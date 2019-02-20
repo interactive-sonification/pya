@@ -41,6 +41,8 @@ class Asig:
             self.sig = self.sig.astype('float64')/32768
         elif self.sig.dtype != np.dtype('float64'):
             self.sig = self.sig.astype('float64')
+        else:
+            print("load_wavfile: TODO: add format")
             
     def __getitem__(self, index):
         if isinstance(index, int):
@@ -97,12 +99,24 @@ class Asig:
     def rms(self, axis=0):
         return np.sqrt(np.mean(np.square(self.sig), axis))
         
-    def plot(self):
-        return plt.plot(np.arange(0, self.samples)/self.sr, self.sig)
+    def plot(self, fn=None, **kwargs):
+        if fn:
+            if fn=='db':
+                fn=lambda x: np.sign(x) * ampdb((abs(x)*2**16 + 1))
+            elif not callable(fn):
+                print("Asig.plot: fn is neither keyword nor function")
+                return
+            plot_sig = fn(self.sig) 
+        else:
+            plot_sig = self.sig
+        return plt.plot(np.arange(0, self.samples)/self.sr, plot_sig, **kwargs)
 
     def get_duration(self):
         return self.samples/self.sr
-    
+
+    def get_times(self):
+        return np.linspace(0, self.get_duration(), self.samples)
+
     def __repr__(self):
         return "Asig('{}'): {} x {} @ {} Hz = {:.3f} s".format(
             self.label, self.channels, self.samples, self.sr, self.samples/self.sr)
@@ -258,6 +272,10 @@ class Asig:
                 sig_new = self.sig * interp_fn(np.linspace(0, duration, self.samples))**curve  # ToDo: curve segmentwise!!!
         return Asig(sig_new, self.sr, label=self.label+"_enveloped")
     
+    def adsr(self, att=0, dec=0.1, sus=0.7, rel=0.1, curve=1):
+        dur = self.get_duration()
+        return self.envelope( [0, 1, sus, sus, 0], [0, att, att+dec, dur-rel, dur])
+
     def window(self, win='bartlett'):
         if not win:
             return self
