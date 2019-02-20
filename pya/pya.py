@@ -13,7 +13,7 @@ import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
 
-from .helpers import *  # import ampdb, linlin, dbamp etc.
+from .helpers import ampdb, linlin, dbamp, play
 
 # from IPython import get_ipython
 # from IPython.core.magic import Magics, cell_magic, line_magic, magics_class
@@ -118,7 +118,7 @@ class Asig:
         if type(sil_pad) is list:
             sil_pad_samples = [int(v*self.sr) for v in sil_pad]
         else:
-            sil_pad_samples = (int(v*self.sr), )*2 
+            sil_pad_samples = (int(sil_pad * self.sr), )*2 
         
         event_list = []
         for i in range(0, self.samples, step_samples):
@@ -143,25 +143,18 @@ class Asig:
         return np.array(event_list)
     
     # spectral segment into pieces - incomplete and unused
-    def find_events_spectral(self, nperseg=64, on_threshold=3, off_threshold=2, medfilt_order=15):
-        tiny = np.finfo(np.dtype('float64')).tiny
-        f, t, Sxx = scipy.signal.spectrogram(self.sig, self.sr, nperseg=nperseg)
-        env = np.mean(np.log(Sxx + tiny), 0)
-        sp = np.mean(np.log(Sxx + tiny), 1)
-        ts = np.arange(self.samples)/self.sr
-        envsig = np.log(self.sig**2 + 0.001)
-        envsig = envsig - np.median(envsig)
-        menv = scipy.signal.medfilt(env, medfilt_order) - np.median(env)
-        # plt.subplot(311); plt.imshow(np.log(Sxx), origin="lowerleft", aspect=50)
-        # plt.subplot(312); plt.plot(sp)
-        # plt.subplot(313); 
-        # plt.plot(ts, envsig); 
-        # plt.plot(t, env - np.median(env), 'r-');
-        # plt.plot(t, menv, 'b-');
-        ibeg = np.where( np.logical_and( menv[1:] > on_threshold, menv[:-1] < on_threshold) )[0]
-        iend = np.where( np.logical_and( menv[1:] < off_threshold, menv[:-1] > off_threshold) )[0]
-        nevents = len(ibeg)
-        return (np.vstack((t[ibeg], t[iend])).T*self.sr).astype('int32')
+    # def find_events_spectral(self, nperseg=64, on_threshold=3, off_threshold=2, medfilt_order=15):
+    #     tiny = np.finfo(np.dtype('float64')).eps
+    #     f, t, Sxx = scipy.signal.spectrogram(self.sig, self.sr, nperseg=nperseg)
+    #     env = np.mean(np.log(Sxx + tiny), 0)
+    #     sp = np.mean(np.log(Sxx + tiny), 1)
+    #     # ts = np.arange(self.samples)/self.sr
+    #     envsig = np.log(self.sig**2 + 0.001)
+    #     envsig = envsig - np.median(envsig)
+    #     menv = scipy.signal.medfilt(env, medfilt_order) - np.median(env)
+    #     ibeg = np.where( np.logical_and( menv[1:] > on_threshold, menv[:-1] < on_threshold) )[0]
+    #     iend = np.where( np.logical_and( menv[1:] < off_threshold, menv[:-1] > off_threshold) )[0]
+    #     return (np.vstack((t[ibeg], t[iend])).T*self.sr).astype('int32')
     
     def fade_in(self, dur=0.1, curve=1):
         nsamp = int(dur*self.sr)
@@ -197,8 +190,8 @@ class Asig:
         plt.xlabel('freq (Hz)') 
         plt.ylabel('|F(freq)|')
         plt.subplot(212) 
-        plt.plot(frq, np.angle(Y), 'b.', markersize=0.2);
-            
+        plt.plot(frq, np.angle(Y), 'b.', markersize=0.2)
+
     def spectrogram(self, *argv, **kvarg):
         f, t, Sxx = scipy.signal.spectrogram(self.sig, self.sr, *argv, **kvarg)
         return f, t, Sxx
@@ -296,11 +289,12 @@ class Asig:
         res = Asig( np.zeros((self.samples//stride_in*stride_out, )), sr=self.sr, label=self.label+'_ola')
         ii = 0
         io = 0
-        for i in range(self.samples//stride_in):
+        for _ in range(self.samples//stride_in):
             i0 = ii - nperseg//2
             i1 = ii + nperseg//2
             if i0 < 0: i0 = 0  # TODO: correct left zero padding!!!
-            if i1 >= self.samples: i1 = self.samples-1  # ToDo: correct right zero padding!!!
+            if i1 >= self.samples: 
+                i1 = self.samples-1  # ToDo: correct right zero padding!!!
             res.add(self[i0:i1].window(win).sig, pos=io) 
             io += stride_out
             ii += stride_in
@@ -403,7 +397,7 @@ class Astft:
             if len(np.shape(x))>2:
                 self.channels = np.shape(x)[2]
             # TODO: set other values, particularly check if self.times and self.freqs are correct
-            self.ntimes, nfreqs, = np.shape(self.stft)
+            self.ntimes, self.nfreqs, = np.shape(self.stft)
             self.times = np.linspace(0, (self.nperseg-self.noverlap)*self.ntimes/self.sr, self.ntimes)
             self.freqs = np.linspace(0, self.sr//2, self.nfreqs) 
         else:
@@ -422,7 +416,7 @@ class Astft:
             kwargs['fs'] = kwargs['sr']
             del kwargs['sr']
 
-        times, sig = scipy.signal.istft(self.stft, **kwargs)
+        _, sig = scipy.signal.istft(self.stft, **kwargs)  # _ since 1st return value 'times' unused
         return Asig(sig, sr=self.sr, label=self.label+'_2sig')
             
     def plot(self, fn = lambda x: x):
