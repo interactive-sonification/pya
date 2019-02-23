@@ -22,16 +22,27 @@ from .helpers import ampdb, linlin, dbamp, play
 class Asig:
     'audio signal class'
     
-    def __init__(self, sig, sr=44100, label=""):
+    def __init__(self, sig, sr=44100, label="", channels=1):
+        self.sr = sr
+        self._ = {}  # dictionary for further return values
+        self.channels = channels
         if isinstance(sig, str):
-            self.load_wavfile(sig)            
+            self.load_wavfile(sig) 
+        elif isinstance(sig, int):  # sample length
+            if self.channels==1:
+                self.sig = np.zeros(sig)
+            else:
+                self.sig = np.zeros((sig, self.channels))
+        elif isinstance(sig, float): # if float interpret as duration
+            if self.channels==1:
+                self.sig = np.zeros(int(sig*sr))
+            else:
+                self.sig = np.zeros((int(sig*sr), self.channels))
         else:
             self.sig = np.array(sig)
-            self.sr = sr
         self.label = label
         sigshape = np.shape(self.sig)
         self.samples = sigshape[0]
-        self.channels = 1
         if len(sigshape) > 1:
             self.channels = sigshape[1]
 
@@ -43,6 +54,18 @@ class Asig:
             self.sig = self.sig.astype('float64')
         else:
             print("load_wavfile: TODO: add format")
+    
+    def save_wavfile(self, fname="asig.wav", dtype='float32'):
+        if dtype == 'int16':
+            data = (self.sig*32767).astype('int16')
+        elif dtype == 'int32':
+            data = (self.sig*2147483647).astype('int32')
+        elif dtype == 'uint8':
+            data = (self.sig*127 + 128).astype('uint8')
+        elif dtype == 'float32':
+            data = self.sig.astype('float32')
+        scipy.io.wavfile.write(fname, self.sr, data)
+        return self
             
     def __getitem__(self, index):
         if isinstance(index, int):
@@ -64,22 +87,24 @@ class Asig:
             sl = slice(int(tidx[0]*self.sr), int(tidx[1]*self.sr), tidx[2])
         return Asig(self.sig[sl], self.sr, self.label+"_tsliced")
 
-    def resample(self, target_sr=44100, rate=1, kind='quadratic'):
-        times = np.linspace(0, self.samples/self.sr, self.samples)
-        interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind, assume_sorted=True)
-        tsel = np.arange(0, self.samples/self.sr, rate/target_sr)  # from[secs], to[secs], rate
+    def resample(self, target_sr=44100, rate=1, kind='linear'):
+        times = np.arange(self.samples)/self.sr
+        interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind, 
+                    assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
+        tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
         return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
 
     def play(self, rate=1, block=False):
         if not self.sr in [8000, 11025, 22050, 44100, 48000]:
             print("resample as sr is exotic")
-            self.resample(44100, rate).play(block=block)
+            self._['play'] = self.resample(44100, rate).play(block=block)
         else:
             if rate is not 1:
                 print("resample as rate!=1")
-                self.resample(44100, rate).play(block=block)
+                self._['play'] = self.resample(44100, rate).play(block=block)
             else:
-                play(self.sig, self.channels, self.sr, block=block)
+                self._['play'] = play(self.sig, self.channels, self.sr, block=block)
+        return self
     
     def norm(self, norm=1, dcflag=False):
         if dcflag: 
@@ -105,17 +130,18 @@ class Asig:
                 fn=lambda x: np.sign(x) * ampdb((abs(x)*2**16 + 1))
             elif not callable(fn):
                 print("Asig.plot: fn is neither keyword nor function")
-                return
+                return self
             plot_sig = fn(self.sig) 
         else:
             plot_sig = self.sig
-        return plt.plot(np.arange(0, self.samples)/self.sr, plot_sig, **kwargs)
+        self._['plot'] = plt.plot(np.arange(0, self.samples)/self.sr, plot_sig, **kwargs)
+        return self
 
     def get_duration(self):
         return self.samples/self.sr
 
     def get_times(self):
-        return np.linspace(0, self.get_duration(), self.samples)
+        return np.linspace(0, (self.samples-1)/self.sr, self.samples) # timestamps for left-edge of sample-and-hold-signal
 
     def __repr__(self):
         return "Asig('{}'): {} x {} @ {} Hz = {:.3f} s".format(
@@ -154,8 +180,23 @@ class Asig:
                         event_begin - sil_pad_samples[0], 
                         event_end - step_samples * sil_min_steps + sil_pad_samples[1]])
                     sil_flag = True
-        return np.array(event_list)
-    
+        self._['events']= np.array(event_list)
+        return self
+
+    def select_event(self, index=None, onset=None):
+        if not 'events' in self._:
+            print('select_event: no events, return all')
+            return self
+        events = self._['events']
+        if onset:
+            index = np.argmin(np.abs(events[:,0]-onset*self.sr))
+        if not index is None:
+            beg, end = events[index]
+            print(beg, end)
+            return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}")
+        print('select_event: neither index nor onset given: return self')
+        return self
+
     # spectral segment into pieces - incomplete and unused
     # def find_events_spectral(self, nperseg=64, on_threshold=3, off_threshold=2, medfilt_order=15):
     #     tiny = np.finfo(np.dtype('float64')).eps
@@ -188,36 +229,20 @@ class Asig:
                               )),
                     self.sr, label=self.label+"_fadeout")
 
-    def to_spec(self):
-        return Aspec(self)
+    def iirfilter(self, cutoff_freqs, btype='bandpass', ftype='butter', order=4, 
+                    filter='lfilter', rp=None, rs=None):
+        Wn = np.array(cutoff_freqs)*2/self.sr
+        b, a = scipy.signal.iirfilter(order, Wn, rp=rp, rs=rs, btype=btype, ftype=ftype)
+        y = scipy.signal.__getattribute__(filter)(b, a, self.sig)
+        aout = Asig(y, self.sr, label=self.label+"_iir")
+        aout._['b']= b
+        aout._['a']= a
+        return aout
 
-    def spectrum(self):
-        nrfreqs = self.samples//2 + 1
-        frq = np.linspace(0, 0.5*self.sr, nrfreqs) # one sides frequency range
-        Y = fft(self.sig)[:nrfreqs]  # / self.samples
-        return frq, Y
+    def plot_freqz(self, worN, **kwargs):
+        w, h = scipy.signal.freqz(self._['b'], self._['a'], worN)
+        plt.plot(w*self.sr/2/np.pi, ampdb(abs(h)), **kwargs)
 
-    def plot_spectrum(self):
-        frq, Y = self.spectrum()
-        plt.subplot(211)
-        plt.plot(frq, np.abs(Y))
-        plt.xlabel('freq (Hz)') 
-        plt.ylabel('|F(freq)|')
-        plt.subplot(212) 
-        plt.plot(frq, np.angle(Y), 'b.', markersize=0.2)
-
-    def spectrogram(self, *argv, **kvarg):
-        f, t, Sxx = scipy.signal.spectrogram(self.sig, self.sr, *argv, **kvarg)
-        return f, t, Sxx
-
-    def bpfilter(self, lpf, hpf, order=4, btype='band', ftype='butter', filtmethod='pad'):
-        cutoff_low = lpf / (self.sr/2)
-        cutoff_high = hpf / (self.sr/2)
-        b, a = scipy.signal.iirfilter(order, [cutoff_low, cutoff_high], 
-            btype=btype, analog=False, ftype=ftype)
-        return Asig(scipy.signal.filtfilt(b, a, self.sig, method=filtmethod, axis=0), 
-            self.sr, label=self.label+"_bpf")
-        
     def add(self, sig, pos=None, amp=1, onset=None):
         if type(sig) == Asig:
             n = sig.samples
@@ -272,18 +297,18 @@ class Asig:
                 sig_new = self.sig * interp_fn(np.linspace(0, duration, self.samples))**curve  # ToDo: curve segmentwise!!!
         return Asig(sig_new, self.sr, label=self.label+"_enveloped")
     
-    def adsr(self, att=0, dec=0.1, sus=0.7, rel=0.1, curve=1):
+    def adsr(self, att=0, dec=0.1, sus=0.7, rel=0.1, curve=1, kind='linear'):
         dur = self.get_duration()
-        return self.envelope( [0, 1, sus, sus, 0], [0, att, att+dec, dur-rel, dur])
+        return self.envelope( [0, 1, sus, sus, 0], [0, att, att+dec, dur-rel, dur], 
+                                curve=curve, kind=kind)
 
-    def window(self, win='bartlett'):
+    def window(self, win='triang', **kwargs):
         if not win:
             return self
-        # TODO: use win name directly as fn in scipy.signal.windows
-        if win == 'bartlett':
-            return Asig(self.sig*scipy.signal.windows.bartlett(self.samples), self.sr, label=self.label+"_bartlet")
-        if win == 'cosine':
-            return Asig(self.sig*scipy.signal.windows.cosine(self.samples), self.sr, label=self.label+"_bartlet")
+        winstr = win
+        if type(winstr)==tuple: 
+            winstr = win[0]
+        return Asig(self.sig*scipy.signal.get_window(win, self.samples, **kwargs), self.sr, label=self.label+"_"+winstr)
     
     def window_op(self, nperseg=64, stride=32, win=None, fn='rms', pad='mirror'):
         centerpos = np.arange(0, self.samples, stride)
@@ -300,7 +325,8 @@ class Asig:
                 res[i] = fn(self[i0:i1])
         return Asig(np.array(res), sr=self.sr//stride, label='window_oped')
     
-    def overlap_add(self, nperseg=64, stride_in=32, stride_out=32, win=None, pad='mirror'):
+    def overlap_add(self, nperseg=64, stride_in=32, stride_out=32, jitter_in=None, jitter_out=None, 
+                    win=None, pad='mirror'):
         # TODO: check with multichannel ASigs
         # TODO: allow stride_in and stride_out to be arrays of indices
         # TODO: add jitter_in, jitter_out parameters to reduce spectral ringing effects
@@ -309,14 +335,40 @@ class Asig:
         io = 0
         for _ in range(self.samples//stride_in):
             i0 = ii - nperseg//2
-            i1 = ii + nperseg//2
+            if jitter_in: i0 += np.random.randint(jitter_in)
+            i1 = i0 + nperseg
             if i0 < 0: i0 = 0  # TODO: correct left zero padding!!!
             if i1 >= self.samples: 
                 i1 = self.samples-1  # ToDo: correct right zero padding!!!
-            res.add(self[i0:i1].window(win).sig, pos=io) 
+            pos = io
+            if jitter_out: pos += np.random.randint(jitter_out)
+            res.add(self[i0:i1].window(win).sig, pos=pos) 
             io += stride_out
             ii += stride_in
         return res
+    
+    def to_spec(self):
+        return Aspec(self)
+
+    def spectrum(self):
+        nrfreqs = self.samples//2 + 1
+        frq = np.linspace(0, 0.5*self.sr, nrfreqs) # one sides frequency range
+        Y = fft(self.sig)[:nrfreqs]  # / self.samples
+        return frq, Y
+
+    def plot_spectrum(self, **kwargs):
+        frq, Y = self.spectrum()
+        plt.subplot(211)
+        plt.plot(frq, np.abs(Y), **kwargs)
+        plt.xlabel('freq (Hz)') 
+        plt.ylabel('|F(freq)|')
+        plt.subplot(212) 
+        self._['lines'] = plt.plot(frq, np.angle(Y), 'b.', markersize=0.2)
+        return self
+
+    def spectrogram(self, *argv, **kvarg):
+        freqs, times, Sxx = scipy.signal.spectrogram(self.sig, self.sr, *argv, **kvarg)
+        return freqs, times, Sxx
 
 
 class Aspec:
@@ -372,10 +424,10 @@ class Aspec:
             rfft_new = self.rfftspec * weights**curve
         return Aspec(rfft_new, self.sr, label=self.label+"_weighted")
             
-    def plot(self):
-        plt.plot(self.freqs, np.abs(self.rfftspec))
+    def plot(self, fn=np.abs, **kwargs):
+        plt.plot(self.freqs, fn(self.rfftspec), **kwargs)
         plt.xlabel('freq (Hz)') 
-        plt.ylabel('|F(freq)|')
+        plt.ylabel(f'{fn.__name__}(freq)')
         
     def __repr__(self):
         return "Aspec('{}'): {} x {} @ {} Hz = {:.3f} s".format(self.label, 
