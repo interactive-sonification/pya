@@ -74,6 +74,8 @@ class Asig:
             start, stop, step = index.indices(len(self.sig))    # index is a slice
         elif isinstance(index, list) or isinstance(index, np.ndarray):
             return Asig(self.sig[index], self.sr, self.label+"_arrayindexed")
+        elif isinstance(index, str):
+            return self._[index]
         else:
             raise TypeError("index must be int, array, or slice")        
         return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), self.label+"_sliced")
@@ -97,11 +99,11 @@ class Asig:
     def play(self, rate=1, block=False):
         if not self.sr in [8000, 11025, 22050, 44100, 48000]:
             print("resample as sr is exotic")
-            self._['play'] = self.resample(44100, rate).play(block=block)
+            self._['play'] = self.resample(44100, rate).play(block=block)['play']
         else:
             if rate is not 1:
                 print("resample as rate!=1")
-                self._['play'] = self.resample(44100, rate).play(block=block)
+                self._['play'] = self.resample(44100, rate).play(block=block)['play']
             else:
                 self._['play'] = play(self.sig, self.channels, self.sr, block=block)
         return self
