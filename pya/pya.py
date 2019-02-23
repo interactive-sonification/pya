@@ -64,7 +64,7 @@ class Asig:
             data = (self.sig*127 + 128).astype('uint8')
         elif dtype == 'float32':
             data = self.sig.astype('float32')
-        scipy.io.wavfile.write(fname, self.sr, data)
+        wavfile.write(fname, self.sr, data)
         return self
             
     def __getitem__(self, index):
