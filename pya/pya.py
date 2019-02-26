@@ -22,8 +22,9 @@ from .helpers import ampdb, linlin, dbamp, play
 class Asig:
     'audio signal class'
     
-    def __init__(self, sig, sr=44100, label="", channels=1):
+    def __init__(self, sig, sr=44100, label="", channels=1, verbose=False):
         self.sr = sr
+        self.verbose = verbose
         self._ = {}  # dictionary for further return values
         self.channels = channels
         if isinstance(sig, str):
@@ -98,11 +99,13 @@ class Asig:
 
     def play(self, rate=1, block=False):
         if not self.sr in [8000, 11025, 22050, 44100, 48000]:
-            print("resample as sr is exotic")
+            if self.verbose:
+                print("resample as sr is exotic")
             self._['play'] = self.resample(44100, rate).play(block=block)['play']
         else:
             if rate is not 1:
-                print("resample as rate!=1")
+                if self.verbose: 
+                    print("resample as rate!=1")
                 self._['play'] = self.resample(44100, rate).play(block=block)['play']
             else:
                 self._['play'] = play(self.sig, self.channels, self.sr, block=block)
@@ -179,8 +182,9 @@ class Asig:
                     sil_count = 0  # reset if there is outlier non-silence
                 if sil_count > sil_min_steps:  # event ended
                     event_list.append([
-                        event_begin - sil_pad_samples[0], 
-                        event_end - step_samples * sil_min_steps + sil_pad_samples[1]])
+                        max(event_begin - sil_pad_samples[0], 0), 
+                        min(event_end - step_samples * sil_min_steps + sil_pad_samples[1], self.samples-1)
+                    ])
                     sil_flag = True
         self._['events']= np.array(event_list)
         return self
@@ -194,7 +198,6 @@ class Asig:
             index = np.argmin(np.abs(events[:,0]-onset*self.sr))
         if not index is None:
             beg, end = events[index]
-            print(beg, end)
             return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}")
         print('select_event: neither index nor onset given: return self')
         return self
