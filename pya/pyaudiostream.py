@@ -10,8 +10,8 @@ class PyaudioStream():
         # self.signal = 0 # This is supposed to be replaced by qt signal
         self.pa = pyaudio.PyAudio()
         self.outputChannels =  channels# Init, but change based on the chosen device. 
-        self.fs = fs  # The divider helps us to use a smaller samping rate. 
-        self.chunk = chunk # The smaller the smaller latency 
+        self.fs = sr  # The divider helps us to use a smaller samping rate. 
+        self.chunk = bs # The smaller the smaller latency 
         self.audioformat = pyaudio.paInt16
         self.recording = False
         self.il = [] # input list 
@@ -28,22 +28,10 @@ class PyaudioStream():
                 self.il.append(self.pa.get_device_info_by_index(i))
             if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
                 self.ol.append(self.pa.get_device_info_by_index(i))
-        self.inputIdx = 0
+        self.inputIdx = 0 
         self.outputIdx = 1
         self.inVol = np.ones(self.maxInputChannels) # Current version has 6 inputs max. But should taylor this. 
         self.outVol = np.ones(self.maxOutputChannels)
-        self.currentTime = time.time()
-        self.prevTime = time.time()
-        self.first = True
-        self.time = []
-
-        self.bpfilter = Filter(typ = 'band')
-        # This can be set by kwargs maybe 
-        self.reverse = Reverse(self.chunk)
-
-        self.method = "None"
-
-        
     
     def printAudioDevices(self):
         for i in range(self.pa.get_device_count()):
@@ -59,50 +47,14 @@ class PyaudioStream():
             out_data = bytes(np.zeros(self.chunk * self.outputChannels))
             return out_data, pyaudio.paComplete
 
-    def dspParameters(self, **kwargs):
-        # Can use it to update all parameters. 
-        self.bpfilter.setFilter(**kwargs)
-    
-
-    def dsp(self, x):
-        # filter:
-        y = self.bpfilter.lfilter(x)
-
-        # Check method:
-                # To be replaced. 
-        if self.method == 'None':
-            pass
-
-        elif self.method == "Reverse":
-            y = self.reverse.apply(y)
-        elif self.method == 'Spectral Shifting':
-            pass
-            # print ("Spectral Shifting selected")
-
-        elif self.method == 'Harmonization':
-            pass
-            # print ("Harmonization")
-        elif self.method == 'MFCC':
-            pass
-            # print ("MFCC Feature extraction")
-        else: 
-            raise Warning("Unrecognise method. No method applied. ")
-
-        return y 
-
     def _recordCallback(self, in_data, frame_count, time_info, flag):
         audio_data = (np.frombuffer(in_data, dtype = np.int16) * self.inVol[0]).astype(np.int16)
         self.bufflist.append(audio_data)
         # out_data = self._outputgain(middle_data) # Individual channel gain and master gain
         return audio_data, pyaudio.paContinue
 
-    def setsignal(self, sig):
-        self.bufflist = sig
-
-
     def record(self):
         # What is the chunk size ? is it scaled based on input channels or output channels. 
-
         try:  # restarting recording without closing stream, resulting an unstoppable stream. 
              # This can happen in Jupyter when you trigger record multple times without stopping it first. 
             self.stream.stop_stream()
@@ -157,8 +109,10 @@ class PyaudioStream():
             Step 2: check if there's any input sigal, if not play internal buffer, else do nothing
             Step 3: Convert data into int16
             Step 4: Convert to the correct channels (not implemented at this stage. )
+            Step 5: Convert the sig in to certain chunks for playback: 
+                This method needs to be changed to suit multiple sounds being played together. 
+            Step 6: Switch on the stream. 
         """
-
         try:  
             self.playStream.stop_stream()
             self.playStream.close()
@@ -182,10 +136,8 @@ class PyaudioStream():
 
             # sig = self.mono2nchan(sig,self.outputChannels) # duplicate based on channels
             self.play_data = self.makechunk(sig, self.chunk*self.outputChannels) 
-
         self.totalChunks = len(self.play_data) # total chunks
         self.frameCount = 0 # Start from the beginning. 
-        
         # This method will only work with pyqt, because if not it will only run 1 iteration.  
         self.playStream = self.pa.open(
             format = self.audioformat,

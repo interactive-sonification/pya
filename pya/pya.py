@@ -97,34 +97,32 @@ class Asig:
         tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
         return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
 
-    """
-        Work on this one to either implement channels to simpleaudio or pyaudio 
-    """
 
-    def play2(self, rate = 1):
+    # New method with pyaudio
+    def play(self, rate = 1):
         if not self.sr in [8000, 11025, 22050, 44100, 48000]:
             print("resample as sr is exotic")
-            self._['play'] = self.resample(44100, rate).play2()['play']
+            self._['play'] = self.resample(44100, rate).play()['play']
         else:
             if rate is not 1:
                 print("resample as rate!=1")
-                self._['play'] = self.resample(44100, rate).play2()['play']
+                self._['play'] = self.resample(44100, rate).play()['play']
             else:
                 self._['play'] = playpyaudio(self.sig, self.channels, self.sr)
         return self
 
-
-    def play(self, rate=1, block=False):
-        if not self.sr in [8000, 11025, 22050, 44100, 48000]:
-            print("resample as sr is exotic")
-            self._['play'] = self.resample(44100, rate).play(block=block)['play']
-        else:
-            if rate is not 1:
-                print("resample as rate!=1")
-                self._['play'] = self.resample(44100, rate).play(block=block)['play']
-            else:
-                self._['play'] = play(self.sig, self.channels, self.sr, block=block)
-        return self
+    # This is the original method via simpleaudio
+    # def play(self, rate=1, block=False):
+    #     if not self.sr in [8000, 11025, 22050, 44100, 48000]:
+    #         print("resample as sr is exotic")
+    #         self._['play'] = self.resample(44100, rate).play(block=block)['play']
+    #     else:
+    #         if rate is not 1:
+    #             print("resample as rate!=1")
+    #             self._['play'] = self.resample(44100, rate).play(block=block)['play']
+    #         else:
+    #             self._['play'] = play(self.sig, self.channels, self.sr, block=block)
+    #     return self
     
     def norm(self, norm=1, dcflag=False):
         if dcflag: 

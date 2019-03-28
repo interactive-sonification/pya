@@ -36,34 +36,6 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
     return np.frombuffer(b''.join(buflist), dtype=np.int16)
 
 
-def _play_with_pyaudio(seg, channels = 1,  format = pyaudio.paInt16):
-    # Need to turn seg in to sig 
-    # channels: 1 mono, 2 stereo, n -> n channels. 
-    p = pyaudio.PyAudio()
-    stream = p.open(format=format,
-                    channels=channels,
-                    rate=seg.frame_rate,
-                    output=True)
-
-    # break audio into half-second chunks (to allows keyboard interrupts)
-    for chunk in make_chunks(seg, 500):
-        stream.write(chunk._data)
-
-    stream.stop_stream()
-    stream.close()
-
-    p.terminate()
-
-def make_chunks(audio_segment, chunk_length):
-    """
-    Breaks an AudioSegment into chunks that are <chunk_length> milliseconds
-    long.
-    if chunk_length is 50 then you'll get a list of 50 millisecond long audio
-    segments back (except the last one, which can be shorter)
-    """
-    number_of_chunks = ceil(len(audio_segment) / float(chunk_length))
-    return [audio_segment[i * chunk_length:(i + 1) * chunk_length]
-            for i in range(int(number_of_chunks))]
 
 # This part uses pyaudio for playing. 
 def playpyaudio(sig, num_channels=1, sr=44100, bs = 512, block=False):
@@ -76,26 +48,27 @@ def playpyaudio(sig, num_channels=1, sr=44100, bs = 512, block=False):
     else:
         return
   
-def play(sig, num_channels=1, sr=44100, block=False):
-    """Plays audio signal via simpleaudio
+  # Old play method with simpleaudio
+# def play(sig, num_channels=1, sr=44100, block=False):
+#     """Plays audio signal via simpleaudio
 
-    Arguments:
-        sig {iterable} -- Signal to be played
+#     Arguments:
+#         sig {iterable} -- Signal to be played
 
-    Keyword Arguments:
-        num_channels {int} -- Number of channels (default: {1})
-        sr {int} -- Audio sample rate (default: {44100})
-        block {bool} -- if True, block until playback is finished
-                        (default: {False})
+#     Keyword Arguments:
+#         num_channels {int} -- Number of channels (default: {1})
+#         sr {int} -- Audio sample rate (default: {44100})
+#         block {bool} -- if True, block until playback is finished
+#                         (default: {False})
 
-    Returns:
-        simpleaudio play_obj -- see description in simpleaudio
-    """
-    play_obj = sa.play_buffer((32767*sig).astype(np.int16), num_channels=num_channels, 
-                              bytes_per_sample=2, sample_rate=sr)
-    if block:
-        play_obj.wait_done() # wait for playback to finish before returning
-    return play_obj
+#     Returns:
+#         simpleaudio play_obj -- see description in simpleaudio
+#     """
+#     play_obj = sa.play_buffer((32767*sig).astype(np.int16), num_channels=num_channels, 
+#                               bytes_per_sample=2, sample_rate=sr)
+#     if block:
+#         play_obj.wait_done() # wait for playback to finish before returning
+#     return play_obj
 
 
 
