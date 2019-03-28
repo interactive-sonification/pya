@@ -13,7 +13,7 @@ import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
 
-from .helpers import ampdb, linlin, dbamp, play
+from .helpers import ampdb, linlin, dbamp, playpyaudio
 
 # from IPython import get_ipython
 # from IPython.core.magic import Magics, cell_magic, line_magic, magics_class
@@ -22,8 +22,10 @@ from .helpers import ampdb, linlin, dbamp, play
 class Asig:
     'audio signal class'
     
-    def __init__(self, sig, sr=44100, label="", channels=1):
+    def __init__(self, sig, sr=44100, bs = 512, label="", channels=1):
+
         self.sr = sr
+        self.bs = bs #buffer size for pyaudio
         self._ = {}  # dictionary for further return values
         self.channels = channels
         if isinstance(sig, str):
@@ -41,10 +43,9 @@ class Asig:
         else:
             self.sig = np.array(sig)
         self.label = label
-        sigshape = np.shape(self.sig)
-        self.samples = sigshape[0]
-        if len(sigshape) > 1:
-            self.channels = sigshape[1]
+        self.samples = np.shape(self.sig)[0]
+        # if len(sigshape) > 1:
+        #     self.channels = sigshape[1]
 
     def load_wavfile(self, fname):
         self.sr, self.sig = wavfile.read(fname) # load the sample data
@@ -95,6 +96,23 @@ class Asig:
                     assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
         tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
         return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
+
+    """
+        Work on this one to either implement channels to simpleaudio or pyaudio 
+    """
+
+    def play2(self, rate = 1):
+        if not self.sr in [8000, 11025, 22050, 44100, 48000]:
+            print("resample as sr is exotic")
+            self._['play'] = self.resample(44100, rate).play2()['play']
+        else:
+            if rate is not 1:
+                print("resample as rate!=1")
+                self._['play'] = self.resample(44100, rate).play2()['play']
+            else:
+                self._['play'] = playpyaudio(self.sig, self.channels, self.sr)
+        return self
+
 
     def play(self, rate=1, block=False):
         if not self.sr in [8000, 11025, 22050, 44100, 48000]:

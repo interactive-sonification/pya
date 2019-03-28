@@ -3,10 +3,16 @@
 import numpy as np
 import pyaudio
 import simpleaudio as sa
+from pya.pyaudiostream import PyaudioStream
 
+class _error(Exception):
+    pass
 
 def record(dur=2, channels=1, rate=44100, chunk=256):
     """Record audio
+
+    (if you implement the for loop as a callback and put it to stream_callback = _,
+        if will be a non-blocking way. )
 
     Keyword Arguments:
         dur {int} -- Duration (default: {2})
@@ -30,6 +36,46 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
     return np.frombuffer(b''.join(buflist), dtype=np.int16)
 
 
+def _play_with_pyaudio(seg, channels = 1,  format = pyaudio.paInt16):
+    # Need to turn seg in to sig 
+    # channels: 1 mono, 2 stereo, n -> n channels. 
+    p = pyaudio.PyAudio()
+    stream = p.open(format=format,
+                    channels=channels,
+                    rate=seg.frame_rate,
+                    output=True)
+
+    # break audio into half-second chunks (to allows keyboard interrupts)
+    for chunk in make_chunks(seg, 500):
+        stream.write(chunk._data)
+
+    stream.stop_stream()
+    stream.close()
+
+    p.terminate()
+
+def make_chunks(audio_segment, chunk_length):
+    """
+    Breaks an AudioSegment into chunks that are <chunk_length> milliseconds
+    long.
+    if chunk_length is 50 then you'll get a list of 50 millisecond long audio
+    segments back (except the last one, which can be shorter)
+    """
+    number_of_chunks = ceil(len(audio_segment) / float(chunk_length))
+    return [audio_segment[i * chunk_length:(i + 1) * chunk_length]
+            for i in range(int(number_of_chunks))]
+
+# This part uses pyaudio for playing. 
+def playpyaudio(sig, num_channels=1, sr=44100, bs = 512, block=False):
+    try:
+        audiostream = PyaudioStream(bs = bs, sr =sr)
+        audiostream.play(sig)
+
+    except ImportError:
+        raise ImportError("Can't play audio via Pyaudiostream")
+    else:
+        return
+  
 def play(sig, num_channels=1, sr=44100, block=False):
     """Plays audio signal via simpleaudio
 
