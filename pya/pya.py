@@ -117,10 +117,10 @@ class Asig:
         except ImportError:
             raise ImportError("Can't play audio via Pyaudiostream")
         
-            
+    
 
     # New method with pyaudio
-    def play(self, rate = 1, device_index = 1):
+    def play(self, rate = 1, device_index = 1, pan = None):
         if not self.sr in [8000, 11025, 22050, 44100, 48000]:
             print("resample as sr is exotic")
             self._['play'] = self.resample(44100, rate).play()['play']
@@ -129,7 +129,20 @@ class Asig:
                 print("resample as rate!=1")
                 self._['play'] = self.resample(44100, rate).play()['play']
             else:
-                self._['play'] = self._playpyaudio(self.sig, self.channels, self.sr, device_index = device_index)
+                if pan is None :
+                    self._['play'] = self._playpyaudio(self.sig, self.channels, self.sr, device_index = device_index)
+                elif type(pan) is int:
+                    # How do I mapped a stereo signal to one channel. 
+                    if self.channels > 1 and self.channels > pan:
+                        print ("Assigning a multichannel signal to one particular channel. The channels will be merged and average.")
+                        sig_merged = self.sig.mean(axis = 1) # L + R /2 method, but not good with phase issue 
+                        # Assign 
+                        sig_nchan = np.zeros((len(sig_merged) , self.channels))
+                        sig_nchan[:, pan] = sig_merged
+                        self._['play'] = self._playpyaudio(sig_nchan, self.channels, self.sr, device_index = device_index)
+                    else:
+                        raise ValueError("Integer pan needs to be smaller than ASig.channels (max output channels)")
+
         return self
 
     def sequencemode(self, onoff = False):
@@ -163,9 +176,6 @@ class Asig:
             print ("Position is list")
         else:
             raise Warning("Unsupported type, nothing happened. Use only list for panning or integer for channel assignment")
-
-
-
         return self
 
     # This is the original method via simpleaudio
