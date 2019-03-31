@@ -13,17 +13,16 @@ import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
 
-from .helpers import ampdb, linlin, dbamp, playpyaudio
+from .pyaudiostream import SequenceStream, PyaudioStream
 
+from .helpers import ampdb, linlin, dbamp
 # from IPython import get_ipython
 # from IPython.core.magic import Magics, cell_magic, line_magic, magics_class
 
 
 class Asig:
     'audio signal class'
-    
-    def __init__(self, sig, sr=44100, bs = 512, label="", channels=1):
-
+    def __init__(self, sig, sr=44100, bs = 1024, label="", channels=1):
         self.sr = sr
         self.bs = bs #buffer size for pyaudio
         self._ = {}  # dictionary for further return values
@@ -48,13 +47,25 @@ class Asig:
         #     self.channels = sigshape[1]
 
     def load_wavfile(self, fname):
+        # Discuss to change to float32 . 
+
         self.sr, self.sig = wavfile.read(fname) # load the sample data
         if self.sig.dtype == np.dtype('int16'):
-            self.sig = self.sig.astype('float64')/32768
-        elif self.sig.dtype != np.dtype('float64'):
-            self.sig = self.sig.astype('float64')
+            self.sig = self.sig.astype('float32')/32768
+            try:
+                self.channels = self.sig.shape[1]
+            except IndexError:
+                self.channels = 1
+        elif self.sig.dtype != np.dtype('float32'):
+            self.sig = self.sig.astype('float32')
+            try:
+                self.channels = self.sig.shape[1]
+            except IndexError:
+                self.channels = 1
         else:
             print("load_wavfile: TODO: add format")
+
+        # Set channel here. 
     
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         if dtype == 'int16':
@@ -98,8 +109,18 @@ class Asig:
         return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
 
 
+        # This part uses pyaudio for playing. 
+    def _playpyaudio(self, sig, num_channels=1, sr=44100, bs = 512, device_index = 1,  block=False):
+        try:
+            audiostream = PyaudioStream(bs = bs, sr =sr, channels = num_channels, device_index = device_index)
+            audiostream.play(sig)
+        except ImportError:
+            raise ImportError("Can't play audio via Pyaudiostream")
+        
+            
+
     # New method with pyaudio
-    def play(self, rate = 1):
+    def play(self, rate = 1, device_index = 1):
         if not self.sr in [8000, 11025, 22050, 44100, 48000]:
             print("resample as sr is exotic")
             self._['play'] = self.resample(44100, rate).play()['play']
@@ -108,7 +129,43 @@ class Asig:
                 print("resample as rate!=1")
                 self._['play'] = self.resample(44100, rate).play()['play']
             else:
-                self._['play'] = playpyaudio(self.sig, self.channels, self.sr)
+                self._['play'] = self._playpyaudio(self.sig, self.channels, self.sr, device_index = device_index)
+        return self
+
+    def sequencemode(self, onoff = False):
+        if (onoff):
+            print ("Switch on the continuous buffer")
+            # self.stream = playpyaudio
+
+        else:
+            print ("switch it off")
+
+
+    def playseq(self, onset, src):
+        
+        if isinstance(onset[0], int): # Sample
+            print ("Onset in sample")
+            return self
+
+        elif isinstance(onset[0], float):
+            print ("Onset in second. ")
+            return self
+
+
+    def pan(self, pos):
+        """
+            There are two possible ways of using pos:
+            pos as a list: [0, 1, 0, 1] : they become the multiplier. 
+        """
+        if type(pos) is list:
+            print (' Position info is a list')
+        elif type(pos) is int:
+            print ("Position is list")
+        else:
+            raise Warning("Unsupported type, nothing happened. Use only list for panning or integer for channel assignment")
+
+
+
         return self
 
     # This is the original method via simpleaudio
@@ -388,6 +445,9 @@ class Asig:
         freqs, times, Sxx = scipy.signal.spectrogram(self.sig, self.sr, *argv, **kvarg)
         return freqs, times, Sxx
 
+    def size(self): 
+        # return samples and length in time:
+        return self.sig.shape, self.sig.shape[0]/self.sr
 
 class Aspec:
     'audio spectrum class using rfft'

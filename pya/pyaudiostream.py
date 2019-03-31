@@ -1,18 +1,19 @@
 import pyaudio
 import numpy as np
-from pya.helpers import * 
 import time
 import scipy.signal as signal
+from collections import deque
 
 
 class PyaudioStream():
-    def __init__(self, bs = 256,  sr = 44100, channels = 1):
+    def __init__(self, bs = 256,  sr = 44100, channels = 1, device_index  = 1):
         # self.signal = 0 # This is supposed to be replaced by qt signal
         self.pa = pyaudio.PyAudio()
         self.outputChannels =  channels# Init, but change based on the chosen device. 
         self.fs = sr  # The divider helps us to use a smaller samping rate. 
         self.chunk = bs # The smaller the smaller latency 
         self.audioformat = pyaudio.paInt16
+
         self.recording = False
         self.il = [] # input list 
         self.bufflist = [] # Buffer for input audio tracks
@@ -29,7 +30,7 @@ class PyaudioStream():
             if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
                 self.ol.append(self.pa.get_device_info_by_index(i))
         self.inputIdx = 0 
-        self.outputIdx = 1
+        self.outputIdx = device_index
         self.inVol = np.ones(self.maxInputChannels) # Current version has 6 inputs max. But should taylor this. 
         self.outVol = np.ones(self.maxOutputChannels)
     
@@ -38,14 +39,14 @@ class PyaudioStream():
             print (self.pa.get_device_info_by_index(i))
 
     def _playcallback(self, in_data, frame_count, time_info, flag):
-        
         if (self.frameCount < self.totalChunks):
-            out_data = self._outputgain(self.play_data[self.frameCount])
+            # out_data = self._outputgain(self.play_data[self.frameCount])
+            out_data = self.play_data[self.frameCount]
             self.frameCount += 1
-            return out_data, pyaudio.paContinue
+            return bytes(out_data), pyaudio.paContinue
         else: # The last one . 
-            out_data = bytes(np.zeros(self.chunk * self.outputChannels))
-            return out_data, pyaudio.paComplete
+            out_data = np.zeros(self.chunk * self.outputChannels)
+            return bytes(out_data), pyaudio.paComplete
 
     def _recordCallback(self, in_data, frame_count, time_info, flag):
         audio_data = (np.frombuffer(in_data, dtype = np.int16) * self.inVol[0]).astype(np.int16)
@@ -85,16 +86,6 @@ class PyaudioStream():
         except AttributeError:
             print ("No stream, stop button did nothing. ")
 
-    # Put plot in a separate class maybe 
-    def getWaveform(self):
-        try:
-            # The commented one is for bytes 
-            # self.waveform = np.frombuffer(b''.join(self.bufflist), 'Int16')
-            self.waveform = np.hstack(self.bufflist)
-        except ValueError:
-            self.waveform = np.zeros(self.chunk)
-        return self.waveform, len(self.waveform)/self.fs
-
     def stopPlaying(self):
         try: # To prevent self.playStream not created before stop button pressed
             self.playStream.stop_stream()
@@ -113,6 +104,7 @@ class PyaudioStream():
                 This method needs to be changed to suit multiple sounds being played together. 
             Step 6: Switch on the stream. 
         """
+        print ("Play sound. ")
         try:  
             self.playStream.stop_stream()
             self.playStream.close()
@@ -124,7 +116,14 @@ class PyaudioStream():
             else: 
                 raise Warning("Play called but no audio.")
         else:
+            """
+                Commented out the formatting . 
+                Default pafloat32 for now. 
+            """
+
             if sig.dtype == np.dtype('float64'):
+                sig = (sig * 32767).astype(np.int16)
+            elif sig.dtype == np.dtype('float32'):
                 sig = (sig * 32767).astype(np.int16)
             elif sig.dtype == np.dtype('int8'):
                 sig = (sig * 256).astype(np.int16)
@@ -134,8 +133,12 @@ class PyaudioStream():
                 msg = str(sig.dtype) + " is not a supported date type. Supports int16, float64 and int8."
                 raise TypeError(msg)
 
+            sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig
+
             # sig = self.mono2nchan(sig,self.outputChannels) # duplicate based on channels
-            self.play_data = self.makechunk(sig, self.chunk*self.outputChannels) 
+
+            self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels) 
+            
         self.totalChunks = len(self.play_data) # total chunks
         self.frameCount = 0 # Start from the beginning. 
         # This method will only work with pyqt, because if not it will only run 1 iteration.  
@@ -175,3 +178,88 @@ class PyaudioStream():
         data_col = data.reshape([self.chunk, channels])
         data_col *= glist[:channels] # Only apply the list matching the channels. 
         return data.astype(np.int16)
+
+# Again, not dealing with multichannel yet. 
+class SequenceStream():
+    def __init__(self, bs = 256,  sr = 44100, channels = 1):
+        self.pa = pyaudio.PyAudio()
+        self.outputChannels =  channels # Work on this later. 
+        self.fs = sr; self.chunk = bs # The smaller the smaller latency 
+        self.audioformat = pyaudio.paInt16
+        self.outputIdx = 1
+        self.emptybuffer = bytes(np.zeros(self.chunk * self.outputChannels))
+        self.ringbuffer = deque([self.emptybuffer,self.emptybuffer, self.emptybuffer,self.emptybuffer], maxlen = 4)
+
+    def openstream(self):
+        try:  
+            self.playStream.stop_stream()
+            self.playStream.close()
+        except AttributeError:
+            pass
+        self.dataflag = False
+        self.playStream = self.pa.open(
+            format = self.audioformat,
+            channels = self.outputChannels, 
+            rate = self.fs,
+            input = False,
+            output = True,
+            output_device_index=self.outputIdx,
+            frames_per_buffer = self.chunk,
+            stream_callback=self._playcallback
+           )
+        self.playStream.start_stream()
+
+    def play(self, onset, sig):
+        if onset is list and sig is list:
+            self.play_data = self.mixing_function(onset, sig)
+            self.play_data = self.makechunk(self.play_data, self.chunk)
+            self.len = len(self.play_data)
+            self.count = 0
+            self.dataflag = True
+        else: 
+            raise TypeError("Onset and sig need to be list ")
+
+
+    def mixing_function(self, onset,sig):
+        maxlen = np.max([o + len(s) for o, s in zip(onset, sig)])
+        result =  np.zeros(maxlen)
+        for i in range(len(onset)):
+            result[onset[i]:onset[i] + len(sig[i])] += sig[i] 
+        return result
+
+    def makechunk(self, lst, chunk):
+        result = []
+        # TODO. Find a faster solution for this. 
+        for i in np.arange(0, len(lst), chunk):
+            temp = lst[i:i + chunk]
+            if len(temp) < chunk:
+                temp = np.pad(temp, (0, chunk - len(temp)), 'constant')
+            result.append(temp)
+        return result
+
+    
+    def _playcallback(self, in_data, frame_count, time_info, flag):  
+        # Create a ring buffer here. 
+
+        if (self.dataflag):
+            out_data = self.play_data(self.count)
+            self.count +=1
+            if self.count > self.len:
+                self.dataflag = False
+        # out_data = self.ringbuffer[0]
+        # self.ringbuffer.rotate(-1)
+        # # Here to decide what should give to append to the ring buffer. . 
+        # self.ringbuffer[-1] = self.emptybuffer
+        else:
+            out_data = self.emptybuffer
+        return out_data, pyaudio.paComplete
+
+
+    def closestream(self):
+        try: # To prevent self.playStream not created before stop button pressed
+            self.playStream.stop_stream()
+            self.playStream.close()
+            print ("Play Stream Stopped. ")
+        except AttributeError:
+            print ("No stream, stop button did nothing. ")
+
