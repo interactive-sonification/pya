@@ -131,19 +131,31 @@ class Asig:
             else:
                 if pan is None :
                     self._['play'] = self._playpyaudio(self.sig, self.channels, self.sr, device_index = device_index)
-                elif type(pan) is int:
-                    # How do I mapped a stereo signal to one channel. 
-                    if self.channels > 1 and self.channels > pan:
-                        print ("Assigning a multichannel signal to one particular channel. The channels will be merged and average.")
-                        sig_merged = self.sig.mean(axis = 1) # L + R /2 method, but not good with phase issue 
-                        # Assign 
-                        sig_nchan = np.zeros((len(sig_merged) , self.channels))
-                        sig_nchan[:, pan] = sig_merged
-                        self._['play'] = self._playpyaudio(sig_nchan, self.channels, self.sr, device_index = device_index)
-                    else:
-                        raise ValueError("Integer pan needs to be smaller than ASig.channels (max output channels)")
-
+                else:
+                    sig_pan = self.panning(self.sig, pan) # Created a panned signal
+                    self._['play'] = self._playpyaudio(sig_pan, self.channels, self.sr, device_index = device_index)
         return self
+
+    def panning(self, data,  pan):
+        """
+            There are two possible ways of using pos:
+            pos as a list: [0, 1, 0, 1] : they become the multiplier. 
+        """
+        if type(pan) is int:
+            # How do I mapped a stereo signal to one channel. 
+            if self.channels > 1 and self.channels > pan:
+                print ("Warning: Assigning a multichannel signal to a single channel. Signal will be merged and averaged.")
+                sig_merged = data.mean(axis = 1) # L + R /2 method, but not good with phase issue 
+                # Assign 
+                sig_nchan = np.zeros((len(sig_merged) , self.channels))
+                sig_nchan[:, pan] = sig_merged
+            else:
+                raise ValueError("Integer pan needs to be smaller than ASig.channels (max output channels)")
+            
+        
+            
+        return sig_nchan
+
 
     def sequencemode(self, onoff = False):
         if (onoff):
@@ -165,18 +177,7 @@ class Asig:
             return self
 
 
-    def pan(self, pos):
-        """
-            There are two possible ways of using pos:
-            pos as a list: [0, 1, 0, 1] : they become the multiplier. 
-        """
-        if type(pos) is list:
-            print (' Position info is a list')
-        elif type(pos) is int:
-            print ("Position is list")
-        else:
-            raise Warning("Unsupported type, nothing happened. Use only list for panning or integer for channel assignment")
-        return self
+
 
     # This is the original method via simpleaudio
     # def play(self, rate=1, block=False):
