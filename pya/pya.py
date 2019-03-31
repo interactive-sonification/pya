@@ -151,9 +151,24 @@ class Asig:
                 sig_nchan[:, pan] = sig_merged
             else:
                 raise ValueError("Integer pan needs to be smaller than ASig.channels (max output channels)")
-            
-        
-            
+        elif type(pan) is list: 
+            """
+                Several possibilities here:
+                    1. sig is mono:
+                        convert to multi channels and apply gain. 
+                    2. sig's channels equals pan size 
+                    3. sig's channels > pan size and
+                    4. sig's channels < pan size 
+            """
+            if np.max(pan) > 1:
+                print ("Warning: list value should be between 0 ~ 1.") 
+            if self.channels == 1: # if mono sig. 
+                sig_nchan = self.mono2nchanel(data, len(pan))
+                sig_nchan *= pan # apply panning. 
+            elif self.channels == len(pan):
+                sig_nchan = data * pan
+            else:
+                raise ValueError ("pan size and signal channels don't match")
         return sig_nchan
 
 
@@ -282,6 +297,8 @@ class Asig:
             return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}")
         print('select_event: neither index nor onset given: return self')
         return self
+
+
 
     # spectral segment into pieces - incomplete and unused
     # def find_events_spectral(self, nperseg=64, on_threshold=3, off_threshold=2, medfilt_order=15):
@@ -460,6 +477,10 @@ class Asig:
         # return samples and length in time:
         return self.sig.shape, self.sig.shape[0]/self.sr
 
+    def mono2nchanel(self, x , chan):
+        c = np.vstack([x]*chan)
+        return c.transpose()
+
 class Aspec:
     'audio spectrum class using rfft'
     
@@ -586,3 +607,4 @@ class Astft:
     def __repr__(self):
         return "Astft('{}'): {} x {} @ {} Hz = {:.3f} s".format(self.label, 
             self.channels, self.samples, self.sr, self.samples/self.sr)
+
