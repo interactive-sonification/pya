@@ -19,7 +19,6 @@ from .helpers import ampdb, linlin, dbamp
 # from IPython import get_ipython
 # from IPython.core.magic import Magics, cell_magic, line_magic, magics_class
 
-
 class Asig:
     'audio signal class'
     def __init__(self, sig, sr=44100, bs = 1024, label="", channels=1):
@@ -101,8 +100,14 @@ class Asig:
             sl = slice(int(tidx[0]*self.sr), int(tidx[1]*self.sr), tidx[2])
         return Asig(self.sig[sl], self.sr, self.label+"_tsliced")
 
+
+    """
+        Bug report: resample cant deal with multichannel 
+    """
+    
     def resample(self, target_sr=44100, rate=1, kind='linear'):
-        times = np.arange(self.samples)/self.sr
+        # This only work for single channel. 
+        times = np.arange(self.samples * self.channels)/self.sr
         interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind, 
                     assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
         tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
@@ -114,11 +119,11 @@ class Asig:
         try:
             audiostream = PyaudioStream(bs = bs, sr =sr, channels = num_channels, device_index = device_index)
             audiostream.play(sig)
+            return audiostream
         except ImportError:
             raise ImportError("Can't play audio via Pyaudiostream")
         
     
-
     # New method with pyaudio
     def play(self, rate = 1, device_index = 1, pan = None):
         if not self.sr in [8000, 11025, 22050, 44100, 48000]:
@@ -135,6 +140,10 @@ class Asig:
                     sig_pan = self.panning(self.sig, pan) # Created a panned signal
                     self._['play'] = self._playpyaudio(sig_pan, self.channels, self.sr, device_index = device_index)
         return self
+
+    # Haven't tested yet. 
+    def stop(self):
+        self._['play'].stopPlaying()
 
     def panning(self, data,  pan):
         """
@@ -182,7 +191,6 @@ class Asig:
 
 
     def playseq(self, onset, src):
-        
         if isinstance(onset[0], int): # Sample
             print ("Onset in sample")
             return self
@@ -191,8 +199,16 @@ class Asig:
             print ("Onset in second. ")
             return self
 
-
-
+    def overwrite(self, sig):
+        """
+        This method overwrite the sig with new sig, then readjust the channels. 
+        This is more robust than directly assigning sig is that the channels is adjust accordingly 
+        """
+        self.sig = sig
+        try:
+            self.channels = self.sig.shape[1]
+        except IndexError:
+            self.channels = 1
 
     # This is the original method via simpleaudio
     # def play(self, rate=1, block=False):
