@@ -138,6 +138,11 @@ class Asig:
 
         # This part uses pyaudio for playing. 
     def _playpyaudio(self, device_index = 1):
+        """
+            play function take signal and channels as arguments. 
+            device_index needs to be set properly: currently this method is not robust, as you need to 
+            manually adjust it for external soundcard output. 
+        """
         try:
             self.device_index = device_index
             audiostream = PyaudioStream(bs = self.bs, sr =self.sr, device_index = self.device_index)
@@ -146,18 +151,24 @@ class Asig:
         except ImportError:
             raise ImportError("Can't play audio via Pyaudiostream")
         
-    
-    # New method with pyaudio
-    def play(self, rate = 1, device_index = 1,):
-        if not self.sr in [8000, 11025, 22050, 44100, 48000]:
-            print("resample as sr is exotic")
-            self._['play'] = self.resample(44100, rate).play()['play']
-        else:
-            if rate is not 1:
-                print("resample as rate!=1")
+    def play(self, rate = 1, device_index = 1, fixed_sr = False):
+        """
+        Play audio using pyaudio. 1. Resample the data if needed. 
+            @This force the audio to be always played at 441000, It is not effective. 
+        
+        """
+        if fixed_sr:
+            if not self.sr in [8000, 11025, 22050, 44100, 48000]:
+                print("resample as sr is exotic")
                 self._['play'] = self.resample(44100, rate).play()['play']
             else:
-                self._['play'] = self._playpyaudio(device_index = device_index)
+                if rate is not 1:
+                    print("resample as rate!=1")
+                    self._['play'] = self.resample(44100, rate).play()['play']
+                else:
+                    self._['play'] = self._playpyaudio(device_index = device_index)
+        else: 
+            self._['play'] = self._playpyaudio(device_index = device_index)
         return self
 
     # Haven't tested yet. 
@@ -170,7 +181,7 @@ class Asig:
             Route the signal to n channel starting with out (type int):
                 out = 0: does nothing as the same signal is being routed to the same position
                 out > 0: move the first channel of self.sig to out channel, other channels follow
-                out < 0: negative slicing 
+                out < 0: negative slicing , if overslicing, do nothing. 
         """
         if type(out) is not int:
             print ("Warning: route needs to be integer, nothing happened")

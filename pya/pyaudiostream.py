@@ -95,13 +95,12 @@ class PyaudioStream():
 
     def play(self, sig, chan = 1):
         """
-            Step 1: try to close any excessive stream. 
-            Step 2: check if there's any input sigal, if not play internal buffer, else do nothing
-            Step 3: Convert data into int16
-            Step 4: Convert to the correct channels (not implemented at this stage. )
-            Step 5: Convert the sig in to certain chunks for playback: 
+            -> try to close any excessive stream. 
+            -> check if signal channels more than device output channels, if so slice it. 
+            -> Convert data into int16
+            ->: Convert the sig in to certain chunks for playback: 
                 This method needs to be changed to suit multiple sounds being played together. 
-            Step 6: Switch on the stream. 
+            -> Switch on the stream. 
         """
         self.outputChannels = chan
         try:  
@@ -109,11 +108,9 @@ class PyaudioStream():
             self.playStream.close()
         except AttributeError:
             pass
-
         if chan > self.maxOutputChannels:
             sig = sig[:, :self.maxOutputChannels]
             self.outputChannels = self.maxOutputChannels
-
         if sig.dtype == np.dtype('float64'):
             sig = (sig * 32767).astype(np.int16)
         elif sig.dtype == np.dtype('float32'):
