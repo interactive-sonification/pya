@@ -3,7 +3,7 @@
 import numpy as np
 import pyaudio
 import simpleaudio as sa
-from .pyaudiostream import PyaudioStream, SequenceStream
+from .pyaudiostream import PyaudioStream, Soundserver
 
 class _error(Exception):
     pass
