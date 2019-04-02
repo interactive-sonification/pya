@@ -6,35 +6,36 @@ from collections import deque
 from math import ceil
 
 class PyaudioStream():
-    def __init__(self, bs = 256,  sr = 44100, channels = 1, device_index  = 1):
-        # self.signal = 0 # This is supposed to be replaced by qt signal
+    def __init__(self, bs = 256,  sr = 44100,  device_index  = 1):
         self.pa = pyaudio.PyAudio()
-        self.outputChannels =  channels# Init, but change based on the chosen device. 
         self.fs = sr  # The divider helps us to use a smaller samping rate. 
         self.chunk = bs # The smaller the smaller latency 
         self.audioformat = pyaudio.paInt16
         self.recording = False
-        self.il = [] ; self.ol = [] # out list
         self.bufflist = [] # Buffer for input audio tracks
-        self.waveform = [] # maybe this is a mistake. 
         self.totalChunks = 0 # This is the len of bufflist. 
         self.masterVol = 1 # Master volume. 
-        self.maxInputChannels = 6
-        self.maxOutputChannels = 6
-        self.emitsignal = False
-        for i in range(self.pa.get_device_count()):
-            if self.pa.get_device_info_by_index(i)['maxInputChannels'] > 0:
-                self.il.append(self.pa.get_device_info_by_index(i))
-            if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
-                self.ol.append(self.pa.get_device_info_by_index(i))
+        
+        # self.il = [] ; self.ol = [] # out list
+        # for i in range(self.pa.get_device_count()):
+        #     if self.pa.get_device_info_by_index(i)['maxInputChannels'] > 0:
+        #         self.il.append(self.pa.get_device_info_by_index(i))
+        #     if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
+        #         self.ol.append(self.pa.get_device_info_by_index(i))
+
+            
         self.inputIdx = 0 
+        self.maxInputChannels = self.pa.get_device_info_by_index(self.inputIdx)['maxInputChannels']
         self.outputIdx = device_index
+        self.maxOutputChannels = self.pa.get_device_info_by_index(self.outputIdx)['maxOutputChannels']
         self.inVol = np.ones(self.maxInputChannels) # Current version has 6 inputs max. But should taylor this. 
         self.outVol = np.ones(self.maxOutputChannels)
+        
     
     def printAudioDevices(self):
         for i in range(self.pa.get_device_count()):
             print (self.pa.get_device_info_by_index(i))
+
 
     def _playcallback(self, in_data, frame_count, time_info, flag):
         if (self.frameCount < self.totalChunks):
@@ -66,7 +67,7 @@ class PyaudioStream():
         self.bufflist = []
         self.stream = self.pa.open(
             format = self.audioformat,
-            channels = self.outputChannels, 
+            channels = self.outputChannels,
             rate = self.fs,
             input = True,
             output = True,
@@ -92,7 +93,7 @@ class PyaudioStream():
         except AttributeError:
             print ("No stream, stop button did nothing. ")
 
-    def play(self, sig = None):
+    def play(self, sig, chan = 1):
         """
             Step 1: try to close any excessive stream. 
             Step 2: check if there's any input sigal, if not play internal buffer, else do nothing
@@ -102,39 +103,33 @@ class PyaudioStream():
                 This method needs to be changed to suit multiple sounds being played together. 
             Step 6: Switch on the stream. 
         """
+        self.outputChannels = chan
         try:  
             self.playStream.stop_stream()
             self.playStream.close()
         except AttributeError:
             pass
-        if sig is None:
-            if self.bufflist:
-                self.play_data = self.bufflist
-            else: 
-                raise Warning("Play called but no audio.")
+
+        if chan > self.maxOutputChannels:
+            sig = sig[:, :self.maxOutputChannels]
+            self.outputChannels = self.maxOutputChannels
+
+        if sig.dtype == np.dtype('float64'):
+            sig = (sig * 32767).astype(np.int16)
+        elif sig.dtype == np.dtype('float32'):
+            sig = (sig * 32767).astype(np.int16)
+        elif sig.dtype == np.dtype('int8'):
+            sig = (sig * 256).astype(np.int16)
+        elif sig.dtype == np.dtype('int16'): # Correct format
+            pass
         else:
-            """
-                Commented out the formatting . 
-                Default pafloat32 for now. 
-            """
+            msg = str(sig.dtype) + " is not a supported date type. Supports int16, float64 and int8."
+            raise TypeError(msg)
 
-            if sig.dtype == np.dtype('float64'):
-                sig = (sig * 32767).astype(np.int16)
-            elif sig.dtype == np.dtype('float32'):
-                sig = (sig * 32767).astype(np.int16)
-            elif sig.dtype == np.dtype('int8'):
-                sig = (sig * 256).astype(np.int16)
-            elif sig.dtype == np.dtype('int16'): # Correct format
-                pass
-            else:
-                msg = str(sig.dtype) + " is not a supported date type. Supports int16, float64 and int8."
-                raise TypeError(msg)
+        sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig
 
-            sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig
-
-            # sig = self.mono2nchan(sig,self.outputChannels) # duplicate based on channels
-
-            self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels) 
+        # sig = self.mono2nchan(sig,self.outputChannels) # duplicate based on channels
+        self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels) 
 
         self.totalChunks = len(self.play_data) # total chunks
         self.frameCount = 0 # Start from the beginning. 

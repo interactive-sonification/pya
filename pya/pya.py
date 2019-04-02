@@ -40,11 +40,13 @@ class Asig:
                 self.sig = np.zeros((int(sig*sr), self.channels))
         else:
             self.sig = np.array(sig)
-        self.label = label
+            try:
+                self.channels = self.sig.shape[1]
+            except IndexError:
+                self.channels = 1
         self.samples = np.shape(self.sig)[0]
-
-                # if len(sigshape) > 1:
-        #     self.channels = sigshape[1]
+        self.label = label
+        self.device_index = 1
 
     def load_wavfile(self, fname):
         # Discuss to change to float32 . 
@@ -135,17 +137,18 @@ class Asig:
             return Asig(new_sig, target_sr, label=self.label+"_resampled", channels = new_sig.shape[1])
 
         # This part uses pyaudio for playing. 
-    def _playpyaudio(self, sig, num_channels=1, sr=44100, bs = 512, device_index = 1,  block=False):
+    def _playpyaudio(self, device_index = 1):
         try:
-            audiostream = PyaudioStream(bs = bs, sr =sr, channels = num_channels, device_index = device_index)
-            audiostream.play(sig)
+            self.device_index = device_index
+            audiostream = PyaudioStream(bs = self.bs, sr =self.sr, device_index = self.device_index)
+            audiostream.play(self.sig, chan = self.channels)
             return audiostream
         except ImportError:
             raise ImportError("Can't play audio via Pyaudiostream")
         
     
     # New method with pyaudio
-    def play(self, rate = 1, device_index = 1, pan = None):
+    def play(self, rate = 1, device_index = 1,):
         if not self.sr in [8000, 11025, 22050, 44100, 48000]:
             print("resample as sr is exotic")
             self._['play'] = self.resample(44100, rate).play()['play']
@@ -154,18 +157,42 @@ class Asig:
                 print("resample as rate!=1")
                 self._['play'] = self.resample(44100, rate).play()['play']
             else:
-                if pan is None :
-                    self._['play'] = self._playpyaudio(self.sig, self.channels, self.sr, device_index = device_index)
-                else:
-                    sig_pan = self.panning(self.sig, pan) # Created a panned signal
-                    self._['play'] = self._playpyaudio(sig_pan, self.channels, self.sr, device_index = device_index)
+                self._['play'] = self._playpyaudio(device_index = device_index)
         return self
 
     # Haven't tested yet. 
     def stop(self):
         self._['play'].stopPlaying()
+        return self
 
-    def panning(self, data,  pan):
+    def route(self, out= 0):
+        """
+            Route the signal to n channel starting with out (type int):
+                out = 0: does nothing as the same signal is being routed to the same position
+                out > 0: move the first channel of self.sig to out channel, other channels follow
+                out < 0: negative slicing 
+        """
+        if type(out) is not int:
+            print ("Warning: route needs to be integer, nothing happened")
+            return self
+        else:
+            if out == 0:  #If 0 do nothing. 
+                return self
+            elif out > 0: 
+                # not optimized method here
+                new_sig = np.zeros((self.samples, out + self.channels))
+                new_sig[:, out:out + self.channels] = self.sig
+                print (new_sig.shape)
+                return Asig(new_sig, self.sr, label=self.label)
+
+            elif out < 0 and -out < self.channels :
+                new_sig = self.sig[:, -out:]
+                return Asig(new_sig, self.sr, label=self.label)
+            else:
+                print ("left shift over the total channel, nothing happened")
+                return self
+
+    def panning(self,  pan):
         """
             There are two possible ways of using pos:
             pos as a list: [0, 1, 0, 1] : they become the multiplier. 
@@ -198,7 +225,8 @@ class Asig:
                 sig_nchan = data * pan
             else:
                 raise ValueError ("pan size and signal channels don't match")
-        return sig_nchan
+            self.sig =  sig_nchan
+        return self
 
 
     def sequencemode(self, onoff = False):
@@ -228,7 +256,7 @@ class Asig:
             self.channels = self.sig.shape[1]
         except IndexError:
             self.channels = 1
-        self.samples = np.shape(self.sig)[0]
+        self.samples = len(self.sig)
 
     # This is the original method via simpleaudio
     # def play(self, rate=1, block=False):
