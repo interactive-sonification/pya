@@ -102,7 +102,6 @@ class PyaudioStream():
                 This method needs to be changed to suit multiple sounds being played together. 
             Step 6: Switch on the stream. 
         """
-        print ("Play sound. ")
         try:  
             self.playStream.stop_stream()
             self.playStream.close()

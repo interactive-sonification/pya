@@ -106,25 +106,33 @@ class Asig:
         Bug report: resample cant deal with multichannel 
     """
     
-    def resample(self, target_sr=44100, rate=1, kind='linear'):
-        # This only work for single channel. 
-        times = np.arange(self.samples )/self.sr
-
-        interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind, 
-                    assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
-        tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
-        return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
-
-        
     # def resample(self, target_sr=44100, rate=1, kind='linear'):
     #     # This only work for single channel. 
     #     times = np.arange(self.samples )/self.sr
-    #     for i in range(self.channels):
+
     #     interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind, 
     #                 assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
     #     tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
     #     return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
 
+        # A new resample method that deals with multichannel signal. 
+        # Maybe performance can be improved. 
+
+    def resample(self, target_sr=44100, rate=1, kind='linear'):
+        # This only work for single channel. 
+        times = np.arange(self.samples )/self.sr
+        tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
+        if self.channels == 1:
+            interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind, 
+                    assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
+            return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
+        else:
+            new_sig = np.ndarray(shape = (int(self.samples/self.sr * target_sr/rate), self.channels))
+            for i in range(self.channels):
+                interp_fn = scipy.interpolate.interp1d(times, self.sig[:,i], kind=kind, 
+                        assume_sorted=True, bounds_error=False, fill_value=self.sig[-1, i])
+                new_sig[:, i] = interp_fn(tsel)
+            return Asig(new_sig, target_sr, label=self.label+"_resampled", channels = new_sig.shape[1])
 
         # This part uses pyaudio for playing. 
     def _playpyaudio(self, sig, num_channels=1, sr=44100, bs = 512, device_index = 1,  block=False):
