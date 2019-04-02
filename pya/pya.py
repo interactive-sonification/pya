@@ -115,7 +115,7 @@ class Asig:
     #     tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
     #     return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
 
-
+    # TODO: 'NoneType' object is not subscriptable
     def resample(self, target_sr=44100, rate=1, kind='linear'):
         """
             Resample signal based on interpolation, can process multichannel
@@ -132,7 +132,7 @@ class Asig:
                 interp_fn = scipy.interpolate.interp1d(times, self.sig[:,i], kind=kind, 
                         assume_sorted=True, bounds_error=False, fill_value=self.sig[-1, i])
                 new_sig[:, i] = interp_fn(tsel)
-            return Asig(new_sig, target_sr, label=self.label+"_resampled", channels = new_sig.shape[1])
+            return Asig(new_sig, target_sr, label=self.label+"_resampled")
 
         # This part uses pyaudio for playing. 
     def _playpyaudio(self, device_index = 1):
@@ -143,38 +143,50 @@ class Asig:
         """
         try:
             self.device_index = device_index
-            audiostream = PyaudioStream(bs = self.bs, sr =self.sr, device_index = self.device_index)
-            audiostream.play(self.sig, chan = self.channels)
-            return audiostream
+            self.audiostream = PyaudioStream(bs = self.bs, sr =self.sr, device_index = self.device_index)
+            self.audiostream.play(self.sig, chan = self.channels)
+            return self
         except ImportError:
             raise ImportError("Can't play audio via Pyaudiostream")
         
-    def play(self, rate = 1, device_index = 1, fixed_sr = False):
+    def play(self, rate = 1, device_index = 1):
         """
         Play audio using pyaudio. 1. Resample the data if needed. 
             @This force the audio to be always played at 441000, It is not effective. 
-        
+
         """
-        if fixed_sr:
-            if not self.sr in [8000, 11025, 22050, 44100, 48000]:
-                print("resample as sr is exotic")
+        # if not self.sr in [8000, 11025, 22050, 44100, 48000]:
+        #     print("resample as sr is exotic")
+        #     return self.resample(44100, rate).play()['play']
+        # else:
+        #     if rate is not 1:
+        #         print("resample as rate!=1")
+        #         return self.resample(44100, rate).play()['play']
+            
+        #         # self._['play'] = self.resample(44100, rate).play()['play']
+        #     else:
+        #         return self._playpyaudio(device_index = device_index)
+
+        if not self.sr in [8000, 11025, 22050, 44100, 48000]:
+            print("resample as sr is exotic")
+            self._['play'] = self.resample(44100, rate).play()['play']
+        else:
+            if rate is not 1:
+                print("resample as rate!=1")
                 self._['play'] = self.resample(44100, rate).play()['play']
+            
+                # self._['play'] = self.resample(44100, rate).play()['play']
             else:
-                if rate is not 1:
-                    print("resample as rate!=1")
-                    self._['play'] = self.resample(44100, rate).play()['play']
-                else:
-                    self._['play'] = self._playpyaudio(device_index = device_index)
-        else: 
-            self._['play'] = self._playpyaudio(device_index = device_index)
+                self._['play'] = self._playpyaudio(device_index = device_index)
         return self
+
+  
 
     def stop(self):
         """
             Stop playing
         """
-
-        self._['play'].stopPlaying()
+        self._['play'].audiostream.stopPlaying()
         return self
 
     def route(self, out= 0):

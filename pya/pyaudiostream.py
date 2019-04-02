@@ -204,15 +204,8 @@ class Soundserver(PyaudioStream):
                     sig[i] = sig[i].resample(self.fs)
             return sig
 
-    def _streamcallback(self, in_data, frame_count, time_info, flag):  
-        if (self.framecount < self.len):
-            out_data = self.play_data[self.framecount]
-            self.framecount +=1
-        else:
-            out_data = self.emptybuffer
-        return bytes(out_data), pyaudio.paContinue
 
-    def open(self):
+    def openstream(self):
         """
             Only the server. It will have a constant callback
         """
@@ -236,6 +229,14 @@ class Soundserver(PyaudioStream):
            )
         self.serverStream.start_stream()
         
+    def _streamcallback(self, in_data, frame_count, time_info, flag):  
+        if (self.framecount < self.len):
+            print ("playing")
+            out_data = self.play_data[self.framecount]
+            self.framecount +=1
+        else:
+            out_data = self.emptybuffer
+        return bytes(out_data), pyaudio.paContinue
 
     def play(self, onset, siglist):
         """
@@ -246,9 +247,13 @@ class Soundserver(PyaudioStream):
             raise AssertionError("Size of onset and signal lists need to be the same.")
         sig = self.unifySR(siglist) # Check if any difference in sampling rates
         sig = self.mixing(onset, sig)
-
-        print ("Play Sound")
-        
+        sig = self.toInt16(sig)
+        sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig # Long format is only for multichannel
+        self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels)
+        self.framecount = 0
+        self.len = len(self.play_data)
+        # print (self.play_data[52])
+        # print (self.play_data.shape)
 
     def scale2channels(self, asigs):
         if asigs.channels == self.outputChannels:
@@ -264,7 +269,6 @@ class Soundserver(PyaudioStream):
             y[:,:asigs.channels] = asigs.sig
             return y 
 
-
     def mixing(self, onset, sig):
         """
             What is the quickest way to blend all sigles. 
@@ -278,14 +282,6 @@ class Soundserver(PyaudioStream):
         result = np.zeros(shape = (maxlen, self.outputChannels))
         for i in range(len(onset)):
             result[onset[i]:onset[i] + len(sig_scaled[i]), :] += sig_scaled[i]
-        return result
-
-    def mix(self, onset, sig):
-        siglengths = np.vectorize(len)(sig)
-        maxlen = max(onset + siglengths)
-        result = np.zeros(maxlen)
-        for i in range(len(sig)):
-            result[onset[i]: onset[i]+siglengths[i]] += sig[i]
         return result
 
     def closeserver(self):
