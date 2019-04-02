@@ -273,6 +273,17 @@ class Asig:
             sigar = sigar[:last-pos]
         self.sig[pos:last] += amp*sigar
         return self
+
+    def append(self, asig, amp=1):
+        if self.channels != asig.channels:
+            print("Asig.append: channels don't match")
+            return self
+        if self.sr != asig.sr:
+            print("resampling appended signal")
+            atmp = asig.resample(self.sr)
+        else:
+            atmp = asig
+        return Asig(np.hstack((self.sig, atmp.sig)), self.sr, label=self.label+"+"+asig.label) 
     
     def envelope(self, amps, ts=None, curve=1, kind='linear'):
         nsteps = len(amps)
