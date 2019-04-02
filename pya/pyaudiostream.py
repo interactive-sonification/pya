@@ -3,7 +3,7 @@ import numpy as np
 import time
 import scipy.signal as signal
 from collections import deque
-
+from math import ceil
 
 class PyaudioStream():
     def __init__(self, bs = 256,  sr = 44100, channels = 1, device_index  = 1):
@@ -13,11 +13,9 @@ class PyaudioStream():
         self.fs = sr  # The divider helps us to use a smaller samping rate. 
         self.chunk = bs # The smaller the smaller latency 
         self.audioformat = pyaudio.paInt16
-
         self.recording = False
-        self.il = [] # input list 
+        self.il = [] ; self.ol = [] # out list
         self.bufflist = [] # Buffer for input audio tracks
-        self.ol = [] # out list
         self.waveform = [] # maybe this is a mistake. 
         self.totalChunks = 0 # This is the len of bufflist. 
         self.masterVol = 1 # Master volume. 
@@ -138,7 +136,7 @@ class PyaudioStream():
             # sig = self.mono2nchan(sig,self.outputChannels) # duplicate based on channels
 
             self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels) 
-            
+
         self.totalChunks = len(self.play_data) # total chunks
         self.frameCount = 0 # Start from the beginning. 
         # This method will only work with pyqt, because if not it will only run 1 iteration.  
@@ -154,19 +152,30 @@ class PyaudioStream():
            )
         self.playStream.start_stream()
 
+    
     def makechunk(self, lst, chunk):
-        result = []
-        # TODO. Find a faster solution for this. 
-        for i in np.arange(0, len(lst), chunk):
-            temp = lst[i:i + chunk]
-            if len(temp) < chunk:
-                temp = np.pad(temp, (0, chunk - len(temp)), 'constant')
-            result.append(temp)
-        return result
+        l = lst.copy() # Make a copy if not it will change the input. 
+        l.resize((ceil(l.shape[0]/chunk),chunk), refcheck=False)
+        l.reshape(l.shape[0] * l.shape[1])
+        return l
+
+    # def makechunk2(self, lst, chunk):
+    #     result = []
+    #     lst = np.pad(lst, (0, lst.shape[0]%chunk), 'constant')
+    #     for i in np.arange(0, len(lst), chunk):
+    #         temp = lst[i:i + chunk]
+    #         result.append(temp)
+    #     return result
 
     def mono2nchan(self, mono, channels = 2):
         # convert a mono signal to multichannel by duplicating it to each channel. 
-        return np.repeat(mono, channels)
+        return np.repeat(mono, channels)# This is actually quite slow
+
+        """
+        
+            c = np.vstack([b]*4)
+            return c.transpose()
+        """
 
     def _outputgain(self, sig):
         out_data =  self._multichannelgain(sig, \
