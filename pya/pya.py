@@ -12,8 +12,7 @@ import scipy.interpolate
 import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
-
-from .pyaudiostream import SequenceStream, PyaudioStream
+from .pyaudiostream import Soundserver, PyaudioStream
 
 from .helpers import ampdb, linlin, dbamp
 # from IPython import get_ipython
@@ -103,7 +102,6 @@ class Asig:
             sl = slice(int(tidx[0]*self.sr), int(tidx[1]*self.sr), tidx[2])
         return Asig(self.sig[sl], self.sr, self.label+"_tsliced")
 
-
     """
         Bug report: resample cant deal with multichannel 
     """
@@ -117,11 +115,11 @@ class Asig:
     #     tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
     #     return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
 
-        # A new resample method that deals with multichannel signal. 
-        # Maybe performance can be improved. 
 
     def resample(self, target_sr=44100, rate=1, kind='linear'):
-        # This only work for single channel. 
+        """
+            Resample signal based on interpolation, can process multichannel
+        """
         times = np.arange(self.samples )/self.sr
         tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
         if self.channels == 1:
@@ -171,8 +169,11 @@ class Asig:
             self._['play'] = self._playpyaudio(device_index = device_index)
         return self
 
-    # Haven't tested yet. 
     def stop(self):
+        """
+            Stop playing
+        """
+
         self._['play'].stopPlaying()
         return self
 
@@ -205,6 +206,7 @@ class Asig:
 
     def panning(self,  pan):
         """
+            @TODO, need rework now route is in a separate method. 
             There are two possible ways of using pos:
             pos as a list: [0, 1, 0, 1] : they become the multiplier. 
         """
@@ -212,7 +214,7 @@ class Asig:
             # How do I mapped a stereo signal to one channel. 
             if self.channels > 1 and self.channels > pan:
                 print ("Warning: Assigning a multichannel signal to a single channel. Signal will be merged and averaged.")
-                sig_merged = data.mean(axis = 1) # L + R /2 method, but not good with phase issue 
+                sig_merged = self.sig.mean(axis = 1) # L + R /2 method, but not good with phase issue 
                 # Assign 
                 sig_nchan = np.ndarray(shape = (len(sig_merged) , self.channels))
                 sig_nchan[:, pan] = sig_merged
@@ -230,37 +232,37 @@ class Asig:
             if np.max(pan) > 1:
                 print ("Warning: list value should be between 0 ~ 1.") 
             if self.channels == 1: # if mono sig. 
-                sig_nchan = self.mono2nchanel(data, len(pan))
+                sig_nchan = self.mono2nchanel(self.sig, len(pan))
                 sig_nchan *= pan # apply panning. 
             elif self.channels == len(pan):
-                sig_nchan = data * pan
+                sig_nchan = self.sig * pan
             else:
                 raise ValueError ("pan size and signal channels don't match")
             self.sig =  sig_nchan
         return self
 
 
-    def sequencemode(self, onoff = False):
-        if (onoff):
-            print ("Switch on the continuous buffer")
-            # self.stream = playpyaudio
+    # Sequance mode obsolte now. 
+    # def sequencemode(self, onoff = False):
+    #     if (onoff):
+    #         print ("Switch on the continuous buffer")
+    #         # self.stream = playpyaudio
+    #     else:
+    #         print ("switch it off")
 
-        else:
-            print ("switch it off")
 
+    # def playseq(self, onset, src):
+    #     if isinstance(onset[0], int): # Sample
+    #         print ("Onset in sample")
+    #         return self
 
-    def playseq(self, onset, src):
-        if isinstance(onset[0], int): # Sample
-            print ("Onset in sample")
-            return self
+    #     elif isinstance(onset[0], float):
+    #         print ("Onset in second. ")
+    #         return self
 
-        elif isinstance(onset[0], float):
-            print ("Onset in second. ")
-            return self
-
-    def overwrite(self, sig):
+    def overwrite(self, sig, sr = None):
         """
-        This method overwrite the sig with new signal, then readjust the channels. 
+        This method overwrite the sig with new signal, then readjust the shape. 
         """
         self.sig = sig
         try:
@@ -268,6 +270,7 @@ class Asig:
         except IndexError:
             self.channels = 1
         self.samples = len(self.sig)
+        return self
 
     # This is the original method via simpleaudio
     # def play(self, rate=1, block=False):
@@ -282,6 +285,8 @@ class Asig:
     #             self._['play'] = play(self.sig, self.channels, self.sr, block=block)
     #     return self
     
+
+    #TODO: check with multichannel. 
     def norm(self, norm=1, dcflag=False):
         if dcflag: 
             self.sig = self.sig - np.mean(self.sig, 0)
@@ -299,7 +304,7 @@ class Asig:
     
     def rms(self, axis=0):
         return np.sqrt(np.mean(np.square(self.sig), axis))
-        
+            
     def plot(self, fn=None, **kwargs):
         if fn:
             if fn=='db':
@@ -618,7 +623,7 @@ class Aspec:
         return "Aspec('{}'): {} x {} @ {} Hz = {:.3f} s".format(self.label, 
             self.channels, self.samples, self.sr, self.samples/self.sr)
 
-
+#TODO, check with multichannel 
 class Astft:
     'audio spectrogram (STFT) class'
 

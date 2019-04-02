@@ -87,28 +87,13 @@ class PyaudioStream():
         try: # To prevent self.playStream not created before stop button pressed
             self.playStream.stop_stream()
             self.playStream.close()
-            print ("Play Stream Stopped. ")
-        except AttributeError:
-            print ("No stream, stop button did nothing. ")
-
-    def play(self, sig, chan = 1):
-        """
-            -> try to close any excessive stream. 
-            -> check if signal channels more than device output channels, if so slice it. 
-            -> Convert data into int16
-            ->: Convert the sig in to certain chunks for playback: 
-                This method needs to be changed to suit multiple sounds being played together. 
-            -> Switch on the stream. 
-        """
-        self.outputChannels = chan
-        try:  
-            self.playStream.stop_stream()
-            self.playStream.close()
         except AttributeError:
             pass
-        if chan > self.maxOutputChannels:
-            sig = sig[:, :self.maxOutputChannels]
-            self.outputChannels = self.maxOutputChannels
+
+    def toInt16(self, sig):
+        """
+        Conver the datatype to int16
+        """
         if sig.dtype == np.dtype('float64'):
             sig = (sig * 32767).astype(np.int16)
         elif sig.dtype == np.dtype('float32'):
@@ -120,8 +105,25 @@ class PyaudioStream():
         else:
             msg = str(sig.dtype) + " is not a supported date type. Supports int16, float64 and int8."
             raise TypeError(msg)
+        return sig
 
-        sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig
+    def play(self, sig, chan = 1):
+        """
+            -> try to close any excessive stream. 
+            -> check if signal channels more than device output channels, if so slice it. 
+            -> Convert data into int16
+            ->: Convert the sig in to certain chunks for playback: 
+                This method needs to be changed to suit multiple sounds being played together. 
+            -> Switch on the stream. 
+        """
+        self.outputChannels = chan
+        self.stopPlaying() # Make sure there is no previous stream leftover. 
+        if chan > self.maxOutputChannels:
+            sig = sig[:, :self.maxOutputChannels]
+            self.outputChannels = self.maxOutputChannels
+
+        sig = self.toInt16(sig) # Make sure the data is int16. 
+        sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig # Long format is only for multichannel
 
         # sig = self.mono2nchan(sig,self.outputChannels) # duplicate based on channels
         self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels) 
@@ -185,7 +187,7 @@ class Soundserver(PyaudioStream):
     def __init__(self, bs = 256,  sr = 44100,  device_index  = 1):
         PyaudioStream.__init__(self, bs,  sr ,  device_index)
         self.outputChannels = self.maxOutputChannels # Make sure the output channels match the device max output
-
+        self.emptybuffer = np.zeros(self.chunk * self.outputChannels).astype(np.int16)
 
     def unifySR(self, sig):
         """
@@ -201,8 +203,19 @@ class Soundserver(PyaudioStream):
                 if sig[i].sr != self.fs:
                     sig[i] = sig[i].resample(self.fs)
             return sig
-        
+
+    def _streamcallback(self, in_data, frame_count, time_info, flag):  
+        if (self.framecount < self.len):
+            out_data = self.play_data[self.framecount]
+            self.framecount +=1
+        else:
+            out_data = self.emptybuffer
+        return bytes(out_data), pyaudio.paContinue
+
     def open(self):
+        """
+            Only the server. It will have a constant callback
+        """
         try:  
             self.serverStream.stop_stream()
             self.serverStream.close()
@@ -211,7 +224,7 @@ class Soundserver(PyaudioStream):
         self.dataflag = False
         self.framecount = 0
         self.len = -1 
-        self.playStream = self.pa.open(
+        self.serverStream = self.pa.open(
             format = self.audioformat,
             channels = self.outputChannels, 
             rate = self.fs,
@@ -219,7 +232,66 @@ class Soundserver(PyaudioStream):
             output = True,
             output_device_index=self.outputIdx,
             frames_per_buffer = self.chunk,
-            stream_callback=self._playcallback
+            stream_callback=self._streamcallback
            )
-        self.playStream.start_stream()
+        self.serverStream.start_stream()
         
+
+    def play(self, onset, siglist):
+        """
+            Play sequence: 
+                onset: a list of timestamp for each sound to be play 
+        """
+        if len(onset) != len(siglist):
+            raise AssertionError("Size of onset and signal lists need to be the same.")
+        sig = self.unifySR(siglist) # Check if any difference in sampling rates
+        sig = self.mixing(onset, sig)
+
+        print ("Play Sound")
+        
+
+    def scale2channels(self, asigs):
+        if asigs.channels == self.outputChannels:
+            return asigs.sig# Dont do anything
+        elif asigs.channels == 1:
+            y = np.repeat(asigs.sig, self.outputChannels).reshape((len(asigs.sig), self.outputChannels))
+            return y 
+        elif asigs.channels > self.outputChannels:
+            y = asigs.sig[:,:self.outputChannels] 
+            return y
+        elif asigs.channels < self.outputChannels:
+            y = np.zeros(shape = (len(asigs.sig), self.outputChannels))
+            y[:,:asigs.channels] = asigs.sig
+            return y 
+
+
+    def mixing(self, onset, sig):
+        """
+            What is the quickest way to blend all sigles. 
+            1. mono signal needs to be scale to whatever 
+            2. 
+        """
+        # maxlen only need to be check on one channel. 
+        maxlen = np.max([o + len(s.sig) for o, s in zip(onset, sig)])
+        # result =  np.zeros(maxlen) # This is wrong for multichannels. 
+        sig_scaled = [self.scale2channels(s) for s in sig]
+        result = np.zeros(shape = (maxlen, self.outputChannels))
+        for i in range(len(onset)):
+            result[onset[i]:onset[i] + len(sig_scaled[i]), :] += sig_scaled[i]
+        return result
+
+    def mix(self, onset, sig):
+        siglengths = np.vectorize(len)(sig)
+        maxlen = max(onset + siglengths)
+        result = np.zeros(maxlen)
+        for i in range(len(sig)):
+            result[onset[i]: onset[i]+siglengths[i]] += sig[i]
+        return result
+
+    def closeserver(self):
+        try: # To prevent self.playStream not created before stop button pressed
+            self.serverStream.stop_stream()
+            self.serverStream.close()
+            print ("Play Stream Stopped. ")
+        except AttributeError:
+            print ("No stream, stop button did nothing. ")
