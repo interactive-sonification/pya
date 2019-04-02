@@ -21,9 +21,7 @@ class PyaudioStream():
         #     if self.pa.get_device_info_by_index(i)['maxInputChannels'] > 0:
         #         self.il.append(self.pa.get_device_info_by_index(i))
         #     if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
-        #         self.ol.append(self.pa.get_device_info_by_index(i))
-
-            
+        #         self.ol.append(self.pa.get_device_info_by_index(i))        
         self.inputIdx = 0 
         self.maxInputChannels = self.pa.get_device_info_by_index(self.inputIdx)['maxInputChannels']
         self.outputIdx = device_index
@@ -145,10 +143,12 @@ class PyaudioStream():
 
     
     def makechunk(self, lst, chunk):
+        """
+            Return a list that is splice by the chunk
+        """
         l = lst.copy() # Make a copy if not it will change the input. 
         l.resize((ceil(l.shape[0]/chunk),chunk), refcheck=False)
         l.reshape(l.shape[0] * l.shape[1])
-        # l_flat =l.flatten()
         return l
 
     # def makechunk2(self, lst, chunk):
@@ -180,24 +180,37 @@ class PyaudioStream():
         data_col *= glist[:channels] # Only apply the list matching the channels. 
         return data.astype(np.int16)
 
-# Again, not dealing with multichannel yet. 
-class SequenceStream():
-    def __init__(self, bs = 256,  sr = 44100, channels = 1):
-        self.pa = pyaudio.PyAudio()
-        self.outputChannels =  channels # Work on this later. 
-        self.fs = sr; self.chunk = bs # The smaller the smaller latency 
-        self.audioformat = pyaudio.paInt16
-        self.outputIdx = 1
-        self.emptybuffer = bytes(np.zeros(self.chunk * self.outputChannels))
-        self.ringbuffer = deque([self.emptybuffer,self.emptybuffer, self.emptybuffer,self.emptybuffer], maxlen = 4)
 
-    def openstream(self):
+class Soundserver(PyaudioStream):
+    def __init__(self, bs = 256,  sr = 44100,  device_index  = 1):
+        PyaudioStream.__init__(self, bs,  sr ,  device_index)
+        self.outputChannels = self.maxOutputChannels # Make sure the output channels match the device max output
+
+
+    def unifySR(self, sig):
+        """
+        Check the sampling rate of each asig in the list, 
+        if they are different, resample to the lowest sampling rate. 
+        """
+        srl = [s.sr for s in sig]
+        if srl.count(srl[0]) == len(srl):
+            return sig
+        else:
+            self.fs  = np.min(srl)
+            for i in range(len(srl)): # resample asig that is > smallest sr. 
+                if sig[i].sr != self.fs:
+                    sig[i] = sig[i].resample(self.fs)
+            return sig
+        
+    def open(self):
         try:  
-            self.playStream.stop_stream()
-            self.playStream.close()
+            self.serverStream.stop_stream()
+            self.serverStream.close()
         except AttributeError:
             pass
         self.dataflag = False
+        self.framecount = 0
+        self.len = -1 
         self.playStream = self.pa.open(
             format = self.audioformat,
             channels = self.outputChannels, 
@@ -209,58 +222,4 @@ class SequenceStream():
             stream_callback=self._playcallback
            )
         self.playStream.start_stream()
-
-    def play(self, onset, sig):
-        if onset is list and sig is list:
-            self.play_data = self.mixing_function(onset, sig)
-            self.play_data = self.makechunk(self.play_data, self.chunk)
-            self.len = len(self.play_data)
-            self.count = 0
-            self.dataflag = True
-        else: 
-            raise TypeError("Onset and sig need to be list ")
-
-
-    def mixing_function(self, onset,sig):
-        maxlen = np.max([o + len(s) for o, s in zip(onset, sig)])
-        result =  np.zeros(maxlen)
-        for i in range(len(onset)):
-            result[onset[i]:onset[i] + len(sig[i])] += sig[i] 
-        return result
-
-    def makechunk(self, lst, chunk):
-        result = []
-        # TODO. Find a faster solution for this. 
-        for i in np.arange(0, len(lst), chunk):
-            temp = lst[i:i + chunk]
-            if len(temp) < chunk:
-                temp = np.pad(temp, (0, chunk - len(temp)), 'constant')
-            result.append(temp)
-        return result
-
-    
-    def _playcallback(self, in_data, frame_count, time_info, flag):  
-        # Create a ring buffer here. 
-
-        if (self.dataflag):
-            out_data = self.play_data(self.count)
-            self.count +=1
-            if self.count > self.len:
-                self.dataflag = False
-        # out_data = self.ringbuffer[0]
-        # self.ringbuffer.rotate(-1)
-        # # Here to decide what should give to append to the ring buffer. . 
-        # self.ringbuffer[-1] = self.emptybuffer
-        else:
-            out_data = self.emptybuffer
-        return out_data, pyaudio.paComplete
-
-
-    def closestream(self):
-        try: # To prevent self.playStream not created before stop button pressed
-            self.playStream.stop_stream()
-            self.playStream.close()
-            print ("Play Stream Stopped. ")
-        except AttributeError:
-            print ("No stream, stop button did nothing. ")
-
+        
