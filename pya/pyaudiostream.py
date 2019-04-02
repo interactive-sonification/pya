@@ -157,6 +157,7 @@ class PyaudioStream():
         l = lst.copy() # Make a copy if not it will change the input. 
         l.resize((ceil(l.shape[0]/chunk),chunk), refcheck=False)
         l.reshape(l.shape[0] * l.shape[1])
+        # l_flat =l.flatten()
         return l
 
     # def makechunk2(self, lst, chunk):

@@ -10,7 +10,6 @@ class _error(Exception):
 
 
 
-
 def record(dur=2, channels=1, rate=44100, chunk=256):
     """Record audio
 

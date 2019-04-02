@@ -42,7 +42,8 @@ class Asig:
             self.sig = np.array(sig)
         self.label = label
         self.samples = np.shape(self.sig)[0]
-        # if len(sigshape) > 1:
+
+                # if len(sigshape) > 1:
         #     self.channels = sigshape[1]
 
     def load_wavfile(self, fname):
@@ -107,11 +108,22 @@ class Asig:
     
     def resample(self, target_sr=44100, rate=1, kind='linear'):
         # This only work for single channel. 
-        times = np.arange(self.samples * self.channels)/self.sr
+        times = np.arange(self.samples )/self.sr
+
         interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind, 
                     assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
         tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
         return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
+
+        
+    # def resample(self, target_sr=44100, rate=1, kind='linear'):
+    #     # This only work for single channel. 
+    #     times = np.arange(self.samples )/self.sr
+    #     for i in range(self.channels):
+    #     interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind, 
+    #                 assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
+    #     tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
+    #     return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
 
 
         # This part uses pyaudio for playing. 
@@ -156,7 +168,7 @@ class Asig:
                 print ("Warning: Assigning a multichannel signal to a single channel. Signal will be merged and averaged.")
                 sig_merged = data.mean(axis = 1) # L + R /2 method, but not good with phase issue 
                 # Assign 
-                sig_nchan = np.zeros((len(sig_merged) , self.channels))
+                sig_nchan = np.ndarray(shape = (len(sig_merged) , self.channels))
                 sig_nchan[:, pan] = sig_merged
             else:
                 raise ValueError("Integer pan needs to be smaller than ASig.channels (max output channels)")
@@ -201,14 +213,14 @@ class Asig:
 
     def overwrite(self, sig):
         """
-        This method overwrite the sig with new sig, then readjust the channels. 
-        This is more robust than directly assigning sig is that the channels is adjust accordingly 
+        This method overwrite the sig with new signal, then readjust the channels. 
         """
         self.sig = sig
         try:
             self.channels = self.sig.shape[1]
         except IndexError:
             self.channels = 1
+        self.samples = np.shape(self.sig)[0]
 
     # This is the original method via simpleaudio
     # def play(self, rate=1, block=False):
