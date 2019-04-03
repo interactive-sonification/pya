@@ -181,13 +181,14 @@ class Asig:
                 self._['play'] = self._playpyaudio(device_index = device_index)
         return self
 
-  
-
     def stop(self):
         """
             Stop playing
         """
-        self._['play'].audiostream.stopPlaying()
+        try:
+            self._['play'].audiostream.stopPlaying()
+        except KeyError:
+            print ("No play no stop, nothing happened.")
         return self
 
     def route(self, out= 0):
@@ -207,7 +208,6 @@ class Asig:
                 # not optimized method here
                 new_sig = np.zeros((self.samples, out + self.channels))
                 new_sig[:, out:out + self.channels] = self.sig
-                print (new_sig.shape)
                 return Asig(new_sig, self.sr, label=self.label)
 
             elif out < 0 and -out < self.channels :
@@ -254,28 +254,9 @@ class Asig:
             self.sig =  sig_nchan
         return self
 
-
-    # Sequance mode obsolte now. 
-    # def sequencemode(self, onoff = False):
-    #     if (onoff):
-    #         print ("Switch on the continuous buffer")
-    #         # self.stream = playpyaudio
-    #     else:
-    #         print ("switch it off")
-
-
-    # def playseq(self, onset, src):
-    #     if isinstance(onset[0], int): # Sample
-    #         print ("Onset in sample")
-    #         return self
-
-    #     elif isinstance(onset[0], float):
-    #         print ("Onset in second. ")
-    #         return self
-
     def overwrite(self, sig, sr = None):
         """
-        This method overwrite the sig with new signal, then readjust the shape. 
+        Overwrite the sig with new signal, then readjust the shape. 
         """
         self.sig = sig
         try:
@@ -284,6 +265,7 @@ class Asig:
             self.channels = 1
         self.samples = len(self.sig)
         return self
+
 
     # This is the original method via simpleaudio
     # def play(self, rate=1, block=False):
@@ -299,7 +281,7 @@ class Asig:
     #     return self
     
 
-    #TODO: check with multichannel. 
+    
     def norm(self, norm=1, dcflag=False):
         if dcflag: 
             self.sig = self.sig - np.mean(self.sig, 0)
@@ -702,16 +684,17 @@ class Astft:
             self.channels, self.samples, self.sr, self.samples/self.sr)
 
 
-class Soundserver(PyaudioStream):
+class Aserver(PyaudioStream):
     """
-    Soundserver is a always on stream, so allow asig being sent 
+    Aserver is a always on stream, so allow asig being sent 
     """
     def __init__(self, bs = 256,  sr = 44100,  device_index  = 1):
         PyaudioStream.__init__(self, bs,  sr ,  device_index)
         self.outputChannels = self.maxOutputChannels # Make sure the output channels match the device max output
         self.emptybuffer = np.zeros(self.chunk * self.outputChannels).astype(np.int16)
+        self.streamStatus = False
 
-    def unifySR(self, asigs):
+    def _unifySR(self, asigs):
         """
         Check the sampling rate of each asig in the list, 
         if they are different, resample to the lowest sampling rate. 
@@ -735,6 +718,7 @@ class Soundserver(PyaudioStream):
             self.serverStream.close()
         except AttributeError:
             pass
+        self.streamStatus = True
         self.dataflag = False
         self.framecount = 0
         self.len = -1 
@@ -749,6 +733,7 @@ class Soundserver(PyaudioStream):
             stream_callback=self._streamcallback
            )
         self.serverStream.start_stream()
+        return self
         
     def _streamcallback(self, in_data, frame_count, time_info, flag):  
         """
@@ -781,8 +766,8 @@ class Soundserver(PyaudioStream):
         """
         if len(onset) != len(asiglist):
             raise AssertionError("Size of onset and signal lists need to be the same.")
-        asigs = self.unifySR(asiglist) # Check if any difference in sampling rates
-        sig = self.mixing(onset, asigs) # At this level, things are just signals. 
+        asigs = self._unifySR(asiglist) # Check if any difference in sampling rates
+        sig = self._mixing(onset, asigs) # At this level, things are just signals. 
         sig = self.toInt16(sig)
         sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig # Long format is only for multichannel
         self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels)
@@ -790,22 +775,22 @@ class Soundserver(PyaudioStream):
         self.len = len(self.play_data)
 
 
-    def mixing(self, onset, sig):
+    def _mixing(self, onset, sig):
         """
             What is the quickest way to blend all sigles. 
             1. mono signal needs to be scale to whatever 
-            2. 
+            
         """
         # maxlen only need to be check on one channel. 
         maxlen = np.max([o + len(s.sig) for o, s in zip(onset, sig)])
         # result =  np.zeros(maxlen) # This is wrong for multichannels. 
-        sig_scaled = [self.scale2channels(s) for s in sig]
+        sig_scaled = [self._scale2channels(s) for s in sig]
         result = np.zeros(shape = (maxlen, self.outputChannels))
         for i in range(len(onset)):
             result[onset[i]:onset[i] + len(sig_scaled[i]), :] += sig_scaled[i]
         return result
 
-    def scale2channels(self, asig):
+    def _scale2channels(self, asig):
         """
             Convert asig to the output channels.:
             -> scale mono to outputchannels evenly
@@ -830,7 +815,13 @@ class Soundserver(PyaudioStream):
         try: # To prevent self.playStream not created before stop button pressed
             self.serverStream.stop_stream()
             self.serverStream.close()
+            self.streamStatus = False
             print ("Play Stream Stopped. ")
         except AttributeError:
             print ("No stream, stop button did nothing. ")
+
+    def __repr__(self):
+        return "AServer: Fs: {}, Buffer Size: {} Stream Active: {}" .format(
+             self.fs, self.chunk, self.streamStatus)
+    
 
