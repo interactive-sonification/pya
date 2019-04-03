@@ -815,4 +815,4 @@ class Aserver(PyaudioStream):
             print ("No stream, stop button did nothing. ")
 
     def __repr__(self):
-        return f"AServer: Fs: {self.fs}, Buffer Size: {self.chunk}, Stream Active: {self.streamStatus}"
+        return f"AServer: sr: {self.fs}, Buffer Size: {self.chunk}, Stream Active: {self.streamStatus}"

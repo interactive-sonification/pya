@@ -162,12 +162,12 @@ class PyaudioStream():
         return l
 
     def mono2nchan(self, mono, channels=2):
-        # convert a mono signal to multichannel by duplicating it to each channel. 
-        return np.repeat(mono, channels)# This is actually quite slow
         """
             c = np.vstack([b]*4)
             return c.transpose()
         """
+        # convert a mono signal to multichannel by duplicating it to each channel. 
+        return np.repeat(mono, channels)# This is actually quite slow
 
     def _outputgain(self, sig):
         out_data =  self._multichannelgain(sig, self.outputChannels, self.outVol)
