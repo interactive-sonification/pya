@@ -738,12 +738,12 @@ class Aserver(PyaudioStream):
             Callback functions: 
             #TODO: maybe clean up the memory once the playback is finished. 
         """
-<<<<<<< HEAD
+
         if (self.framecount < self.len):
             out_data = (self.play_data[self.framecount] * self.amp).astype(np.int16)
             # out_data = self.play_data[self.framecount]
             self.framecount +=1
-=======
+
 
         else:
             out_data = self.emptybuffer
