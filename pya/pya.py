@@ -744,10 +744,7 @@ class Aserver(PyaudioStream):
             # out_data = self.play_data[self.framecount]
             self.framecount +=1
 =======
-        if (self.frame_count < self.len):
-            out_data = self.play_data[self.frame_count]
-            self.frame_count += 1
->>>>>>> 9bd157abbd48e45ab890b8c8b16662ca96392663
+
         else:
             out_data = self.emptybuffer
         return bytes(out_data), pyaudio.paContinue
