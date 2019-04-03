@@ -94,6 +94,7 @@ class Asig:
             raise TypeError("index must be int, array, or slice")        
         return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), bs = self.bs, label= self.label+"_sliced")
 
+    #TODO: this method is not checked with multichannels. 
     def tslice(self, *tidx):
         if len(tidx) == 1: # stop
             sl = slice(0, tidx[0]*self.sr)
@@ -116,7 +117,6 @@ class Asig:
     #     tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
     #     return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
 
-    # TODO: 'NoneType' object is not subscriptable
     def resample(self, target_sr=44100, rate=1, kind='linear'):
         """
             Resample signal based on interpolation, can process multichannel
@@ -266,7 +266,6 @@ class Asig:
         self.samples = len(self.sig)
         return self
 
-
     # This is the original method via simpleaudio
     # def play(self, rate=1, block=False):
     #     if not self.sr in [8000, 11025, 22050, 44100, 48000]:
@@ -279,8 +278,6 @@ class Asig:
     #         else:
     #             self._['play'] = play(self.sig, self.channels, self.sr, block=block)
     #     return self
-    
-
     
     def norm(self, norm=1, dcflag=False):
         if dcflag: 
@@ -322,7 +319,8 @@ class Asig:
     def __repr__(self):
         return "Asig('{}'): {} x {} @ {} Hz = {:.3f} s".format(
             self.label, self.channels, self.samples, self.sr, self.samples/self.sr)
-    
+
+    #TODO not check. 
     def find_events(self, step_dur=0.001, sil_thr=-20, sil_min_dur=0.1, sil_pad=[0.001,0.1]):
         if self.channels>1:
             print("warning: works only with 1-channel signals")
@@ -358,7 +356,7 @@ class Asig:
                     sil_flag = True
         self._['events']= np.array(event_list)
         return self
-
+    # TODO not checked. 
     def select_event(self, index=None, onset=None):
         if not 'events' in self._:
             print('select_event: no events, return all')
