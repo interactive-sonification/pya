@@ -691,6 +691,7 @@ class Aserver(PyaudioStream):
         self.outputChannels = self.maxOutputChannels # Make sure the output channels match the device max output
         self.emptybuffer = np.zeros(self.chunk * self.outputChannels).astype(np.int16)
         self.streamStatus = False
+        self.amp = 1.
 
     def _unifySR(self, asigs):
         """
@@ -739,7 +740,8 @@ class Aserver(PyaudioStream):
             #TODO: maybe clean up the memory once the playback is finished. 
         """
         if (self.framecount < self.len):
-            out_data = self.play_data[self.framecount]
+            out_data = (self.play_data[self.framecount] * self.amp).astype(np.int16)
+            # out_data = self.play_data[self.framecount]
             self.framecount +=1
         else:
             out_data = self.emptybuffer
@@ -771,6 +773,7 @@ class Aserver(PyaudioStream):
         self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels)
         self.framecount = 0
         self.len = len(self.play_data)
+        return self
 
 
     def _mixing(self, onset, sig):
@@ -787,6 +790,16 @@ class Aserver(PyaudioStream):
         for i in range(len(onset)):
             result[onset[i]:onset[i] + len(sig_scaled[i]), :] += sig_scaled[i]
         return result
+
+    def volume(self, amp = None, db = None):
+        if db:  # overwrites amp
+            self.amp = dbamp(db)
+        elif not amp: # default 1 if neither is given
+            self.amp = 1
+        else:
+            self.amp = amp
+        return self
+
 
     def _scale2channels(self, asig):
         """
