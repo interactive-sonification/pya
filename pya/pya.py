@@ -136,7 +136,7 @@ class Asig:
             return Asig(new_sig, target_sr, label=self.label+"_resampled")
 
         # This part uses pyaudio for playing. 
-    def _playpyaudio(self, device_index = 1):
+    def _playpyaudio(self, device_index=1):
         """
             play function take signal and channels as arguments. 
             device_index needs to be set properly: currently this method is not robust, as you need to 
@@ -144,8 +144,8 @@ class Asig:
         """
         try:
             self.device_index = device_index
-            self.audiostream = PyaudioStream(bs = self.bs, sr =self.sr, device_index = self.device_index)
-            self.audiostream.play(self.sig, chan = self.channels)
+            self.audiostream = PyaudioStream(bs=self.bs, sr=self.sr, device_index=self.device_index)
+            self.audiostream.play(self.sig, chan=self.channels)
             return self
         except ImportError:
             raise ImportError("Can't play audio via Pyaudiostream")
