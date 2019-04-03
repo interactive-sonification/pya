@@ -87,12 +87,12 @@ class Asig:
         elif isinstance(index, slice):
             start, stop, step = index.indices(len(self.sig))    # index is a slice
         elif isinstance(index, list) or isinstance(index, np.ndarray):
-            return Asig(self.sig[index], self.sr, self.label+"_arrayindexed")
+            return Asig(self.sig[index], self.sr, bs = self.bs, label = self.label+"_arrayindexed")
         elif isinstance(index, str):
             return self._[index]
         else:
             raise TypeError("index must be int, array, or slice")        
-        return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), self.label+"_sliced")
+        return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), bs = self.bs, label= self.label+"_sliced")
 
     def tslice(self, *tidx):
         if len(tidx) == 1: # stop
@@ -821,7 +821,7 @@ class Aserver(PyaudioStream):
             print ("No stream, stop button did nothing. ")
 
     def __repr__(self):
-        return "AServer: Fs: {}, Buffer Size: {} Stream Active: {}" .format(
+        return "AServer: Fs: {}, Buffer Size: {}, Stream Active: {}" .format(
              self.fs, self.chunk, self.streamStatus)
     
 
