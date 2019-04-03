@@ -12,7 +12,8 @@ import scipy.interpolate
 import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
-from .pyaudiostream import Soundserver, PyaudioStream
+from .pyaudiostream import PyaudioStream
+import pyaudio
 
 from .helpers import ampdb, linlin, dbamp
 # from IPython import get_ipython
@@ -699,4 +700,137 @@ class Astft:
     def __repr__(self):
         return "Astft('{}'): {} x {} @ {} Hz = {:.3f} s".format(self.label, 
             self.channels, self.samples, self.sr, self.samples/self.sr)
+
+
+class Soundserver(PyaudioStream):
+    """
+    Soundserver is a always on stream, so allow asig being sent 
+    """
+    def __init__(self, bs = 256,  sr = 44100,  device_index  = 1):
+        PyaudioStream.__init__(self, bs,  sr ,  device_index)
+        self.outputChannels = self.maxOutputChannels # Make sure the output channels match the device max output
+        self.emptybuffer = np.zeros(self.chunk * self.outputChannels).astype(np.int16)
+
+    def unifySR(self, asigs):
+        """
+        Check the sampling rate of each asig in the list, 
+        if they are different, resample to the lowest sampling rate. 
+        """
+        srl = [s.sr for s in asigs]
+        if srl.count(srl[0]) == len(srl):
+            return asigs
+        else:
+            self.fs  = np.min(srl)
+            for i in range(len(srl)): # resample asig that is > smallest sr. 
+                if asigs[i].sr != self.fs:
+                    asigs[i] = asigs[i].resample(self.fs)
+            return asigs
+
+    def openstream(self):
+        """
+            Only the server. It will have a constant callback
+        """
+        try:  
+            self.serverStream.stop_stream()
+            self.serverStream.close()
+        except AttributeError:
+            pass
+        self.dataflag = False
+        self.framecount = 0
+        self.len = -1 
+        self.serverStream = self.pa.open(
+            format = self.audioformat,
+            channels = self.outputChannels, 
+            rate = self.fs,
+            input = False,
+            output = True,
+            output_device_index=self.outputIdx,
+            frames_per_buffer = self.chunk,
+            stream_callback=self._streamcallback
+           )
+        self.serverStream.start_stream()
+        
+    def _streamcallback(self, in_data, frame_count, time_info, flag):  
+        """
+            Callback functions: 
+            #TODO: maybe clean up the memory once the playback is finished. 
+        """
+        if (self.framecount < self.len):
+            out_data = self.play_data[self.framecount]
+            self.framecount +=1
+        else:
+            out_data = self.emptybuffer
+        return bytes(out_data), pyaudio.paContinue
+
+    """
+        This method is not generic as it only works with asig. It is better with retrive all necessary info (sig, shape, sr, etc.)
+        on the pya level. So that Soundserver class does not depend on pya.
+    """
+
+    def play(self, onset, asiglist):
+    #     thrd = threading.Thread(target = self.playThread, kwargs=dict(onset=onset,siglist=siglist))
+    #     thrd.start()
+
+    # def playThread(self, onset, siglist):
+    #     # self.openstream()
+        """
+
+            Play sequence: 
+                onset: a list of timestamp for each sound to be play 
+            #TODO, currently, a new play will reset the entire playback. Maybe do this in a thread 
+        """
+        if len(onset) != len(asiglist):
+            raise AssertionError("Size of onset and signal lists need to be the same.")
+        asigs = self.unifySR(asiglist) # Check if any difference in sampling rates
+        sig = self.mixing(onset, asigs) # At this level, things are just signals. 
+        sig = self.toInt16(sig)
+        sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig # Long format is only for multichannel
+        self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels)
+        self.framecount = 0
+        self.len = len(self.play_data)
+
+
+    def mixing(self, onset, sig):
+        """
+            What is the quickest way to blend all sigles. 
+            1. mono signal needs to be scale to whatever 
+            2. 
+        """
+        # maxlen only need to be check on one channel. 
+        maxlen = np.max([o + len(s.sig) for o, s in zip(onset, sig)])
+        # result =  np.zeros(maxlen) # This is wrong for multichannels. 
+        sig_scaled = [self.scale2channels(s) for s in sig]
+        result = np.zeros(shape = (maxlen, self.outputChannels))
+        for i in range(len(onset)):
+            result[onset[i]:onset[i] + len(sig_scaled[i]), :] += sig_scaled[i]
+        return result
+
+    def scale2channels(self, asig):
+        """
+            Convert asig to the output channels.:
+            -> scale mono to outputchannels evenly
+            -> reduce larger signal by slicing to match outpuchannels
+            -> pad smaller signal with zero channel
+            This makes sure every signal 
+        """
+        if asig.channels == self.outputChannels:
+            return asig.sig# Dont do anything
+        elif asig.channels == 1:
+            y = np.repeat(asig.sig, self.outputChannels).reshape((len(asig.sig), self.outputChannels))
+            return y 
+        elif asig.channels > self.outputChannels:
+            y = asig.sig[:,:self.outputChannels] 
+            return y
+        elif asig.channels < self.outputChannels:
+            y = np.zeros(shape = (len(asig.sig), self.outputChannels))
+            y[:,:asig.channels] = asig.sig
+            return y 
+
+    def closeserver(self):
+        try: # To prevent self.playStream not created before stop button pressed
+            self.serverStream.stop_stream()
+            self.serverStream.close()
+            print ("Play Stream Stopped. ")
+        except AttributeError:
+            print ("No stream, stop button did nothing. ")
 
