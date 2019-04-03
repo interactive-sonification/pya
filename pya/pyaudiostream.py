@@ -131,7 +131,7 @@ class PyaudioStream():
         sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig # Long format is only for multichannel
 
         # sig = self.mono2nchan(sig,self.outputChannels) # duplicate based on channels
-        self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels) 
+        self.play_data = self.make_chunk(sig_long, self.chunk*self.outputChannels) 
 
         self.totalChunks = len(self.play_data) # total chunks
         self.frameCount = 0 # Start from the beginning. 
@@ -149,7 +149,7 @@ class PyaudioStream():
         self.playStream.start_stream()
 
     
-    def makechunk(self, lst, chunk):
+    def make_chunk(self, lst, chunk):
         """
             Return a list that is splice by the chunk
             Make chunk will pad the final chunk with zeros to match the buffersize. Although this is not necessary, 

@@ -150,11 +150,10 @@ class Asig:
         except ImportError:
             raise ImportError("Can't play audio via Pyaudiostream")
         
-    def play(self, rate = 1, device_index = 1):
+    def play(self, rate=1, device_index=1):
         """
         Play audio using pyaudio. 1. Resample the data if needed. 
-            @This force the audio to be always played at 441000, It is not effective. 
-
+            @This forces the audio to be always played at 44100, it is not effective. 
         """
         # if not self.sr in [8000, 11025, 22050, 44100, 48000]:
         #     print("resample as sr is exotic")
@@ -191,15 +190,15 @@ class Asig:
             print ("No play no stop, nothing happened.")
         return self
 
-    def route(self, out= 0):
+    def route(self, out=0):
         """
             Route the signal to n channel starting with out (type int):
                 out = 0: does nothing as the same signal is being routed to the same position
                 out > 0: move the first channel of self.sig to out channel, other channels follow
-                out < 0: negative slicing , if overslicing, do nothing. 
+                out < 0: negative slicing, if overslicing, do nothing. 
         """
         if type(out) is not int:
-            print ("Warning: route needs to be integer, nothing happened")
+            print ("Warning: route: out needs to be integer, nothing happened")
             return self
         else:
             if out == 0:  #If 0 do nothing. 
@@ -320,7 +319,7 @@ class Asig:
         return "Asig('{}'): {} x {} @ {} Hz = {:.3f} s".format(
             self.label, self.channels, self.samples, self.sr, self.samples/self.sr)
 
-    #TODO not check. 
+    #TODO not checked. 
     def find_events(self, step_dur=0.001, sil_thr=-20, sil_min_dur=0.1, sil_pad=[0.001,0.1]):
         if self.channels>1:
             print("warning: works only with 1-channel signals")
@@ -356,6 +355,7 @@ class Asig:
                     sil_flag = True
         self._['events']= np.array(event_list)
         return self
+
     # TODO not checked. 
     def select_event(self, index=None, onset=None):
         if not 'events' in self._:
@@ -370,8 +370,6 @@ class Asig:
             return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}")
         print('select_event: neither index nor onset given: return self')
         return self
-
-
 
     # spectral segment into pieces - incomplete and unused
     # def find_events_spectral(self, nperseg=64, on_threshold=3, off_threshold=2, medfilt_order=15):
@@ -554,6 +552,7 @@ class Asig:
         c = np.vstack([x]*chan)
         return c.transpose()
 
+
 class Aspec:
     'audio spectrum class using rfft'
     
@@ -686,8 +685,8 @@ class Aserver(PyaudioStream):
     """
     Aserver is a always on stream, so allow asig being sent 
     """
-    def __init__(self, bs = 256,  sr = 44100,  device_index  = 1):
-        PyaudioStream.__init__(self, bs,  sr ,  device_index)
+    def __init__(self, bs=256, sr=44100, device_index=1):
+        PyaudioStream.__init__(self, bs, sr, device_index)
         self.outputChannels = self.maxOutputChannels # Make sure the output channels match the device max output
         self.emptybuffer = np.zeros(self.chunk * self.outputChannels).astype(np.int16)
         self.streamStatus = False
@@ -707,7 +706,7 @@ class Aserver(PyaudioStream):
                     asigs[i] = asigs[i].resample(self.fs)
             return asigs
 
-    def openstream(self):
+    def open_stream(self):
         """
             Only the server. It will have a constant callback
         """
@@ -718,7 +717,7 @@ class Aserver(PyaudioStream):
             pass
         self.streamStatus = True
         self.dataflag = False
-        self.framecount = 0
+        self.frame_count = 0
         self.len = -1 
         self.serverStream = self.pa.open(
             format = self.audioformat,
@@ -728,19 +727,19 @@ class Aserver(PyaudioStream):
             output = True,
             output_device_index=self.outputIdx,
             frames_per_buffer = self.chunk,
-            stream_callback=self._streamcallback
+            stream_callback=self._stream_callback
            )
         self.serverStream.start_stream()
         return self
         
-    def _streamcallback(self, in_data, frame_count, time_info, flag):  
+    def _stream_callback(self, in_data, frame_count, time_info, flag):  
         """
             Callback functions: 
             #TODO: maybe clean up the memory once the playback is finished. 
         """
-        if (self.framecount < self.len):
-            out_data = self.play_data[self.framecount]
-            self.framecount +=1
+        if (self.frame_count < self.len):
+            out_data = self.play_data[self.frame_count]
+            self.frame_count += 1
         else:
             out_data = self.emptybuffer
         return bytes(out_data), pyaudio.paContinue
@@ -757,7 +756,6 @@ class Aserver(PyaudioStream):
     # def playThread(self, onset, siglist):
     #     # self.openstream()
         """
-
             Play sequence: 
                 onset: a list of timestamp for each sound to be play 
             #TODO, currently, a new play will reset the entire playback. Maybe do this in a thread 
@@ -768,16 +766,14 @@ class Aserver(PyaudioStream):
         sig = self._mixing(onset, asigs) # At this level, things are just signals. 
         sig = self.toInt16(sig)
         sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig # Long format is only for multichannel
-        self.play_data = self.makechunk(sig_long, self.chunk*self.outputChannels)
-        self.framecount = 0
+        self.play_data = self.make_chunk(sig_long, self.chunk*self.outputChannels)
+        self.frame_count = 0
         self.len = len(self.play_data)
-
 
     def _mixing(self, onset, sig):
         """
             What is the quickest way to blend all sigles. 
             1. mono signal needs to be scale to whatever 
-            
         """
         # maxlen only need to be check on one channel. 
         maxlen = np.max([o + len(s.sig) for o, s in zip(onset, sig)])
@@ -809,7 +805,7 @@ class Aserver(PyaudioStream):
             y[:,:asig.channels] = asig.sig
             return y 
 
-    def closeserver(self):
+    def close_server(self):
         try: # To prevent self.playStream not created before stop button pressed
             self.serverStream.stop_stream()
             self.serverStream.close()
@@ -819,7 +815,4 @@ class Aserver(PyaudioStream):
             print ("No stream, stop button did nothing. ")
 
     def __repr__(self):
-        return "AServer: Fs: {}, Buffer Size: {}, Stream Active: {}" .format(
-             self.fs, self.chunk, self.streamStatus)
-    
-
+        return f"AServer: Fs: {self.fs}, Buffer Size: {self.chunk}, Stream Active: {self.streamStatus}"
