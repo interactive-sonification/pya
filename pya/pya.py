@@ -14,6 +14,7 @@ from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
 from .pyaudiostream import PyaudioStream
 import pyaudio
+from math import floor
 
 from .helpers import ampdb, linlin, dbamp
 # from IPython import get_ipython
@@ -122,13 +123,13 @@ class Asig:
             Resample signal based on interpolation, can process multichannel
         """
         times = np.arange(self.samples )/self.sr
-        tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
+        tsel = np.arange(floor(self.samples/self.sr * target_sr/rate))*rate/target_sr
         if self.channels == 1:
             interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind, 
                     assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
             return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
         else:
-            new_sig = np.ndarray(shape = (int(self.samples/self.sr * target_sr/rate), self.channels))
+            new_sig = np.ndarray(shape = (int(self.samples/self.sr * target_sr/rate) , self.channels))
             for i in range(self.channels):
                 interp_fn = scipy.interpolate.interp1d(times, self.sig[:,i], kind=kind, 
                         assume_sorted=True, bounds_error=False, fill_value=self.sig[-1, i])
@@ -216,22 +217,38 @@ class Asig:
                 print ("left shift over the total channel, nothing happened")
                 return self
 
-    def panning(self,  pan):
+
+    def pan2(self,  pan = 0.):
         """
             @TODO, need rework now route is in a separate method. 
             There are two possible ways of using pos:
             pos as a list: [0, 1, 0, 1] : they become the multiplier. 
         """
-        if type(pan) is int:
-            # How do I mapped a stereo signal to one channel. 
-            if self.channels > 1 and self.channels > pan:
-                print ("Warning: Assigning a multichannel signal to a single channel. Signal will be merged and averaged.")
-                sig_merged = self.sig.mean(axis = 1) # L + R /2 method, but not good with phase issue 
-                # Assign 
-                sig_nchan = np.ndarray(shape = (len(sig_merged) , self.channels))
-                sig_nchan[:, pan] = sig_merged
+
+        if type(pan) is float:
+            # Stereo panning. 
+            if pan <= 1. and pan >= -1.:
+                angle = linlin(pan, -1, 1, 0, np.pi/2.)
+                left = np.cos(angle)
+                right = np.sin(angle)
+                if self.channels == 1:
+                    newsig = np.repeat(self.sig, 2)# This is actually quite slow
+                    """
+                    The pan2 return a new asig but doesn't permanently change the original, unless you assign it. 
+                    """
+                    newsig_shape = newsig.reshape(-1, 2) * [left, right]
+                    return Asig(newsig_shape, self.sr, label=self.label, channels = 2)
+                else:
+                    sig = self.sig
+                    sig[:,:2] *= [left, right]
+                    return Asig(sig, self.sr, label=self.label)
+
             else:
-                raise ValueError("Integer pan needs to be smaller than ASig.channels (max output channels)")
+                raise ValueError("Scalar panning need to be in the range -1. to 1.")
+
+
+
+
         elif type(pan) is list: 
             """
                 Several possibilities here:
@@ -553,6 +570,15 @@ class Asig:
         return c.transpose()
 
 
+    def custom(self, func, **kwargs):
+        """
+            A custom function method. 
+        """
+
+        func(self, **kwargs)
+        return self 
+
+
 class Aspec:
     'audio spectrum class using rfft'
     
@@ -811,7 +837,7 @@ class Aserver(PyaudioStream):
         if asig.channels == self.outputChannels:
             return asig.sig# Dont do anything
         elif asig.channels == 1:
-            y = np.repeat(asig.sig, self.outputChannels).reshape((len(asig.sig), self.outputChannels))
+            y = np.repeat(asig.sig, self.outputChannels).reshape((-1, self.outputChannels))
             return y 
         elif asig.channels > self.outputChannels:
             y = asig.sig[:,:self.outputChannels] 

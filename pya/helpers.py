@@ -9,7 +9,6 @@ class _error(Exception):
     pass
 
 
-
 def record(dur=2, channels=1, rate=44100, chunk=256):
     """Record audio
 
@@ -38,16 +37,7 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
     return np.frombuffer(b''.join(buflist), dtype=np.int16)
 
 
-# This part uses pyaudio for playing. 
-def playpyaudio(sig, num_channels=1, sr=44100, bs = 512, block=False):
-    try:
-        audiostream = PyaudioStream(bs = bs, sr =sr, channels = num_channels)
-        audiostream.play(sig)
 
-    except ImportError:
-        raise ImportError("Can't play audio via Pyaudiostream")
-    else:
-        return
   
   # Old play method with simpleaudio
 # def play(sig, num_channels=1, sr=44100, block=False):
