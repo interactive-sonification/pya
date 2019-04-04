@@ -262,8 +262,12 @@ class Asig:
         left = blend[0]; right = blend[1]
         # [[0.1,0.2,03], [0.4,0.5,0.6]]
         if len(left) == self.channels and len(right) == self.channels:
-            left_sig = np.sum(self.sig * left, axis = 1)
-            right_sig = np.sum(self.sig * right, axis = 1)
+
+            if self.channels == 1:
+                left_sig = self.sig * left; right_sig = self.sig * right
+            else:
+                left_sig = np.sum(self.sig * left, axis = 1)
+                right_sig = np.sum(self.sig * right, axis = 1)
             sig = np.stack((left_sig,right_sig), axis = 1)
             return Asig(sig, self.sr, label=self.label+'_to_stereo')
         else:
