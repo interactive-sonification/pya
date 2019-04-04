@@ -198,33 +198,84 @@ class Asig:
                 out > 0: move the first channel of self.sig to out channel, other channels follow
                 out < 0: negative slicing, if overslicing, do nothing. 
         """
-        if type(out) is not int:
-            print ("Warning: route: out needs to be integer, nothing happened")
-            return self
-        else:
+        if type(out) is int:
             if out == 0:  #If 0 do nothing. 
                 return self
             elif out > 0: 
                 # not optimized method here
                 new_sig = np.zeros((self.samples, out + self.channels))
                 new_sig[:, out:out + self.channels] = self.sig
-                return Asig(new_sig, self.sr, label=self.label)
+                return Asig(new_sig, self.sr, label=self.label+'_routed')
 
             elif out < 0 and -out < self.channels :
                 new_sig = self.sig[:, -out:]
-                return Asig(new_sig, self.sr, label=self.label)
+                return Asig(new_sig, self.sr, label=self.label+'_routed')
             else:
                 print ("left shift over the total channel, nothing happened")
                 return self
 
+        elif type(out) is list: 
+            """
+                Several possibilities here:
+                    1. sig is mono:
+                        convert to multi channels and apply gain. 
+                    2. sig's channels equals pan size 
+                    3. sig's channels > pan size and
+                    4. sig's channels < pan size 
+
+                Dont permanently change self.sig
+            """
+            if np.max(out) > 1 or np.min(out) < 0.:
+                print ("Warning: list value should be between 0 ~ 1.") 
+            if self.channels == 1: # if mono sig. 
+                sig_nchan = self.mono2nchanel(self.sig, len(out))
+                sig_nchan *= out # apply panning. 
+            elif self.channels == len(out):
+                sig_nchan = self.sig * out
+            else:
+                raise ValueError ("pan size and signal channels don't match")
+            self.sig =  sig_nchan
+            return self
+        else:
+            raise TypeError("Argument needs to be a list of 0 ~ 1.")
+
+    def to_mono(self, blend):
+        """
+            Blend multichannel: if mono signal do nothing. 
+            [0.33, 0.33, 0,33] blend a 3-chan sigal to a mono signal with 0.33x each 
+        """
+        if self.channels == 1:
+            print ("Warning: signal is already mono")
+            return self
+
+        if len(blend) != self.channels:
+            print ("Error: blend should have the same length as channels")
+            return self
+        else:
+            sig = np.sum(self.sig * blend, axis = 1)
+            return Asig(sig, self.sr, label=self.label+'_blended')
+
+    def to_stereo(self, blend):
+        """
+            Blend any channel of signal to stereo. 
+        """
+        left = blend[0]; right = blend[1]
+        # [[0.1,0.2,03], [0.4,0.5,0.6]]
+        if len(left) == self.channels and len(right) == self.channels:
+            left_sig = np.sum(self.sig * left, axis = 1)
+            right_sig = np.sum(self.sig * right, axis = 1)
+            sig = np.stack((left_sig,right_sig), axis = 1)
+            return Asig(sig, self.sr, label=self.label+'_to_stereo')
+        else:
+            print ("Error: blend needs to be a list of left and right mix, e.g [[0.4],[0.5]], each element needs to match the channel size")
+            return self
 
     def pan2(self,  pan = 0.):
         """
-            @TODO, need rework now route is in a separate method. 
-            There are two possible ways of using pos:
-            pos as a list: [0, 1, 0, 1] : they become the multiplier. 
+            pan2 only creates output in stereo, mono will be copy to stereo, stereo works as it should, 
+            larger channel signal will only has 0 and 1 being changed. 
+            panning is based on constant power panning. 
         """
-
         if type(pan) is float:
             # Stereo panning. 
             if pan <= 1. and pan >= -1.:
@@ -237,38 +288,14 @@ class Asig:
                     The pan2 return a new asig but doesn't permanently change the original, unless you assign it. 
                     """
                     newsig_shape = newsig.reshape(-1, 2) * [left, right]
-                    return Asig(newsig_shape, self.sr, label=self.label, channels = 2)
+                    return Asig(newsig_shape, self.sr, label=self.label+"_pan2ed", channels = 2)
                 else:
                     sig = self.sig
                     sig[:,:2] *= [left, right]
-                    return Asig(sig, self.sr, label=self.label)
-
+                    return Asig(sig, self.sr, label=self.label+"_pan2ed")
             else:
                 raise ValueError("Scalar panning need to be in the range -1. to 1.")
 
-
-
-
-        elif type(pan) is list: 
-            """
-                Several possibilities here:
-                    1. sig is mono:
-                        convert to multi channels and apply gain. 
-                    2. sig's channels equals pan size 
-                    3. sig's channels > pan size and
-                    4. sig's channels < pan size 
-            """
-            if np.max(pan) > 1:
-                print ("Warning: list value should be between 0 ~ 1.") 
-            if self.channels == 1: # if mono sig. 
-                sig_nchan = self.mono2nchanel(self.sig, len(pan))
-                sig_nchan *= pan # apply panning. 
-            elif self.channels == len(pan):
-                sig_nchan = self.sig * pan
-            else:
-                raise ValueError ("pan size and signal channels don't match")
-            self.sig =  sig_nchan
-        return self
 
     def overwrite(self, sig, sr = None):
         """
@@ -566,9 +593,9 @@ class Asig:
         return self.sig.shape, self.sig.shape[0]/self.sr
 
     def mono2nchanel(self, x , chan):
+        # Create multichannel signal from mono
         c = np.vstack([x]*chan)
         return c.transpose()
-
 
     def custom(self, func, **kwargs):
         """
