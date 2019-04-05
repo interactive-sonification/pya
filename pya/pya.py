@@ -48,7 +48,7 @@ class Asig:
                 self.channels = 1
         self.samples = np.shape(self.sig)[0]
         self.label = label
-        self.device_index = 1
+        self.device = 1
 
     def load_wavfile(self, fname):
         # Discuss to change to float32 . 
@@ -138,37 +138,25 @@ class Asig:
             return Asig(new_sig, target_sr, label=self.label+"_resampled")
 
         # This part uses pyaudio for playing. 
-    def _playpyaudio(self, device_index=1):
+    def _playpyaudio(self, device=1):
         """
             play function take signal and channels as arguments. 
-            device_index needs to be set properly: currently this method is not robust, as you need to 
+            device needs to be set properly: currently this method is not robust, as you need to 
             manually adjust it for external soundcard output. 
         """
         try:
-            self.device_index = device_index
-            self.audiostream = PyaudioStream(bs=self.bs, sr=self.sr, device_index=self.device_index)
+            self.device = device
+            self.audiostream = PyaudioStream(bs=self.bs, sr=self.sr, device=self.device)
             self.audiostream.play(self.sig, chan=self.channels)
             return self
         except ImportError:
             raise ImportError("Can't play audio via Pyaudiostream")
         
-    def play(self, rate=1, device_index=1):
+    def play(self, rate=1, device=1):
         """
         Play audio using pyaudio. 1. Resample the data if needed. 
             @This forces the audio to be always played at 44100, it is not effective. 
         """
-        # if not self.sr in [8000, 11025, 22050, 44100, 48000]:
-        #     print("resample as sr is exotic")
-        #     return self.resample(44100, rate).play()['play']
-        # else:
-        #     if rate is not 1:
-        #         print("resample as rate!=1")
-        #         return self.resample(44100, rate).play()['play']
-            
-        #         # self._['play'] = self.resample(44100, rate).play()['play']
-        #     else:
-        #         return self._playpyaudio(device_index = device_index)
-
         if not self.sr in [8000, 11025, 22050, 44100, 48000]:
             print("resample as sr is exotic")
             self._['play'] = self.resample(44100, rate).play()['play']
@@ -176,10 +164,8 @@ class Asig:
             if rate is not 1:
                 print("resample as rate!=1")
                 self._['play'] = self.resample(44100, rate).play()['play']
-            
-                # self._['play'] = self.resample(44100, rate).play()['play']
             else:
-                self._['play'] = self._playpyaudio(device_index = device_index)
+                self._['play'] = self._playpyaudio(device = device)
         return self
 
     def stop(self):
@@ -688,7 +674,7 @@ class Aserver:
     Aserver manages an pyaudio stream, using its aserver callback 
     to feed dispatched signals to output at the right time 
     """
-    def __init__(self, sr=44100, bs=256, device=1, channels=2, format=pyaudio.paInt16):
+    def __init__(self, sr=44100, bs=256, device=1, channels=2, format=pyaudio.paFloat32):
         self.sr = sr
         self.bs = bs
         self.device = device
@@ -701,11 +687,23 @@ class Aserver:
             self.channels = self.max_out_chn
         self.format = format
         self.gain = 1.0
-        self.asigs = []
-        self.onsets = []
-        self.curpos = []  # start of next frame to deliver
+        self.srv_onsets = []
+        self.srv_asigs = []
+        self.srv_curpos = []  # start of next frame to deliver
+        self.srv_outs = []  # output channel offset for that asig
         self.pastream = None
-        self.empty_buffer = np.zeros((self.bs, self.channels), dtype='int16')
+        self.dtype = 'float32'  # for pyaudio.paFloat32
+        self.range = 1.0
+        self.boot_time = None  # time.time() when stream starts
+        self.block_cnt = None  # nr. of callback invocations
+        self.block_duration = self.bs / self.sr # nominal time increment per callback
+        self.block_time = None # estimated time stamp for current block
+        if self.format == pyaudio.paInt16:
+            self.dtype = 'int16'
+            self.range = 32767
+        if not self.format in [pyaudio.paInt16, pyaudio.paFloat32]:
+            print(f"Aserver: currently unsupported pyaudio format {self.format}")
+        self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.dtype)
 
     def __repr__(self):
         state = False
@@ -721,6 +719,9 @@ class Aserver:
         self.pastream = self.pa.open(format=self.format, channels=self.channels, rate=self.sr,
             input=False, output=True, frames_per_buffer=self.bs, 
             output_device_index=self.device, stream_callback=self._play_callback)
+        self.boot_time = time.time()
+        self.block_time = self.boot_time
+        self.block_cnt = 0
         self.pastream.start_stream()
         return self
 
@@ -740,47 +741,70 @@ class Aserver:
     def __del__(self):
         self.pa.terminate()
 
-    def play(self, asig, onset=0):
-        """dispatch asigs or arrays for given onset"""
+    def play(self, asig, onset=0, out=0):
+        """dispatch asigs or arrays for given onset"""        
+        if out<0:
+            print("Aserver:play: illegal out<0")
+            return
+        sigid = id(asig)  # for copy check
+        if asig.sr != self.sr:
+            asig = asig.resample(self.sr)
         if onset < 1e6:
             onset = time.time() + onset
-        idx = np.searchsorted(self.onsets, onset)
-        self.onsets.insert(idx, onset)
-        # TODO: make sure that inserted asig has self.channels channels,
-        # 'float32' dtype and correct sr
-        # TODO: integrate out argument
-        self.asigs.insert(idx, asig)
-        self.curpos.insert(idx, 0)
+        idx = np.searchsorted(self.srv_onsets, onset)
+        self.srv_onsets.insert(idx, onset)
+        if asig.sig.dtype != self.dtype:
+            if id(asig) == sigid: asig = copy.copy(asig)
+            asig.sig = asig.sig.astype(self.dtype)
+        # copy only relevant channels...
+        nchn = min(asig.channels, self.channels - out) # max number of copyable channels
+        # in: [:nchn] out: [out:out+nchn]
+        if id(asig) == sigid:
+            h = asig.sig
+            asig = copy.copy(asig)
+            if len(h.shape) == 1: asig.sig = asig.sig.reshape(asig.samples, 1)
+        asig.sig = asig.sig[:,:nchn].reshape(asig.samples, nchn)
+        asig.channels = nchn
+        # so now in callback safely copy to out:out+asig.sig.shape[1]
+        self.srv_asigs.insert(idx, asig)
+        self.srv_curpos.insert(idx, 0)
+        self.srv_outs.insert(idx, out)
         return self
 
     def _play_callback(self, in_data, frame_count, time_info, flag):
         """callback function, called from pastream thread when data needed"""
-        tnow = time.time()
-        if len(self.asigs) == 0 or self.onsets[0]>tnow:  # to shortcut computing
+        tnow = self.block_time
+        self.block_time += self.block_duration
+        self.block_cnt += 1
+        self.timejitter = time.time() - self.block_time  # just curious - not needed but for time stability check
+
+        if len(self.srv_asigs) == 0 or self.srv_onsets[0] > tnow:  # to shortcut computing
             return (self.empty_buffer, pyaudio.paContinue)
 
-        data = np.zeros((self.bs, self.channels), dtype='float32')
+        data = np.zeros((self.bs, self.channels), dtype=self.dtype)
         # iterate through all registered asigs, adding samples to play
         dellist = [] # memorize completed items for deletion
-        for i, t in enumerate(self.onsets):
-            if t > tnow: 
-                # TODO: integrate more precise start with zero padding
-                # at begin if (t + self.bs/self.sr > tnow)
+        t_next_block = tnow + self.bs / self.sr
+        for i, t in enumerate(self.srv_onsets):
+            if t > t_next_block: # doesn't begin before next block
                 break  # since list is always onset-sorted
-            a = self.asigs[i]
-            c = self.curpos[i]
-            tmpsig = a.sig[c:c+self.bs]
-            n = tmpsig.shape[0]
-            if n == self.bs:
-                data += tmpsig.reshape(n, self.channels) 
-                self.curpos[i] += self.bs
-            else:  # must have reached end of asig 
-                data[:n] += tmpsig.reshape(n, self.channels)
+            a = self.srv_asigs[i]
+            c = self.srv_curpos[i]
+            if t > tnow:  # first block: apply precise zero padding
+                io0 = int((t - tnow) * self.sr)
+            else:
+                io0 = 0
+            tmpsig = a.sig[c:c+self.bs-io0]
+            n, nch = tmpsig.shape
+            out = self.srv_outs[i]
+            data[io0:io0+n, out:out+nch] += tmpsig # .reshape(n, nch) not needed as moved to play
+            self.srv_curpos[i] += n
+            if self.srv_curpos[i] >= a.samples:
                 dellist.append(i) # store for deletion
-        # clean up list
+        # clean up lists
         for i in dellist[::-1]:  # traverse backwards!
-            del(self.asigs[i])
-            del(self.onsets[i])
-            del(self.curpos[i])
-        outdata = (data * 32767 * self.gain).astype('int16')
-        return (outdata, pyaudio.paContinue)
+            del(self.srv_asigs[i])
+            del(self.srv_onsets[i])
+            del(self.srv_curpos[i])
+            del(self.srv_outs[i])
+        return (data * (self.range * self.gain), pyaudio.paContinue)
