@@ -4,6 +4,7 @@ import numpy as np
 import pyaudio
 import simpleaudio as sa
 from .pyaudiostream import PyaudioStream
+import time
 
 class _error(Exception):
     pass
@@ -35,8 +36,6 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
     stream.close()
     p.terminate()
     return np.frombuffer(b''.join(buflist), dtype=np.int16)
-
-
 
   
   # Old play method with simpleaudio

@@ -192,6 +192,7 @@ class Asig:
             print ("No play no stop, nothing happened.")
         return self
 
+    @timeit
     def route(self, out=0):
         """
             Route the signal to n channel starting with out (type int):
@@ -245,6 +246,8 @@ class Asig:
         """
             Blend multichannel: if mono signal do nothing. 
             [0.33, 0.33, 0,33] blend a 3-chan sigal to a mono signal with 0.33x each 
+
+            np.sum is the main computation here. Not much can be done to make it faster. 
         """
         if self.channels == 1:
             print ("Warning: signal is already mono")
@@ -264,12 +267,15 @@ class Asig:
         """
         left = blend[0]; right = blend[1]
         # [[0.1,0.2,03], [0.4,0.5,0.6]]
+        if self.channels == 1:
+            left_sig = self.sig * left; right_sig = self.sig * right
+            sig = np.stack((left_sig,right_sig), axis = 1)
+            return Asig(sig, self.sr, label=self.label+'_to_stereo')
+        
         if len(left) == self.channels and len(right) == self.channels:
-            if self.channels == 1:
-                left_sig = self.sig * left; right_sig = self.sig * right
-            else:
-                left_sig = np.sum(self.sig * left, axis = 1)
-                right_sig = np.sum(self.sig * right, axis = 1)
+
+            left_sig = np.sum(self.sig * left, axis = 1)
+            right_sig = np.sum(self.sig * right, axis = 1)
             sig = np.stack((left_sig,right_sig), axis = 1)
             return Asig(sig, self.sr, label=self.label+'_to_stereo')
         else:
@@ -280,7 +286,7 @@ class Asig:
     def rewire(self, dic):
         """
             rewire channels:
-            {(0, 1): 0.5}
+            {(0, 1): 0.5}: move channel 0 to 1 then reduce gain to 0.5
         """
         max_ch  = max(dic, key=lambda x: x[1])[1] # Find what the largest channel in the newly rewired is . 
         
@@ -302,24 +308,22 @@ class Asig:
             pan2 only creates output in stereo, mono will be copy to stereo, stereo works as it should, 
             larger channel signal will only has 0 and 1 being changed. 
             panning is based on constant power panning. 
+
+            # gain multiplication is the main computation cost. 
         """
         if type(pan) is float:
             # Stereo panning. 
             if pan <= 1. and pan >= -1.:
                 angle = linlin(pan, -1, 1, 0, np.pi/2.)
-                left = np.cos(angle)
-                right = np.sin(angle)
+                gain = [np.cos(angle), np.sin(angle)]
                 if self.channels == 1:
                     newsig = np.repeat(self.sig, 2)# This is actually quite slow
-                    """
-                    The pan2 return a new asig but doesn't permanently change the original, unless you assign it. 
-                    """
-                    newsig_shape = newsig.reshape(-1, 2) * [left, right]
+                    newsig_shape = newsig.reshape(-1, 2) * gain
                     return Asig(newsig_shape, self.sr, label=self.label+"_pan2ed", channels = 2)
                 else:
-                    sig = self.sig
-                    sig[:,:2] *= [left, right]
-                    return Asig(sig, self.sr, label=self.label+"_pan2ed")
+                    newsig = self.sig
+                    newsig[:,:2] *= gain 
+                    return Asig(newsig, self.sr, label=self.label+"_pan2ed")
             else:
                 raise ValueError("Scalar panning need to be in the range -1. to 1.")
 
