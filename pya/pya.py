@@ -16,9 +16,11 @@ from .pyaudiostream import PyaudioStream
 import pyaudio
 from math import floor
 
-from .helpers import ampdb, linlin, dbamp
+from .helpers import ampdb, linlin, dbamp, timeit
 # from IPython import get_ipython
 # from IPython.core.magic import Magics, cell_magic, line_magic, magics_class
+
+
 
 class Asig:
     'audio signal class'
@@ -51,7 +53,6 @@ class Asig:
 
     def load_wavfile(self, fname):
         # Discuss to change to float32 . 
-
         self.sr, self.sig = wavfile.read(fname) # load the sample data
         if self.sig.dtype == np.dtype('int16'):
             self.sig = self.sig.astype('float32')/32768
@@ -239,6 +240,7 @@ class Asig:
         else:
             raise TypeError("Argument needs to be a list of 0 ~ 1.")
 
+    @timeit
     def to_mono(self, blend):
         """
             Blend multichannel: if mono signal do nothing. 
@@ -254,7 +256,8 @@ class Asig:
         else:
             sig = np.sum(self.sig * blend, axis = 1)
             return Asig(sig, self.sr, label=self.label+'_blended')
-
+    
+    @timeit
     def to_stereo(self, blend):
         """
             Blend any channel of signal to stereo. 
@@ -262,7 +265,6 @@ class Asig:
         left = blend[0]; right = blend[1]
         # [[0.1,0.2,03], [0.4,0.5,0.6]]
         if len(left) == self.channels and len(right) == self.channels:
-
             if self.channels == 1:
                 left_sig = self.sig * left; right_sig = self.sig * right
             else:
@@ -274,6 +276,27 @@ class Asig:
             print ("Error: blend needs to be a list of left and right mix, e.g [[0.4],[0.5]], each element needs to match the channel size")
             return self
 
+    @timeit
+    def rewire(self, dic):
+        """
+            rewire channels:
+            {(0, 1): 0.5}
+        """
+        max_ch  = max(dic, key=lambda x: x[1])[1] # Find what the largest channel in the newly rewired is . 
+        
+        if max_ch > self.channels :
+            new_sig = np.zeros((self.samples, max_ch))
+            new_sig[:, :self.channels] = self.sig
+        else:
+            new_sig = self.sig 
+        
+        for i, k in enumerate(dic):
+            new_sig[k[1]] = self.sig[k[0]] * i
+
+        return Asig(new_sig, self.sr, label=self.label+'_rewire')
+ 
+            
+    @timeit
     def pan2(self,  pan = 0.):
         """
             pan2 only creates output in stereo, mono will be copy to stereo, stereo works as it should, 
