@@ -6,31 +6,19 @@ from collections import deque
 from math import ceil
 
 class PyaudioStream():
-    """
-        Pyaudiostream class manages audio I/O via pyaudio. 
-        -> Recording 
-        -> Playback
-        -> Gain control (not integrated with pya yet)
-        -> Multi channel 
-    """
-    def __init__(self, bs=256,  sr=44100,  device_index=1):
+    """Pyaudiostream class manages audio I/O via pyaudio."""
+    def __init__(self, bs=256,  sr=44100,  device=1):
         self.pa = pyaudio.PyAudio()
-        self.fs = sr  # The divider helps us to use a smaller samping rate. 
-        self.chunk = bs # The smaller the smaller latency 
+        self.sr = sr  
+        self.bs = bs 
         self.audioformat = pyaudio.paInt16
         self.recording = False
-        self.bufflist = [] # Buffer for input audio tracks
-        self.totalChunks = 0 # This is the len of bufflist. 
-        self.masterVol = 1 # Master volume. 
-        # self.il = [] ; self.ol = [] # out list
-        # for i in range(self.pa.get_device_count()):
-        #     if self.pa.get_device_info_by_index(i)['maxInputChannels'] > 0:
-        #         self.il.append(self.pa.get_device_info_by_index(i))
-        #     if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
-        #         self.ol.append(self.pa.get_device_info_by_index(i))        
+        self.bufflist = []  # buffer for input audio tracks
+        self.totalChunks = 0  # this is the len of bufflist. 
+        self.gain = 1 
         self.inputIdx = 0 
         self.maxInputChannels = self.pa.get_device_info_by_index(self.inputIdx)['maxInputChannels']
-        self.outputIdx = device_index
+        self.outputIdx = device
         self.maxOutputChannels = self.pa.get_device_info_by_index(self.outputIdx)['maxOutputChannels']
         self.inVol = np.ones(self.maxInputChannels) # Current version has 6 inputs max. But should taylor this. 
         self.outVol = np.ones(self.maxOutputChannels)
@@ -41,18 +29,16 @@ class PyaudioStream():
 
     def _playcallback(self, in_data, frame_count, time_info, flag):
         if (self.frameCount < self.totalChunks):
-            # out_data = self._outputgain(self.play_data[self.frameCount])
             out_data = self.play_data[self.frameCount]
             self.frameCount += 1
             return bytes(out_data), pyaudio.paContinue
-        else: # The last one . 
-            out_data = np.zeros(self.chunk * self.outputChannels)
+        else: # The last one
+            out_data = np.zeros(self.bs * self.outputChannels)
             return bytes(out_data), pyaudio.paComplete
 
     def _recordCallback(self, in_data, frame_count, time_info, flag):
         audio_data = (np.frombuffer(in_data, dtype = np.int16) * self.inVol[0]).astype(np.int16)
         self.bufflist.append(audio_data)
-        # out_data = self._outputgain(middle_data) # Individual channel gain and master gain
         return audio_data, pyaudio.paContinue
 
     def record(self):
@@ -70,12 +56,12 @@ class PyaudioStream():
         self.stream = self.pa.open(
             format = self.audioformat,
             channels = self.outputChannels,
-            rate = self.fs,
+            rate = self.sr,
             input = True,
             output = True,
             input_device_index=self.inputIdx,
             output_device_index=self.outputIdx,
-            frames_per_buffer = self.chunk,
+            frames_per_buffer = self.bs,
             stream_callback=self._recordCallback)
         self.stream.start_stream()
 
@@ -130,20 +116,19 @@ class PyaudioStream():
         sig_long = sig.reshape(sig.shape[0]*sig.shape[1]) if self.outputChannels > 1 else sig # Long format is only for multichannel
 
         # sig = self.mono2nchan(sig,self.outputChannels) # duplicate based on channels
-        self.play_data = self.make_chunk(sig_long, self.chunk*self.outputChannels) 
+        self.play_data = self.make_chunk(sig_long, self.bs*self.outputChannels) 
 
         self.totalChunks = len(self.play_data) # total chunks
         self.frameCount = 0 # Start from the beginning. 
 
-        # This method will only work with pyqt, because if not it will only run 1 iteration.  
         self.playStream = self.pa.open(
             format = self.audioformat,
             channels = self.outputChannels, 
-            rate = self.fs,
+            rate = self.sr,
             input = False,
             output = True,
             output_device_index = self.outputIdx,
-            frames_per_buffer = self.chunk,
+            frames_per_buffer = self.bs,
             stream_callback = self._playcallback
            )
         self.playStream.start_stream()
@@ -162,20 +147,16 @@ class PyaudioStream():
         return l
 
     def mono2nchan(self, mono, channels=2):
-        """
-            c = np.vstack([b]*4)
-            return c.transpose()
-        """
         # convert a mono signal to multichannel by duplicating it to each channel. 
         return np.repeat(mono, channels)# This is actually quite slow
 
     def _outputgain(self, sig):
         out_data =  self._multichannelgain(sig, self.outputChannels, self.outVol)
-        return bytes((out_data * self.masterVol).astype(np.int16))
+        return bytes((out_data * self.gain).astype(np.int16))
 
     # Currently not implemented here. 
     def _multichannelgain(self, data, channels, glist):
         data = data.astype(np.float32)
-        data_col = data.reshape([self.chunk, channels])
+        data_col = data.reshape([self.bs, channels])
         data_col *= glist[:channels] # Only apply the list matching the channels. 
         return data.astype(np.int16)
