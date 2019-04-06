@@ -16,16 +16,11 @@ import pyaudio
 from .pyaudiostream import PyaudioStream
 
 from .helpers import ampdb, linlin, dbamp
-# from IPython import get_ipython
-# from IPython.core.magic import Magics, cell_magic, line_magic, magics_class
-
-default_aserver = None
 
 class Asig:
     'audio signal class'
-    def __init__(self, sig, sr=44100, bs = 1024, label="", channels=1):
+    def __init__(self, sig, sr=44100, label="", channels=1):
         self.sr = sr
-        self.bs = bs #buffer size for pyaudio
         self._ = {}  # dictionary for further return values
         self.channels = channels
         if isinstance(sig, str):
@@ -89,12 +84,12 @@ class Asig:
         elif isinstance(index, slice):
             start, stop, step = index.indices(len(self.sig))    # index is a slice
         elif isinstance(index, list) or isinstance(index, np.ndarray):
-            return Asig(self.sig[index], self.sr, bs = self.bs, label = self.label+"_arrayindexed")
+            return Asig(self.sig[index], self.sr, label=self.label+"_arrayindexed")
         elif isinstance(index, str):
             return self._[index]
         else:
             raise TypeError("index must be int, array, or slice")        
-        return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), bs = self.bs, label= self.label+"_sliced")
+        return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), label=self.label+"_sliced")
 
     #TODO: this method is not checked with multichannels. 
     def tslice(self, *tidx):
@@ -136,47 +131,39 @@ class Asig:
                         assume_sorted=True, bounds_error=False, fill_value=self.sig[-1, i])
                 new_sig[:, i] = interp_fn(tsel)
             return Asig(new_sig, target_sr, label=self.label+"_resampled")
-
-        # This part uses pyaudio for playing. 
-    def _playpyaudio(self, device=1):
-        """
-            play function take signal and channels as arguments. 
-            device needs to be set properly: currently this method is not robust, as you need to 
-            manually adjust it for external soundcard output. 
-        """
-        try:
-            self.device = device
-            self.audiostream = PyaudioStream(bs=self.bs, sr=self.sr, device=self.device)
-            self.audiostream.play(self.sig, chan=self.channels)
-            return self
-        except ImportError:
-            raise ImportError("Can't play audio via Pyaudiostream")
         
-    def play(self, rate=1, device=1):
+    def play(self, rate=1, **kwargs):
         """
-        Play audio using pyaudio. 1. Resample the data if needed. 
-            @This forces the audio to be always played at 44100, it is not effective. 
+        Play Asig audio via Aserver, using Aserver.default (if existing)
+        kwargs are propagated to Aserver:play (onset=0, out=0)
+        IDEA/ToDo: allow to set server='stream' to create 
+          which terminates when finished using pyaudiostream
         """
-        if not self.sr in [8000, 11025, 22050, 44100, 48000]:
-            print("resample as sr is exotic")
-            self._['play'] = self.resample(44100, rate).play()['play']
+        if 'server' in kwargs.keys():
+            s = kwargs['server']
         else:
-            if rate is not 1:
-                print("resample as rate!=1")
-                self._['play'] = self.resample(44100, rate).play()['play']
-            else:
-                self._['play'] = self._playpyaudio(device = device)
+            s = Aserver.default
+        if not isinstance(s, Aserver):
+            print("Asig.play: error: no default server running, nor server arg specified.")
+            return
+        if rate == 1 and self.sr == s.sr:
+            asig = self
+            print(asig)
+        else:
+            asig = self.resample(s.sr, rate)
+            print(asig)
+        s.play(asig, **kwargs)
         return self
 
-    def stop(self):
-        """
-            Stop playing
-        """
-        try:
-            self._['play'].audiostream.stopPlaying()
-        except KeyError:
-            print ("No play no stop, nothing happened.")
-        return self
+    # def stop(self):
+    #     """
+    #         Stop playing: oops, if played via Aserver that's more difficult...
+    #     """
+    #     try:
+    #         self._['play'].audiostream.stopPlaying()
+    #     except KeyError:
+    #         print ("No play no stop, nothing happened.")
+    #     return self
 
     def route(self, out=0):
         """
@@ -669,7 +656,37 @@ class Astft:
             self.channels, self.samples, self.sr, self.samples/self.sr)
 
 
+# global pya.startup() and shutdown() fns 
+def startup(**kwargs):
+    Aserver.startup_default_server(**kwargs)
+
+def shutdown(**kwargs):
+    Aserver.shutdown_default_server(**kwargs)
+
+
 class Aserver:
+
+    default = None  # that's the default Aserver if Asigs play via it
+
+    @staticmethod
+    def startup_default_server(**kwargs):
+        if Aserver.default is None:
+            print("Aserver startup_default_server: create and boot")
+            Aserver.default = Aserver(**kwargs)  # using all default settings
+            Aserver.default.boot()
+            print(Aserver.default)
+        else:
+            print("Aserver default_server already set.")
+
+    @staticmethod
+    def shutdown_default_server():
+        if isinstance(Aserver.default, Aserver):
+            Aserver.default.quit()
+            del(Aserver.default)
+            Aserver.default = None
+        else: 
+            print("Aserver:shutdown_default_server: no default_server to shutdown")
+
     """
     Aserver manages an pyaudio stream, using its aserver callback 
     to feed dispatched signals to output at the right time 
@@ -741,7 +758,7 @@ class Aserver:
     def __del__(self):
         self.pa.terminate()
 
-    def play(self, asig, onset=0, out=0):
+    def play(self, asig, onset=0, out=0, **kwargs):
         """dispatch asigs or arrays for given onset"""        
         if out<0:
             print("Aserver:play: illegal out<0")
@@ -760,9 +777,9 @@ class Aserver:
         nchn = min(asig.channels, self.channels - out) # max number of copyable channels
         # in: [:nchn] out: [out:out+nchn]
         if id(asig) == sigid:
-            h = asig.sig
             asig = copy.copy(asig)
-            if len(h.shape) == 1: asig.sig = asig.sig.reshape(asig.samples, 1)
+        if len(asig.sig.shape) == 1: 
+            asig.sig = asig.sig.reshape(asig.samples, 1)
         asig.sig = asig.sig[:,:nchn].reshape(asig.samples, nchn)
         asig.channels = nchn
         # so now in callback safely copy to out:out+asig.sig.shape[1]
