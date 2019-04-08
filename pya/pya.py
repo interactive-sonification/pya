@@ -166,7 +166,7 @@ class Asig:
             Resample signal based on interpolation, can process multichannel
         """
         times = np.arange(self.samples )/self.sr
-        tsel = np.arange(floor(self.samples/self.sr * target_sr/rate))*rate/target_sr
+        tsel = np.arange(np.floor(self.samples/self.sr * target_sr/rate))*rate/target_sr
         if self.channels == 1:
             interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind,
                     assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
@@ -706,7 +706,6 @@ class Aspec:
             self.samples = x.samples
             self.channels = x.channels
             self.cn = x.cn
-            # Todo: warn if Asig cn overwrites given cn
             if self.cn != cn:
                 print("Aspec:init: given cn different from Asig cn: using Asig.cn")
         elif type(x) == list or type(x) == np.ndarray:
