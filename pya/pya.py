@@ -21,11 +21,7 @@ from .helpers import ampdb, linlin, dbamp, timeit
 
 class Asig:
     'audio signal class'
-<<<<<<< HEAD
-    def __init__(self, sig, sr=44100, label="", channels=1):
-=======
-    def __init__(self, sig, sr=44100, bs = 1024, label="", channels=1, cn = None):
->>>>>>> pya-jiajun
+    def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
         self.sr = sr
         self._ = {}  # dictionary for further return values
         self.channels = channels
@@ -75,7 +71,7 @@ class Asig:
         else:
             print("load_wavfile: TODO: add format")
 
-        # Set channel here.
+        # ToDo: set channels here
 
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         if dtype == 'int16':
@@ -88,41 +84,28 @@ class Asig:
             data = self.sig.astype('float32')
         wavfile.write(fname, self.sr, data)
         return self
-<<<<<<< HEAD
 
-    def __getitem__(self, index):
-        # if isinstance(index, int):
-        #     start, stop, step = 0, index, 1
-        print (index)
-        # print ()
-        # atmp = copy.copy(self)
-        # atmp.sig = self.sig[index]
-        # atmp.sr = int(self.sr/abs(step0))
-        return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed')
-=======
-            
     def _set_col_names(self):
-        # Problem is by doing that generating a new instance will no longer preserve cn. 
+        # Problem is by doing that generating a new instance will no longer preserve cn.
         if self.cn is None:
             pass
-        else:                   
+        else:
             if type(self.cn[0]) is str:
                 self.col_name = {self.cn[i]: i for i in range(len(self.cn))}
             else:
                 raise TypeError("column names need to be a list of strings")
-        
+
     def __getitem__(self, index):
         if isinstance(index, tuple):
             if type(index[1]) is list and type(index[1][0]) is str:
                 col_idx = [self.col_name.get(s) for s in index[1]]
-                return Asig(self.sig[index[0], col_idx], self.sr, bs = self.bs, label = self.label+'_arrayindexed', cn = self.cn)
+                return Asig(self.sig[index[0], col_idx], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
             elif type(index[1] is str):
-                return Asig(self.sig[index[0], self.col_name.get(index[1])], self.sr, bs = self.bs, label = self.label+'_arrayindexed', cn = self.cn)
+                return Asig(self.sig[index[0], self.col_name.get(index[1])], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
             else:
-                return Asig(self.sig[index], self.sr, bs = self.bs, label = self.label+'_arrayindexed', cn = self.cn)
+                return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
         else:
-            return Asig(self.sig[index], self.sr, bs = self.bs, label = self.label+'_arrayindexed', cn = self.cn)
->>>>>>> pya-jiajun
+            return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
 
         # if isinstance(index, slice):
         #     start, stop, step = index.indices(len(self.sig))    # index is a slice
@@ -154,10 +137,7 @@ class Asig:
         #         return Asig(self.sig[start0:stop0:step0, index[1]]
         #         , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
 
-<<<<<<< HEAD
 
-=======
->>>>>>> pya-jiajun
         # else:
         #     raise TypeError("index must be int, array, or slice")
 
@@ -170,15 +150,8 @@ class Asig:
             sl = slice(int(tidx[0]*self.sr), int(tidx[1]*self.sr))
         else:
             sl = slice(int(tidx[0]*self.sr), int(tidx[1]*self.sr), tidx[2])
-        return Asig(self.sig[sl], self.sr, self.label+"_tsliced", cn = self.cn)
+        return Asig(self.sig[sl], self.sr, self.label+"_tsliced", cn=self.cn)
 
-<<<<<<< HEAD
-    """
-        Bug report: resample cant deal with multichannel
-    """
-
-=======
->>>>>>> pya-jiajun
     # def resample(self, target_sr=44100, rate=1, kind='linear'):
     #     # This only work for single channel.
     #     times = np.arange(self.samples )/self.sr
@@ -197,14 +170,14 @@ class Asig:
         if self.channels == 1:
             interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind,
                     assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
-            return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled", cn = self.cn)
+            return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled", cn=self.cn)
         else:
             new_sig = np.ndarray(shape = (int(self.samples/self.sr * target_sr/rate) , self.channels))
             for i in range(self.channels):
                 interp_fn = scipy.interpolate.interp1d(times, self.sig[:,i], kind=kind,
                         assume_sorted=True, bounds_error=False, fill_value=self.sig[-1, i])
                 new_sig[:, i] = interp_fn(tsel)
-            return Asig(new_sig, target_sr, label=self.label+"_resampled", cn = self.cn)
+            return Asig(new_sig, target_sr, label=self.label+"_resampled", cn=self.cn)
 
     def play(self, rate=1, **kwargs):
         """
@@ -265,11 +238,11 @@ class Asig:
                 # not optimized method here
                 new_sig = np.zeros((self.samples, out + self.channels))
                 new_sig[:, out:out + self.channels] = self.sig_copy
-                return Asig(new_sig, self.sr, label=self.label+'_routed', cn = self.cn)
+                return Asig(new_sig, self.sr, label=self.label+'_routed', cn=self.cn)
 
             elif out < 0 and -out < self.channels :
                 new_sig = self.sig_copy[:, -out:]
-                return Asig(new_sig, self.sr, label=self.label+'_routed', cn = self.cn)
+                return Asig(new_sig, self.sr, label=self.label+'_routed', cn=self.cn)
             else:
                 print ("left shift over the total channel, nothing happened")
                 return self
@@ -293,7 +266,7 @@ class Asig:
                 new_sig = self.sig_copy * out
             else:
                 raise ValueError ("pan size and signal channels don't match")
-            return Asig(new_sig, self.sr, label=self.label+'_routed', cn = self.cn)
+            return Asig(new_sig, self.sr, label=self.label+'_routed', cn=self.cn)
         else:
             raise TypeError("Argument needs to be a list of 0 ~ 1.")
 
@@ -315,13 +288,8 @@ class Asig:
             return self
         else:
             sig = np.sum(self.sig_copy * blend, axis = 1)
-<<<<<<< HEAD
-            return Asig(sig, self.sr, label=self.label+'_blended')
+            return Asig(sig, self.sr, label=self.label+'_blended', cn=self.cn)
 
-=======
-            return Asig(sig, self.sr, label=self.label+'_blended', cn = self.cn)
-    
->>>>>>> pya-jiajun
     @timeit
     def to_stereo(self, blend):
         """
@@ -332,19 +300,14 @@ class Asig:
         if self.channels == 1:
             left_sig = self.sig_copy * left; right_sig = self.sig_copy * right
             sig = np.stack((left_sig,right_sig), axis = 1)
-<<<<<<< HEAD
-            return Asig(sig, self.sr, label=self.label+'_to_stereo')
+            return Asig(sig, self.sr, label=self.label+'_to_stereo', cn=self.cn)
 
-=======
-            return Asig(sig, self.sr, label=self.label+'_to_stereo', cn = self.cn)
-        
->>>>>>> pya-jiajun
         if len(left) == self.channels and len(right) == self.channels:
 
             left_sig = np.sum(self.sig_copy * left, axis = 1)
             right_sig = np.sum(self.sig_copy * right, axis = 1)
             sig = np.stack((left_sig,right_sig), axis = 1)
-            return Asig(sig, self.sr, label=self.label+'_to_stereo', cn = self.cn)
+            return Asig(sig, self.sr, label=self.label+'_to_stereo', cn=self.cn)
         else:
             print ("Error: blend needs to be a list of left and right mix, e.g [[0.4],[0.5]], each element needs to match the channel size")
             return self
@@ -366,15 +329,9 @@ class Asig:
         for i, k in enumerate(dic):
             new_sig[k[1]] = self.sig_copy[k[0]] * i
 
-<<<<<<< HEAD
-        return Asig(new_sig, self.sr, label=self.label+'_rewire')
+        return Asig(new_sig, self.sr, label=self.label+'_rewire', cn=self.cn)
 
 
-=======
-        return Asig(new_sig, self.sr, label=self.label+'_rewire', cn = self.cn)
- 
-            
->>>>>>> pya-jiajun
     @timeit
     def pan2(self,  pan = 0.):
         """
@@ -393,15 +350,10 @@ class Asig:
                 if self.channels == 1:
                     newsig = np.repeat(self.sig_copy, 2)# This is actually quite slow
                     newsig_shape = newsig.reshape(-1, 2) * gain
-                    return Asig(newsig_shape, self.sr, label=self.label+"_pan2ed", channels = 2, cn = self.cn)
+                    return Asig(newsig_shape, self.sr, label=self.label+"_pan2ed", channels = 2, cn=self.cn)
                 else:
-<<<<<<< HEAD
                     self.sig_copy[:,:2] *= gain
-                    return Asig(newsig, self.sr, label=self.label+"_pan2ed")
-=======
-                    self.sig_copy[:,:2] *= gain 
-                    return Asig(newsig, self.sr, label=self.label+"_pan2ed", cn = self.cn)
->>>>>>> pya-jiajun
+                    return Asig(newsig, self.sr, label=self.label+"_pan2ed", cn=self.cn)
             else:
                 print ("Warning: Scalar panning need to be in the range -1. to 1. nothing changed.")
                 return self
@@ -445,13 +397,8 @@ class Asig:
             amp = dbamp(db)
         elif not amp: # default 1 if neither is given
             amp = 1
-<<<<<<< HEAD
-        return Asig(self.sig*amp, self.sr, label=self.label+"_scaled")
+        return Asig(self.sig*amp, self.sr, label=self.label+"_scaled", cn=self.cn)
 
-=======
-        return Asig(self.sig*amp, self.sr, label=self.label+"_scaled", cn = self.cn)
-    
->>>>>>> pya-jiajun
     def rms(self, axis=0):
         return np.sqrt(np.mean(np.square(self.sig), axis))
 
@@ -480,27 +427,27 @@ class Asig:
 
     def __mul__(self, other):
         if isinstance(other, Asig):
-            return Asig(self.sig * other.sig, self.sr, label=self.label+"_multiplied", cn = self.cn)
+            return Asig(self.sig * other.sig, self.sr, label=self.label+"_multiplied", cn=self.cn)
         else:
-            return Asig(self.sig * other, self.sr, label=self.label+"_multiplied", cn = self.cn)
+            return Asig(self.sig * other, self.sr, label=self.label+"_multiplied", cn=self.cn)
 
     def __rmul__(self, other):
         if isinstance(other, Asig):
-            return Asig(self.sig * other.sig, self.sr, label=self.label+"_multiplied", cn = self.cn)
+            return Asig(self.sig * other.sig, self.sr, label=self.label+"_multiplied", cn=self.cn)
         else:
-            return Asig(self.sig * other, self.sr, label=self.label+"_multiplied", cn = self.cn)
+            return Asig(self.sig * other, self.sr, label=self.label+"_multiplied", cn=self.cn)
 
     def __add__(self, other):
         if isinstance(other, Asig):
-            return Asig(self.sig + other.sig, self.sr, label=self.label+"_added", cn = self.cn)
+            return Asig(self.sig + other.sig, self.sr, label=self.label+"_added", cn=self.cn)
         else:
-            return Asig(self.sig + other, self.sr, label=self.label+"_added", cn = self.cn)
+            return Asig(self.sig + other, self.sr, label=self.label+"_added", cn=self.cn)
 
     def __radd__(self, other):
         if isinstance(other, Asig):
-            return Asig(self.sig + other.sig, self.sr, label=self.label+"_added", cn = self.cn)
+            return Asig(self.sig + other.sig, self.sr, label=self.label+"_added", cn=self.cn)
         else:
-            return Asig(self.sig + other, self.sr, label=self.label+"_added", cn = self.cn)
+            return Asig(self.sig + other, self.sr, label=self.label+"_added", cn=self.cn)
 
     #TODO not checked.
     def find_events(self, step_dur=0.001, sil_thr=-20, sil_min_dur=0.1, sil_pad=[0.001,0.1]):
@@ -550,7 +497,7 @@ class Asig:
         if not index is None:
             beg, end = events[index]
             print(beg, end)
-            return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}", cn = self.cn)
+            return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}", cn=self.cn)
         print('select_event: neither index nor onset given: return self')
         return self
 
@@ -574,13 +521,8 @@ class Asig:
             nsamp = self.samples
             print("warning: Asig too short for fade_in - adapting fade_in time")
         return Asig(np.hstack((self.sig[:nsamp] * np.linspace(0, 1, nsamp)**curve, self.sig[nsamp:])),
-<<<<<<< HEAD
-                    self.sr, label=self.label+"_fadein")
+                    self.sr, label=self.label+"_fadein", cn=self.cn)
 
-=======
-                    self.sr, label=self.label+"_fadein", cn = self.cn)
-    
->>>>>>> pya-jiajun
     def fade_out(self, dur=0.1, curve=1):
         nsamp = int(dur*self.sr)
         if nsamp > self.samples:
@@ -589,7 +531,7 @@ class Asig:
         return Asig(np.hstack((self.sig[:-nsamp],
                                self.sig[-nsamp:] * np.linspace(1, 0, nsamp)**curve
                               )),
-                    self.sr, label=self.label+"_fadeout", cn = self.cn)
+                    self.sr, label=self.label+"_fadeout", cn=self.cn)
 
     def iirfilter(self, cutoff_freqs, btype='bandpass', ftype='butter', order=4,
                     filter='lfilter', rp=None, rs=None):
@@ -657,13 +599,8 @@ class Asig:
             if nsteps != self.samples:
                 interp_fn = scipy.interpolate.interp1d(given_ts, amps, kind=kind)
                 sig_new = self.sig * interp_fn(np.linspace(0, duration, self.samples))**curve  # ToDo: curve segmentwise!!!
-<<<<<<< HEAD
-        return Asig(sig_new, self.sr, label=self.label+"_enveloped")
+        return Asig(sig_new, self.sr, label=self.label+"_enveloped", cn=self.cn)
 
-=======
-        return Asig(sig_new, self.sr, label=self.label+"_enveloped", cn = self.cn)
-    
->>>>>>> pya-jiajun
     def adsr(self, att=0, dec=0.1, sus=0.7, rel=0.1, curve=1, kind='linear'):
         dur = self.get_duration()
         return self.envelope( [0, 1, sus, sus, 0], [0, att, att+dec, dur-rel, dur],
@@ -675,13 +612,9 @@ class Asig:
         winstr = win
         if type(winstr)==tuple:
             winstr = win[0]
-<<<<<<< HEAD
-        return Asig(self.sig*scipy.signal.get_window(win, self.samples, **kwargs), self.sr, label=self.label+"_"+winstr)
+        return Asig(self.sig*scipy.signal.get_window(win, self.samples, **kwargs),
+            self.sr, label=self.label+"_"+winstr, cn=self.cn)
 
-=======
-        return Asig(self.sig*scipy.signal.get_window(win, self.samples, **kwargs), self.sr, label=self.label+"_"+winstr, cn = self.cn)
-    
->>>>>>> pya-jiajun
     def window_op(self, nperseg=64, stride=32, win=None, fn='rms', pad='mirror'):
         centerpos = np.arange(0, self.samples, stride)
         nsegs = len(centerpos)
@@ -695,20 +628,15 @@ class Asig:
                 res[i] = self[i0:i1].window(win).__getattribute__(fn)()
             else: # assume fn to be a function on Asig
                 res[i] = fn(self[i0:i1])
-<<<<<<< HEAD
-        return Asig(np.array(res), sr=self.sr//stride, label='window_oped')
+        return Asig(np.array(res), sr=self.sr//stride, label='window_oped', cn=self.cn)
 
     def overlap_add(self, nperseg=64, stride_in=32, stride_out=32, jitter_in=None, jitter_out=None,
-=======
-        return Asig(np.array(res), sr=self.sr//stride, label='window_oped', cn = self.cn)
-    
-    def overlap_add(self, nperseg=64, stride_in=32, stride_out=32, jitter_in=None, jitter_out=None, 
->>>>>>> pya-jiajun
                     win=None, pad='mirror'):
         # TODO: check with multichannel ASigs
         # TODO: allow stride_in and stride_out to be arrays of indices
         # TODO: add jitter_in, jitter_out parameters to reduce spectral ringing effects
-        res = Asig( np.zeros((self.samples//stride_in*stride_out, )), sr=self.sr, label=self.label+'_ola', cn = self.cn)
+        res = Asig(np.zeros((self.samples//stride_in*stride_out, )), sr=self.sr,
+                label=self.label+'_ola', cn=self.cn)
         ii = 0
         io = 0
         for _ in range(self.samples//stride_in):
@@ -769,13 +697,18 @@ class Asig:
 class Aspec:
     'audio spectrum class using rfft'
 
-    def __init__(self, x, sr=44100, label=None):
+    def __init__(self, x, sr=44100, label=None, cn=None):
+        self.cn = cn
         if type(x) == Asig:
             self.sr = x.sr
             self.rfftspec = np.fft.rfft(x.sig)
             self.label = x.label+"_spec"
             self.samples = x.samples
             self.channels = x.channels
+            self.cn = x.cn
+            # Todo: warn if Asig cn overwrites given cn
+            if self.cn != cn:
+                print("Aspec:init: given cn different from Asig cn: using Asig.cn")
         elif type(x) == list or type(x) == np.ndarray:
             self.rfftspec = np.array(x)
             self.sr = sr
@@ -791,7 +724,7 @@ class Aspec:
         self.freqs = np.linspace(0, self.sr/2, self.nr_freqs)
 
     def to_sig(self):
-        return Asig(np.fft.irfft(self.rfftspec), sr=self.sr, label=self.label+'_2sig', cn = self.cn)
+        return Asig(np.fft.irfft(self.rfftspec), sr=self.sr, label=self.label+'_2sig', cn=self.cn)
 
     def weight(self, weights, freqs=None, curve=1, kind='linear'):
         nfreqs = len(weights)
@@ -834,7 +767,7 @@ class Astft:
 
     def __init__(self, x, sr=None, label=None, window='hann', nperseg=256,
                 noverlap=None, nfft=None, detrend=False, return_onesided=True,
-                boundary='zeros', padded=True, axis=-1):
+                boundary='zeros', padded=True, axis=-1, cn=None):
         self.window = window
         self.nperseg = nperseg
         self.noverlap =  noverlap
@@ -844,6 +777,7 @@ class Astft:
         self.boundary = boundary
         self.padded = padded
         self.axis = axis
+        self.cn = cn
         if type(x) == Asig:
             self.sr = x.sr
             if sr: self.sr = sr  # explicitly given sr overwrites Asig
@@ -882,26 +816,16 @@ class Astft:
             del kwargs['sr']
 
         _, sig = scipy.signal.istft(self.stft, **kwargs)  # _ since 1st return value 'times' unused
-<<<<<<< HEAD
-        return Asig(sig, sr=self.sr, label=self.label+'_2sig')
+        return Asig(sig, sr=self.sr, label=self.label+'_2sig', cn=self.cn)
 
-=======
-        return Asig(sig, sr=self.sr, label=self.label+'_2sig', cn = self.cn)
-            
->>>>>>> pya-jiajun
     def plot(self, fn = lambda x: x):
         plt.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)))
         plt.colorbar()
         return self
 
     def __repr__(self):
-<<<<<<< HEAD
         return "Astft('{}'): {} x {} @ {} Hz = {:.3f} s".format(self.label,
-            self.channels, self.samples, self.sr, self.samples/self.sr)
-=======
-        return "Astft('{}'): {} x {} @ {} Hz = {:.3f} s".format(self.label, 
-            self.channels, self.samples, self.sr, self.samples/self.sr, cn = self.cn)
->>>>>>> pya-jiajun
+            self.channels, self.samples, self.sr, self.samples/self.sr, cn=self.cn)
 
 
 # global pya.startup() and shutdown() fns
