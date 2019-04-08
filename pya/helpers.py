@@ -4,10 +4,10 @@ import numpy as np
 import pyaudio
 import simpleaudio as sa
 from .pyaudiostream import PyaudioStream
+import time
 
 class _error(Exception):
     pass
-
 
 
 def record(dur=2, channels=1, rate=44100, chunk=256):
@@ -37,17 +37,6 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
     p.terminate()
     return np.frombuffer(b''.join(buflist), dtype=np.int16)
 
-
-# This part uses pyaudio for playing. 
-def playpyaudio(sig, num_channels=1, sr=44100, bs = 512, block=False):
-    try:
-        audiostream = PyaudioStream(bs = bs, sr =sr, channels = num_channels)
-        audiostream.play(sig)
-
-    except ImportError:
-        raise ImportError("Can't play audio via Pyaudiostream")
-    else:
-        return
   
   # Old play method with simpleaudio
 # def play(sig, num_channels=1, sr=44100, block=False):
@@ -163,3 +152,20 @@ def ampdb(amp):
     """
 
     return 20*np.log10(amp)
+
+"""
+decorator to time methods
+"""
+def timeit(method):
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+        if 'log_time' in kw:
+            name = kw.get('log_name', method.__name__.upper())
+            kw['log_time'][name] = int((te - ts) * 1000)
+        else:
+            print ('%r  %2.2f ms' % \
+                  (method.__name__, (te - ts) * 1000))
+        return result
+    return timed
