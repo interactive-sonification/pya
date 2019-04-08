@@ -100,8 +100,9 @@ class Asig:
             if type(index[1]) is list and type(index[1][0]) is str:
                 col_idx = [self.col_name.get(s) for s in index[1]]
                 return Asig(self.sig[index[0], col_idx], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
-            elif type(index[1] is str):
-                return Asig(self.sig[index[0], self.col_name.get(index[1])], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+            elif isinstance(index[1], str):
+                col = self.col_name.get(index[1])
+                return Asig(self.sig[index[0], col], self.sr, label=self.label+'_arrayindexed', cn=self.cn[col])
             else:
                 return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
         else:
