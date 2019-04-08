@@ -50,6 +50,9 @@ class Asig:
         self.samples = np.shape(self.sig)[0]
         self.label = label
         self.device_index = 1
+        # Make a copy for any processing events e.g. (panning, filtering) 
+        # that needs to process the signal without permanent change. 
+        self.sig_copy = self.sig.copy() # It takes around 100ms to copy a 17min audio at 44.1khz
 
     def load_wavfile(self, fname):
         # Discuss to change to float32 . 
@@ -88,13 +91,38 @@ class Asig:
             start, stop, step = 0, index, 1
         elif isinstance(index, slice):
             start, stop, step = index.indices(len(self.sig))    # index is a slice
+            return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), bs = self.bs, label= self.label+"_sliced")
         elif isinstance(index, list) or isinstance(index, np.ndarray):
             return Asig(self.sig[index], self.sr, bs = self.bs, label = self.label+"_arrayindexed")
         elif isinstance(index, str):
             return self._[index]
+        elif isinstance(index, tuple):
+            # tuple is used for channel slicing, [:, :2]
+            start0, stop0, step0 = index[0].indices(len(self.sig)) 
+            if isinstance(index[1], slice):
+                # This is not ok 
+                start1, stop1, step1 = index[1].indices(len(self.sig)) 
+                return Asig(self.sig[start0:stop0:step0, start1:stop1:step1]
+                , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
+            
+            elif isinstance(index[1], int):
+                s_copy = self.sig.copy()
+                s_copy[:, np.isin(np.arange(self.channels), index[1], invert=True)] = 0
+                return Asig(s_copy[start0:stop0:step0, :]
+                , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
+
+                # return Asig(self.sig[start0:stop0:step0, index[1]]
+                # , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
+
+
+            elif isinstance(index[1], list):
+                return Asig(self.sig[start0:stop0:step0, index[1]]
+                , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
+
+                
         else:
             raise TypeError("index must be int, array, or slice")        
-        return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), bs = self.bs, label= self.label+"_sliced")
+        
 
     #TODO: this method is not checked with multichannels. 
     def tslice(self, *tidx):
@@ -223,17 +251,18 @@ class Asig:
                 out > 0: move the first channel of self.sig to out channel, other channels follow
                 out < 0: negative slicing, if overslicing, do nothing. 
         """
+
         if type(out) is int:
             if out == 0:  #If 0 do nothing. 
                 return self
             elif out > 0: 
                 # not optimized method here
                 new_sig = np.zeros((self.samples, out + self.channels))
-                new_sig[:, out:out + self.channels] = self.sig
+                new_sig[:, out:out + self.channels] = self.sig_copy
                 return Asig(new_sig, self.sr, label=self.label+'_routed')
 
             elif out < 0 and -out < self.channels :
-                new_sig = self.sig[:, -out:]
+                new_sig = self.sig_copy[:, -out:]
                 return Asig(new_sig, self.sr, label=self.label+'_routed')
             else:
                 print ("left shift over the total channel, nothing happened")
@@ -247,20 +276,18 @@ class Asig:
                     2. sig's channels equals pan size 
                     3. sig's channels > pan size and
                     4. sig's channels < pan size 
-
                 Dont permanently change self.sig
             """
             if np.max(out) > 1 or np.min(out) < 0.:
                 print ("Warning: list value should be between 0 ~ 1.") 
             if self.channels == 1: # if mono sig. 
-                sig_nchan = self.mono2nchanel(self.sig, len(out))
-                sig_nchan *= out # apply panning. 
+                new_sig = self.mono2nchanel(self.sig_copy, len(out))
+                new_sig *= out # apply panning. 
             elif self.channels == len(out):
-                sig_nchan = self.sig * out
+                new_sig = self.sig_copy * out
             else:
                 raise ValueError ("pan size and signal channels don't match")
-            self.sig =  sig_nchan
-            return self
+            return Asig(new_sig, self.sr, label=self.label+'_routed')
         else:
             raise TypeError("Argument needs to be a list of 0 ~ 1.")
 
@@ -272,6 +299,7 @@ class Asig:
 
             np.sum is the main computation here. Not much can be done to make it faster. 
         """
+    
         if self.channels == 1:
             print ("Warning: signal is already mono")
             return self
@@ -280,7 +308,7 @@ class Asig:
             print ("Error: blend should have the same length as channels")
             return self
         else:
-            sig = np.sum(self.sig * blend, axis = 1)
+            sig = np.sum(self.sig_copy * blend, axis = 1)
             return Asig(sig, self.sr, label=self.label+'_blended')
     
     @timeit
@@ -291,14 +319,14 @@ class Asig:
         left = blend[0]; right = blend[1]
         # [[0.1,0.2,03], [0.4,0.5,0.6]]
         if self.channels == 1:
-            left_sig = self.sig * left; right_sig = self.sig * right
+            left_sig = self.sig_copy * left; right_sig = self.sig_copy * right
             sig = np.stack((left_sig,right_sig), axis = 1)
             return Asig(sig, self.sr, label=self.label+'_to_stereo')
         
         if len(left) == self.channels and len(right) == self.channels:
 
-            left_sig = np.sum(self.sig * left, axis = 1)
-            right_sig = np.sum(self.sig * right, axis = 1)
+            left_sig = np.sum(self.sig_copy * left, axis = 1)
+            right_sig = np.sum(self.sig_copy * right, axis = 1)
             sig = np.stack((left_sig,right_sig), axis = 1)
             return Asig(sig, self.sr, label=self.label+'_to_stereo')
         else:
@@ -315,12 +343,12 @@ class Asig:
         
         if max_ch > self.channels :
             new_sig = np.zeros((self.samples, max_ch))
-            new_sig[:, :self.channels] = self.sig
+            new_sig[:, :self.channels] = self.sig_copy
         else:
             new_sig = self.sig 
         
         for i, k in enumerate(dic):
-            new_sig[k[1]] = self.sig[k[0]] * i
+            new_sig[k[1]] = self.sig_copy[k[0]] * i
 
         return Asig(new_sig, self.sr, label=self.label+'_rewire')
  
@@ -334,21 +362,22 @@ class Asig:
 
             # gain multiplication is the main computation cost. 
         """
+        pan = float(pan)
         if type(pan) is float:
             # Stereo panning. 
             if pan <= 1. and pan >= -1.:
                 angle = linlin(pan, -1, 1, 0, np.pi/2.)
                 gain = [np.cos(angle), np.sin(angle)]
                 if self.channels == 1:
-                    newsig = np.repeat(self.sig, 2)# This is actually quite slow
+                    newsig = np.repeat(self.sig_copy, 2)# This is actually quite slow
                     newsig_shape = newsig.reshape(-1, 2) * gain
                     return Asig(newsig_shape, self.sr, label=self.label+"_pan2ed", channels = 2)
                 else:
-                    newsig = self.sig
-                    newsig[:,:2] *= gain 
+                    self.sig_copy[:,:2] *= gain 
                     return Asig(newsig, self.sr, label=self.label+"_pan2ed")
             else:
-                raise ValueError("Scalar panning need to be in the range -1. to 1.")
+                print ("Warning: Scalar panning need to be in the range -1. to 1. nothing changed.")
+                return self
 
 
     def overwrite(self, sig, sr = None):
@@ -416,6 +445,10 @@ class Asig:
     def __repr__(self):
         return "Asig('{}'): {} x {} @ {} Hz = {:.3f} s".format(
             self.label, self.channels, self.samples, self.sr, self.samples/self.sr)
+
+
+    def __mul__(self, other):
+        self.sig *= other
 
     #TODO not checked. 
     def find_events(self, step_dur=0.001, sil_thr=-20, sil_min_dur=0.1, sil_pad=[0.001,0.1]):
