@@ -87,41 +87,48 @@ class Asig:
         return self
             
     def __getitem__(self, index):
-        if isinstance(index, int):
-            start, stop, step = 0, index, 1
-        elif isinstance(index, slice):
-            start, stop, step = index.indices(len(self.sig))    # index is a slice
-            return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), bs = self.bs, label= self.label+"_sliced")
-        elif isinstance(index, list) or isinstance(index, np.ndarray):
-            return Asig(self.sig[index], self.sr, bs = self.bs, label = self.label+"_arrayindexed")
-        elif isinstance(index, str):
-            return self._[index]
-        elif isinstance(index, tuple):
-            # tuple is used for channel slicing, [:, :2]
-            start0, stop0, step0 = index[0].indices(len(self.sig)) 
-            if isinstance(index[1], slice):
-                # This is not ok 
-                start1, stop1, step1 = index[1].indices(len(self.sig)) 
-                return Asig(self.sig[start0:stop0:step0, start1:stop1:step1]
-                , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
+        # if isinstance(index, int):
+        #     start, stop, step = 0, index, 1
+        print (index)
+        # print ()
+        # atmp = copy.copy(self)
+        # atmp.sig = self.sig[index]
+        # atmp.sr = int(self.sr/abs(step0))
+        return Asig(self.sig[index], self.sr, bs = self.bs, label = self.label+'_arrayindexed')
+
+        # if isinstance(index, slice):
+        #     start, stop, step = index.indices(len(self.sig))    # index is a slice
+        #     return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), bs = self.bs, label= self.label+"_sliced")
+        # elif isinstance(index, list) or isinstance(index, np.ndarray):
+        #     return Asig(self.sig[index], self.sr, bs = self.bs, label = self.label+"_arrayindexed")
+        # elif isinstance(index, str):
+        #     return self._[index]
+        # elif isinstance(index, tuple):
+        #     # tuple is used for channel slicing, [:, :2]
+        #     start0, stop0, step0 = index[0].indices(len(self.sig)) 
+        #     if isinstance(index[1], slice):
+        #         # This is not ok 
+        #         start1, stop1, step1 = index[1].indices(len(self.sig)) 
+        #         return Asig(self.sig[start0:stop0:step0, start1:stop1:step1]
+        #         , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
             
-            elif isinstance(index[1], int):
-                s_copy = self.sig.copy()
-                s_copy[:, np.isin(np.arange(self.channels), index[1], invert=True)] = 0
-                return Asig(s_copy[start0:stop0:step0, :]
-                , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
+        #     elif isinstance(index[1], int):
+        #         # s_copy = self.sig.copy()
+        #         # s_copy[:, np.isin(np.arange(self.channels), index[1], invert=True)] = 0
+        #         # return Asig(s_copy[start0:stop0:step0, :]
+        #         # , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
 
-                # return Asig(self.sig[start0:stop0:step0, index[1]]
-                # , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
+        #         return Asig(self.sig[start0:stop0:step0, index[1]]
+        #         , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
 
 
-            elif isinstance(index[1], list):
-                return Asig(self.sig[start0:stop0:step0, index[1]]
-                , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
+        #     elif isinstance(index[1], list):
+        #         return Asig(self.sig[start0:stop0:step0, index[1]]
+        #         , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
 
                 
-        else:
-            raise TypeError("index must be int, array, or slice")        
+        # else:
+        #     raise TypeError("index must be int, array, or slice")        
         
 
     #TODO: this method is not checked with multichannels. 
@@ -448,7 +455,29 @@ class Asig:
 
 
     def __mul__(self, other):
-        self.sig *= other
+        if isinstance(other, Asig):
+            return Asig(self.sig * other.sig, self.sr, label=self.label+"_multiplied")
+        else:
+            return Asig(self.sig * other, self.sr, label=self.label+"_multiplied")
+
+    def __rmul__(self, other):
+        if isinstance(other, Asig):
+            return Asig(self.sig * other.sig, self.sr, label=self.label+"_multiplied")
+        else:
+            return Asig(self.sig * other, self.sr, label=self.label+"_multiplied")
+
+    def __add__(self, other):
+        if isinstance(other, Asig):
+            return Asig(self.sig + other.sig, self.sr, label=self.label+"_added")
+        else:
+            return Asig(self.sig + other, self.sr, label=self.label+"_added")
+
+
+    def __radd__(self, other):
+        if isinstance(other, Asig):
+            return Asig(self.sig + other.sig, self.sr, label=self.label+"_added")
+        else:
+            return Asig(self.sig + other, self.sr, label=self.label+"_added")
 
     #TODO not checked. 
     def find_events(self, step_dur=0.001, sil_thr=-20, sil_min_dur=0.1, sil_pad=[0.001,0.1]):
