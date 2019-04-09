@@ -96,51 +96,49 @@ class Asig:
                 raise TypeError("column names need to be a list of strings")
 
     def __getitem__(self, index):
-        if isinstance(index, tuple):
-            if type(index[1]) is list and type(index[1][0]) is str:
-                col_idx = [self.col_name.get(s) for s in index[1]]
-                return Asig(self.sig[index[0], col_idx], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
-            elif isinstance(index[1], str):
-                col = self.col_name.get(index[1])
-                return Asig(self.sig[index[0], col], self.sr, label=self.label+'_arrayindexed', cn=self.cn[col])
+        """
+            Here are all the possibility:
+            index is slice, int, list, tuple,
+            1. int can be directly self.sig[index] (else condition )
+            2. slice needs to take into account of step for resampling.
+            3. list: integer can self.sig[index]; string will subset by colname
+            4. Tuple:
+                same as 1,2,3 for both row and column.
+        """
+        if isinstance(index, int):
+            return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+        elif isinstance(index, list):
+            # This doesn't take into acount of str yet
+            if isinstance(index[0], str):
+                col_idx = [self.col_name.get(s) for s in index]
+                return Asig(self.sig[:, col_idx], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
             else:
                 return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+        elif isinstance(index, slice):
+            start, stop, step = index.indices(len(self.sig))    # index is a slice
+
+            return Asig(self.sig[index], sr = int(self.sr/abs(step)), label= self.label+"_sliced", cn = self.cn)
+        elif isinstance(index, tuple):
+            # if row is slice, need to take care of
+            if isinstance(index[0], slice):
+                start, stop, step = index[0].indices(len(self.sig))
+                sr = int(self.sr/abs(step))
+            else:
+                sr = self.sr
+            if isinstance (index[1], slice):
+                return Asig(self.sig[index[0], index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+            elif type(index[1]) is list and type(index[1][0]) is str:
+                col_idx = [self.col_name.get(s) for s in index[1]]
+                return Asig(self.sig[index[0], col_idx], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+            elif type(index[1] is str):
+                return Asig(self.sig[index[0], self.col_name.get(index[1])], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+            else:
+                return Asig(self.sig[index], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
         else:
-            return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
-
-        # if isinstance(index, slice):
-        #     start, stop, step = index.indices(len(self.sig))    # index is a slice
-        #     return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), bs = self.bs, label= self.label+"_sliced")
-        # elif isinstance(index, list) or isinstance(index, np.ndarray):
-        #     return Asig(self.sig[index], self.sr, bs = self.bs, label = self.label+"_arrayindexed")
-        # elif isinstance(index, str):
-        #     return self._[index]
-        # elif isinstance(index, tuple):
-        #     # tuple is used for channel slicing, [:, :2]
-        #     start0, stop0, step0 = index[0].indices(len(self.sig))
-        #     if isinstance(index[1], slice):
-        #         # This is not ok
-        #         start1, stop1, step1 = index[1].indices(len(self.sig))
-        #         return Asig(self.sig[start0:stop0:step0, start1:stop1:step1]
-        #         , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
-
-        #     elif isinstance(index[1], int):
-        #         # s_copy = self.sig.copy()
-        #         # s_copy[:, np.isin(np.arange(self.channels), index[1], invert=True)] = 0
-        #         # return Asig(s_copy[start0:stop0:step0, :]
-        #         # , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
-
-        #         return Asig(self.sig[start0:stop0:step0, index[1]]
-        #         , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
+            # return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+            raise TypeError("index must be int, array, or slice")
 
 
-        #     elif isinstance(index[1], list):
-        #         return Asig(self.sig[start0:stop0:step0, index[1]]
-        #         , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
-
-
-        # else:
-        #     raise TypeError("index must be int, array, or slice")
 
 
     #TODO: this method is not checked with multichannels.
@@ -879,6 +877,9 @@ class Aserver:
         self.pa = pyaudio.PyAudio()
         self.channels = channels
         self.device_dict = self.pa.get_device_info_by_index(self.device)
+        """
+            self.max_out_chn is not that useful: there can be multiple devices having the same mu
+        """
         self.max_out_chn = self.device_dict['maxOutputChannels']
         if self.max_out_chn < self.channels:
             print(f"Aserver: warning: {channels}>{self.max_out_chn} channels requested - truncated.")
@@ -902,12 +903,43 @@ class Aserver:
         if not self.format in [pyaudio.paInt16, pyaudio.paFloat32]:
             print(f"Aserver: currently unsupported pyaudio format {self.format}")
         self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.dtype)
+        self.input_devices = []
+        self.output_devices = []
+        for i in range(self.pa.get_device_count()):
+            if self.pa.get_device_info_by_index(i)['maxInputChannels'] > 0:
+                self.input_devices.append(self.pa.get_device_info_by_index(i))
+            if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
+                self.output_devices.append(self.pa.get_device_info_by_index(i))
 
     def __repr__(self):
         state = False
         if self.pastream:
             state = self.pastream.is_active()
-        return f"AServer: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}"
+        msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}
+Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
+        return msg
+
+
+    def get_devices(self):
+        print ("Input Devices: ")
+        [print (f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}") for i in self.input_devices]
+        print ("Output Devices: ")
+        [print (f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}") for i in self.output_devices]
+        return self.input_devices, self.output_devices
+
+    def print_device_info(self):
+        print ("Input Devices: ")
+        [print (i) for i in self.input_devices]
+        print ("\n")
+        print ("Output Devices: ")
+        [print (o) for o in self.output_devices]
+
+    def set_device(self, idx, reboot = True):
+        self.device = idx
+        self.device_dict = self.pa.get_device_info_by_index(self.device)
+        if reboot:
+            self.quit()
+            self.boot()
 
     def boot(self):
         """ boot Aserver = start stream, setting its callback to this callback"""
@@ -917,10 +949,12 @@ class Aserver:
         self.pastream = self.pa.open(format=self.format, channels=self.channels, rate=self.sr,
             input=False, output=True, frames_per_buffer=self.bs,
             output_device_index=self.device, stream_callback=self._play_callback)
+
         self.boot_time = time.time()
         self.block_time = self.boot_time
         self.block_cnt = 0
         self.pastream.start_stream()
+        print ("Server Booted")
         return self
 
     def quit(self):
