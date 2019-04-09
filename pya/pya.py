@@ -50,7 +50,6 @@ class Asig:
         self.cn = cn
         self._set_col_names()
 
-
     def load_wavfile(self, fname):
         # Discuss to change to float32 .
         self.sr, self.sig = wavfile.read(fname) # load the sample data
@@ -70,7 +69,6 @@ class Asig:
             print("load_wavfile: TODO: add format")
 
         # ToDo: set channels here
-
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         if dtype == 'int16':
             data = (self.sig*32767).astype('int16')
@@ -93,7 +91,6 @@ class Asig:
             else:
                 raise TypeError("column names need to be a list of strings")
 
-
     def __getitem__(self, index):
         """
             Here are all the possibility:
@@ -110,13 +107,16 @@ class Asig:
             # This doesn't take into acount of str yet
             if isinstance(index[0], str):
                 col_idx = [self.col_name.get(s) for s in index]
-                return Asig(self.sig[:, col_idx], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+                return Asig(self.sig[:, col_idx], self.sr, \
+                    label=self.label+'_arrayindexed', cn=self.cn)
             else:
-                return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+                return Asig(self.sig[index], self.sr, \
+                    label=self.label+'_arrayindexed', cn=self.cn)
         elif isinstance(index, slice):
             start, stop, step = index.indices(len(self.sig))    # index is a slice
+            return Asig(self.sig[index], sr = int(self.sr/abs(step)), \
+                label= self.label+"_sliced", cn = self.cn)
 
-            return Asig(self.sig[index], sr = int(self.sr/abs(step)), label= self.label+"_sliced", cn = self.cn)
         elif isinstance(index, tuple):
             # if row is slice, need to take care of
             if isinstance(index[0], slice):
@@ -125,18 +125,20 @@ class Asig:
             else:
                 sr = self.sr
             if isinstance (index[1], slice):
-                return Asig(self.sig[index[0], index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+                return Asig(self.sig[index[0], index[1]], sr=sr, \
+                    label=self.label+'_arrayindexed', cn=self.cn)
             elif type(index[1]) is list and type(index[1][0]) is str:
                 col_idx = [self.col_name.get(s) for s in index[1]]
-                return Asig(self.sig[index[0], col_idx], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+                return Asig(self.sig[index[0], col_idx], sr=sr, \
+                    label=self.label+'_arrayindexed', cn=self.cn)
             elif type(index[1] is str):
-                return Asig(self.sig[index[0], self.col_name.get(index[1])], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+                return Asig(self.sig[index[0], self.col_name.get(index[1])], \
+                    sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
             else:
-                return Asig(self.sig[index], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+                return Asig(self.sig[index], sr=sr, \
+                    label=self.label+'_arrayindexed', cn=self.cn)
         else:
-            # return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
             raise TypeError("index must be int, array, or slice")
-
 
     #TODO: this method is not checked with multichannels.
     def tslice(self, *tidx):
@@ -149,15 +151,14 @@ class Asig:
         return Asig(self.sig[sl], self.sr, self.label+"_tsliced", cn=self.cn)
 
     def resample(self, target_sr=44100, rate=1, kind='linear'):
-        """
-            Resample signal based on interpolation, can process multichannel
-        """
+        """Resample signal based on interpolation, can process multichannel"""
         times = np.arange(self.samples )/self.sr
         tsel = np.arange(np.floor(self.samples/self.sr * target_sr/rate))*rate/target_sr
         if self.channels == 1:
             interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind,
                     assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
-            return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled", cn=self.cn)
+            return Asig(interp_fn(tsel), target_sr, \
+                label=self.label+"_resampled", cn=self.cn)
         else:
             new_sig = np.ndarray(shape = (int(self.samples/self.sr * target_sr/rate) , self.channels))
             for i in range(self.channels):
@@ -167,8 +168,7 @@ class Asig:
             return Asig(new_sig, target_sr, label=self.label+"_resampled", cn=self.cn)
 
     def play(self, rate=1, **kwargs):
-        """
-        Play Asig audio via Aserver, using Aserver.default (if existing)
+        """Play Asig audio via Aserver, using Aserver.default (if existing)
         kwargs are propagated to Aserver:play (onset=0, out=0)
         IDEA/ToDo: allow to set server='stream' to create
           which terminates when finished using pyaudiostream
@@ -190,8 +190,7 @@ class Asig:
         return self
 
     def route(self, out=0):
-        """
-            Route the signal to n channel starting with out (type int):
+        """Route the signal to n channel starting with out (type int):
                 out = 0: does nothing as the same signal is being routed to the same position
                 out > 0: move the first channel of self.sig to out channel, other channels follow
                 out < 0: negative slicing, if overslicing, do nothing.
@@ -255,7 +254,6 @@ class Asig:
             sig = np.sum(self.sig_copy * blend, axis = 1)
             return Asig(sig, self.sr, label=self.label+'_blended', cn=self.cn)
 
-    @timeit
     def to_stereo(self, blend):
         """
             Blend any channel of signal to stereo.
@@ -274,30 +272,24 @@ class Asig:
             sig = np.stack((left_sig,right_sig), axis = 1)
             return Asig(sig, self.sr, label=self.label+'_to_stereo', cn=self.cn)
         else:
-            print ("Error: blend needs to be a list of left and right mix, e.g [[0.4],[0.5]], each element needs to match the channel size")
+            print ("Error: blend needs to be a list of left "
+                + "and right mix, e.g [[0.4],[0.5]], each element needs to match the channel size")
             return self
 
-    @timeit
     def rewire(self, dic):
-        """
-            rewire channels:
+        """rewire channels:
             {(0, 1): 0.5}: move channel 0 to 1 then reduce gain to 0.5
         """
         max_ch  = max(dic, key=lambda x: x[1])[1] # Find what the largest channel in the newly rewired is .
-
         if max_ch > self.channels :
             new_sig = np.zeros((self.samples, max_ch))
             new_sig[:, :self.channels] = self.sig_copy
         else:
             new_sig = self.sig
-
         for i, k in enumerate(dic):
             new_sig[k[1]] = self.sig_copy[k[0]] * i
-
         return Asig(new_sig, self.sr, label=self.label+'_rewire', cn=self.cn)
 
-
-    @timeit
     def pan2(self,  pan = 0.):
         """
             pan2 only creates output in stereo, mono will be copy to stereo, stereo works as it should,
@@ -315,14 +307,14 @@ class Asig:
                 if self.channels == 1:
                     newsig = np.repeat(self.sig_copy, 2)# This is actually quite slow
                     newsig_shape = newsig.reshape(-1, 2) * gain
-                    return Asig(newsig_shape, self.sr, label=self.label+"_pan2ed", channels = 2, cn=self.cn)
+                    return Asig(newsig_shape, self.sr, \
+                        label=self.label+"_pan2ed", channels = 2, cn=self.cn)
                 else:
                     self.sig_copy[:,:2] *= gain
                     return Asig(newsig, self.sr, label=self.label+"_pan2ed", cn=self.cn)
             else:
                 print ("Warning: Scalar panning need to be in the range -1. to 1. nothing changed.")
                 return self
-
 
     def overwrite(self, sig, sr = None):
         """
@@ -888,9 +880,11 @@ Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
 
     def get_devices(self):
         print ("Input Devices: ")
-        [print (f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}") for i in self.input_devices]
+        [print (f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}")\
+             for i in self.input_devices]
         print ("Output Devices: ")
-        [print (f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}") for i in self.output_devices]
+        [print (f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}")\
+             for i in self.output_devices]
         return self.input_devices, self.output_devices
 
     def print_device_info(self):
@@ -905,7 +899,10 @@ Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         self.device_dict = self.pa.get_device_info_by_index(self.device)
         if reboot:
             self.quit()
-            self.boot()
+            try:
+                self.boot()
+            except OSError:
+                print ("Error: Invalid device. Server did not boot.")
 
     def boot(self):
         """ boot Aserver = start stream, setting its callback to this callback"""
