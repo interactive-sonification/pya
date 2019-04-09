@@ -14,9 +14,8 @@ from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
 import pyaudio
 from .pyaudiostream import PyaudioStream
-
 from .helpers import ampdb, linlin, dbamp, timeit
-
+from .ugen import *
 
 # def ts(t0, t1, step):
 #     return {'tslice': [t0, t1, step]}
