@@ -403,7 +403,7 @@ class Asig:
     def rms(self, axis=0):
         return np.sqrt(np.mean(np.square(self.sig), axis))
 
-    def plot(self, fn=None, **kwargs):
+    def plot(self, fn=None, offset=0, scale=1, **kwargs):
         if fn:
             if fn=='db':
                 fn=lambda x: np.sign(x) * ampdb((abs(x)*2**16 + 1))
@@ -413,7 +413,15 @@ class Asig:
             plot_sig = fn(self.sig)
         else:
             plot_sig = self.sig
-        self._['plot'] = plt.plot(np.arange(0, self.samples)/self.sr, plot_sig, **kwargs)
+        if offset==0 and scale==1:
+            self._['plot'] = plt.plot(np.arange(0, self.samples)/self.sr, plot_sig, **kwargs)
+        else:
+            p = []
+            ts = np.linspace(0, self.samples/self.sr, self.samples)
+            for i, c in enumerate(self.sig.T):
+                p.append(plt.plot(ts, i*offset + c*scale , **kwargs))
+                plt.xlabel("time [s]")
+                if self.cn: plt.text(0, (i+0.1)*offset, self.cn[i])
         return self
 
     def get_duration(self):
@@ -830,7 +838,7 @@ class Astft:
 
 # global pya.startup() and shutdown() fns
 def startup(**kwargs):
-    Aserver.startup_default_server(**kwargs)
+    return Aserver.startup_default_server(**kwargs)
 
 def shutdown(**kwargs):
     Aserver.shutdown_default_server(**kwargs)
@@ -849,6 +857,7 @@ class Aserver:
             print(Aserver.default)
         else:
             print("Aserver default_server already set.")
+        return Aserver.default
 
     @staticmethod
     def shutdown_default_server():
