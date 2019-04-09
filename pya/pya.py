@@ -95,6 +95,7 @@ class Asig:
             else:
                 raise TypeError("column names need to be a list of strings")
 
+
     def __getitem__(self, index):
         """
             Here are all the possibility:
