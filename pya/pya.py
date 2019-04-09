@@ -17,8 +17,6 @@ from .pyaudiostream import PyaudioStream
 
 from .helpers import ampdb, linlin, dbamp, timeit
 
-
-
 class Asig:
     'audio signal class'
     def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
@@ -140,8 +138,6 @@ class Asig:
             raise TypeError("index must be int, array, or slice")
 
 
-
-
     #TODO: this method is not checked with multichannels.
     def tslice(self, *tidx):
         if len(tidx) == 1: # stop
@@ -151,15 +147,6 @@ class Asig:
         else:
             sl = slice(int(tidx[0]*self.sr), int(tidx[1]*self.sr), tidx[2])
         return Asig(self.sig[sl], self.sr, self.label+"_tsliced", cn=self.cn)
-
-    # def resample(self, target_sr=44100, rate=1, kind='linear'):
-    #     # This only work for single channel.
-    #     times = np.arange(self.samples )/self.sr
-
-    #     interp_fn = scipy.interpolate.interp1d(times, self.sig, kind=kind,
-    #                 assume_sorted=True, bounds_error=False, fill_value=self.sig[-1])
-    #     tsel = np.arange(self.samples/self.sr * target_sr/rate)*rate/target_sr
-    #     return Asig(interp_fn(tsel), target_sr, label=self.label+"_resampled")
 
     def resample(self, target_sr=44100, rate=1, kind='linear'):
         """
@@ -202,27 +189,6 @@ class Asig:
         s.play(asig, **kwargs)
         return self
 
-    # def stop(self):
-    #     """
-    #         Stop playing: oops, if played via Aserver that's more difficult...
-    #     """
-    #     try:
-    #         self._['play'].audiostream.stopPlaying()
-    #     except KeyError:
-    #         print ("No play no stop, nothing happened.")
-    #     return self
-
-    # def stop(self):
-    #     """
-    #         Stop playing
-    #     """
-    #     try:
-    #         self._['play'].audiostream.stopPlaying()
-    #     except KeyError:
-    #         print ("No play no stop, nothing happened.")
-    #     return self
-
-    @timeit
     def route(self, out=0):
         """
             Route the signal to n channel starting with out (type int):
@@ -230,7 +196,6 @@ class Asig:
                 out > 0: move the first channel of self.sig to out channel, other channels follow
                 out < 0: negative slicing, if overslicing, do nothing.
         """
-
         if type(out) is int:
             if out == 0:  #If 0 do nothing.
                 return self
