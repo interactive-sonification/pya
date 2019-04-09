@@ -18,6 +18,8 @@ from .pyaudiostream import PyaudioStream
 from .helpers import ampdb, linlin, dbamp, timeit
 
 
+# def ts(t0, t1, step):
+#     return {'tslice': [t0, t1, step]}
 
 class Asig:
     'audio signal class'
@@ -95,6 +97,10 @@ class Asig:
             else:
                 raise TypeError("column names need to be a list of strings")
 
+    @staticmethod
+    def ts(t0, t1, step):
+        return {'tslice': [t0, t1, step]}
+
 
     def __getitem__(self, index):
         """
@@ -105,6 +111,7 @@ class Asig:
             3. list: integer can self.sig[index]; string will subset by colname
             4. Tuple:
                 same as 1,2,3 for both row and column.
+                ts for time slicing.            
         """
         if isinstance(index, int):
             return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
@@ -124,19 +131,27 @@ class Asig:
             if isinstance(index[0], slice):
                 start, stop, step = index[0].indices(len(self.sig))
                 sr = int(self.sr/abs(step))
+                rslice = index[0] # row slice
+
+            elif isinstance(index[0], dict) and 'tslice' in index[0].keys():
+                tstart, tstop, step = index[0]['tslice']
+                rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
+                sr = int(self.sr/abs(step))
+
             else:
+                rslice = index[0]
                 sr = self.sr
             if isinstance (index[1], slice):
-                return Asig(self.sig[index[0], index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+                return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
             elif type(index[1]) is list and type(index[1][0]) is str:
                 col_idx = [self.col_name.get(s) for s in index[1]]
-                return Asig(self.sig[index[0], col_idx], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
-            elif type(index[1] is str):
-                return Asig(self.sig[index[0], self.col_name.get(index[1])], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
-            else:
-                return Asig(self.sig[index], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+                return Asig(self.sig[rslice, col_idx], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+            elif isinstance(index[1], str):
+                # The column name should be incorrect afterward. 
+                return Asig(self.sig[rslice, self.col_name.get(index[1])], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+            elif isinstance(index[1], int):
+                return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
         else:
-            # return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
             raise TypeError("index must be int, array, or slice")
 
 
