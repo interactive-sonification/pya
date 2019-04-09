@@ -96,52 +96,49 @@ class Asig:
                 raise TypeError("column names need to be a list of strings")
 
     def __getitem__(self, index):
-        if isinstance(index, tuple):
-            if isinstance (index[1], slice):
-                return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
-            elif type(index[1]) is list and type(index[1][0]) is str:
-                col_idx = [self.col_name.get(s) for s in index[1]]
-                return Asig(self.sig[index[0], col_idx], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
-            elif type(index[1] is str):
-                return Asig(self.sig[index[0], self.col_name.get(index[1])], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+        """
+            Here are all the possibility: 
+            index is slice, int, list, tuple, 
+            1. int can be directly self.sig[index] (else condition )
+            2. slice needs to take into account of step for resampling. 
+            3. list: integer can self.sig[index]; string will subset by colname
+            4. Tuple:
+                same as 1,2,3 for both row and column. 
+        """
+        if isinstance(index, int):
+            return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+        elif isinstance(index, list):
+            # This doesn't take into acount of str yet
+            if isinstance(index[0], str):
+                col_idx = [self.col_name.get(s) for s in index]
+                return Asig(self.sig[:, col_idx], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
             else:
                 return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+        elif isinstance(index, slice):
+            start, stop, step = index.indices(len(self.sig))    # index is a slice
+    
+            return Asig(self.sig[index], sr = int(self.sr/abs(step)), label= self.label+"_sliced", cn = self.cn)
+        elif isinstance(index, tuple):
+            # if row is slice, need to take care of 
+            if isinstance(index[0], slice):
+                start, stop, step = index[0].indices(len(self.sig))
+                sr = int(self.sr/abs(step))
+            else:
+                sr = self.sr
+            if isinstance (index[1], slice):
+                return Asig(self.sig[index[0], index[1]], sr = sr, label=self.label+'_arrayindexed', cn=self.cn)
+            elif type(index[1]) is list and type(index[1][0]) is str:
+                col_idx = [self.col_name.get(s) for s in index[1]]
+                return Asig(self.sig[index[0], col_idx], sr = sr, label=self.label+'_arrayindexed', cn=self.cn)
+            elif type(index[1] is str):
+                return Asig(self.sig[index[0], self.col_name.get(index[1])], sr = sr, label=self.label+'_arrayindexed', cn=self.cn)
+            else:
+                return Asig(self.sig[index], sr = sr, label=self.label+'_arrayindexed', cn=self.cn)
         else:
-            return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
-
-        # if isinstance(index, slice):
-        #     start, stop, step = index.indices(len(self.sig))    # index is a slice
-        #     return Asig(self.sig[start:stop:step], int(self.sr/abs(step)), bs = self.bs, label= self.label+"_sliced")
-        # elif isinstance(index, list) or isinstance(index, np.ndarray):
-        #     return Asig(self.sig[index], self.sr, bs = self.bs, label = self.label+"_arrayindexed")
-        # elif isinstance(index, str):
-        #     return self._[index]
-        # elif isinstance(index, tuple):
-        #     # tuple is used for channel slicing, [:, :2]
-        #     start0, stop0, step0 = index[0].indices(len(self.sig))
-        #     if isinstance(index[1], slice):
-        #         # This is not ok
-        #         start1, stop1, step1 = index[1].indices(len(self.sig))
-        #         return Asig(self.sig[start0:stop0:step0, start1:stop1:step1]
-        #         , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
-
-        #     elif isinstance(index[1], int):
-        #         # s_copy = self.sig.copy()
-        #         # s_copy[:, np.isin(np.arange(self.channels), index[1], invert=True)] = 0
-        #         # return Asig(s_copy[start0:stop0:step0, :]
-        #         # , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
-
-        #         return Asig(self.sig[start0:stop0:step0, index[1]]
-        #         , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
+            # return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+            raise TypeError("index must be int, array, or slice")
 
 
-        #     elif isinstance(index[1], list):
-        #         return Asig(self.sig[start0:stop0:step0, index[1]]
-        #         , int(self.sr/abs(step0)), bs = self.bs, label= self.label+"_sliced")
-
-
-        # else:
-        #     raise TypeError("index must be int, array, or slice")
 
 
     #TODO: this method is not checked with multichannels.
