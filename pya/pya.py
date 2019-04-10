@@ -102,6 +102,7 @@ class Asig:
                 same as 1,2,3 for both row and column.
                 ts for time slicing.            
         """
+
         if isinstance(index, int):
             return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
         elif isinstance(index, list):
@@ -120,6 +121,8 @@ class Asig:
 
         elif isinstance(index, tuple):
             # if row is slice, need to take care of
+            print (index)
+        
             if isinstance(index[0], slice):
                 start, stop, step = index[0].indices(len(self.sig))
                 sr = int(self.sr/abs(step))
@@ -138,16 +141,20 @@ class Asig:
             else:
                 rslice = index[0]
                 sr = self.sr
-            if isinstance (index[1], slice):
+            if isinstance (index[1], slice) or isinstance(index[1], list) or isinstance(index[1], int):
                 return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+            
+            
             elif type(index[1]) is list and type(index[1][0]) is str:
                 col_idx = [self.col_name.get(s) for s in index[1]]
                 return Asig(self.sig[rslice, col_idx], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+            
+            
+            
             elif isinstance(index[1], str):
                 # The column name should be incorrect afterward. 
                 return Asig(self.sig[rslice, self.col_name.get(index[1])], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
-            elif isinstance(index[1], int):
-                return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+
         else:
             raise TypeError("index must be int, array, or slice")
 
