@@ -61,3 +61,5 @@ def noise(typ="white", amp=1.0, dur=1.0, sr=44100, channels=1, cn=None):
             b6 = white * 0.115926
         sig = _normalize(sig) * amp
     return Asig(sig, sr=sr, label=typ, channels=channels, cn=cn)
+
+#TODO, FM AM Additive Subtractive But for the future. This is not necessary right now. 
