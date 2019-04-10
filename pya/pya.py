@@ -122,20 +122,14 @@ class Asig:
 
         elif isinstance(index, tuple):
             # if row is slice, need to take care of
-            print ("is tuple")
-                    
-
-
             if isinstance(index[0], slice):
                 start, stop, step = index[0].indices(len(self.sig))
                 sr = int(self.sr/abs(step))
                 rslice = index[0] # row slice
 
             elif isinstance(index[0], int) or isinstance(index[0], float):
-                print ("index[0] is int or float")
                 if isinstance(index[1], int) or isinstance(index[1], float):
                     #Case: a[(2,4)] or a[(2,4,1)]
-                    print ("Is this condition")
                     tstart = index[0]; tstop = index[1]
                     if len(index) == 3: # has step in it
                         step = index[2]
@@ -146,9 +140,9 @@ class Asig:
                     rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
                     return Asig(self.sig[rslice], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
                 else:
-                    if isinstance(index[0], int):
-                        rslice = index[0]
-                        sr = self.sr
+                    # if index[0] < 0:
+                    rslice = index[0]
+                    sr = self.sr
 
             elif isinstance(index[0], tuple): #time slice with tuple (start,end) or (start,end,step)
                 if len(index[0]) == 2:
