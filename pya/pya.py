@@ -17,9 +17,6 @@ from .pyaudiostream import PyaudioStream
 from .helpers import ampdb, linlin, dbamp, timeit
 from .ugen import *  # newly added ugen. 
 
-# def ts(t0, t1, step):
-#     return {'tslice': [t0, t1, step]}
-
 class Asig:
     'audio signal class'
     def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
@@ -94,7 +91,6 @@ class Asig:
             else:
                 raise TypeError("column names need to be a list of strings")
 
-
     def __getitem__(self, index):
         """
             Here are all the possibility:
@@ -155,7 +151,7 @@ class Asig:
         else:
             raise TypeError("index must be int, array, or slice")
 
-    #TODO: this method is not checked with multichannels.
+    #TODO: this may not be necessary any more. 
     def tslice(self, *tidx):
         if len(tidx) == 1: # stop
             sl = slice(0, tidx[0]*self.sr)
