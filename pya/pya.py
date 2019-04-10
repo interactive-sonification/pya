@@ -94,10 +94,6 @@ class Asig:
             else:
                 raise TypeError("column names need to be a list of strings")
 
-    @staticmethod
-    def ts(t0, t1, step):
-        return {'tslice': [t0, t1, step]}
-
 
     def __getitem__(self, index):
         """
@@ -133,9 +129,14 @@ class Asig:
                 sr = int(self.sr/abs(step))
                 rslice = index[0] # row slice
 
-            elif isinstance(index[0], dict) and 'tslice' in index[0].keys():
-                tstart, tstop, step = index[0]['tslice']
-                rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
+            elif isinstance(index[0], tuple): #time slice with tuple (start,end) or (start,end,step)
+                if len(index[0]) == 2:
+                    tstart, tstop = index[0]
+                    step = 1
+                    rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
+                else:
+                    tstart, tstop, step = index[0]
+                    rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
                 sr = int(self.sr/abs(step))
 
             else:
