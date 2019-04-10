@@ -102,6 +102,7 @@ class Asig:
                 same as 1,2,3 for both row and column.
                 ts for time slicing.            
         """
+        print (index)
 
         if isinstance(index, int):
             return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
@@ -121,12 +122,33 @@ class Asig:
 
         elif isinstance(index, tuple):
             # if row is slice, need to take care of
-            print (index)
-        
+            print ("is tuple")
+                    
+
+
             if isinstance(index[0], slice):
                 start, stop, step = index[0].indices(len(self.sig))
                 sr = int(self.sr/abs(step))
                 rslice = index[0] # row slice
+
+            elif isinstance(index[0], int) or isinstance(index[0], float):
+                print ("index[0] is int or float")
+                if isinstance(index[1], int) or isinstance(index[1], float):
+                    #Case: a[(2,4)] or a[(2,4,1)]
+                    print ("Is this condition")
+                    tstart = index[0]; tstop = index[1]
+                    if len(index) == 3: # has step in it
+                        step = index[2]
+                        sr = int(self.sr/abs(step))
+                    else:
+                        step = 1
+                        sr = self.sr
+                    rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
+                    return Asig(self.sig[rslice], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+                else:
+                    if isinstance(index[0], int):
+                        rslice = index[0]
+                        sr = self.sr
 
             elif isinstance(index[0], tuple): #time slice with tuple (start,end) or (start,end,step)
                 if len(index[0]) == 2:
@@ -144,12 +166,9 @@ class Asig:
             if isinstance (index[1], slice) or isinstance(index[1], list) or isinstance(index[1], int):
                 return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
             
-            
             elif type(index[1]) is list and type(index[1][0]) is str:
                 col_idx = [self.col_name.get(s) for s in index[1]]
                 return Asig(self.sig[rslice, col_idx], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
-            
-            
             
             elif isinstance(index[1], str):
                 # The column name should be incorrect afterward. 
