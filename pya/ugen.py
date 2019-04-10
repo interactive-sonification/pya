@@ -39,13 +39,14 @@ def sawtooth(freq=440, amp=1.0, dur=1.0, width=1., sr=44100, channels=1, cn=None
     return Asig(sig, sr=sr, label="sawtooth", channels=channels, cn=cn)
 
 def noise(typ="white", amp=1.0, dur=1.0, sr=44100, channels=1, cn=None):
-    from .pay import Asig
+    from .pya import Asig
     length = _get_length(dur, sr)
     # Question is that will be that be too slow. 
     if typ == "white" or "white_noise":
         sig = np.random.rand(length) * amp  # oR may switch to normal
 
     elif typ == "pink" or "pink_noise":
+        # Based on Paul Kellet's method
         b0,b1,b2,b3,b4,b5,b6 = 0,0,0,0,0,0,0
         sig = []
         for i in range(length):
@@ -59,11 +60,4 @@ def noise(typ="white", amp=1.0, dur=1.0, sr=44100, channels=1, cn=None):
             sig.append(b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362)
             b6 = white * 0.115926
         sig = _normalize(sig) * amp
-
-    # elif typ == "brown" or "brown_noise"
-
-
-
-
-
     return Asig(sig, sr=sr, label=typ, channels=channels, cn=cn)
