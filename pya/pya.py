@@ -15,10 +15,7 @@ from scipy.io import wavfile
 import pyaudio
 from .pyaudiostream import PyaudioStream
 from .helpers import ampdb, linlin, dbamp, timeit
-from .ugen import *
-
-# def ts(t0, t1, step):
-#     return {'tslice': [t0, t1, step]}
+from .ugen import *  # newly added ugen. 
 
 class Asig:
     'audio signal class'
@@ -94,11 +91,6 @@ class Asig:
             else:
                 raise TypeError("column names need to be a list of strings")
 
-    @staticmethod
-    def ts(t0, t1, step):
-        return {'tslice': [t0, t1, step]}
-
-
     def __getitem__(self, index):
         """
             Here are all the possibility:
@@ -133,9 +125,14 @@ class Asig:
                 sr = int(self.sr/abs(step))
                 rslice = index[0] # row slice
 
-            elif isinstance(index[0], dict) and 'tslice' in index[0].keys():
-                tstart, tstop, step = index[0]['tslice']
-                rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
+            elif isinstance(index[0], tuple): #time slice with tuple (start,end) or (start,end,step)
+                if len(index[0]) == 2:
+                    tstart, tstop = index[0]
+                    step = 1
+                    rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
+                else:
+                    tstart, tstop, step = index[0]
+                    rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
                 sr = int(self.sr/abs(step))
 
             else:
@@ -154,7 +151,7 @@ class Asig:
         else:
             raise TypeError("index must be int, array, or slice")
 
-    #TODO: this method is not checked with multichannels.
+    #TODO: this may not be necessary any more. 
     def tslice(self, *tidx):
         if len(tidx) == 1: # stop
             sl = slice(0, tidx[0]*self.sr)
