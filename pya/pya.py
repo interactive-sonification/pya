@@ -16,6 +16,10 @@ import pyaudio
 from .pyaudiostream import PyaudioStream
 from .helpers import ampdb, linlin, dbamp, timeit
 from .ugen import *  # newly added ugen. 
+import logging
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.addHandler(logging.NullHandler())
+
 
 class Asig:
     'audio signal class'
@@ -94,20 +98,23 @@ class Asig:
     def __getitem__(self, index):
         """
             Here are all the possibility:
-            index is slice, int, list, tuple,
-            1. int can be directly self.sig[index] (else condition )
-            2. slice needs to take into account of step for resampling.
-            3. list: integer can self.sig[index]; string will subset by colname
-            4. Tuple:
-                same as 1,2,3 for both row and column.
-                ts for time slicing.            
+            1. Index is integer: a[5], as numpy . get row 5
+            2. Index is list: a[[3,4,5]] returns row 3,4,5
+            3. Index is slice: a[3:50:1], row slicing
+            4. Index is set: a[{1,3}], time slicing. 
+            4. Index is tuple: tuple always has two elements. 
+                * Index[0] is int, list, slice or tuple.   
+                # Index[0] is a set. time slicing. 
+                # Index[1] is int, list, slice, list of str, list of boolean. 
         """
-        print (index)
 
+        # _LOGGER.info(type(index))
         if isinstance(index, int):
+            # Case a[4], 4th row 
             return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
+
         elif isinstance(index, list):
-            # This doesn't take into acount of str yet
+            # Case a[[1,2,4]] for row selection or case[['l']] name column selection 
             if isinstance(index[0], str):
                 col_idx = [self.col_name.get(s) for s in index]
                 return Asig(self.sig[:, col_idx], self.sr, \
@@ -115,55 +122,59 @@ class Asig:
             else:
                 return Asig(self.sig[index], self.sr, \
                     label=self.label+'_arrayindexed', cn=self.cn)
+
         elif isinstance(index, slice):
+            # Case a[start:stop:step], 
             start, stop, step = index.indices(len(self.sig))    # index is a slice
             return Asig(self.sig[index], sr = int(self.sr/abs(step)), \
                 label= self.label+"_sliced", cn = self.cn)
 
+        elif isinstance(index, set):
+            # Case a[{0, 2}] Play from 0s to 2.0s
+            print (index)
+            index = list(index) # convert a set to list for indexing
+            tstart = index[0]
+            tstop = index[1]
+            sr = self.sr
+            rslice = slice(int(tstart*self.sr), int(tstop*self.sr), 1)
+            return Asig(self.sig[rslice], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+
         elif isinstance(index, tuple):
-            # if row is slice, need to take care of
-            if isinstance(index[0], slice):
+            # Tuple is when there are dedicated slicing for rows and columns. 
+
+            # First check index[0]
+            if isinstance(index[0], int) or isinstance(index[0], list):
+                # Case a[4, :], 
+                rslice = index[0]
+                sr = self.sr
+
+            elif isinstance(index[0], slice):
                 start, stop, step = index[0].indices(len(self.sig))
                 sr = int(self.sr/abs(step))
                 rslice = index[0] # row slice
 
-            elif isinstance(index[0], int) or isinstance(index[0], float):
-                if isinstance(index[1], int) or isinstance(index[1], float):
-                    #Case: a[(2,4)] or a[(2,4,1)]
-                    tstart = index[0]; tstop = index[1]
-                    if len(index) == 3: # has step in it
-                        step = index[2]
-                        sr = int(self.sr/abs(step))
-                    else:
-                        step = 1
-                        sr = self.sr
-                    rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
-                    return Asig(self.sig[rslice], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
-                else:
-                    # if index[0] < 0:
-                    rslice = index[0]
-                    sr = self.sr
-
-            elif isinstance(index[0], tuple): #time slice with tuple (start,end) or (start,end,step)
-                if len(index[0]) == 2:
-                    tstart, tstop = index[0]
-                    step = 1
-                    rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
-                else:
-                    tstart, tstop, step = index[0]
-                    rslice = slice(int(tstart*self.sr), int(tstop*self.sr), step)
-                sr = int(self.sr/abs(step))
+            elif isinstance(index[0], set): #Time slicing
+                val = [i for i in index[0]]
+                tstart = val[0]
+                tstop = val[1]
+                sr = self.sr
+                rslice = slice(int(tstart*self.sr), int(tstop*self.sr), 1)
 
             else:
                 rslice = index[0]
                 sr = self.sr
-            if isinstance (index[1], slice) or isinstance(index[1], list) or isinstance(index[1], int):
-                return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
-            
-            elif type(index[1]) is list and type(index[1][0]) is str:
+
+            # Now check index[1]: 
+            # First check if index[1] is channel name slicing 
+            if type(index[1]) is list and type(index[1][0]) is str:
                 col_idx = [self.col_name.get(s) for s in index[1]]
                 return Asig(self.sig[rslice, col_idx], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+
+            # int, list, slice are the same. 
+            elif isinstance (index[1], int) or isinstance(index[1], list) or isinstance(index[1], slice):
+                return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn) 
             
+            # if only a single channel name is given. 
             elif isinstance(index[1], str):
                 # The column name should be incorrect afterward. 
                 return Asig(self.sig[rslice, self.col_name.get(index[1])], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
