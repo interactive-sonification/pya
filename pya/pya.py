@@ -171,6 +171,12 @@ class Asig:
         else:
             raise TypeError("index must be int, array, or slice")
 
+    def __eq__(self, other):
+        sig_eq = np.array_equal(self.sig, other.sig)
+        sr_eq = self.sr == other.sr
+        return sig_eq and sr_eq
+
+
     #TODO: this may not be necessary any more. 
     def tslice(self, *tidx):
         if len(tidx) == 1: # stop
