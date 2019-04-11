@@ -136,6 +136,7 @@ class Asig:
             tstart = index[0]
             tstop = index[1]
             sr = self.sr
+            
             rslice = slice(int(tstart*self.sr), int(tstop*self.sr), 1)
             return Asig(self.sig[rslice], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
 
