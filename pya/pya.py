@@ -129,14 +129,15 @@ class Asig:
             return Asig(self.sig[index], sr = int(self.sr/abs(step)), \
                 label= self.label+"_sliced", cn = self.cn)
 
-        elif isinstance(index, set):
+        elif isinstance(index, dict):
             # Case a[{0, 2}] Play from 0s to 2.0s
-            print (index)
-            index = list(index) # convert a set to list for indexing
-            tstart = index[0]
-            tstop = index[1]
+            # print (index)
+            # index = list(index) # convert a set to list for indexing
+            # tstart = index[0]
+            # tstop = index[1]
+            for key, value in index.items():
+                tstart, tstop = key, value
             sr = self.sr
-            
             rslice = slice(int(tstart*self.sr), int(tstop*self.sr), 1)
             return Asig(self.sig[rslice], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
 
@@ -154,10 +155,10 @@ class Asig:
                 sr = int(self.sr/abs(step))
                 rslice = index[0] # row slice
 
-            elif isinstance(index[0], set): #Time slicing
-                val = [i for i in index[0]]
-                tstart = val[0]
-                tstop = val[1]
+            elif isinstance(index[0], dict): #Time slicing
+ 
+                for key, value in index[0].items():
+                    tstart, tstop = key, value
                 sr = self.sr
                 rslice = slice(int(tstart*self.sr), int(tstop*self.sr), 1)
 
