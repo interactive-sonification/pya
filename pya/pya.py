@@ -117,10 +117,11 @@ class Asig:
             if isinstance(index[0], str):
                 col_idx = [self.col_name.get(s) for s in index]
                 return Asig(self.sig[:, col_idx], self.sr, \
-                    label=self.label+'_arrayindexed', cn=self.cn)
+                    label=self.label+'_arrayindexed', cn=index)
             else:
+                cn_new = [self.cn[i] for i in index]
                 return Asig(self.sig[index], self.sr, \
-                    label=self.label+'_arrayindexed', cn=self.cn)
+                    label=self.label+'_arrayindexed', cn=cn_new)
 
         elif isinstance(index, slice):
             # Case a[start:stop:step], 
@@ -176,16 +177,21 @@ class Asig:
             # First check if index[1] is channel name slicing 
             if type(index[1]) is list and type(index[1][0]) is str:
                 col_idx = [self.col_name.get(s) for s in index[1]]
-                return Asig(self.sig[rslice, col_idx], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+                cn_new = [self.cn[i] for i in col_idx]
+                return Asig(self.sig[rslice, col_idx], sr=sr, label=self.label+'_arrayindexed', cn=cn_new)
 
             # int, list, slice are the same. 
             elif isinstance (index[1], int) or isinstance(index[1], list) or isinstance(index[1], slice):
-                return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=self.cn) 
+                if isinstance(index[1], list):
+                    cn_new = [self.cn[i] for i in index[1]]
+                else:
+                    cn_new = self.cn[index[1]]
+                return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=cn_new) 
             
             # if only a single channel name is given. 
             elif isinstance(index[1], str):
                 # The column name should be incorrect afterward. 
-                return Asig(self.sig[rslice, self.col_name.get(index[1])], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
+                return Asig(self.sig[rslice, self.col_name.get(index[1])], sr=sr, label=self.label+'_arrayindexed', cn=index[1])
 
         else:
             raise TypeError("index must be int, array, or slice")
