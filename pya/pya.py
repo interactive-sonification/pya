@@ -107,7 +107,6 @@ class Asig:
                 # Index[0] is a set. time slicing. 
                 # Index[1] is int, list, slice, list of str, list of boolean. 
         """
-
         # _LOGGER.info(type(index))
         if isinstance(index, int):
             # Case a[4], 4th row 
@@ -130,15 +129,17 @@ class Asig:
                 label= self.label+"_sliced", cn = self.cn)
 
         elif isinstance(index, dict):
-            # Case a[{0, 2}] Play from 0s to 2.0s
-            # print (index)
-            # index = list(index) # convert a set to list for indexing
-            # tstart = index[0]
-            # tstop = index[1]
             for key, value in index.items():
-                tstart, tstop = key, value
+                try:
+                    start = int(key*self.sr)
+                except TypeError:
+                    start = None
+                try:
+                    stop = int(value*self.sr)
+                except TypeError:
+                    stop = None
+            rslice = slice(start, stop, 1)
             sr = self.sr
-            rslice = slice(int(tstart*self.sr), int(tstop*self.sr), 1)
             return Asig(self.sig[rslice], sr=sr, label=self.label+'_arrayindexed', cn=self.cn)
 
         elif isinstance(index, tuple):
@@ -156,12 +157,17 @@ class Asig:
                 rslice = index[0] # row slice
 
             elif isinstance(index[0], dict): #Time slicing
- 
                 for key, value in index[0].items():
-                    tstart, tstop = key, value
+                    try:
+                        start = int(key*self.sr)
+                    except TypeError: # if it is None
+                        start = None
+                    try:
+                        stop = int(value*self.sr)
+                    except TypeError: 
+                        stop = None
+                rslice = slice(start, stop, 1)
                 sr = self.sr
-                rslice = slice(int(tstart*self.sr), int(tstop*self.sr), 1)
-
             else:
                 rslice = index[0]
                 sr = self.sr
