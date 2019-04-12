@@ -251,10 +251,11 @@ class Asig:
         return self
 
     def route(self, out=0):
-        """Route the signal to n channel starting with out (type int):
-                out = 0: does nothing as the same signal is being routed to the same position
-                out > 0: move the first channel of self.sig to out channel, other channels follow
-                out < 0: negative slicing, if overslicing, do nothing.
+        """
+        Route the signal to n channel starting with out (type int):
+            out = 0: does nothing as the same signal is being routed to the same position
+            out > 0: move the first channel of self.sig to out channel, other channels follow
+            out < 0: negative slicing, if overslicing, do nothing.
         """
         if type(out) is int:
             if out == 0:  #If 0 do nothing.
