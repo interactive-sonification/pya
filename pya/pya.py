@@ -97,15 +97,16 @@ class Asig:
 
     def __getitem__(self, index):
         """
-        Here are all the possibility:
+        Accept numpy style slicing:
+
         1. Index is integer: a[5], as numpy . get row 5
         2. Index is list: a[[3,4,5]] returns row 3,4,5
         3. Index is slice: a[3:50:1], row slicing
         4. Index is set: a[{1,3}], time slicing. 
         5. Index is tuple: tuple always has two elements. 
-            * Index[0] is int, list, slice or tuple.   
-            # Index[0] is a set. time slicing. 
-            # Index[1] is int, list, slice, list of str, list of boolean. 
+            * Index[0] is int, list, slice or tuple.
+            * Index[0] is a set. time slicing.
+            * Index[1] is int, list, slice, list of str, list of boolean.
         """
         if isinstance(index, int):
             # Case a[4], 4th row 

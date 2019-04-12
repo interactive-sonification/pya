@@ -5,7 +5,6 @@ import numpy as np
 
 class TestSlicing(TestCase):
 
-
     def setUp(self):
         self.sig = np.sin(2*np.pi* 100 * np.linspace(0,1,44100))
         self.asine = Asig(self.sig, sr=44100,label="test_sine")
