@@ -17,6 +17,7 @@ from .pyaudiostream import PyaudioStream
 from .helpers import ampdb, linlin, dbamp, timeit
 from .ugen import *  # newly added ugen. 
 import logging
+
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
@@ -97,17 +98,17 @@ class Asig:
 
     def __getitem__(self, index):
         """
-            Here are all the possibility:
-            1. Index is integer: a[5], as numpy . get row 5
-            2. Index is list: a[[3,4,5]] returns row 3,4,5
-            3. Index is slice: a[3:50:1], row slicing
-            4. Index is set: a[{1,3}], time slicing. 
-            4. Index is tuple: tuple always has two elements. 
-                * Index[0] is int, list, slice or tuple.   
-                # Index[0] is a set. time slicing. 
-                # Index[1] is int, list, slice, list of str, list of boolean. 
+        Here are all the possibility:
+        1. Index is integer: a[5], as numpy . get row 5
+        2. Index is list: a[[3,4,5]] returns row 3,4,5
+        3. Index is slice: a[3:50:1], row slicing
+        4. Index is set: a[{1,3}], time slicing. 
+        5. Index is tuple: tuple always has two elements. 
+            * Index[0] is int, list, slice or tuple.   
+            # Index[0] is a set. time slicing. 
+            # Index[1] is int, list, slice, list of str, list of boolean. 
         """
-        # _LOGGER.info(type(index))
+        _LOGGER.warning("This is a logger")
         if isinstance(index, int):
             # Case a[4], 4th row 
             return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
@@ -119,9 +120,10 @@ class Asig:
                 return Asig(self.sig[:, col_idx], self.sr, \
                     label=self.label+'_arrayindexed', cn=index)
             else:
-                cn_new = [self.cn[i] for i in index]
+
+
                 return Asig(self.sig[index], self.sr, \
-                    label=self.label+'_arrayindexed', cn=cn_new)
+                    label=self.label+'_arrayindexed', cn=self.cn)
 
         elif isinstance(index, slice):
             # Case a[start:stop:step], 
