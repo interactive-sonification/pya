@@ -21,7 +21,6 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
-
 class Asig:
     'audio signal class'
     def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
@@ -108,7 +107,6 @@ class Asig:
             # Index[0] is a set. time slicing. 
             # Index[1] is int, list, slice, list of str, list of boolean. 
         """
-        _LOGGER.warning("This is a logger")
         if isinstance(index, int):
             # Case a[4], 4th row 
             return Asig(self.sig[index], self.sr, label=self.label+'_arrayindexed', cn=self.cn)
@@ -117,19 +115,17 @@ class Asig:
             # Case a[[1,2,4]] for row selection or case[['l']] name column selection 
             if isinstance(index[0], str):
                 col_idx = [self.col_name.get(s) for s in index]
-                return Asig(self.sig[:, col_idx], self.sr, \
-                    label=self.label+'_arrayindexed', cn=index)
+                return Asig(self.sig[:, col_idx], self.sr,
+                            label=self.label+'_arrayindexed', cn=index)
             else:
-
-
-                return Asig(self.sig[index], self.sr, \
-                    label=self.label+'_arrayindexed', cn=self.cn)
+                return Asig(self.sig[index], self.sr,
+                            label=self.label+'_arrayindexed', cn=self.cn)
 
         elif isinstance(index, slice):
             # Case a[start:stop:step], 
             start, stop, step = index.indices(len(self.sig))    # index is a slice
-            return Asig(self.sig[index], sr = int(self.sr/abs(step)), \
-                label= self.label+"_sliced", cn = self.cn)
+            return Asig(self.sig[index], sr = int(self.sr/abs(step)),
+                        label= self.label+"_sliced", cn = self.cn)
 
         elif isinstance(index, dict):
             for key, value in index.items():
@@ -167,7 +163,7 @@ class Asig:
                         start = None
                     try:
                         stop = int(value*self.sr)
-                    except TypeError: 
+                    except TypeError:
                         stop = None
                 rslice = slice(start, stop, 1)
                 sr = self.sr
@@ -188,9 +184,9 @@ class Asig:
                     cn_new = [self.cn[i] for i in index[1]]
                 else:
                     cn_new = self.cn[index[1]]
-                return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=cn_new) 
-            
-            # if only a single channel name is given. 
+                return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label+'_arrayindexed', cn=cn_new)
+
+            # if only a single channel name is given.
             elif isinstance(index[1], str):
                 # The column name should be incorrect afterward. 
                 return Asig(self.sig[rslice, self.col_name.get(index[1])], sr=sr, label=self.label+'_arrayindexed', cn=index[1])
@@ -204,7 +200,7 @@ class Asig:
         return sig_eq and sr_eq
 
 
-    #TODO: this may not be necessary any more. 
+    #TODO: this may not be necessary any more.
     def tslice(self, *tidx):
         if len(tidx) == 1: # stop
             sl = slice(0, tidx[0]*self.sr)
@@ -242,7 +238,7 @@ class Asig:
         else:
             s = Aserver.default
         if not isinstance(s, Aserver):
-            print("Asig.play: error: no default server running, nor server arg specified.")
+            _LOGGER.error("Asig.play: error: no default server running, nor server arg specified.")
             return
         if rate == 1 and self.sr == s.sr:
             asig = self
@@ -371,11 +367,12 @@ class Asig:
                 if self.channels == 1:
                     newsig = np.repeat(self.sig_copy, 2)# This is actually quite slow
                     newsig_shape = newsig.reshape(-1, 2) * gain
-                    return Asig(newsig_shape, self.sr, \
-                        label=self.label+"_pan2ed", channels = 2, cn=self.cn)
+                    new_cn = [self.cn, self.cn]
+                    return Asig(newsig_shape, self.sr,
+                        label=self.label+"_pan2ed", channels = 2, cn=new_cn)
                 else:
                     self.sig_copy[:,:2] *= gain
-                    return Asig(newsig, self.sr, label=self.label+"_pan2ed", cn=self.cn)
+                    return Asig(self.sig_copy, self.sr, label=self.label+"_pan2ed", cn=self.cn)
             else:
                 print ("Warning: Scalar panning need to be in the range -1. to 1. nothing changed.")
                 return self
@@ -1022,7 +1019,7 @@ Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
             asig = copy.copy(asig)
         if len(asig.sig.shape) == 1:
             asig.sig = asig.sig.reshape(asig.samples, 1)
-        asig.sig = asig.sig[:,:nchn].reshape(asig.samples, nchn)
+        asig.sig = asig.sig[:, :nchn].reshape(asig.samples, nchn)
         asig.channels = nchn
         # so now in callback safely copy to out:out+asig.sig.shape[1]
         self.srv_asigs.insert(idx, asig)
