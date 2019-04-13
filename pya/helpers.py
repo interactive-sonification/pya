@@ -6,6 +6,7 @@ import simpleaudio as sa
 from .pyaudiostream import PyaudioStream
 import time
 
+
 class _error(Exception):
     pass
 
@@ -29,7 +30,7 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
     stream = p.open(format=pyaudio.paInt16, channels=channels, rate=rate, input=True,
                     output=True, frames_per_buffer=chunk)
     buflist = []
-    for _ in range(0, int(rate/chunk*dur)):
+    for _ in range(0, int(rate / chunk * dur)):
         data = stream.read(chunk)
         buflist.append(data)
     stream.stop_stream()
@@ -37,8 +38,6 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
     p.terminate()
     return np.frombuffer(b''.join(buflist), dtype=np.int16)
 
-  
-  # Old play method with simpleaudio
 # def play(sig, num_channels=1, sr=44100, block=False):
 #     """Plays audio signal via simpleaudio
 
@@ -54,12 +53,11 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
 #     Returns:
 #         simpleaudio play_obj -- see description in simpleaudio
 #     """
-#     play_obj = sa.play_buffer((32767*sig).astype(np.int16), num_channels=num_channels, 
-#                               bytes_per_sample=2, sample_rate=sr)
+#     play_obj = sa.play_buffer((32767*sig).astype(np.int16), num_channels=num_channels,
+#     bytes_per_sample=2, sample_rate=sr)
 #     if block:
 #         play_obj.wait_done() # wait for playback to finish before returning
 #     return play_obj
-
 
 
 def linlin(x, smi, sma, dmi, dma):
@@ -76,7 +74,7 @@ def linlin(x, smi, sma, dmi, dma):
         float -- [description]
     """
 
-    return (x-smi)/(sma-smi)*(dma-dmi) + dmi
+    return (x - smi) / (sma - smi) * (dma - dmi) + dmi
 
 
 def midicps(m):
@@ -89,7 +87,7 @@ def midicps(m):
         float -- [description]
     """
 
-    return 440.0*2**((m-69)/12.0)
+    return 440.0 * 2 ** ((m - 69) / 12.0)
 
 
 def cpsmidi(c):
@@ -102,7 +100,7 @@ def cpsmidi(c):
         float -- [description]
     """
 
-    return 69+12*np.log2(c/440.0)
+    return 69 + 12 * np.log2(c / 440.0)
 
 
 def clip(value, minimum=-float("inf"), maximum=float("inf")):
@@ -130,33 +128,30 @@ def clip(value, minimum=-float("inf"), maximum=float("inf")):
 
 def dbamp(db):
     """TODO
-
     Arguments:
         db {[type]} -- [description]
 
     Returns:
         [type] -- [description]
     """
-
-    return 10**(db/20.0)
+    return 10 ** (db / 20.0)
 
 
 def ampdb(amp):
     """TODO
-
     Arguments:
         amp {[type]} -- [description]
 
     Returns:
         [type] -- [description]
     """
+    return 20 * np.log10(amp)
 
-    return 20*np.log10(amp)
 
-"""
-decorator to time methods
-"""
 def timeit(method):
+    """
+    decorator to time methods
+    """
     def timed(*args, **kw):
         ts = time.time()
         result = method(*args, **kw)
@@ -165,7 +160,7 @@ def timeit(method):
             name = kw.get('log_name', method.__name__.upper())
             kw['log_time'][name] = int((te - ts) * 1000)
         else:
-            print ('%r  %2.2f ms' % \
+            print('%r  %2.2f ms' %
                   (method.__name__, (te - ts) * 1000))
         return result
     return timed
