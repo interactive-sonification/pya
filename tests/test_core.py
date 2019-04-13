@@ -3,6 +3,8 @@ from pya import *
 import numpy as np 
 
 
+# The core should test whether the whole asig, aserver can be created.
+
 class TestPya(TestCase):
 
     def setUp(self):

@@ -51,7 +51,8 @@ class Asig:
         # make a copy for any processing events e.g. (panning, filtering)
         # that needs to process the signal without permanent change.
         self.sig_copy = self.sig.copy() # It takes around 100ms to copy a 17min audio at 44.1khz
-        self.cn = cn
+        
+        self.cn = cn  
         self._set_col_names()
 
     def load_wavfile(self, fname):
@@ -239,7 +240,7 @@ class Asig:
         else:
             s = Aserver.default
         if not isinstance(s, Aserver):
-            _LOGGER.error("Asig.play: error: no default server running, nor server arg specified.")
+            _LOGGER.error("Asig.play: no default server running, nor server arg specified.")
             return
         if rate == 1 and self.sr == s.sr:
             asig = self
@@ -250,25 +251,40 @@ class Asig:
         s.play(asig, **kwargs)
         return self
 
+
     def route(self, out=0):
+        """Route the signal to n channel. This method shift the signal to out channel:
+
+            * out = 0: does nothing as the same signal is being routed to the same position
+            * out > 0: move the first channel of self.sig to out channel, other channels follow
         """
-        Route the signal to n channel starting with out (type int):
-            out = 0: does nothing as the same signal is being routed to the same position
-            out > 0: move the first channel of self.sig to out channel, other channels follow
-            out < 0: negative slicing, if overslicing, do nothing.
-        """
-        if type(out) is int:
+        if isinstance(out, int):
             if out == 0:  #If 0 do nothing.
                 return self
             elif out > 0:
                 # not optimized method here
                 new_sig = np.zeros((self.samples, out + self.channels))
-                new_sig[:, out:out + self.channels] = self.sig_copy
-                return Asig(new_sig, self.sr, label=self.label+'_routed', cn=self.cn)
 
-            elif out < 0 and -out < self.channels :
-                new_sig = self.sig_copy[:, -out:]
-                return Asig(new_sig, self.sr, label=self.label+'_routed', cn=self.cn)
+                _LOGGER.debug("Shift to channel %d, new signal has %d channels", out, new_sig.shape[1])
+                if self.channels == 1:
+                    new_sig[:, out] = self.sig_copy
+                else:
+                    new_sig[:, out:(out + self.channels)] = self.sig_copy
+                _LOGGER.debug("Successfully assign signal to new_sig")
+                if self.cn is None:
+                    new_cn = self.cn
+                else:
+                    uname_list = ['unnamed' for i in range(out)]
+                    if isinstance(self.cn, list):
+                        new_cn = uname_list + self.cn
+                    else:
+                        new_cn = uname_list.append(self.cn)
+                return Asig(new_sig, self.sr, label=self.label+'_routed', cn=new_cn)
+
+            # The left shift function is removed.
+            # elif out < 0 and -out < self.channels :
+            #     new_sig = self.sig_copy[:, -out:]
+            #     return Asig(new_sig, self.sr, label=self.label+'_routed', cn=self.cn)
             else:
                 print ("left shift over the total channel, nothing happened")
                 return self
