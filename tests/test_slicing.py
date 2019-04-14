@@ -14,10 +14,10 @@ class TestSlicing(TestCase):
         pass
 
     def test_int(self):
-        self.assertTrue(np.array_equal(self.asine[4].sig, self.sig[4]))
+        self.assertAlmostEqual(self.asine[4].sig, self.sig[4])
 
     def test_intlist(self):
-        self.assertTrue(np.array_equal(self.asine[2, 4, 5].sig, self.sig[2, 4, 5]))
+        self.assertTrue(np.array_equal(self.asine[[2, 4, 5]].sig, self.sig[[2, 4, 5]]))
 
     def test_namelist(self):
         """Check whether I can pass a list of column names and get the same result"""
@@ -28,12 +28,12 @@ class TestSlicing(TestCase):
 
     def test_time(self):
         """Check whether time slicing equals sample slicing."""
-        result = self.asine[(0, 1.0, 1)]
+        result = self.asine[{0 : 1.0}]
         expect = self.asine[:44100]
         self.assertEqual(expect, result)
 
         """Check negative time work"""
-        result = self.asine[{1, -1}] # Play from 1s. to the last 1.s 
+        result = self.asine[{1: -1}] # Play from 1s. to the last 1.s
         expect = self.asine[4]
 
 

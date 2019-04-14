@@ -110,8 +110,10 @@ class Asig:
             * Index[1] is int, list, slice, list of str, list of boolean.
         """
         if isinstance(index, int):
-            # Case a[4], 4th row
-            return Asig(self.sig[index], self.sr, label=self.label + '_arrayindexed', cn=self.cn)
+            # This step is to prevent an int/float being used as argument for asig as
+            # it will be interpretd as sample length or duration instead of signal.
+            new_sig = [self.sig[index]] if self.channels == 1 else self.sig[index]
+            return Asig(new_sig, self.sr, label=self.label + '_arrayindexed', cn=self.cn)
 
         elif isinstance(index, list):
             # Case a[[1,2,4]] for row selection or case[['l']] name column selection
