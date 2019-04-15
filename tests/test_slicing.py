@@ -3,14 +3,17 @@ from pya import *
 
 import numpy as np
 
+
 class TestSlicing(TestCase):
 
     def setUp(self):
         self.sig = np.sin(2*np.pi* 100 * np.linspace(0,1,44100))
         self.asine = Asig(self.sig, sr=44100,label="test_sine")
-        self.astereo = Asig("../examples/samples/stereoTest.wav", label='stereo', cn = ['l','r'])
+        # self.astereo = Asig("../examples/samples/stereoTest.wav", label='stereo', cn = ['l','r'])
         self.sig4 = np.sin(2*np.pi* 100 * np.linspace(0,4,44100 * 4))  # 4second sine
         self.asine4 = Asig(self.sig4, sr=44100,label="test_sine")
+        self.sig2ch = np.repeat(self.sig, 2).reshape(((44100, 2)))
+        self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=['l', 'r'])
 
     def tearDown(self):
         pass

@@ -5,14 +5,17 @@ import logging
 logging.basicConfig(level = logging.DEBUG)
 
 
-class TestSlicing(TestCase):
+class TestRoutePan(TestCase):
 
     def setUp(self):
         self.sig = np.sin(2*np.pi* 100 * np.linspace(0,1,44100))
         self.asine = Asig(self.sig, sr=44100,label="test_sine")
         self.asineWithName = Asig(self.sig, sr=44100,label="test_sine", cn = 'sine')
-        self.astereo = Asig("../examples/samples/stereoTest.wav", label='stereo', cn = ['l','r'])
-        self.asentence = Asig("../examples/samples/sentence.wav", label='sentence', cn = 'sen')
+        self.sig2ch = np.repeat(self.sig, 2).reshape(((44100, 2)))
+        self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=['l', 'r'])
+        # self.astereo = Asig("/examples/samples/stereoTest.wav", label='stereo', cn=['l','r'])
+        self.sig16ch = np.repeat(self.sig, 16).reshape(((44100, 16)))
+        self.asine16ch = Asig(self.sig16ch, sr=44100, label="test_sine_16ch")
 
     def tearDown(self):
         pass
@@ -25,4 +28,25 @@ class TestSlicing(TestCase):
         result = self.asineWithName.route(3)
         self.assertEqual(4, result.channels)
 
-        
+    def test_to_mono(self):
+        result = self.astereo.to_mono([0.5, 0.5])
+        self.assertEqual(result.channels, 1)
+        result = self.asine16ch.to_mono(np.ones(16) * 0.1)
+        self.assertEqual(result.channels, 1)
+
+    def test_stereo(self):
+        result = self.asine.to_stereo([0.5, 0.5])
+        self.assertEqual(result.channels, 2)
+
+        result = self.asine16ch.to_stereo([np.ones(16), np.zeros(16)])
+        self.assertEqual(result.channels, 2)
+
+    def test_rewire(self):
+        result = self.astereo.rewire({(0, 1): 0.5,
+                                      (1, 0): 0.5})
+        temp = self.astereo.sig
+        expect = temp.copy()
+        expect[:, 0] = temp[:, 1] * 0.5
+        expect[:, 1] = temp[:, 0] * 0.5
+        self.assertTrue(np.array_equal(expect[1000:10010, 1], result.sig[1000:10010, 1]))
+

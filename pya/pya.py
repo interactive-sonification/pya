@@ -97,7 +97,7 @@ class Asig:
         self.device = 1  # TODO this seems uncessary
         # make a copy for any processing events e.g. (panning, filtering)
         # that needs to process the signal without permanent change.
-        self.sig_copy = self.sig.copy()  # It takes around 100ms to copy a 17min audio at 44.1khz
+        self.sig_copy = np.copy(self.sig)  # It takes around 100ms to copy a 17min audio at 44.1khz
         # TODO discuss whether copy is necessary as it is not memory efficient
         self.cn = cn
         self._set_col_names()
@@ -365,12 +365,16 @@ class Asig:
         else:
             raise TypeError("Argument needs to be a list of 0 ~ 1.")
 
-    @timeit
     def to_mono(self, blend):
-        """
-            Blend multichannel: if mono signal do nothing.
-            [0.33, 0.33, 0,33] blend a 3-chan sigal to a mono signal with 0.33x each
-            np.sum is the main computation here. Not much can be done to make it faster.
+        """Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)
+
+        Parameters:
+        ----------
+
+        blend : list
+            list of gain for each channel as a multiplier. Do nothing if signal is already mono, raise warning
+            if len(blend) not equal to self.channels
+
         """
 
         if self.channels == 1:
@@ -417,14 +421,16 @@ class Asig:
         """rewire channels:
             {(0, 1): 0.5}: move channel 0 to 1 then reduce gain to 0.5
         """
-        max_ch = max(dic, key=lambda x: x[1])[1]  # Find what the largest channel in the newly rewired is .
+        max_ch = max(dic, key=lambda x: x[1])[1] + 1  # Find what the largest channel in the newly rewired is .
         if max_ch > self.channels:
             new_sig = np.zeros((self.samples, max_ch))
             new_sig[:, :self.channels] = self.sig_copy
         else:
-            new_sig = self.sig
-        for i, k in enumerate(dic):
-            new_sig[k[1]] = self.sig_copy[k[0]] * i
+            print ("Direct copy")
+            new_sig = self.sig_copy
+            
+        for key, val in dic.items():
+            new_sig[:, key[1]] = self.sig[:, key[0]] * val
         return Asig(new_sig, self.sr, label=self.label + '_rewire', cn=self.cn)
 
     def pan2(self, pan=0.):
