@@ -24,11 +24,56 @@ _LOGGER.addHandler(logging.NullHandler())
 
 
 class Asig:
-    'audio signal class'
+    """Audio signal class
+
+    Parameters:
+    ----------
+    sig : numpy.array, str, int, float
+        * numpy array as the audio signal
+        * str as path to wave file. Currently only support .wav format. Will add more in future version
+        * int creates a mono silent signal of sig samples
+        * float creates a mono silent signal of sig seconds
+
+    sr : int
+        sampling rate
+
+    label : str
+        label for the member
+
+    channels : int
+        signal channels
+
+    cn : list
+        channels names, length needs to match the signal's channels
+
+    Attributes:
+    ----------
+    sig : numpy array
+        audio signal array
+
+    sig_copy: numpy array (to be discussed or removed)
+        a copy of the audio signal
+
+    channels : int
+        signal channels
+
+    sr : int
+        sampling rate
+
+    samples : int
+        length of signal
+
+    cn : list
+        channels names
+
+    label : str
+        label for the member
+
+    """
     def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
         self.sr = sr
         self._ = {}  # dictionary for further return values
-        self.channels = channels
+        self.channels = channels  #TODO discuss to remove channels as an argument
         if isinstance(sig, str):
             self.load_wavfile(sig)
         elif isinstance(sig, int):  # sample length
@@ -49,10 +94,11 @@ class Asig:
                 self.channels = 1
         self.samples = np.shape(self.sig)[0]
         self.label = label
-        self.device = 1
+        self.device = 1  # TODO this seems uncessary
         # make a copy for any processing events e.g. (panning, filtering)
         # that needs to process the signal without permanent change.
         self.sig_copy = self.sig.copy()  # It takes around 100ms to copy a 17min audio at 44.1khz
+        # TODO discuss whether copy is necessary as it is not memory efficient
         self.cn = cn
         self._set_col_names()
 
@@ -100,12 +146,21 @@ class Asig:
     def __getitem__(self, index):
         """ Perform numpy style slicing and time slicing and generate new asig. 
 
-        Parameters
+        Parameters:
+        ----------
+        index : int, slice, list, tuple, dict
+            Slicing argument. What are additional to numpy slicing:
+
+            * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :] creates indexing of 1s to 2.5s.
+
+            * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig. asig[['front', 'rear']], etc...
+
+        Returns:
+        ----------
+        Asig(sliced_signal, adjusted_sr, remarked_label, subset_channelnames)
         """
         if isinstance(index, tuple):  # Most likely case. 
-            # Tuple is when there are dedicated slicing for rows and columns.
-
-            # First check index[0]
+            # First check index[0] for row slicing
             if isinstance(index[0], int) or isinstance(index[0], list):
                 # Case a[4, :],
                 rslice = index[0]
