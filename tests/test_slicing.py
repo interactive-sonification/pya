@@ -53,6 +53,6 @@ class TestSlicing(TestCase):
         self.assertTrue(np.array_equal(result.sig, expected_sig))
 
 
-        result = self.astereo[0:368, [True, False]]
-        expected_sig = self.astereo.sig[0:368:1, 0]
+        result = self.astereo[0:368, [False, True]]
+        expected_sig = self.astereo.sig[0:368:1, [False, True]]
         self.assertTrue(np.array_equal(result.sig, expected_sig))
