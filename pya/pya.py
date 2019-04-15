@@ -182,7 +182,7 @@ class Asig:
                 if isinstance(index[1][0], str):
                     print ("str")
                     cslice = [self.col_name.get(s) for s in index[1]]
-                    cn_new = [self.cn[i] for i in col_idx]   
+                    cn_new = [self.cn[i] for i in cslice]   
                 elif isinstance(index[1][0], bool):
                     cslice = index[1]
                     cn_new = list(compress(self.cn, index[1]))
