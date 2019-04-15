@@ -10,7 +10,7 @@ class TestSlicing(TestCase):
         self.asine = Asig(self.sig, sr=44100,label="test_sine")
         self.astereo = Asig("../examples/samples/stereoTest.wav", label='stereo', cn = ['l','r'])
         self.sig4 = np.sin(2*np.pi* 100 * np.linspace(0,4,44100 * 4))  # 4second sine
-        self.asine4 = Asig(self.sig, sr=44100,label="test_sine")
+        self.asine4 = Asig(self.sig4, sr=44100,label="test_sine")
 
     def tearDown(self):
         pass
@@ -43,16 +43,29 @@ class TestSlicing(TestCase):
         expected_sig = self.astereo.sig[0:44100:2, 0]
         self.assertTrue(np.array_equal(result.sig, expected_sig))
 
+        # Channel as string slice.
         result = self.astereo[0:44100:2, 'l']
         expected_sig = self.astereo.sig[0:44100:2, 0]
         self.assertTrue(np.array_equal(result.sig, expected_sig))  # Check if signal equal
         self.assertEqual(result.cn, 'l')  # Check whether the new column name is correct
 
+        # channel name slice as list.
         result = self.astereo[0:44100:2, ['l', 'r']]
         expected_sig = self.astereo.sig[0:44100:2, :]
         self.assertTrue(np.array_equal(result.sig, expected_sig))
 
-
+        # Bool slice
         result = self.astereo[0:368, [False, True]]
         expected_sig = self.astereo.sig[0:368:1, [False, True]]
         self.assertTrue(np.array_equal(result.sig, expected_sig))
+        # time slicing
+        result = self.astereo[{1: -1}, 0]  # Play from 1s. to the last 1.s
+        expect = self.astereo[44100: -44100, 0]
+        self.assertEqual(expect, result)
+
+        # time slicing
+        result = self.astereo[{1: -1}, :]  # Play from 1s. to the last 1.s
+        expect = self.astereo[44100: -44100, :]
+        self.assertEqual(expect, result)
+
+        # Any more?
