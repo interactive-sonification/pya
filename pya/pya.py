@@ -17,6 +17,7 @@ from .pyaudiostream import PyaudioStream
 from .helpers import ampdb, linlin, dbamp, timeit
 from .ugen import *  # newly added ugen.
 import logging
+from itertools import compress
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -97,7 +98,7 @@ class Asig:
                 raise TypeError("column names need to be a list of strings")
 
     def __getitem__(self, index):
-        """
+        """ TODO, rewrite this. 
         Accept numpy style slicing:
 
         1. Index is integer: a[5], as numpy . get row 5
@@ -177,17 +178,22 @@ class Asig:
 
             # Now check index[1]:
             # First check if index[1] is channel name slicing
-            if type(index[1]) is list and type(index[1][0]) is str:
-                col_idx = [self.col_name.get(s) for s in index[1]]
-                cn_new = [self.cn[i] for i in col_idx]
-                return Asig(self.sig[rslice, col_idx], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
+            if type(index[1]) is list:
+                if isinstance(index[1][0], str):
+                    print ("str")
+                    cslice = [self.col_name.get(s) for s in index[1]]
+                    cn_new = [self.cn[i] for i in col_idx]   
+                elif isinstance(index[1][0], bool):
+                    cslice = index[1]
+                    cn_new = list(compress(self.cn, index[1]))
+                elif isinstance(index[1][0], int):
+                    cslice = index[1]
+                    cn_new = [self.cn[i] for i in index[1]]
+                return Asig(self.sig[rslice, cslice], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
 
             # int, list, slice are the same.
-            elif isinstance(index[1], int) or isinstance(index[1], list) or isinstance(index[1], slice):
-                if isinstance(index[1], list):
-                    cn_new = [self.cn[i] for i in index[1]]
-                else:
-                    cn_new = self.cn[index[1]]
+            elif isinstance((index[1]), int) or isinstance(index[1], slice):
+                cn_new = self.cn[index[1]]
                 return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
 
             # if only a single channel name is given.
