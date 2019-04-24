@@ -258,7 +258,10 @@ class Asig:
             * String/string_list slicing for subsetting channels based on channel name self.cn
             * time slicing (unit seconds) via dict. 
         2 possible modes: 1. standard pythonic way that the setitem is bound by the object.
-        2. A more audio mixer way which the size of signal becomes strechable."""
+        2. A more audio mixer way which the size of signal becomes strechable.
+
+        TODO: 1. Design usecases. 2. value is an asig. 3. strechable mode. 
+        """
 
         if isinstance(index, tuple):
             _LOGGER.debug("slice with tuple")
@@ -287,7 +290,11 @@ class Asig:
                 _LOGGER.debug("Standard column slicing detected")
                 cslice = index[1]
 
-            self.sig[rslice, cslice] = value
+            if isinstance(value, Asig):
+                self.sig[rslice, cslice] = value.sig
+            else:
+                self.sig[rslice, cslice] = value
+
             _LOGGER.debug("Assigned value")
             return self
 
@@ -306,7 +313,10 @@ class Asig:
             return self
         
         else:
-            self.sig[index] = value
+            if isinstance(value, Asig):
+                self.sig[index] = value.sig
+            else:
+                self.sig[index] = value
             return self
 
     # TODO: this may not be necessary any more.
