@@ -299,17 +299,21 @@ class Asig:
             return self
 
         elif isinstance(index, dict):
-            _LOGGER.debug("slice with dict")
-            for key, value in index[0].items():
+            for key, val in index.items():
                 try:
                     start = int(key * self.sr)
                 except TypeError:  # if it is None
                     start = None
                 try:
-                    stop = int(value * self.sr)
+                    stop = int(val * self.sr)
                 except TypeError:
                     stop = None
+            _LOGGER.debug("slice with dict, start: %d, stop: %d", start, stop)
             rslice = slice(start, stop, 1)
+            if isinstance(value, Asig):
+                self.sig[rslice] = value.sig
+            else:
+                self.sig[rslice] = value
             return self
         
         else:
