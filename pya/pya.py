@@ -73,7 +73,7 @@ class Asig:
     def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
         self.sr = sr
         self._ = {}  # dictionary for further return values
-        self.channels = channels  #TODO discuss to remove channels as an argument
+        self.channels = channels  # TODO discuss to remove channels as an argument
         if isinstance(sig, str):
             self.load_wavfile(sig)
         elif isinstance(sig, int):  # sample length
@@ -144,7 +144,7 @@ class Asig:
                 raise TypeError("column names need to be a list of strings")
 
     def __getitem__(self, index):
-        """ Perform numpy style slicing and time slicing and generate new asig. 
+        """ Perform numpy style slicing and time slicing and generate new asig.
 
         Parameters:
         ----------
@@ -159,7 +159,7 @@ class Asig:
         ----------
         Asig(sliced_signal, adjusted_sr, remarked_label, subset_channelnames)
         """
-        if isinstance(index, tuple):  # Most likely case. 
+        if isinstance(index, tuple):  # Most likely case.
             # First check index[0] for row slicing
             if isinstance(index[0], int) or isinstance(index[0], list):
                 # Case a[4, :],
@@ -241,12 +241,11 @@ class Asig:
                 return Asig(self.sig[index], self.sr,
                             label=self.label + '_arrayindexed', cn=self.cn)
 
-        elif isinstance(index, int):  # most unlikely case. 
+        elif isinstance(index, int):  # most unlikely case.
             # This step is to prevent an int/float being used as argument for asig as
             # it will be interpretd as sample length or duration instead of signal.
             new_sig = [self.sig[index]] if self.channels == 1 else self.sig[index]
             return Asig(new_sig, self.sr, label=self.label + '_arrayindexed', cn=self.cn)
-
 
         else:
             raise TypeError("index must be int, array, or slice")
@@ -312,58 +311,27 @@ class Asig:
             * out > 0: move the first channel of self.sig to out channel, other channels follow
         """
         if isinstance(out, int):
-            if out == 0:  # If 0 do nothing.
-                return self
-            elif out > 0:
-                # not optimized method here
-                new_sig = np.zeros((self.samples, out + self.channels))
+            # not optimized method here
+            new_sig = np.zeros((self.samples, out + self.channels))
 
-                _LOGGER.debug("Shift to channel %d, new signal has %d channels", out, new_sig.shape[1])
-                if self.channels == 1:
-                    new_sig[:, out] = self.sig_copy
-                else:
-                    new_sig[:, out:(out + self.channels)] = self.sig_copy
-                _LOGGER.debug("Successfully assign signal to new_sig")
-                if self.cn is None:
-                    new_cn = self.cn
-                else:
-                    uname_list = ['unnamed' for i in range(out)]
-                    if isinstance(self.cn, list):
-                        new_cn = uname_list + self.cn
-                    else:
-                        new_cn = uname_list.append(self.cn)
-                return Asig(new_sig, self.sr, label=self.label + '_routed', cn=new_cn)
-
-            # The left shift function is removed.
-            # elif out < 0 and -out < self.channels :
-            #     new_sig = self.sig_copy[:, -out:]
-            #     return Asig(new_sig, self.sr, label=self.label+'_routed', cn=self.cn)
+            _LOGGER.debug("Shift to channel %d, new signal has %d channels", out, new_sig.shape[1])
+            if self.channels == 1:
+                new_sig[:, out] = self.sig_copy
             else:
-                print("left shift over the total channel, nothing happened")
-                return self
-
-        elif type(out) is list:
-            """
-                Several possibilities here:
-                    1. sig is mono:
-                        convert to multi channels and apply gain.
-                    2. sig's channels equals pan size
-                    3. sig's channels > pan size and
-                    4. sig's channels < pan size
-                Dont permanently change self.sig
-            """
-            if np.max(out) > 1 or np.min(out) < 0.:
-                _LOGGER.warning("Warning: list value should be between 0 ~ 1.")
-            if self.channels == 1:  # if mono sig.
-                new_sig = self.mono2nchanel(self.sig_copy, len(out))
-                new_sig *= out  # apply panning.
-            elif self.channels == len(out):
-                new_sig = self.sig_copy * out
+                new_sig[:, out:(out + self.channels)] = self.sig_copy
+            _LOGGER.debug("Successfully assign signal to new_sig")
+            if self.cn is None:
+                new_cn = self.cn
             else:
-                raise ValueError("pan size and signal channels don't match")
-            return Asig(new_sig, self.sr, label=self.label + '_routed', cn=self.cn)
+                uname_list = ['unnamed' for i in range(out)]
+                if isinstance(self.cn, list):
+                    new_cn = uname_list + self.cn
+                else:
+                    new_cn = uname_list.append(self.cn)
+            return Asig(new_sig, self.sr, label=self.label + '_routed', cn=new_cn)
+
         else:
-            raise TypeError("Argument needs to be a list of 0 ~ 1.")
+            raise TypeError("Argument needs to be int")
 
     def to_mono(self, blend):
         """Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)
@@ -426,20 +394,19 @@ class Asig:
             new_sig = np.zeros((self.samples, max_ch))
             new_sig[:, :self.channels] = self.sig_copy
         else:
-            print ("Direct copy")
             new_sig = self.sig_copy
-            
         for key, val in dic.items():
             new_sig[:, key[1]] = self.sig[:, key[0]] * val
         return Asig(new_sig, self.sr, label=self.label + '_rewire', cn=self.cn)
 
     def pan2(self, pan=0.):
-        """
-            pan2 only creates output in stereo, mono will be copy to stereo, stereo works as it should,
-            larger channel signal will only has 0 and 1 being changed.
-            panning is based on constant power panning.
+        """pan2 only creates output in stereo, mono will be copy to stereo, stereo works as it should,
+        larger channel signal will only has 0 and 1 being changed.
+        panning is based on constant power panning.
 
-            # gain multiplication is the main computation cost.
+        gain multiplication is the main computation cost.
+        :param pan: float. range -1. to 1.
+        :return: Asig
         """
         pan = float(pan)
         if type(pan) is float:
@@ -508,7 +475,7 @@ class Asig:
             if fn == 'db':
                 fn = lambda x: np.sign(x) * ampdb((abs(x) * 2 ** 16 + 1))
             elif not callable(fn):
-                print("Asig.plot: fn is neither keyword nor function")
+                _LOGGER.warning("Asig.plot: fn is neither keyword nor function")
                 return self
             plot_sig = fn(self.sig)
         else:
@@ -794,10 +761,11 @@ class Asig:
         # return samples and length in time:
         return self.sig.shape, self.sig.shape[0] / self.sr
 
-    def mono2nchanel(self, x, chan):
+    def vstack(self, chan):
         # Create multichannel signal from mono
-        c = np.vstack([x] * chan)
-        return c.transpose()
+        self.sig = np.vstack([self.sig] * chan)
+        self.sig = self.sig.transpose()
+        return self.overwrite(self.sig, self.sr)  # Overwrite the signalqweqe3
 
     def custom(self, func, **kwargs):
         """
