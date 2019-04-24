@@ -161,6 +161,7 @@ class Asig:
         """
         if isinstance(index, tuple):  # Most likely case.
             # First check index[0] for row slicing
+            _LOGGER.debug("slice with tuple")
             if isinstance(index[0], int) or isinstance(index[0], list):
                 # Case a[4, :],
                 rslice = index[0]
@@ -183,6 +184,7 @@ class Asig:
                         stop = None
                 rslice = slice(start, stop, 1)
                 sr = self.sr
+                _LOGGER.debug("Time slicing, start: %d, stop: %d", start, stop)
             else:
                 rslice = index[0]
                 sr = self.sr
@@ -250,10 +252,62 @@ class Asig:
         else:
             raise TypeError("index must be int, array, or slice")
 
-    def __eq__(self, other):
-        sig_eq = np.array_equal(self.sig, other.sig)
-        sr_eq = self.sr == other.sr
-        return sig_eq and sr_eq
+    def __setitem__(self, index, value):
+        """setitem: asig[index] = value. This allows all the methods from getitem:
+            * Numpy style slicing 
+            * String/string_list slicing for subsetting channels based on channel name self.cn
+            * time slicing (unit seconds) via dict. 
+        2 possible modes: 1. standard pythonic way that the setitem is bound by the object.
+        2. A more audio mixer way which the size of signal becomes strechable."""
+
+        if isinstance(index, tuple):
+            _LOGGER.debug("slice with tuple")
+            if isinstance(index[0], dict):
+                for key, val in index[0].items():
+                    try:
+                        start = int(key * self.sr)
+                    except TypeError:  # if it is None
+                        start = None
+                    try:
+                        stop = int(val * self.sr)
+                    except TypeError:
+                        stop = None
+                _LOGGER.info("Time slicing detected, start: %d, end: %d", start, stop)
+                rslice = slice(start, stop, None)
+                # rslice = index[0]
+            else:
+                _LOGGER.debug("Standard row slicing detected")
+                rslice = slice(0, 44100, None)
+                # rslice = index[0]
+
+            if isinstance(index[1], str):  # If index[1] is a column name
+                _LOGGER.info("Column slicing with column name: %s", index[1])
+                cslice = self.col_name.get(index[1])
+            else:
+                _LOGGER.debug("Standard column slicing detected")
+                cslice = index[1]
+
+            self.sig[rslice, cslice] = value
+            _LOGGER.debug("Assigned value")
+            return self
+
+        elif isinstance(index, dict):
+            _LOGGER.debug("slice with dict")
+            for key, value in index[0].items():
+                try:
+                    start = int(key * self.sr)
+                except TypeError:  # if it is None
+                    start = None
+                try:
+                    stop = int(value * self.sr)
+                except TypeError:
+                    stop = None
+            rslice = slice(start, stop, 1)
+            return self
+        
+        else:
+            self.sig[index] = value
+            return self
 
     # TODO: this may not be necessary any more.
     def tslice(self, *tidx):
@@ -497,6 +551,13 @@ class Asig:
 
     def get_times(self):
         return np.linspace(0, (self.samples - 1) / self.sr, self.samples)  # timestamps for left-edge of sample-and-hold-signal
+
+
+    def __eq__(self, other):
+        """Check if two asig objects have the same signal. But does not care about sr and others"""
+        sig_eq = np.array_equal(self.sig, other.sig)
+        sr_eq = self.sr == other.sr
+        return sig_eq and sr_eq
 
     def __repr__(self):
         return "Asig('{}'): {} x {} @ {} Hz = {:.3f} s".format(
