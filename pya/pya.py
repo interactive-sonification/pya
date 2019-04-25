@@ -151,9 +151,11 @@ class Asig:
         index : int, slice, list, tuple, dict
             Slicing argument. What are additional to numpy slicing:
 
-            * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :] creates indexing of 1s to 2.5s.
+            * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :] 
+            creates indexing of 1s to 2.5s.
 
-            * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig. asig[['front', 'rear']], etc...
+            * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig. 
+            asig[['front', 'rear']], etc...
 
         Returns:
         ----------
@@ -277,11 +279,10 @@ class Asig:
                         stop = None
                 _LOGGER.info("Time slicing detected, start: %d, end: %d", start, stop)
                 rslice = slice(start, stop, None)
-                # rslice = index[0]
+
             else:
                 _LOGGER.debug("Standard row slicing detected")
-                rslice = slice(0, 44100, None)
-                # rslice = index[0]
+                rslice = index[0]
 
             if isinstance(index[1], str):  # If index[1] is a column name
                 _LOGGER.info("Column slicing with column name: %s", index[1])
@@ -315,7 +316,18 @@ class Asig:
             else:
                 self.sig[rslice] = value
             return self
-        
+
+        elif isinstance(index, list) and isinstance(index[0], str):
+            col_idx = [self.col_name.get(s) for s in index]
+            msg = " ".join(str(col_idx))
+            _LOGGER.debug("slice with list of column names: " + msg)
+            col_idx = col_idx[0] if len(col_idx) == 1 else col_idx
+            if isinstance(value, Asig):
+                self.sig[:, col_idx] = value.sig
+            else:
+                self.sig[:, col_idx] = value
+            return self
+
         else:
             if isinstance(value, Asig):
                 self.sig[index] = value.sig
@@ -468,8 +480,8 @@ class Asig:
         return Asig(new_sig, self.sr, label=self.label + '_rewire', cn=self.cn)
 
     def pan2(self, pan=0.):
-        """pan2 only creates output in stereo, mono will be copy to stereo, stereo works as it should,
-        larger channel signal will only has 0 and 1 being changed.
+        """pan2 only creates output in stereo, mono will be copy to stereo, 
+        stereo works as it should, larger channel signal will only has 0 and 1 being changed.
         panning is based on constant power panning.
 
         gain multiplication is the main computation cost.
@@ -492,7 +504,7 @@ class Asig:
                     self.sig_copy[:, :2] *= gain
                     return Asig(self.sig_copy, self.sr, label=self.label + "_pan2ed", cn=self.cn)
             else:
-                print("Warning: Scalar panning need to be in the range -1. to 1. nothing changed.")
+                _LOGGER.warning("Scalar panning need to be in the range -1. to 1. nothing changed.")
                 return self
 
     def overwrite(self, sig, sr=None):
@@ -521,6 +533,7 @@ class Asig:
     #     return self
 
     def norm(self, norm=1, dcflag=False):
+        """Normalize signal"""
         if dcflag:
             self.sig = self.sig - np.mean(self.sig, 0)
         if norm <= 0:  # take negative values as level in dB
@@ -529,16 +542,20 @@ class Asig:
         return self
 
     def gain(self, amp=None, db=None):
+        """Apply gain in amplitude or dB"""
         if db:  # overwrites amp
             amp = dbamp(db)
+            _LOGGER.debug("gain in dB: %f, in amp: %f", float(db), amp)
         elif not amp:  # default 1 if neither is given
             amp = 1
         return Asig(self.sig * amp, self.sr, label=self.label + "_scaled", cn=self.cn)
 
     def rms(self, axis=0):
+        """Return signal's RMS"""
         return np.sqrt(np.mean(np.square(self.sig), axis))
 
     def plot(self, fn=None, offset=0, scale=1, **kwargs):
+        """Display signal graph"""
         if fn:
             if fn == 'db':
                 fn = lambda x: np.sign(x) * ampdb((abs(x) * 2 ** 16 + 1))
@@ -561,9 +578,11 @@ class Asig:
         return self
 
     def get_duration(self):
+        """Return duration in seconds"""
         return self.samples / self.sr
 
     def get_times(self):
+        """Get time stamps as a linspace"""
         return np.linspace(0, (self.samples - 1) / self.sr, self.samples)  # timestamps for left-edge of sample-and-hold-signal
 
 
