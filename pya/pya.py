@@ -1,30 +1,33 @@
-"""Contains the classes Asig Aspec and later Astft,
-to enable sample-precise audio coding with numpy/scipy/python
-for multi-channel audio processing & sonification
+"""Asig, Aspec and Astft classes.
+
+This file contains the A* classes to enable sample-precise 
+audio coding with numpy/scipy/python for multi-channel audio 
+processing & sonification.
 """
 
 import copy
+import logging
 import time
+from itertools import compress
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pyaudio
 import scipy.interpolate
 import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
-import pyaudio
+
+from .helpers import ampdb, dbamp, linlin, timeit
 from .pyaudiostream import PyaudioStream
-from .helpers import ampdb, linlin, dbamp, timeit
 from .ugen import *  # newly added ugen.
-import logging
-from itertools import compress
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
 
 class Asig:
-    """Audio signal class
+    """Audio signal class.
 
     Parameters:
     ----------
@@ -70,6 +73,7 @@ class Asig:
         label for the member
 
     """
+
     def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
         self.sr = sr
         self._ = {}  # dictionary for further return values
@@ -119,8 +123,8 @@ class Asig:
                 self.channels = 1
         else:
             print("load_wavfile: TODO: add format")
-
         # ToDo: set channels here
+
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         if dtype == 'int16':
             data = (self.sig * 32767).astype('int16')
@@ -151,9 +155,11 @@ class Asig:
         index : int, slice, list, tuple, dict
             Slicing argument. What are additional to numpy slicing:
 
-            * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :] creates indexing of 1s to 2.5s.
+            * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] 
+              or asig[{1:2.5}, :] creates indexing of 1s to 2.5s.
 
-            * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig. asig[['front', 'rear']], etc...
+            * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig. 
+              asig[['front', 'rear']], etc...
 
         Returns:
         ----------
@@ -255,16 +261,6 @@ class Asig:
         sr_eq = self.sr == other.sr
         return sig_eq and sr_eq
 
-    # TODO: this may not be necessary any more.
-    def tslice(self, *tidx):
-        if len(tidx) == 1:  # stop
-            sl = slice(0, tidx[0] * self.sr)
-        elif len(tidx) == 2:  # start and stop:
-            sl = slice(int(tidx[0] * self.sr), int(tidx[1] * self.sr))
-        else:
-            sl = slice(int(tidx[0] * self.sr), int(tidx[1] * self.sr), tidx[2])
-        return Asig(self.sig[sl], self.sr, self.label + "_tsliced", cn=self.cn)
-
     def resample(self, target_sr=44100, rate=1, kind='linear'):
         """Resample signal based on interpolation, can process multichannel"""
         times = np.arange(self.samples) / self.sr
@@ -305,10 +301,10 @@ class Asig:
         return self
 
     def route(self, out=0):
-        """Route the signal to n channel. This method shift the signal to out channel:
+        """Route the signal to n channel. This method shifts the signal by out channels:
 
             * out = 0: does nothing as the same signal is being routed to the same position
-            * out > 0: move the first channel of self.sig to out channel, other channels follow
+            * out > 0: move channels of self.sig to channels out [,out+1,...]
         """
         if isinstance(out, int):
             # not optimized method here
@@ -329,32 +325,36 @@ class Asig:
                 else:
                     new_cn = uname_list.append(self.cn)
             return Asig(new_sig, self.sr, label=self.label + '_routed', cn=new_cn)
-
         else:
             raise TypeError("Argument needs to be int")
 
-    def to_mono(self, blend):
-        """Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)
+    def to_mono(self, blend=None):
+        """Mix channels to mono signal.
+
+        Perform sig = np.sum(self.sig_copy * blend, axis=1)
 
         Parameters:
         ----------
-
         blend : list
             list of gain for each channel as a multiplier. Do nothing if signal is already mono, raise warning
             if len(blend) not equal to self.channels
 
         """
-
         if self.channels == 1:
             _LOGGER.warning("Signal is already mono")
             return self
 
+        if blend is None:
+            blend = np.ones(self.channels)/self.channels
+        # Todo: add check for type number
+
         if len(blend) != self.channels:
-            _LOGGER.warning("Arg len %d, signal channel %d. Method did nothing", len(blend), self.channels)
+            _LOGGER.warning("Asig.to_mono(): len(blend)=%d != %d=Asig.channels -> no action", 
+            len(blend), self.channels)
             return self
         else:
             sig = np.sum(self.sig_copy * blend, axis=1)
-            return Asig(sig, self.sr, label=self.label + '_blended', cn=self.cn)
+            return Asig(sig, self.sr, label=self.label + '_blended', cn=[self.cn[np.argmax(blend)]])
 
     def to_stereo(self, blend):
         """Blend any channel of signal to stereo.
@@ -439,19 +439,6 @@ class Asig:
         self.samples = len(self.sig)
         return self
 
-    # This is the original method via simpleaudio
-    # def play(self, rate=1, block=False):
-    #     if not self.sr in [8000, 11025, 22050, 44100, 48000]:
-    #         print("resample as sr is exotic")
-    #         self._['play'] = self.resample(44100, rate).play(block=block)['play']
-    #     else:
-    #         if rate is not 1:
-    #             print("resample as rate!=1")
-    #             self._['play'] = self.resample(44100, rate).play(block=block)['play']
-    #         else:
-    #             self._['play'] = play(self.sig, self.channels, self.sr, block=block)
-    #     return self
-
     def norm(self, norm=1, dcflag=False):
         if dcflag:
             self.sig = self.sig - np.mean(self.sig, 0)
@@ -480,7 +467,7 @@ class Asig:
             plot_sig = fn(self.sig)
         else:
             plot_sig = self.sig
-        if offset == 0 and scale == 1:
+        if self.channels==1 or (offset == 0 and scale == 1):
             self._['plot'] = plt.plot(np.arange(0, self.samples) / self.sr, plot_sig, **kwargs)
         else:
             p = []
@@ -496,7 +483,8 @@ class Asig:
         return self.samples / self.sr
 
     def get_times(self):
-        return np.linspace(0, (self.samples - 1) / self.sr, self.samples)  # timestamps for left-edge of sample-and-hold-signal
+        """get time stamps for left-edge of sample-and-hold-signal"""
+        return np.linspace(0, (self.samples - 1) / self.sr, self.samples)
 
     def __repr__(self):
         return "Asig('{}'): {} x {} @ {} Hz = {:.3f} s".format(
@@ -765,13 +753,10 @@ class Asig:
         # Create multichannel signal from mono
         self.sig = np.vstack([self.sig] * chan)
         self.sig = self.sig.transpose()
-        return self.overwrite(self.sig, self.sr)  # Overwrite the signalqweqe3
+        return self.overwrite(self.sig, self.sr)  # Overwrite the signal
 
     def custom(self, func, **kwargs):
-        """
-            A custom function method.
-        """
-
+        """custom function method."""
         func(self, **kwargs)
         return self
 
@@ -912,7 +897,7 @@ class Astft:
             self.label, self.channels, self.samples, self.sr, self.samples / self.sr, cn=self.cn)
 
 
-# global pya.startup() and shutdown() fns
+# global pya.startup() and shutdown() functions
 def startup(**kwargs):
     return Aserver.startup_default_server(**kwargs)
 
@@ -994,8 +979,7 @@ class Aserver:
         state = False
         if self.pastream:
             state = self.pastream.is_active()
-        msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}
-Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
+        msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state} Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
 
     def get_devices(self):
@@ -1025,7 +1009,7 @@ Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
                 print("Error: Invalid device. Server did not boot.")
 
     def boot(self):
-        """ boot Aserver = start stream, setting its callback to this callback"""
+        """boot Aserver = start stream, setting its callback to this callback."""
         if self.pastream is not None and self.pastream.is_active():
             print("Aserver:boot: already running...")
             return -1
@@ -1057,7 +1041,7 @@ Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         self.pa.terminate()
 
     def play(self, asig, onset=0, out=0, **kwargs):
-        """dispatch asigs or arrays for given onset"""
+        """Dispatch asigs or arrays for given onset."""
         if out < 0:
             print("Aserver:play: illegal out<0")
             return
@@ -1088,11 +1072,14 @@ Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return self
 
     def _play_callback(self, in_data, frame_count, time_info, flag):
-        """callback function, called from pastream thread when data needed"""
+        """callback function, called from pastream thread when data needed."""
         tnow = self.block_time
         self.block_time += self.block_duration
         self.block_cnt += 1
         self.timejitter = time.time() - self.block_time  # just curious - not needed but for time stability check
+        if self.timejitter > 3*self.block_duration:
+            _LOGGER.warning(f"Aserver late by {self.timejitter} seconds: block_time reseted!")
+            self.block_time = time.time()
 
         if len(self.srv_asigs) == 0 or self.srv_onsets[0] > tnow:  # to shortcut computing
             return (self.empty_buffer, pyaudio.paContinue)
