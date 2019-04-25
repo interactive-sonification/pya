@@ -1,6 +1,5 @@
 from unittest import TestCase
 from pya import *
-
 import numpy as np
 
 
@@ -72,3 +71,7 @@ class TestSlicing(TestCase):
         self.assertEqual(expect, result)
 
         # Any more?
+
+    def test_setitem(self):
+        print("Testing on setitem")
+
