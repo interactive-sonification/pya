@@ -147,6 +147,118 @@ class Asig:
             else:
                 raise TypeError("column names need to be a list of strings")
 
+    # def __getitem__(self, index):
+    #     """ Perform numpy style slicing and time slicing and generate new asig.
+
+    #     Parameters:
+    #     ----------
+    #     index : int, slice, list, tuple, dict
+    #         Slicing argument. What are additional to numpy slicing:
+
+    #         * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :] 
+    #         creates indexing of 1s to 2.5s.
+
+    #         * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig. 
+    #         asig[['front', 'rear']], etc...
+
+    #     Returns:
+    #     ----------
+    #     Asig(sliced_signal, adjusted_sr, remarked_label, subset_channelnames)
+    #     """
+    #     if isinstance(index, tuple):  # Most likely case.
+    #         # First check index[0] for row slicing
+    #         _LOGGER.debug("slice with tuple")
+    #         if isinstance(index[0], int) or isinstance(index[0], list):
+    #             # Case a[4, :],
+    #             rslice = index[0]
+    #             sr = self.sr
+
+    #         elif isinstance(index[0], slice):
+    #             start, stop, step = index[0].indices(len(self.sig))
+    #             sr = int(self.sr / abs(step))
+    #             rslice = index[0]  # row slice
+
+    #         elif isinstance(index[0], dict):  # Time slicing
+    #             for key, value in index[0].items():
+    #                 try:
+    #                     start = int(key * self.sr)
+    #                 except TypeError:  # if it is None
+    #                     start = None
+    #                 try:
+    #                     stop = int(value * self.sr)
+    #                 except TypeError:
+    #                     stop = None
+    #             rslice = slice(start, stop, 1)
+    #             sr = self.sr
+    #             _LOGGER.debug("Time slicing, start: %d, stop: %d", start, stop)
+    #         else:
+    #             rslice = index[0]
+    #             sr = self.sr
+
+    #         # Now check index[1]:
+    #         if type(index[1]) is list:
+    #             if isinstance(index[1][0], str):
+    #                 cslice = [self.col_name.get(s) for s in index[1]]
+    #                 cn_new = [self.cn[i] for i in cslice] if self.cn is not None else None
+    #             elif isinstance(index[1][0], bool):
+    #                 cslice = index[1]
+    #                 cn_new = list(compress(self.cn, index[1]))
+    #             elif isinstance(index[1][0], int):
+    #                 cslice = index[1]
+    #                 cn_new = [self.cn[i] for i in index[1]] if self.cn is not None else None
+    #             return Asig(self.sig[rslice, cslice], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
+
+    #         # int, list, slice are the same.
+    #         elif isinstance((index[1]), int) or isinstance(index[1], slice):
+    #             cn_new = self.cn[index[1]] if self.cn is not None else None
+    #             return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
+
+    #         # if only a single channel name is given.
+    #         elif isinstance(index[1], str):
+    #             # The column name should be incorrect afterward.
+    #             return Asig(self.sig[rslice, self.col_name.get(index[1])], sr=sr,
+    #                         label=self.label + '_arrayindexed', cn=index[1])
+
+    #     elif isinstance(index, slice):
+    #         # Case a[start:stop:step],
+    #         start, stop, step = index.indices(len(self.sig))    # index is a slice
+    #         return Asig(self.sig[index], sr=int(self.sr / abs(step)),
+    #                     label=self.label + "_sliced", cn=self.cn)
+
+    #     elif isinstance(index, dict):
+    #         for key, value in index.items():
+    #             try:
+    #                 start = int(key * self.sr)
+    #             except TypeError:
+    #                 start = None
+    #             try:
+    #                 stop = int(value * self.sr)
+    #             except TypeError:
+    #                 stop = None
+    #         rslice = slice(start, stop, 1)
+    #         sr = self.sr
+    #         return Asig(self.sig[rslice], sr=sr, label=self.label + '_arrayindexed', cn=self.cn)
+
+    #     elif isinstance(index, list):
+    #         # Case a[[1,2,4]] for row selection or case[['l']] name column selection
+    #         if isinstance(index[0], str):
+    #             col_idx = [self.col_name.get(s) for s in index]
+    #             return Asig(self.sig[:, col_idx], self.sr,
+    #                         label=self.label + '_arrayindexed', cn=index)
+    #         else:
+    #             return Asig(self.sig[index], self.sr,
+    #                         label=self.label + '_arrayindexed', cn=self.cn)
+
+    #     elif isinstance(index, int):  # most unlikely case.
+    #         # This step is to prevent an int/float being used as argument for asig as
+    #         # it will be interpretd as sample length or duration instead of signal.
+    #         new_sig = [self.sig[index]] if self.channels == 1 else self.sig[index]
+    #         return Asig(new_sig, self.sr, label=self.label + '_arrayindexed', cn=self.cn)
+
+    #     else:
+    #         raise TypeError("index must be int, array, or slice")
+
+    ############################ TH: new attempt of __getitem__()
     def __getitem__(self, index):
         """ Perform numpy style slicing and time slicing and generate new asig.
 
@@ -165,98 +277,67 @@ class Asig:
         ----------
         Asig(sliced_signal, adjusted_sr, remarked_label, subset_channelnames)
         """
-        if isinstance(index, tuple):  # Most likely case.
-            # First check index[0] for row slicing
-            _LOGGER.debug("slice with tuple")
-            if isinstance(index[0], int) or isinstance(index[0], list):
-                # Case a[4, :],
-                rslice = index[0]
-                sr = self.sr
+        if isinstance(index, tuple):
+            rindex = index[0]
+            cindex = index[1] if len(index)>1 else None
+        else: # if only slice, list, dict, int or float given for row selection
+            rindex = index
+            cindex = None
 
-            elif isinstance(index[0], slice):
-                start, stop, step = index[0].indices(len(self.sig))
-                sr = int(self.sr / abs(step))
-                rslice = index[0]  # row slice
-
-            elif isinstance(index[0], dict):  # Time slicing
-                for key, value in index[0].items():
-                    try:
-                        start = int(key * self.sr)
-                    except TypeError:  # if it is None
-                        start = None
-                    try:
-                        stop = int(value * self.sr)
-                    except TypeError:
-                        stop = None
-                rslice = slice(start, stop, 1)
-                sr = self.sr
-                _LOGGER.debug("Time slicing, start: %d, stop: %d", start, stop)
-            else:
-                rslice = index[0]
-                sr = self.sr
-
-            # Now check index[1]:
-            if type(index[1]) is list:
-                if isinstance(index[1][0], str):
-                    cslice = [self.col_name.get(s) for s in index[1]]
-                    cn_new = [self.cn[i] for i in cslice] if self.cn is not None else None
-                elif isinstance(index[1][0], bool):
-                    cslice = index[1]
-                    cn_new = list(compress(self.cn, index[1]))
-                elif isinstance(index[1][0], int):
-                    cslice = index[1]
-                    cn_new = [self.cn[i] for i in index[1]] if self.cn is not None else None
-                return Asig(self.sig[rslice, cslice], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
-
-            # int, list, slice are the same.
-            elif isinstance((index[1]), int) or isinstance(index[1], slice):
-                cn_new = self.cn[index[1]] if self.cn is not None else None
-                return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
-
-            # if only a single channel name is given.
-            elif isinstance(index[1], str):
-                # The column name should be incorrect afterward.
-                return Asig(self.sig[rslice, self.col_name.get(index[1])], sr=sr,
-                            label=self.label + '_arrayindexed', cn=index[1])
-
-        elif isinstance(index, slice):
-            # Case a[start:stop:step],
-            start, stop, step = index.indices(len(self.sig))    # index is a slice
-            return Asig(self.sig[index], sr=int(self.sr / abs(step)),
-                        label=self.label + "_sliced", cn=self.cn)
-
-        elif isinstance(index, dict):
-            for key, value in index.items():
+        # parse row index rindex into ridx
+        if isinstance(rindex, list): # e.g. a[[4,5,7,8,9]], or a[[True, False, True...]]
+            ridx = rindex
+            sr = self.sr
+        elif isinstance(rindex, int):  # picking a single row
+            ridx = rindex
+            sr = self.sr
+        elif isinstance(rindex, slice):
+            _, _, step = rindex.indices(len(self.sig))
+            sr = int(self.sr / abs(step))
+            ridx = rindex
+        elif isinstance(rindex, dict):  # time slicing
+            for key, value in rindex.items():
                 try:
                     start = int(key * self.sr)
-                except TypeError:
+                except TypeError:  # if it is None
                     start = None
                 try:
                     stop = int(value * self.sr)
                 except TypeError:
                     stop = None
-            rslice = slice(start, stop, 1)
+            ridx = slice(start, stop, 1)
             sr = self.sr
-            return Asig(self.sig[rslice], sr=sr, label=self.label + '_arrayindexed', cn=self.cn)
+            _LOGGER.debug("Time slicing, start: %d, stop: %d", start, stop)
+        else: # ToDo: check in what situation this is actually called and if it makes sense
+            ridx = rindex
+            sr = self.sr
 
-        elif isinstance(index, list):
-            # Case a[[1,2,4]] for row selection or case[['l']] name column selection
-            if isinstance(index[0], str):
-                col_idx = [self.col_name.get(s) for s in index]
-                return Asig(self.sig[:, col_idx], self.sr,
-                            label=self.label + '_arrayindexed', cn=index)
-            else:
-                return Asig(self.sig[index], self.sr,
-                            label=self.label + '_arrayindexed', cn=self.cn)
-
-        elif isinstance(index, int):  # most unlikely case.
-            # This step is to prevent an int/float being used as argument for asig as
-            # it will be interpretd as sample length or duration instead of signal.
-            new_sig = [self.sig[index]] if self.channels == 1 else self.sig[index]
-            return Asig(new_sig, self.sr, label=self.label + '_arrayindexed', cn=self.cn)
-
+        # now parse cindex
+        if type(cindex) is list:
+            if isinstance(cindex[0], str):
+                cidx = [self.col_name.get(s) for s in cindex]
+                cn_new = [self.cn[i] for i in cidx] if self.cn is not None else None
+            elif isinstance(cindex[0], bool):
+                cidx = cindex
+                cn_new = list(compress(self.cn, cindex))
+            elif isinstance(cindex[0], int):
+                cidx = cindex
+                cn_new = [self.cn[i] for i in cindex] if self.cn is not None else None
+        elif isinstance((cindex), int) or isinstance(cindex, slice): # int, slice are the same.
+            cidx = cindex 
+            cn_new = self.cn[cindex] if self.cn is not None else None
+        elif isinstance(cindex, str): # if only a single channel name is given.
+            cidx = self.col_name.get(cindex)
+            cn_new = [cindex]
         else:
-            raise TypeError("index must be int, array, or slice")
+            cidx = None
+            cn_new = self.cn
+
+        # apply ridx and cidx and return result
+        sig = self.sig[ridx, cidx] if self.channels>1 else self.sig[ridx]
+        return Asig(sig, sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
+
+    ############################
 
     def __setitem__(self, index, value):
         """setitem: asig[index] = value. This allows all the methods from getitem:
