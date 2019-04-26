@@ -8,6 +8,7 @@ processing & sonification.
 import copy
 import logging
 import time
+import numbers
 from itertools import compress
 
 import matplotlib.pyplot as plt
@@ -20,7 +21,7 @@ from scipy.io import wavfile
 
 from .helpers import ampdb, dbamp, linlin, timeit
 from .pyaudiostream import PyaudioStream
-from .ugen import *  # newly added ugen.
+from .ugen import *  # newly added ugen
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -337,7 +338,7 @@ class Asig:
         # apply ridx and cidx and return result
 
         sig = self.sig[ridx, cidx] if self.channels>1 else self.sig[ridx]
-        sig = [sig] if isinstance(sig, float) else sig
+        sig = [sig] if isinstance(sig, numbers.Number) else sig
         return Asig(sig, sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
 
     ############################
