@@ -149,18 +149,18 @@ class Asig:
 
     # def __getitem__(self, index):
     #     """ Perform numpy style slicing and time slicing and generate new asig.
-
+    #
     #     Parameters:
     #     ----------
     #     index : int, slice, list, tuple, dict
     #         Slicing argument. What are additional to numpy slicing:
-
-    #         * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :] 
+    #
+    #         * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :]
     #         creates indexing of 1s to 2.5s.
-
-    #         * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig. 
+    #
+    #         * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig.
     #         asig[['front', 'rear']], etc...
-
+    #
     #     Returns:
     #     ----------
     #     Asig(sliced_signal, adjusted_sr, remarked_label, subset_channelnames)
@@ -172,12 +172,12 @@ class Asig:
     #             # Case a[4, :],
     #             rslice = index[0]
     #             sr = self.sr
-
+    #
     #         elif isinstance(index[0], slice):
     #             start, stop, step = index[0].indices(len(self.sig))
     #             sr = int(self.sr / abs(step))
     #             rslice = index[0]  # row slice
-
+    #
     #         elif isinstance(index[0], dict):  # Time slicing
     #             for key, value in index[0].items():
     #                 try:
@@ -194,7 +194,7 @@ class Asig:
     #         else:
     #             rslice = index[0]
     #             sr = self.sr
-
+    #
     #         # Now check index[1]:
     #         if type(index[1]) is list:
     #             if isinstance(index[1][0], str):
@@ -207,24 +207,24 @@ class Asig:
     #                 cslice = index[1]
     #                 cn_new = [self.cn[i] for i in index[1]] if self.cn is not None else None
     #             return Asig(self.sig[rslice, cslice], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
-
+    #
     #         # int, list, slice are the same.
     #         elif isinstance((index[1]), int) or isinstance(index[1], slice):
     #             cn_new = self.cn[index[1]] if self.cn is not None else None
     #             return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
-
+    #
     #         # if only a single channel name is given.
     #         elif isinstance(index[1], str):
     #             # The column name should be incorrect afterward.
     #             return Asig(self.sig[rslice, self.col_name.get(index[1])], sr=sr,
     #                         label=self.label + '_arrayindexed', cn=index[1])
-
+    #
     #     elif isinstance(index, slice):
     #         # Case a[start:stop:step],
     #         start, stop, step = index.indices(len(self.sig))    # index is a slice
     #         return Asig(self.sig[index], sr=int(self.sr / abs(step)),
     #                     label=self.label + "_sliced", cn=self.cn)
-
+    #
     #     elif isinstance(index, dict):
     #         for key, value in index.items():
     #             try:
@@ -238,7 +238,7 @@ class Asig:
     #         rslice = slice(start, stop, 1)
     #         sr = self.sr
     #         return Asig(self.sig[rslice], sr=sr, label=self.label + '_arrayindexed', cn=self.cn)
-
+    #
     #     elif isinstance(index, list):
     #         # Case a[[1,2,4]] for row selection or case[['l']] name column selection
     #         if isinstance(index[0], str):
@@ -248,13 +248,13 @@ class Asig:
     #         else:
     #             return Asig(self.sig[index], self.sr,
     #                         label=self.label + '_arrayindexed', cn=self.cn)
-
+    #
     #     elif isinstance(index, int):  # most unlikely case.
     #         # This step is to prevent an int/float being used as argument for asig as
     #         # it will be interpretd as sample length or duration instead of signal.
     #         new_sig = [self.sig[index]] if self.channels == 1 else self.sig[index]
     #         return Asig(new_sig, self.sr, label=self.label + '_arrayindexed', cn=self.cn)
-
+    #
     #     else:
     #         raise TypeError("index must be int, array, or slice")
 
@@ -267,10 +267,10 @@ class Asig:
         index : int, slice, list, tuple, dict
             Slicing argument. What are additional to numpy slicing:
 
-            * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :] 
+            * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :]
             creates indexing of 1s to 2.5s.
 
-            * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig. 
+            * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig.
             asig[['front', 'rear']], etc...
 
         Returns:
@@ -290,6 +290,7 @@ class Asig:
             sr = self.sr
         elif isinstance(rindex, int):  # picking a single row
             ridx = rindex
+            _LOGGER.debug("integer slicing of index: %d", ridx)
             sr = self.sr
         elif isinstance(rindex, slice):
             _, _, step = rindex.indices(len(self.sig))
@@ -308,7 +309,7 @@ class Asig:
             ridx = slice(start, stop, 1)
             sr = self.sr
             _LOGGER.debug("Time slicing, start: %d, stop: %d", start, stop)
-        else: # ToDo: check in what situation this is actually called and if it makes sense
+        else:  # Dont think there is a usecase.
             ridx = rindex
             sr = self.sr
 
@@ -324,7 +325,7 @@ class Asig:
                 cidx = cindex
                 cn_new = [self.cn[i] for i in cindex] if self.cn is not None else None
         elif isinstance((cindex), int) or isinstance(cindex, slice): # int, slice are the same.
-            cidx = cindex 
+            cidx = cindex
             cn_new = self.cn[cindex] if self.cn is not None else None
         elif isinstance(cindex, str): # if only a single channel name is given.
             cidx = self.col_name.get(cindex)
@@ -334,7 +335,9 @@ class Asig:
             cn_new = self.cn
 
         # apply ridx and cidx and return result
+
         sig = self.sig[ridx, cidx] if self.channels>1 else self.sig[ridx]
+        sig = [sig] if isinstance(sig, float) else sig
         return Asig(sig, sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
 
     ############################

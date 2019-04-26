@@ -18,7 +18,7 @@ class TestSlicing(TestCase):
         pass
 
     def test_int(self):
-        self.assertAlmostEqual(self.asine[4].sig, self.sig[4])
+        self.assertAlmostEqual(self.asine4[4].sig, self.sig4[4])
 
     def test_intlist(self):
         self.assertTrue(np.array_equal(self.asine[[2, 4, 5]].sig, self.sig[[2, 4, 5]]))
