@@ -1,6 +1,6 @@
 """Asig, Aspec and Astft classes.
 
-This file contains the A* classes to enable sample-precise 
+This file contains the A* classes to enable sample-precise
 audio coding with numpy/scipy/python for multi-channel audio 
 processing & sonification.
 """
@@ -280,12 +280,12 @@ class Asig:
         if isinstance(index, tuple):
             rindex = index[0]
             cindex = index[1] if len(index)>1 else None
-        else: # if only slice, list, dict, int or float given for row selection
+        else:  # if only slice, list, dict, int or float given for row selection
             rindex = index
             cindex = None
 
         # parse row index rindex into ridx
-        if isinstance(rindex, list): # e.g. a[[4,5,7,8,9]], or a[[True, False, True...]]
+        if isinstance(rindex, list):  # e.g. a[[4,5,7,8,9]], or a[[True, False, True...]]
             ridx = rindex
             sr = self.sr
         elif isinstance(rindex, int):  # picking a single row
@@ -324,10 +324,10 @@ class Asig:
             elif isinstance(cindex[0], int):
                 cidx = cindex
                 cn_new = [self.cn[i] for i in cindex] if self.cn is not None else None
-        elif isinstance((cindex), int) or isinstance(cindex, slice): # int, slice are the same.
+        elif isinstance((cindex), int) or isinstance(cindex, slice):  # int, slice are the same.
             cidx = cindex
             cn_new = self.cn[cindex] if self.cn is not None else None
-        elif isinstance(cindex, str): # if only a single channel name is given.
+        elif isinstance(cindex, str):  # if only a single channel name is given.
             cidx = self.col_name.get(cindex)
             cn_new = [cindex]
         else:
@@ -653,7 +653,6 @@ class Asig:
     def get_times(self):
         """Get time stamps for left-edge of sample-and-hold-signal"""
         return np.linspace(0, (self.samples - 1) / self.sr, self.samples)
-
 
     def __eq__(self, other):
         """Check if two asig objects have the same signal. But does not care about sr and others"""
@@ -1252,7 +1251,7 @@ class Aserver:
         self.block_time += self.block_duration
         self.block_cnt += 1
         self.timejitter = time.time() - self.block_time  # just curious - not needed but for time stability check
-        if self.timejitter > 3*self.block_duration:
+        if self.timejitter > 3 * self.block_duration:
             _LOGGER.warning(f"Aserver late by {self.timejitter} seconds: block_time reseted!")
             self.block_time = time.time()
 
