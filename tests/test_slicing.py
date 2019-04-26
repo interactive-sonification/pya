@@ -25,7 +25,7 @@ class TestSlicing(TestCase):
 
     def test_namelist(self):
         """Check whether I can pass a list of column names and get the same result"""
-        result = self.astereo[["l", "r"]]
+        result = self.astereo[:,["l", "r"]]
         expect = self.astereo[:,[0, 1]]
         self.assertEqual(result, expect)
 
@@ -49,7 +49,7 @@ class TestSlicing(TestCase):
         result = self.astereo[0:44100:2, 'l']
         expected_sig = self.astereo.sig[0:44100:2, 0]
         self.assertTrue(np.array_equal(result.sig, expected_sig))  # Check if signal equal
-        self.assertEqual(result.cn, 'l')  # Check whether the new column name is correct
+        self.assertEqual(result.cn, ['l'])  # Check whether the new column name is correct
 
         # channel name slice as list.
         result = self.astereo[0:44100:2, ['l', 'r']]
