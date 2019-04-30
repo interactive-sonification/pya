@@ -187,13 +187,13 @@ class Asig:
             sr = int(self.sr / abs(step))
             ridx = rindex
         elif isinstance(rindex, dict):  # time slicing
-            for key, value in rindex.items():
+            for key, val in rindex.items():
                 try:
                     start = int(key * self.sr)
                 except TypeError:  # if it is None
                     start = None
                 try:
-                    stop = int(value * self.sr)
+                    stop = int(val * self.sr)
                 except TypeError:
                     stop = None
             ridx = slice(start, stop, 1)
@@ -214,20 +214,28 @@ class Asig:
             elif isinstance(cindex[0], int):
                 cidx = cindex
                 cn_new = [self.cn[i] for i in cindex] if self.cn is not None else None
-        elif isinstance((cindex), int) or isinstance(cindex, slice):  # int, slice are the same.
+        elif isinstance(cindex, int):
+            cidx = cindex
+            cn_new = [self.cn[cindex]] if self.cn is not None else None
+        elif isinstance(cindex, slice):
             cidx = cindex
             cn_new = self.cn[cindex] if self.cn is not None else None
         elif isinstance(cindex, str):  # if only a single channel name is given.
             cidx = self.col_name.get(cindex)
             cn_new = [cindex]
-        else:
-            cidx = None
+        else: # if nothing is given, e.g. index = (ridx,) on calling a[:]
+            cidx = slice(None, None, None)
             cn_new = self.cn
 
         # apply ridx and cidx and return result
         sig = self.sig[ridx, cidx] if self.channels>1 else self.sig[ridx]
-        sig = [sig] if isinstance(sig, numbers.Number) else sig
-        return Asig(sig, sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
+        if sig.ndim == 2 and sig.shape[1]==1:
+            sig = np.squeeze(sig)
+        if isinstance(sig, numbers.Number):
+            sig = [sig] # TODO: why doesn't np.array(sig) work? wouldn't it be better?
+        a = Asig(sig, sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
+        a.mix_mode = self.mix_mode
+        return a
 
     # new setitem implementation (TH): in analogy to new __getitem__ and with mix modes
     # work in progress
@@ -236,11 +244,13 @@ class Asig:
     def x(self):
         self.mix_mode = 'extend'
         return self
+    extend = x # better readable synonym 
 
     @property
     def b(self):
         self.mix_mode = 'bound'
         return self
+    bound = b # better readable synonym
 
     def __setitem__(self, index, value):
         """setitem: asig[index] = value.
@@ -252,15 +262,43 @@ class Asig:
         3 possible modes: (referring to asig as 'dest', and value as 'src'
             1. standard pythonic way that the src und dest dimensions need to match
                 asig[...] = value
-            2. bound mode where src is copied up to the limits of src
+            2. bound mode where src is copied up to the bounds of src
                 asig.b[...] = value
             3. extend mode where dest is dynamically extended to make space for src
                 asig.x[...] = value
-        Currently considered call syntax: 
+        
+        Notes - Remarks - Bugs - ToDos: 
+
+        row index: 
+        - list [1,2,3,4,5,6,7,8] or [True, ..., False]
+            -> list    -> b ok, no x
+
+        - int 0
+            -> int     -> allow both b and x? 
+
+        - slice 100:5000:2
+            -> slice, see slice below
+
+        - dict {0.5:2.5}
+            -> slice
+            * b should work, but should it truncate to stop or end of dest?
+            * x only, if step==1 and stop=None
+
+        for all 'x':
+            what if int (resp. start) > self.samples? => extend beyond end
+            but obviously not meaningful for += or *=, only set
+
+        TODOs:
+            a[50:60,0] = 4 -> 4 has no shape!! --> WORKS
+            a[50:60,[0,1]] = [[1,3]] -> WORKS (broadcast_to)
+            a[:,[0,1]] *= [[1,3] --> WORKS! but needs testing
+            check if mix_mode copy required on each fn output: if yes implement
+            check all sig = [[no numpy array]] cases
+            a.x[300:,1:2] = 0.5*b with 1-ch b to 4-ch a: shape problem (600, ) to (600, 1)   
         """
         # check if @property x or b used
         mode = self.mix_mode
-        print("mix_mode is:", mode)
+        # print("mix_mode is:", mode)
         self.mix_mode = None  # reset when done
 
         if isinstance(index, tuple):
@@ -307,47 +345,76 @@ class Asig:
         elif isinstance(cindex, str):  # if only a single channel name is given.
             cidx = self.col_name.get(cindex)
         else:
-            cidx = None
+            cidx = slice(None)
 
-        if self.sig.ndim < 2: 
-            cidx = None  # ToDo: find clean way to cope with ndim==1 arrays...
-
-        print(ridx, cidx)
-
+        if self.sig.ndim == 1:
+            final_index = (ridx)
+        else:
+            final_index = (ridx, cidx)
         # apply setitem: set dest[ridx,cidx] = src return self
         if isinstance(value, Asig):
             src = value.sig
-        else:  # numpy array if not Asig, default: sr fits
+        elif isinstance(value, np.ndarray): # numpy array if not Asig, default: sr fits
             src = value
+        elif isinstance(value, list): # if list
+            src = value     # np.array(value)
+            mode = None  # for list (assume values for channels), mode makes no sense...
+            # TODO: check if useful behavior also for numpy arrays
+        else:
+            src = value
+            mode = None  # for scalar types, mode makes no sense...
+        # TODO: test correct treatment for non-np.array value
 
         # now execute according to mode (which is one of (None, 'bound', 'extend'))
-        print(f"{mode} mode: dest = {self.sig[ridx, cidx].shape}, src = {src.shape}")
+        # print(f"{mode} mode: dest = {self.sig[ridx, cidx].shape}, src = {src.shape}")
 
         if mode is None:
-            self.sig[ridx, cidx] = src.reshape(self.sig[ridx, cidx].shape)
-        elif mode=='bound':
-            dshape = self.sig[ridx, cidx].shape
+            # ToDo: adapt to enable src=number, or row vector for channel values
+            if isinstance(src, numbers.Number):
+                self.sig[final_index] = src
+            elif isinstance(src, list): # for multichannel signals that is value for each column
+                self.sig[final_index] = src
+            else: # numpy array
+                self.sig[final_index] = np.broadcast_to(src, self.sig[final_index].shape)      
+        elif mode == 'bound':
+            dshape = self.sig[final_index].shape 
             dn = dshape[0]  # ToDo: howto get that faster from ridx alone?
             sn = src.shape[0]
             if sn > dn:
-                self.sig[ridx, cidx] = src[:dn]
+                self.sig[final_index] = src[:dn] if len(dshape)==1 else src[:dn,None]
             else:
-                self.sig[ridx, cidx][:sn] = src
+                self.sig[final_index][:sn] = src if len(dshape)==1 else src[:,None]
         elif mode=='extend':
-            dshape = self.sig[ridx, cidx].shape
-            dn = dshape[0]  # ToDo: howto get that faster from ridx alone?
+            if isinstance(ridx, list):
+                print("Asig.setitem Error: extend mode not available for row index list")
+                return self
+            if isinstance(ridx, slice):
+                if ridx.step not in [1, None]:
+                    print("Asig.setitem Error: extend mode only available for step-1 slices")
+                    return self
+                if ridx.stop is not None: 
+                    print("Asig.setitem Error: extend mode only available if stop is None")
+                    return self
+            dshape = self.sig[final_index].shape
+            dn = dshape[0]  # ToDo: howto compute dn faster from ridx shape(self.sig) alone?
             sn = src.shape[0]
             if sn <= dn:  # same as bound, since src fits in
-                self.sig[ridx, cidx][:sn,:] = src
+                # print(dshape, self.sig[final_index][:sn].shape, src.shape)
+                self.sig[final_index][:sn] = np.broadcast_to(src, (sn,) + dshape[1:])
             elif sn > dn:
-                self.sig[ridx, cidx] = src[:dn]
-                print(self.sig.shape, src[dn:].shape)
-                if self.sig.ndim==1:
-                    self.sig = self.sig.reshape(self.samples, 1)
-                self.sig = np.vstack( (self.sig, src[dn:]) )
+                # print("sn>dn shapes:", dshape, src[dn:].shape)
+                self.sig[final_index] = src[:dn]
+                # now extend by nn = sn-dn additional rows
+                if dn>0:
+                    nn = sn - dn # nr of needed additional rows
+                    self.sig = np.r_[self.sig, np.zeros((nn,)+self.sig.shape[1:])]
+                    self.sig[-nn:, cidx] = src[dn:]
+                else: # this is when start is beyond length of dest...
+                    # print(ridx.start, sn, dn)
+                    nn = ridx.start + sn
+                    self.sig = np.r_[self.sig, np.zeros((nn-self.sig.shape[0],)+self.sig.shape[1:])]
+                    self.sig[-sn:, cidx] = src
                 self.samples = self.sig.shape[0]
-                if self.channels == 1 and self.sig.ndim > 1:
-                    self.sig = self.sig.reshape(self.samples)
         return self
 
     def resample(self, target_sr=44100, rate=1, kind='linear'):
@@ -588,8 +655,9 @@ class Asig:
         return sig_eq and sr_eq
 
     def __repr__(self):
-        return "Asig('{}'): {} x {} @ {} Hz = {:.3f} s".format(
-            self.label, self.channels, self.samples, self.sr, self.samples / self.sr)
+        return "Asig('{}'): {} x {} @ {}Hz = {:.3f}s cn={}".format(
+            self.label, self.channels, self.samples, self.sr, self.samples/self.sr,
+            self.cn)
 
     def __mul__(self, other):
         if isinstance(other, Asig):
@@ -604,10 +672,14 @@ class Asig:
             return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
     def __add__(self, other):
-        if isinstance(other, Asig):
-            return Asig(self.sig + other.sig, self.sr, label=self.label + "_added", cn=self.cn)
-        else:
-            return Asig(self.sig + other, self.sr, label=self.label + "_added", cn=self.cn)
+        selfsig = self.sig
+        othersig = other.sig if isinstance(other, Asig) else other
+        if self.mix_mode is 'bound':
+            if selfsig.shape[0] > othersig.shape[0]:
+                selfsig = selfsig[:othersig.shape[0]]
+            elif selfsig.shape[0] < othersig.shape[0]:
+                othersig = othersig[:selfsig.shape[0]]
+        return Asig(selfsig + othersig, self.sr, label=self.label + "_added", cn=self.cn)
 
     def __radd__(self, other):
         if isinstance(other, Asig):
@@ -666,20 +738,6 @@ class Asig:
             return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}", cn=self.cn)
         print('select_event: neither index nor onset given: return self')
         return self
-
-    # spectral segment into pieces - incomplete and unused
-    # def find_events_spectral(self, nperseg=64, on_threshold=3, off_threshold=2, medfilt_order=15):
-    #     tiny = np.finfo(np.dtype('float64')).eps
-    #     f, t, Sxx = scipy.signal.spectrogram(self.sig, self.sr, nperseg=nperseg)
-    #     env = np.mean(np.log(Sxx + tiny), 0)
-    #     sp = np.mean(np.log(Sxx + tiny), 1)
-    #     # ts = np.arange(self.samples)/self.sr
-    #     envsig = np.log(self.sig**2 + 0.001)
-    #     envsig = envsig - np.median(envsig)
-    #     menv = scipy.signal.medfilt(env, medfilt_order) - np.median(env)
-    #     ibeg = np.where( np.logical_and( menv[1:] > on_threshold, menv[:-1] < on_threshold) )[0]
-    #     iend = np.where( np.logical_and( menv[1:] < off_threshold, menv[:-1] > off_threshold) )[0]
-    #     return (np.vstack((t[ibeg], t[iend])).T*self.sr).astype('int32')
 
     def fade_in(self, dur=0.1, curve=1):
         nsamp = int(dur * self.sr)
@@ -825,6 +883,9 @@ class Asig:
 
     def to_spec(self):
         return Aspec(self)
+
+    def to_stft(self, **kwargs):
+        return Astft(self, **kwargs)
 
     def spectrum(self):
         nrfreqs = self.samples // 2 + 1
@@ -988,8 +1049,8 @@ class Astft:
         _, sig = scipy.signal.istft(self.stft, **kwargs)  # _ since 1st return value 'times' unused
         return Asig(sig, sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
-    def plot(self, fn=lambda x: x):
-        plt.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)))
+    def plot(self, fn=lambda x: x, **kwargs):
+        plt.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)), **kwargs)
         plt.colorbar()
         return self
 
