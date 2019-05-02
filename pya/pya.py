@@ -113,13 +113,13 @@ class Asig:
         self._length = np.shape(self.sig)[0]  # Update it. 
         return self._length
 
-    # @length.setter  # actually I dont need a setter. 
-    # def length(self, val):
-    #     _LOGGER.debug("signal length setter")
-    #     self._length = val
-    #     if self._length != np.shape(self.sig)[0]:
-    #         _LOGGER.error(" Assign %d as sample length but doesn't match the signal length: %d", 
-    #         self._length, np.shape(self.sig)[0])
+    @length.setter  # actually I dont need a setter. 
+    def length(self, val):
+        _LOGGER.warning("signal length can't be changed. ")
+        # self._length = val
+        # if self._length != np.shape(self.sig)[0]:
+        #     _LOGGER.error(" Assign %d as sample length but doesn't match the signal length: %d", 
+        #     self._length, np.shape(self.sig)[0])
 
     def load_wavfile(self, fname):
         # Discuss to change to float32 .
