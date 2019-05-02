@@ -26,7 +26,6 @@ from .ugen import *  # newly added ugen
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
-
 class Asig:
     """Audio signal class.
 
