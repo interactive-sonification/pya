@@ -251,6 +251,12 @@ class Asig:
         return self
     bound = b # better readable synonym
 
+    @property
+    def r(self):
+        self.mix_mode = 'replace'
+        return self
+    replace = r
+
     def __setitem__(self, index, value):
         """setitem: asig[index] = value.
 
@@ -331,6 +337,9 @@ class Asig:
         else:  # Dont think there is a usecase.
             ridx = rindex
 
+        start_idx = ridx.start  # Start index of the ridx, 
+        stop_idx = ridx.stop    # Stop index of the rdix
+
         # now parse cindex
         if type(cindex) is list:
             if isinstance(cindex[0], str):
@@ -353,6 +362,7 @@ class Asig:
         # apply setitem: set dest[ridx,cidx] = src return self
         if isinstance(value, Asig):
             src = value.sig
+
         elif isinstance(value, np.ndarray): # numpy array if not Asig, default: sr fits
             src = value
         elif isinstance(value, list): # if list
@@ -383,7 +393,7 @@ class Asig:
                 self.sig[final_index] = src[:dn] if len(dshape)==1 else src[:dn,None]
             else:
                 self.sig[final_index][:sn] = src if len(dshape)==1 else src[:,None]
-        elif mode=='extend':
+        elif mode == 'extend':
             if isinstance(ridx, list):
                 print("Asig.setitem Error: extend mode not available for row index list")
                 return self
@@ -414,6 +424,24 @@ class Asig:
                     self.sig = np.r_[self.sig, np.zeros((nn-self.sig.shape[0],)+self.sig.shape[1:])]
                     self.sig[-sn:, cidx] = src
                 self.samples = self.sig.shape[0]
+
+        elif mode == 'replace':
+            # This mode is to replace a subset with an any given shape. 
+            _LOGGER.info("replace mode")
+            end = start_idx + src.shape[0]  # Where the end point of the newly insert signal should be. 
+            # Create a new signal 
+            # New row is: original samples + (new_signal_sample - the range to be replace)
+            sig = np.ndarray(shape=(self.sig.shape[0] + src.shape[0] - (stop_idx - start_idx), self.channels))
+            if sig.ndim == 2 and sig.shape[1] == 1:
+                sig = np.squeeze(sig)
+            if isinstance(sig, numbers.Number):
+                sig = np.array(sig) 
+
+            sig[:start_idx] = self.sig[:start_idx].copy()  # Copy the first part over   
+            sig[start_idx:end] = src                       # The second part is the new signal
+            sig[end:] = self.sig[stop_idx:].copy()         # The final part is the remaining of self.sig
+            self.sig = sig                                 # Update self.sig
+            self.samples = np.shape(self.sig)[0]
         return self
 
     def resample(self, target_sr=44100, rate=1, kind='linear'):
@@ -659,10 +687,19 @@ class Asig:
             self.cn)
 
     def __mul__(self, other):
-        if isinstance(other, Asig):
-            return Asig(self.sig * other.sig, self.sr, label=self.label + "_multiplied", cn=self.cn)
-        else:
-            return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
+        selfsig = self.sig
+        othersig = other.sig if isinstance(other, Asig) else other
+        if self.mix_mode is 'bound':
+            if selfsig.shape[0] > othersig.shape[0]:
+                selfsig = selfsig[:othersig.shape[0]]
+            elif selfsig.shape[0] < othersig.shape[0]:
+                othersig = othersig[:selfsig.shape[0]]
+        return Asig(selfsig * othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
+
+        # if isinstance(other, Asig):
+        #     return Asig(self.sig * other.sig, self.sr, label=self.label + "_multiplied", cn=self.cn)
+        # else:
+        #     return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
     def __rmul__(self, other):
         if isinstance(other, Asig):
