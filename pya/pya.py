@@ -97,7 +97,7 @@ class Asig:
                 self.channels = self.sig.shape[1]
             except IndexError:
                 self.channels = 1
-        self.samples = np.shape(self.sig)[0]
+        self.samples = np.shape(self.sig)[0]  #TODO, if decided replace with property version. 
         self.label = label
         self.device = 1  # TODO this seems uncessary
         # make a copy for any processing events e.g. (panning, filtering)
@@ -106,6 +106,20 @@ class Asig:
         # TODO discuss whether copy is necessary as it is not memory efficient
         self.cn = cn
         self._set_col_names()
+
+    @property  #TODO discuss and replace self.samples with property
+    def length(self):  # Getter
+        _LOGGER.debug("signal length getter")
+        self._length = np.shape(self.sig)[0]  # Update it. 
+        return self._length
+
+    # @length.setter  # actually I dont need a setter. 
+    # def length(self, val):
+    #     _LOGGER.debug("signal length setter")
+    #     self._length = val
+    #     if self._length != np.shape(self.sig)[0]:
+    #         _LOGGER.error(" Assign %d as sample length but doesn't match the signal length: %d", 
+    #         self._length, np.shape(self.sig)[0])
 
     def load_wavfile(self, fname):
         # Discuss to change to float32 .
@@ -431,15 +445,16 @@ class Asig:
             end = start_idx + src.shape[0]  # Where the end point of the newly insert signal should be. 
             # Create a new signal 
             # New row is: original samples + (new_signal_sample - the range to be replace)
+            # This line is slow. 
             sig = np.ndarray(shape=(self.sig.shape[0] + src.shape[0] - (stop_idx - start_idx), self.channels))
             if sig.ndim == 2 and sig.shape[1] == 1:
                 sig = np.squeeze(sig)
             if isinstance(sig, numbers.Number):
                 sig = np.array(sig) 
 
-            sig[:start_idx] = self.sig[:start_idx].copy()  # Copy the first part over   
+            sig[:start_idx] = self.sig_copy[:start_idx]  # Copy the first part over   
             sig[start_idx:end] = src                       # The second part is the new signal
-            sig[end:] = self.sig[stop_idx:].copy()         # The final part is the remaining of self.sig
+            sig[end:] = self.sig_copy[stop_idx:]       # The final part is the remaining of self.sig
             self.sig = sig                                 # Update self.sig
             self.samples = np.shape(self.sig)[0]
         return self
