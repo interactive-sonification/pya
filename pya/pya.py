@@ -220,6 +220,8 @@ class Asig:
         if type(cindex) is list:
             if isinstance(cindex[0], str):
                 cidx = [self.col_name.get(s) for s in cindex]
+                if cidx is None:
+                    _LOGGER.error("Input column names does not exist") 
                 cn_new = [self.cn[i] for i in cidx] if self.cn is not None else None
             elif isinstance(cindex[0], bool):
                 cidx = cindex
@@ -229,6 +231,7 @@ class Asig:
                 cn_new = [self.cn[i] for i in cindex] if self.cn is not None else None
         elif isinstance(cindex, int):
             cidx = cindex
+            
             cn_new = [self.cn[cindex]] if self.cn is not None else None
         elif isinstance(cindex, slice):
             cidx = cindex
@@ -351,39 +354,48 @@ class Asig:
         else:  # Dont think there is a usecase.
             ridx = rindex
 
-        start_idx = ridx.start  # Start index of the ridx, 
-        stop_idx = ridx.stop    # Stop index of the rdix
+        start_idx = ridx.start if isinstance(ridx, slice) else 0  # Start index of the ridx, 
+        stop_idx = ridx.stop if isinstance(ridx, slice) else 0   # Stop index of the rdix
+
 
         # now parse cindex
         if type(cindex) is list:
             if isinstance(cindex[0], str):
                 cidx = [self.col_name.get(s) for s in cindex]
+                cidx = cidx[0] if len(cidx) == 1 else cidx  # hotfix for now. 
             elif isinstance(cindex[0], bool):
                 cidx = cindex
             elif isinstance(cindex[0], int):
                 cidx = cindex
-        elif isinstance((cindex), int) or isinstance(cindex, slice):  # int, slice are the same.
+        elif isinstance(cindex, int) or isinstance(cindex, slice):  # int, slice are the same.
             cidx = cindex
         elif isinstance(cindex, str):  # if only a single channel name is given.
             cidx = self.col_name.get(cindex)
         else:
             cidx = slice(None)
 
+        _LOGGER.debug("self.sig.ndim == %d", self.sig.ndim)
         if self.sig.ndim == 1:
             final_index = (ridx)
         else:
             final_index = (ridx, cidx)
         # apply setitem: set dest[ridx,cidx] = src return self
+  
+
         if isinstance(value, Asig):
+            _LOGGER.debug("value is asig")
             src = value.sig
 
         elif isinstance(value, np.ndarray): # numpy array if not Asig, default: sr fits
+            _LOGGER.debug("value is ndarray")
             src = value
         elif isinstance(value, list): # if list
+            _LOGGER.debug("value is list")
             src = value     # np.array(value)
             mode = None  # for list (assume values for channels), mode makes no sense...
             # TODO: check if useful behavior also for numpy arrays
         else:
+            _LOGGER.debug("value not asig, ndarray, list")
             src = value
             mode = None  # for scalar types, mode makes no sense...
         # TODO: test correct treatment for non-np.array value
@@ -392,14 +404,19 @@ class Asig:
         # print(f"{mode} mode: dest = {self.sig[ridx, cidx].shape}, src = {src.shape}")
 
         if mode is None:
+            _LOGGER.debug("Default setitem mode")
             # ToDo: adapt to enable src=number, or row vector for channel values
             if isinstance(src, numbers.Number):
                 self.sig[final_index] = src
             elif isinstance(src, list): # for multichannel signals that is value for each column
                 self.sig[final_index] = src
             else: # numpy array
-                self.sig[final_index] = np.broadcast_to(src, self.sig[final_index].shape)      
+                try:
+                    self.sig[final_index] = np.broadcast_to(src, self.sig[final_index].shape) 
+                except ValueError:  # for error: cannot broadcast a non-scalar to a scalar array
+                    self.sig[final_index] = src
         elif mode == 'bound':
+            _LOGGER.debug("Bound setitem mode")
             dshape = self.sig[final_index].shape 
             dn = dshape[0]  # ToDo: howto get that faster from ridx alone?
             sn = src.shape[0]
