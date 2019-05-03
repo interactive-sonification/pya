@@ -26,7 +26,6 @@ from .ugen import *  # newly added ugen
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
-
 class Asig:
     """Audio signal class.
 
@@ -77,6 +76,7 @@ class Asig:
 
     def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
         self.sr = sr
+        self.mix_mode = None
         self._ = {}  # dictionary for further return values
         self.channels = channels  # TODO discuss to remove channels as an argument
         if isinstance(sig, str):
@@ -97,7 +97,7 @@ class Asig:
                 self.channels = self.sig.shape[1]
             except IndexError:
                 self.channels = 1
-        self.samples = np.shape(self.sig)[0]
+        self.samples = np.shape(self.sig)[0]  #TODO, if decided replace with property version. 
         self.label = label
         self.device = 1  # TODO this seems uncessary
         # make a copy for any processing events e.g. (panning, filtering)
@@ -106,6 +106,20 @@ class Asig:
         # TODO discuss whether copy is necessary as it is not memory efficient
         self.cn = cn
         self._set_col_names()
+
+    @property  #TODO discuss and replace self.samples with property
+    def length(self):  # Getter
+        _LOGGER.debug("signal length getter")
+        self._length = np.shape(self.sig)[0]  # Update it. 
+        return self._length
+
+    @length.setter  # actually I dont need a setter. 
+    def length(self, val):
+        _LOGGER.warning("signal length can't be changed. ")
+        # self._length = val
+        # if self._length != np.shape(self.sig)[0]:
+        #     _LOGGER.error(" Assign %d as sample length but doesn't match the signal length: %d", 
+        #     self._length, np.shape(self.sig)[0])
 
     def load_wavfile(self, fname):
         # Discuss to change to float32 .
@@ -148,118 +162,6 @@ class Asig:
             else:
                 raise TypeError("column names need to be a list of strings")
 
-    # def __getitem__(self, index):
-    #     """ Perform numpy style slicing and time slicing and generate new asig.
-    #
-    #     Parameters:
-    #     ----------
-    #     index : int, slice, list, tuple, dict
-    #         Slicing argument. What are additional to numpy slicing:
-    #
-    #         * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :]
-    #         creates indexing of 1s to 2.5s.
-    #
-    #         * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig.
-    #         asig[['front', 'rear']], etc...
-    #
-    #     Returns:
-    #     ----------
-    #     Asig(sliced_signal, adjusted_sr, remarked_label, subset_channelnames)
-    #     """
-    #     if isinstance(index, tuple):  # Most likely case.
-    #         # First check index[0] for row slicing
-    #         _LOGGER.debug("slice with tuple")
-    #         if isinstance(index[0], int) or isinstance(index[0], list):
-    #             # Case a[4, :],
-    #             rslice = index[0]
-    #             sr = self.sr
-    #
-    #         elif isinstance(index[0], slice):
-    #             start, stop, step = index[0].indices(len(self.sig))
-    #             sr = int(self.sr / abs(step))
-    #             rslice = index[0]  # row slice
-    #
-    #         elif isinstance(index[0], dict):  # Time slicing
-    #             for key, value in index[0].items():
-    #                 try:
-    #                     start = int(key * self.sr)
-    #                 except TypeError:  # if it is None
-    #                     start = None
-    #                 try:
-    #                     stop = int(value * self.sr)
-    #                 except TypeError:
-    #                     stop = None
-    #             rslice = slice(start, stop, 1)
-    #             sr = self.sr
-    #             _LOGGER.debug("Time slicing, start: %d, stop: %d", start, stop)
-    #         else:
-    #             rslice = index[0]
-    #             sr = self.sr
-    #
-    #         # Now check index[1]:
-    #         if type(index[1]) is list:
-    #             if isinstance(index[1][0], str):
-    #                 cslice = [self.col_name.get(s) for s in index[1]]
-    #                 cn_new = [self.cn[i] for i in cslice] if self.cn is not None else None
-    #             elif isinstance(index[1][0], bool):
-    #                 cslice = index[1]
-    #                 cn_new = list(compress(self.cn, index[1]))
-    #             elif isinstance(index[1][0], int):
-    #                 cslice = index[1]
-    #                 cn_new = [self.cn[i] for i in index[1]] if self.cn is not None else None
-    #             return Asig(self.sig[rslice, cslice], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
-    #
-    #         # int, list, slice are the same.
-    #         elif isinstance((index[1]), int) or isinstance(index[1], slice):
-    #             cn_new = self.cn[index[1]] if self.cn is not None else None
-    #             return Asig(self.sig[rslice, index[1]], sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
-    #
-    #         # if only a single channel name is given.
-    #         elif isinstance(index[1], str):
-    #             # The column name should be incorrect afterward.
-    #             return Asig(self.sig[rslice, self.col_name.get(index[1])], sr=sr,
-    #                         label=self.label + '_arrayindexed', cn=index[1])
-    #
-    #     elif isinstance(index, slice):
-    #         # Case a[start:stop:step],
-    #         start, stop, step = index.indices(len(self.sig))    # index is a slice
-    #         return Asig(self.sig[index], sr=int(self.sr / abs(step)),
-    #                     label=self.label + "_sliced", cn=self.cn)
-    #
-    #     elif isinstance(index, dict):
-    #         for key, value in index.items():
-    #             try:
-    #                 start = int(key * self.sr)
-    #             except TypeError:
-    #                 start = None
-    #             try:
-    #                 stop = int(value * self.sr)
-    #             except TypeError:
-    #                 stop = None
-    #         rslice = slice(start, stop, 1)
-    #         sr = self.sr
-    #         return Asig(self.sig[rslice], sr=sr, label=self.label + '_arrayindexed', cn=self.cn)
-    #
-    #     elif isinstance(index, list):
-    #         # Case a[[1,2,4]] for row selection or case[['l']] name column selection
-    #         if isinstance(index[0], str):
-    #             col_idx = [self.col_name.get(s) for s in index]
-    #             return Asig(self.sig[:, col_idx], self.sr,
-    #                         label=self.label + '_arrayindexed', cn=index)
-    #         else:
-    #             return Asig(self.sig[index], self.sr,
-    #                         label=self.label + '_arrayindexed', cn=self.cn)
-    #
-    #     elif isinstance(index, int):  # most unlikely case.
-    #         # This step is to prevent an int/float being used as argument for asig as
-    #         # it will be interpretd as sample length or duration instead of signal.
-    #         new_sig = [self.sig[index]] if self.channels == 1 else self.sig[index]
-    #         return Asig(new_sig, self.sr, label=self.label + '_arrayindexed', cn=self.cn)
-    #
-    #     else:
-    #         raise TypeError("index must be int, array, or slice")
-
-    ############################ TH: new attempt of __getitem__()
     def __getitem__(self, index):
         """ Perform numpy style slicing and time slicing and generate new asig.
 
@@ -298,13 +200,13 @@ class Asig:
             sr = int(self.sr / abs(step))
             ridx = rindex
         elif isinstance(rindex, dict):  # time slicing
-            for key, value in rindex.items():
+            for key, val in rindex.items():
                 try:
                     start = int(key * self.sr)
                 except TypeError:  # if it is None
                     start = None
                 try:
-                    stop = int(value * self.sr)
+                    stop = int(val * self.sr)
                 except TypeError:
                     stop = None
             ridx = slice(start, stop, 1)
@@ -325,71 +227,118 @@ class Asig:
             elif isinstance(cindex[0], int):
                 cidx = cindex
                 cn_new = [self.cn[i] for i in cindex] if self.cn is not None else None
-        elif isinstance((cindex), int) or isinstance(cindex, slice):  # int, slice are the same.
+        elif isinstance(cindex, int):
+            cidx = cindex
+            cn_new = [self.cn[cindex]] if self.cn is not None else None
+        elif isinstance(cindex, slice):
             cidx = cindex
             cn_new = self.cn[cindex] if self.cn is not None else None
         elif isinstance(cindex, str):  # if only a single channel name is given.
             cidx = self.col_name.get(cindex)
             cn_new = [cindex]
-        else:
-            cidx = None
+        else: # if nothing is given, e.g. index = (ridx,) on calling a[:]
+            cidx = slice(None, None, None)
             cn_new = self.cn
 
         # apply ridx and cidx and return result
-
         sig = self.sig[ridx, cidx] if self.channels>1 else self.sig[ridx]
-        sig = [sig] if isinstance(sig, numbers.Number) else sig
-        return Asig(sig, sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
+        if sig.ndim == 2 and sig.shape[1]==1:
+            sig = np.squeeze(sig)
+        if isinstance(sig, numbers.Number):
+            sig = [sig] # TODO: why doesn't np.array(sig) work? wouldn't it be better?
+        a = Asig(sig, sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
+        a.mix_mode = self.mix_mode
+        return a
 
-    ############################
+    # new setitem implementation (TH): in analogy to new __getitem__ and with mix modes
+    # work in progress
+
+    @property
+    def x(self):
+        self.mix_mode = 'extend'
+        return self
+    extend = x # better readable synonym 
+
+    @property
+    def b(self):
+        self.mix_mode = 'bound'
+        return self
+    bound = b # better readable synonym
+
+    @property
+    def r(self):
+        self.mix_mode = 'replace'
+        return self
+    replace = r
 
     def __setitem__(self, index, value):
-        """setitem: asig[index] = value. This allows all the methods from getitem:
+        """setitem: asig[index] = value.
+
+        This allows all the methods from getitem:
             * Numpy style slicing 
             * String/string_list slicing for subsetting channels based on channel name self.cn
             * time slicing (unit seconds) via dict. 
-        2 possible modes: 1. standard pythonic way that the setitem is bound by the object.
-        2. A more audio mixer way which the size of signal becomes strechable.
+        3 possible modes: (referring to asig as 'dest', and value as 'src'
+            1. standard pythonic way that the src und dest dimensions need to match
+                asig[...] = value
+            2. bound mode where src is copied up to the bounds of src
+                asig.b[...] = value
+            3. extend mode where dest is dynamically extended to make space for src
+                asig.x[...] = value
+        
+        Notes - Remarks - Bugs - ToDos: 
 
-        TODO: 1. Design usecases. 2. value is an asig. 3. strechable mode. 
+        row index: 
+        - list [1,2,3,4,5,6,7,8] or [True, ..., False]
+            -> list    -> b ok, no x
+
+        - int 0
+            -> int     -> allow both b and x? 
+
+        - slice 100:5000:2
+            -> slice, see slice below
+
+        - dict {0.5:2.5}
+            -> slice
+            * b should work, but should it truncate to stop or end of dest?
+            * x only, if step==1 and stop=None
+
+        for all 'x':
+            what if int (resp. start) > self.samples? => extend beyond end
+            but obviously not meaningful for += or *=, only set
+
+        TODOs:
+            a[50:60,0] = 4 -> 4 has no shape!! --> WORKS
+            a[50:60,[0,1]] = [[1,3]] -> WORKS (broadcast_to)
+            a[:,[0,1]] *= [[1,3] --> WORKS! but needs testing
+            check if mix_mode copy required on each fn output: if yes implement
+            check all sig = [[no numpy array]] cases
+            a.x[300:,1:2] = 0.5*b with 1-ch b to 4-ch a: shape problem (600, ) to (600, 1)   
         """
+        # check if @property x or b used
+        mode = self.mix_mode
+        # print("mix_mode is:", mode)
+        self.mix_mode = None  # reset when done
 
         if isinstance(index, tuple):
-            _LOGGER.debug("slice with tuple")
-            if isinstance(index[0], dict):
-                for key, val in index[0].items():
-                    try:
-                        start = int(key * self.sr)
-                    except TypeError:  # if it is None
-                        start = None
-                    try:
-                        stop = int(val * self.sr)
-                    except TypeError:
-                        stop = None
-                _LOGGER.info("Time slicing detected, start: %d, end: %d", start, stop)
-                rslice = slice(start, stop, None)
+            rindex = index[0]
+            cindex = index[1] if len(index)>1 else None
+        else:  # if only slice, list, dict, int or float given for row selection
+            rindex = index
+            cindex = None
 
-            else:
-                _LOGGER.debug("Standard row slicing detected")
-                rslice = index[0]
-
-            if isinstance(index[1], str):  # If index[1] is a column name
-                _LOGGER.info("Column slicing with column name: %s", index[1])
-                cslice = self.col_name.get(index[1])
-            else:
-                _LOGGER.debug("Standard column slicing detected")
-                cslice = index[1]
-
-            if isinstance(value, Asig):
-                self.sig[rslice, cslice] = value.sig
-            else:
-                self.sig[rslice, cslice] = value
-
-            _LOGGER.debug("Assigned value")
-            return self
-
-        elif isinstance(index, dict):
-            for key, val in index.items():
+        # parse row index rindex into ridx
+        sr = self.sr # default case for conversion if not changed by special case
+        if isinstance(rindex, list):  # e.g. a[[4,5,7,8,9]], or a[[True, False, True...]]
+            ridx = rindex
+        elif isinstance(rindex, int):  # picking a single row
+            ridx = rindex
+        elif isinstance(rindex, slice):
+            _, _, step = rindex.indices(len(self.sig))
+            sr = int(self.sr / abs(step))
+            ridx = rindex
+        elif isinstance(rindex, dict):  # time slicing
+            for key, val in rindex.items():
                 try:
                     start = int(key * self.sr)
                 except TypeError:  # if it is None
@@ -398,31 +347,117 @@ class Asig:
                     stop = int(val * self.sr)
                 except TypeError:
                     stop = None
-            _LOGGER.debug("slice with dict, start: %d, stop: %d", start, stop)
-            rslice = slice(start, stop, 1)
-            if isinstance(value, Asig):
-                self.sig[rslice] = value.sig
-            else:
-                self.sig[rslice] = value
-            return self
+            ridx = slice(start, stop, 1)
+        else:  # Dont think there is a usecase.
+            ridx = rindex
 
-        elif isinstance(index, list) and isinstance(index[0], str):
-            col_idx = [self.col_name.get(s) for s in index]
-            msg = " ".join(str(col_idx))
-            _LOGGER.debug("slice with list of column names: " + msg)
-            col_idx = col_idx[0] if len(col_idx) == 1 else col_idx
-            if isinstance(value, Asig):
-                self.sig[:, col_idx] = value.sig
-            else:
-                self.sig[:, col_idx] = value
-            return self
+        start_idx = ridx.start  # Start index of the ridx, 
+        stop_idx = ridx.stop    # Stop index of the rdix
 
+        # now parse cindex
+        if type(cindex) is list:
+            if isinstance(cindex[0], str):
+                cidx = [self.col_name.get(s) for s in cindex]
+            elif isinstance(cindex[0], bool):
+                cidx = cindex
+            elif isinstance(cindex[0], int):
+                cidx = cindex
+        elif isinstance((cindex), int) or isinstance(cindex, slice):  # int, slice are the same.
+            cidx = cindex
+        elif isinstance(cindex, str):  # if only a single channel name is given.
+            cidx = self.col_name.get(cindex)
         else:
-            if isinstance(value, Asig):
-                self.sig[index] = value.sig
+            cidx = slice(None)
+
+        if self.sig.ndim == 1:
+            final_index = (ridx)
+        else:
+            final_index = (ridx, cidx)
+        # apply setitem: set dest[ridx,cidx] = src return self
+        if isinstance(value, Asig):
+            src = value.sig
+
+        elif isinstance(value, np.ndarray): # numpy array if not Asig, default: sr fits
+            src = value
+        elif isinstance(value, list): # if list
+            src = value     # np.array(value)
+            mode = None  # for list (assume values for channels), mode makes no sense...
+            # TODO: check if useful behavior also for numpy arrays
+        else:
+            src = value
+            mode = None  # for scalar types, mode makes no sense...
+        # TODO: test correct treatment for non-np.array value
+
+        # now execute according to mode (which is one of (None, 'bound', 'extend'))
+        # print(f"{mode} mode: dest = {self.sig[ridx, cidx].shape}, src = {src.shape}")
+
+        if mode is None:
+            # ToDo: adapt to enable src=number, or row vector for channel values
+            if isinstance(src, numbers.Number):
+                self.sig[final_index] = src
+            elif isinstance(src, list): # for multichannel signals that is value for each column
+                self.sig[final_index] = src
+            else: # numpy array
+                self.sig[final_index] = np.broadcast_to(src, self.sig[final_index].shape)      
+        elif mode == 'bound':
+            dshape = self.sig[final_index].shape 
+            dn = dshape[0]  # ToDo: howto get that faster from ridx alone?
+            sn = src.shape[0]
+            if sn > dn:
+                self.sig[final_index] = src[:dn] if len(dshape)==1 else src[:dn,None]
             else:
-                self.sig[index] = value
-            return self
+                self.sig[final_index][:sn] = src if len(dshape)==1 else src[:,None]
+        elif mode == 'extend':
+            if isinstance(ridx, list):
+                print("Asig.setitem Error: extend mode not available for row index list")
+                return self
+            if isinstance(ridx, slice):
+                if ridx.step not in [1, None]:
+                    print("Asig.setitem Error: extend mode only available for step-1 slices")
+                    return self
+                if ridx.stop is not None: 
+                    print("Asig.setitem Error: extend mode only available if stop is None")
+                    return self
+            dshape = self.sig[final_index].shape
+            dn = dshape[0]  # ToDo: howto compute dn faster from ridx shape(self.sig) alone?
+            sn = src.shape[0]
+            if sn <= dn:  # same as bound, since src fits in
+                # print(dshape, self.sig[final_index][:sn].shape, src.shape)
+                self.sig[final_index][:sn] = np.broadcast_to(src, (sn,) + dshape[1:])
+            elif sn > dn:
+                # print("sn>dn shapes:", dshape, src[dn:].shape)
+                self.sig[final_index] = src[:dn]
+                # now extend by nn = sn-dn additional rows
+                if dn>0:
+                    nn = sn - dn # nr of needed additional rows
+                    self.sig = np.r_[self.sig, np.zeros((nn,)+self.sig.shape[1:])]
+                    self.sig[-nn:, cidx] = src[dn:]
+                else: # this is when start is beyond length of dest...
+                    # print(ridx.start, sn, dn)
+                    nn = ridx.start + sn
+                    self.sig = np.r_[self.sig, np.zeros((nn-self.sig.shape[0],)+self.sig.shape[1:])]
+                    self.sig[-sn:, cidx] = src
+                self.samples = self.sig.shape[0]
+
+        elif mode == 'replace':
+            # This mode is to replace a subset with an any given shape. 
+            _LOGGER.info("replace mode")
+            end = start_idx + src.shape[0]  # Where the end point of the newly insert signal should be. 
+            # Create a new signal 
+            # New row is: original samples + (new_signal_sample - the range to be replace)
+            # This line is slow. 
+            sig = np.ndarray(shape=(self.sig.shape[0] + src.shape[0] - (stop_idx - start_idx), self.channels))
+            if sig.ndim == 2 and sig.shape[1] == 1:
+                sig = np.squeeze(sig)
+            if isinstance(sig, numbers.Number):
+                sig = np.array(sig) 
+
+            sig[:start_idx] = self.sig_copy[:start_idx]  # Copy the first part over   
+            sig[start_idx:end] = src                       # The second part is the new signal
+            sig[end:] = self.sig_copy[stop_idx:]       # The final part is the remaining of self.sig
+            self.sig = sig                                 # Update self.sig
+            self.samples = np.shape(self.sig)[0]
+        return self
 
     def resample(self, target_sr=44100, rate=1, kind='linear'):
         """Resample signal based on interpolation, can process multichannel"""
@@ -662,14 +697,24 @@ class Asig:
         return sig_eq and sr_eq
 
     def __repr__(self):
-        return "Asig('{}'): {} x {} @ {} Hz = {:.3f} s".format(
-            self.label, self.channels, self.samples, self.sr, self.samples / self.sr)
+        return "Asig('{}'): {} x {} @ {}Hz = {:.3f}s cn={}".format(
+            self.label, self.channels, self.samples, self.sr, self.samples/self.sr,
+            self.cn)
 
     def __mul__(self, other):
-        if isinstance(other, Asig):
-            return Asig(self.sig * other.sig, self.sr, label=self.label + "_multiplied", cn=self.cn)
-        else:
-            return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
+        selfsig = self.sig
+        othersig = other.sig if isinstance(other, Asig) else other
+        if self.mix_mode is 'bound':
+            if selfsig.shape[0] > othersig.shape[0]:
+                selfsig = selfsig[:othersig.shape[0]]
+            elif selfsig.shape[0] < othersig.shape[0]:
+                othersig = othersig[:selfsig.shape[0]]
+        return Asig(selfsig * othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
+
+        # if isinstance(other, Asig):
+        #     return Asig(self.sig * other.sig, self.sr, label=self.label + "_multiplied", cn=self.cn)
+        # else:
+        #     return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
     def __rmul__(self, other):
         if isinstance(other, Asig):
@@ -678,10 +723,14 @@ class Asig:
             return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
     def __add__(self, other):
-        if isinstance(other, Asig):
-            return Asig(self.sig + other.sig, self.sr, label=self.label + "_added", cn=self.cn)
-        else:
-            return Asig(self.sig + other, self.sr, label=self.label + "_added", cn=self.cn)
+        selfsig = self.sig
+        othersig = other.sig if isinstance(other, Asig) else other
+        if self.mix_mode is 'bound':
+            if selfsig.shape[0] > othersig.shape[0]:
+                selfsig = selfsig[:othersig.shape[0]]
+            elif selfsig.shape[0] < othersig.shape[0]:
+                othersig = othersig[:selfsig.shape[0]]
+        return Asig(selfsig + othersig, self.sr, label=self.label + "_added", cn=self.cn)
 
     def __radd__(self, other):
         if isinstance(other, Asig):
@@ -740,20 +789,6 @@ class Asig:
             return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}", cn=self.cn)
         print('select_event: neither index nor onset given: return self')
         return self
-
-    # spectral segment into pieces - incomplete and unused
-    # def find_events_spectral(self, nperseg=64, on_threshold=3, off_threshold=2, medfilt_order=15):
-    #     tiny = np.finfo(np.dtype('float64')).eps
-    #     f, t, Sxx = scipy.signal.spectrogram(self.sig, self.sr, nperseg=nperseg)
-    #     env = np.mean(np.log(Sxx + tiny), 0)
-    #     sp = np.mean(np.log(Sxx + tiny), 1)
-    #     # ts = np.arange(self.samples)/self.sr
-    #     envsig = np.log(self.sig**2 + 0.001)
-    #     envsig = envsig - np.median(envsig)
-    #     menv = scipy.signal.medfilt(env, medfilt_order) - np.median(env)
-    #     ibeg = np.where( np.logical_and( menv[1:] > on_threshold, menv[:-1] < on_threshold) )[0]
-    #     iend = np.where( np.logical_and( menv[1:] < off_threshold, menv[:-1] > off_threshold) )[0]
-    #     return (np.vstack((t[ibeg], t[iend])).T*self.sr).astype('int32')
 
     def fade_in(self, dur=0.1, curve=1):
         nsamp = int(dur * self.sr)
@@ -899,6 +934,9 @@ class Asig:
 
     def to_spec(self):
         return Aspec(self)
+
+    def to_stft(self, **kwargs):
+        return Astft(self, **kwargs)
 
     def spectrum(self):
         nrfreqs = self.samples // 2 + 1
@@ -1062,8 +1100,8 @@ class Astft:
         _, sig = scipy.signal.istft(self.stft, **kwargs)  # _ since 1st return value 'times' unused
         return Asig(sig, sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
-    def plot(self, fn=lambda x: x):
-        plt.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)))
+    def plot(self, fn=lambda x: x, **kwargs):
+        plt.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)), **kwargs)
         plt.colorbar()
         return self
 
