@@ -269,10 +269,9 @@ class Asig:
     bound = b # better readable synonym
 
     @property
-    def r(self):
+    def replace(self):
         self.mix_mode = 'replace'
         return self
-    replace = r
 
     def __setitem__(self, index, value):
         """setitem: asig[index] = value.
@@ -354,9 +353,6 @@ class Asig:
         else:  # Dont think there is a usecase.
             ridx = rindex
 
-        start_idx = ridx.start if isinstance(ridx, slice) else 0  # Start index of the ridx, 
-        stop_idx = ridx.stop if isinstance(ridx, slice) else 0   # Stop index of the rdix
-
 
         # now parse cindex
         if type(cindex) is list:
@@ -419,7 +415,7 @@ class Asig:
                     self.sig[final_index] = src
 
         elif mode == 'bound':
-            _LOGGER.debug("Bound setitem mode")
+            _LOGGER.debug("setitem bound mode")
             dshape = self.sig[final_index].shape 
             dn = dshape[0]  # ToDo: howto get that faster from ridx alone?
             sn = src.shape[0]
@@ -433,6 +429,7 @@ class Asig:
                 self.sig[final_index][:sn] = src if len(dshape)==1 else src[:,:]
 
         elif mode == 'extend':
+            _LOGGER.info("setitem extend mode")
             if isinstance(ridx, list):
                 print("Asig.setitem Error: extend mode not available for row index list")
                 return self
@@ -465,8 +462,10 @@ class Asig:
                 self.samples = self.sig.shape[0]
 
         elif mode == 'replace':
-            # This mode is to replace a subset with an any given shape. 
-            _LOGGER.info("replace mode")
+            start_idx = ridx.start if isinstance(ridx, slice) else 0  # Start index of the ridx,
+            stop_idx = ridx.stop if isinstance(ridx, slice) else 0  # Stop index of the rdix
+            # This mode is to replace a subset with an any given shape.
+            _LOGGER.info("setitem replace mode")
             end = start_idx + src.shape[0]  # Where the end point of the newly insert signal should be. 
             # Create a new signal 
             # New row is: original samples + (new_signal_sample - the range to be replace)
@@ -477,9 +476,9 @@ class Asig:
             if isinstance(sig, numbers.Number):
                 sig = np.array(sig) 
 
-            sig[:start_idx] = self.sig_copy[:start_idx]  # Copy the first part over   
+            sig[:start_idx] = self.sig[:start_idx]  # Copy the first part over
             sig[start_idx:end] = src                       # The second part is the new signal
-            sig[end:] = self.sig_copy[stop_idx:]       # The final part is the remaining of self.sig
+            sig[end:] = self.sig[stop_idx:]       # The final part is the remaining of self.sig
             self.sig = sig                                 # Update self.sig
             self.samples = np.shape(self.sig)[0]
         return self
