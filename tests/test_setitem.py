@@ -57,28 +57,48 @@ class TestSetitem(TestCase):
         result = np.arange(10) + np.ones(10)
         self.assertTrue(np.array_equal(subject[:10].sig, result))
 
-        subject = self.aramp
+        subject = self.aramp  # set 10 samples with 20 samples in bound mode
         subject.b[-10:] += np.arange(20)
         result = np.arange(1000)[-10:]  + np.arange(10)
         self.assertTrue(np.array_equal(subject[-10:].sig, result))
 
         subject = Asig(np.arange(1000), sr=self.sr, label='ramp')
-        subject.b[-10:] *= 2
+        subject.b[-10:] *= 2        # Test __mul__ also.
         result =  np.arange(1000)[-10:] * 2
         self.assertTrue(np.array_equal(subject[-10:].sig, result))
 
-        # # Multi channel case?
+        # # Multi channel case
         self.ak.b[{2:None}, ['a', 'b']] = np.zeros(shape=(3000, 2))
-
         result = np.sum(self.ak[{2:None}, ['a', 'b']].sig)
-
         self.assertEqual(result, 0.0)
 
 
-
     def test_extend(self):
-        pass
+        a = Asig(0.8, sr=1000, channels=4, cn=['a', 'b', 'c', 'd'])
+        b = pya.sine(dur=0.6, freq=100, sr=1000).fade_in(0.3).fade_out(0.3)
+        # test with extend set mono signal to a, initially only 0.8secs long...
+        a.x[:, 0] = 0.2 * b  # this fits in without need to extend
+        self.assertEqual(a.samples, 800)
+        a.x[300:, 1] = 0.5 * b
+        self.assertEqual(a.samples, 900)
+        a.x[1300:, 'c'] = 0.2 * b[::2]  # compressed sig in ch 'c'
+        self.assertEqual(a.samples, 1600)
+        a.x[1900:, 3] = 0.2 * b[300:]  # only end of tone in ch 'd'
+        self.assertEqual(a.samples, 2200)
+
 
     def test_replace(self):
-        pass
-    
+        # test_sig = np.sin(2*np.pi*20*np.linspace(0, 1, 100))
+        b = np.ones(290)
+        # atest = Asig(test_sig, sr=100, label='test')
+        a = pya.sine(40, sr=100)
+        a.replace[40:50] = b
+        self.assertEqual(a.samples, 100 - 10 + 290)  # First make sure size is correct
+        c = np.sum(a[50:60].sig)   # Then make sure replace value is correct
+        self.assertEqual(c, 10)
+
+        with self.assertRaises(ValueError):
+            # Passing 2 chan to 4 chan asig should raise ValueError
+            self.ak.replace[{1.: 1.5}] = np.zeros((int(44100 * 0.6), 2))
+
+
