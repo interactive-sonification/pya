@@ -725,17 +725,16 @@ class Asig:
     def __mul__(self, other):
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
-        if self.mix_mode is 'bound':
-            if selfsig.shape[0] > othersig.shape[0]:
-                selfsig = selfsig[:othersig.shape[0]]
-            elif selfsig.shape[0] < othersig.shape[0]:
-                othersig = othersig[:selfsig.shape[0]]
-        return Asig(selfsig * othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
+        if isinstance(othersig, numbers.Number):
+            return Asig(selfsig * othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
+        else:
+            if self.mix_mode is 'bound':
+                if selfsig.shape[0] > othersig.shape[0]:
+                    selfsig = selfsig[:othersig.shape[0]]
+                elif selfsig.shape[0] < othersig.shape[0]:
+                    othersig = othersig[:selfsig.shape[0]]
+            return Asig(selfsig * othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
-        # if isinstance(other, Asig):
-        #     return Asig(self.sig * other.sig, self.sr, label=self.label + "_multiplied", cn=self.cn)
-        # else:
-        #     return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
     def __rmul__(self, other):
         if isinstance(other, Asig):
@@ -746,12 +745,18 @@ class Asig:
     def __add__(self, other):
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
-        if self.mix_mode is 'bound':
-            if selfsig.shape[0] > othersig.shape[0]:
-                selfsig = selfsig[:othersig.shape[0]]
-            elif selfsig.shape[0] < othersig.shape[0]:
-                othersig = othersig[:selfsig.shape[0]]
-        return Asig(selfsig + othersig, self.sr, label=self.label + "_added", cn=self.cn)
+        if isinstance(othersig, numbers.Number):  # When other is just a scalar
+            return Asig(selfsig + othersig, self.sr, label=self.label + "_added", cn=self.cn)
+        else:
+            if self.mix_mode is 'bound':
+                try:
+                    if selfsig.shape[0] > othersig.shape[0]:
+                        selfsig = selfsig[:othersig.shape[0]]
+                    elif selfsig.shape[0] < othersig.shape[0]:
+                        othersig = othersig[:selfsig.shape[0]]
+                except AttributeError:
+                    pass  # When othersig is just a scalar not
+            return Asig(selfsig + othersig, self.sr, label=self.label + "_added", cn=self.cn)
 
     def __radd__(self, other):
         if isinstance(other, Asig):
