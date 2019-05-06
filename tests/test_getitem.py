@@ -1,6 +1,8 @@
 from unittest import TestCase
 from pya import *
 import numpy as np
+import logging
+logging.basicConfig(level = logging.DEBUG)
 
 
 class TestSlicing(TestCase):
@@ -41,24 +43,33 @@ class TestSlicing(TestCase):
         self.assertEqual(expect2, result2)
 
     def test_tuple(self):
+        print("single channel, jump sample")
         result = self.astereo[0:44100:2, 0]
         expected_sig = self.astereo.sig[0:44100:2, 0]
         self.assertTrue(np.array_equal(result.sig, expected_sig))
 
         # Channel as string slice.
-        result = self.astereo[0:44100:2, 'l']
-        expected_sig = self.astereo.sig[0:44100:2, 0]
+        print("single channel using col_name")
+        result = self.astereo[0:10:2, ['l']]
+        expected_sig = self.astereo.sig[0:10:2, 0]
+        print(result.sig.shape)
+        print(expected_sig.shape)
         self.assertTrue(np.array_equal(result.sig, expected_sig))  # Check if signal equal
         self.assertEqual(result.cn, ['l'])  # Check whether the new column name is correct
 
         # channel name slice as list.
+        print("both channels using col_name")
         result = self.astereo[0:44100:2, ['l', 'r']]
         expected_sig = self.astereo.sig[0:44100:2, :]
         self.assertTrue(np.array_equal(result.sig, expected_sig))
 
         # Bool slice
-        result = self.astereo[0:368, [False, True]]
-        expected_sig = self.astereo.sig[0:368:1, [False, True]]
+        print("bool list channel selection")
+
+        # This is a special case for scling as numpy return (n, 1) rather than (n,) if we use
+        # bool list to single out a channel.
+        result = self.astereo[360:368, [False, True]]
+        expected_sig = self.astereo.sig[360:368:1, [False, True]]
         self.assertTrue(np.array_equal(result.sig, expected_sig))
         # time slicing
         result = self.astereo[{1: -1}, 0]  # Play from 1s. to the last 1.s
@@ -69,9 +80,4 @@ class TestSlicing(TestCase):
         result = self.astereo[{1: -1}, :]  # Play from 1s. to the last 1.s
         expect = self.astereo[44100: -44100, :]
         self.assertEqual(expect, result)
-
-        # Any more?
-
-    def test_setitem(self):
-        print("Testing on setitem")
 

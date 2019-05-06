@@ -181,6 +181,7 @@ class Asig:
         Asig(sliced_signal, adjusted_sr, remarked_label, subset_channelnames)
         """
         if isinstance(index, tuple):
+            _LOGGER.info(" getitem: index is tuple")
             rindex = index[0]
             cindex = index[1] if len(index)>1 else None
         else:  # if only slice, list, dict, int or float given for row selection
@@ -196,10 +197,12 @@ class Asig:
             _LOGGER.debug("integer slicing of index: %d", ridx)
             sr = self.sr
         elif isinstance(rindex, slice):
+            _LOGGER.info(" getitem: row index is slice.")
             _, _, step = rindex.indices(len(self.sig))
             sr = int(self.sr / abs(step))
             ridx = rindex
         elif isinstance(rindex, dict):  # time slicing
+            _LOGGER.info(" getitem: row index is dict. Time slicing.")
             for key, val in rindex.items():
                 try:
                     start = int(key * self.sr)
@@ -218,6 +221,7 @@ class Asig:
 
         # now parse cindex
         if type(cindex) is list:
+            _LOGGER.info(" getitem: column index is list.")
             if isinstance(cindex[0], str):
                 cidx = [self.col_name.get(s) for s in cindex]
                 if cidx is None:
@@ -230,10 +234,11 @@ class Asig:
                 cidx = cindex
                 cn_new = [self.cn[i] for i in cindex] if self.cn is not None else None
         elif isinstance(cindex, int):
+            _LOGGER.info(" getitem: column index is int.")
             cidx = cindex
-            
             cn_new = [self.cn[cindex]] if self.cn is not None else None
         elif isinstance(cindex, slice):
+            _LOGGER.info(" getitem: column index is slice.")
             cidx = cindex
             cn_new = self.cn[cindex] if self.cn is not None else None
         elif isinstance(cindex, str):  # if only a single channel name is given.
@@ -242,13 +247,19 @@ class Asig:
         else: # if nothing is given, e.g. index = (ridx,) on calling a[:]
             cidx = slice(None, None, None)
             cn_new = self.cn
-
         # apply ridx and cidx and return result
         sig = self.sig[ridx, cidx] if self.channels>1 else self.sig[ridx]
+
+        # Squeezing shouldn't be performed here. this is because: a[:10, 0] and a[:10,[True, False]] return
+        # (10,) and (10, 1) respectively. Which should be dealt with individually.
         if sig.ndim == 2 and sig.shape[1]==1:
-            sig = np.squeeze(sig)
+            if not isinstance(cindex[0], bool):  # Hot fix this to be consistent with bool slciing
+                _LOGGER.debug("ndim is 2 and channel num is 1, performa np.squeeze")
+                sig = np.squeeze(sig)
         if isinstance(sig, numbers.Number):
-            sig = [sig] # TODO: why doesn't np.array(sig) work? wouldn't it be better?
+            _LOGGER.info("signal is scalar, convert to array")
+            sig = np.array(sig)
+
         a = Asig(sig, sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
         a.mix_mode = self.mix_mode
         return a

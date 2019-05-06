@@ -28,7 +28,7 @@ class TestSetitem(TestCase):
 
 
     def test_default(self):
-
+        """Testing of default mode, which should behave as Numpy should."""
         self.azeros[10] = self.aones[10].sig   # value as asig
         self.assertEqual(self.aones[10], self.azeros[10])
 
@@ -52,6 +52,7 @@ class TestSetitem(TestCase):
         
 
     def test_bound(self):
+        """Testing of bound mode. Redundant array will not be assigned"""
         subject = self.aramp
         subject.b[:10] += self.aones[:10]  # This case should be the same as default
         result = np.arange(10) + np.ones(10)
@@ -74,6 +75,7 @@ class TestSetitem(TestCase):
 
 
     def test_extend(self):
+        """Testing of extend mode, longer array will force the taker to extend its shape."""
         a = Asig(0.8, sr=1000, channels=4, cn=['a', 'b', 'c', 'd'])
         b = pya.sine(dur=0.6, freq=100, sr=1000).fade_in(0.3).fade_out(0.3)
         # test with extend set mono signal to a, initially only 0.8secs long...
@@ -88,15 +90,12 @@ class TestSetitem(TestCase):
 
 
     def test_replace(self):
-        # test_sig = np.sin(2*np.pi*20*np.linspace(0, 1, 100))
         b = np.ones(290)
-        # atest = Asig(test_sig, sr=100, label='test')
         a = pya.sine(40, sr=100)
         a.replace[40:50] = b
         self.assertEqual(a.samples, 100 - 10 + 290)  # First make sure size is correct
         c = np.sum(a[50:60].sig)   # Then make sure replace value is correct
         self.assertEqual(c, 10)
-
         with self.assertRaises(ValueError):
             # Passing 2 chan to 4 chan asig should raise ValueError
             self.ak.replace[{1.: 1.5}] = np.zeros((int(44100 * 0.6), 2))
