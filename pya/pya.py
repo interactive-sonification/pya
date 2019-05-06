@@ -211,7 +211,7 @@ class Asig:
                     stop = None
             ridx = slice(start, stop, 1)
             sr = self.sr
-            _LOGGER.debug("Time slicing, start: %d, stop: %d", start, stop)
+            _LOGGER.debug("Time slicing, start: %s, stop: %s", str(start), str(stop))
         else:  # Dont think there is a usecase.
             ridx = rindex
             sr = self.sr
@@ -424,9 +424,13 @@ class Asig:
             dn = dshape[0]  # ToDo: howto get that faster from ridx alone?
             sn = src.shape[0]
             if sn > dn:
-                self.sig[final_index] = src[:dn] if len(dshape)==1 else src[:dn,None]
+                # The original src[:dn,:] resulted error
+                # ValueError: shape mismatch: value array of shape (1500,1,2)
+                # could not be broadcast to indexing result of shape (2,1500)
+                # When passing no.zeros(shape=(1500, 2))
+                self.sig[final_index] = src[:dn] if len(dshape)==1 else src[:dn,:]
             else:
-                self.sig[final_index][:sn] = src if len(dshape)==1 else src[:,None]
+                self.sig[final_index][:sn] = src if len(dshape)==1 else src[:,:]
 
         elif mode == 'extend':
             if isinstance(ridx, list):
