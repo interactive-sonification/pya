@@ -412,9 +412,12 @@ class Asig:
                 self.sig[final_index] = src
             else: # numpy array
                 try:
-                    self.sig[final_index] = np.broadcast_to(src, self.sig[final_index].shape) 
-                except ValueError:  # for error: cannot broadcast a non-scalar to a scalar array
+                    self.sig[final_index] = np.broadcast_to(src, self.sig[final_index].shape)
+                except ValueError:
+                    # an error occurs in as[n] = as2[m].sig
+                    # msg: cannot broadcast a non-scalar to a scalar array
                     self.sig[final_index] = src
+
         elif mode == 'bound':
             _LOGGER.debug("Bound setitem mode")
             dshape = self.sig[final_index].shape 
@@ -424,6 +427,7 @@ class Asig:
                 self.sig[final_index] = src[:dn] if len(dshape)==1 else src[:dn,None]
             else:
                 self.sig[final_index][:sn] = src if len(dshape)==1 else src[:,None]
+
         elif mode == 'extend':
             if isinstance(ridx, list):
                 print("Asig.setitem Error: extend mode not available for row index list")

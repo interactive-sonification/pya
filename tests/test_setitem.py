@@ -21,6 +21,7 @@ class TestSetitem(TestCase):
         self.azeros = Asig(self.zero, sr=self.sr, cn=['z'], label='zeros')
         self.noise = np.random.random(self.sr)
         self.anoise = Asig(self.noise, sr=self.sr, cn=['n'], label='noise')
+        self.aramp = Asig(np.arange(1000), sr=self.sr, label='ramp')
 
     def tearDown(self):
         pass
@@ -51,7 +52,25 @@ class TestSetitem(TestCase):
         
 
     def test_bound(self):
-        pass
+        subject = self.aramp
+        subject.b[:10] += self.aones[:10]  # This case should be the same as default
+        result = np.arange(10) + np.ones(10)
+        self.assertTrue(np.array_equal(subject[:10].sig, result))
+
+        subject = self.aramp
+        subject.b[-10:] += np.arange(20)
+        result = np.arange(1000)[-10:]  + np.arange(10)
+        self.assertTrue(np.array_equal(subject[-10:].sig, result))
+
+        subject = Asig(np.arange(1000), sr=self.sr, label='ramp')
+        subject.b[-10:] *= 2
+        result =  np.arange(1000)[-10:] * 2
+        print(subject.b[-10:])
+        print(result)
+
+
+        self.assertTrue(np.array_equal(subject[-10:].sig, result))
+
 
     def test_extend(self):
         pass
