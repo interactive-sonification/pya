@@ -65,11 +65,15 @@ class TestSetitem(TestCase):
         subject = Asig(np.arange(1000), sr=self.sr, label='ramp')
         subject.b[-10:] *= 2
         result =  np.arange(1000)[-10:] * 2
-        print(subject.b[-10:])
-        print(result)
-
-
         self.assertTrue(np.array_equal(subject[-10:].sig, result))
+
+        # # Multi channel case?
+        self.ak.b[{2:None}, ['a', 'b']] = np.zeros(shape=(3000, 2))
+
+        result = np.sum(self.ak[{2:None}, ['a', 'b']].sig)
+
+        self.assertEqual(result, 0.0)
+
 
 
     def test_extend(self):
