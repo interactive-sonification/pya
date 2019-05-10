@@ -154,7 +154,9 @@ class Asig:
 
     def _set_col_names(self):
         # Problem is by doing that generating a new instance will no longer preserve cn.
+        # TODO: discuss above problem with Jiajun, 
         if self.cn is None:
+            # TODO: set a meaningful list e.g. cn = [str(i) for i in range(self.channels)] instead of 
             pass
         else:
             if type(self.cn[0]) is str:
@@ -573,6 +575,9 @@ class Asig:
             if len(blend) not equal to self.channels
 
         """
+        # TODO: change name to mono()
+        # TODO: change code to accept empty cn - alternatively, make 
+        # sure that signals always get a default cn, see ToDo for Asig.__init__()
         if self.channels == 1:
             _LOGGER.warning("Signal is already mono")
             return self
@@ -589,7 +594,7 @@ class Asig:
             sig = np.sum(self.sig_copy * blend, axis=1)
             return Asig(sig, self.sr, label=self.label + '_blended', cn=[self.cn[np.argmax(blend)]])
 
-    def to_stereo(self, blend):
+    def to_stereo(self, blend=None):
         """Blend any channel of signal to stereo.
 
         Usage: blend = [[list], [list]], e.g:
@@ -599,16 +604,18 @@ class Asig:
         asig[[0.3, 0.3, 0.3], [0.25, 0.25, 0.25 0.25]]
 
         """
-        left = blend[0]
-        right = blend[1]
-        # [[0.1,0.2,03], [0.4,0.5,0.6]]
+        if blend is None:
+            left, right = (1,1)
+        else:
+            left = blend[0]
+            right = blend[1]
+        # [[0.1,0.2,0.3], [0.4,0.5,0.6]]
         if self.channels == 1:
             left_sig = self.sig_copy * left
             right_sig = self.sig_copy * right
             sig = np.stack((left_sig, right_sig), axis=1)
             return Asig(sig, self.sr, label=self.label + '_to_stereo', cn=self.cn)
-
-        if len(left) == self.channels and len(right) == self.channels:
+        elif len(left) == self.channels and len(right) == self.channels:
             left_sig = np.sum(self.sig_copy * left, axis=1)
             right_sig = np.sum(self.sig_copy * right, axis=1)
             sig = np.stack((left_sig, right_sig), axis=1)
@@ -1026,7 +1033,7 @@ class Aspec:
             self.samples = x.samples
             self.channels = x.channels
             self.cn = x.cn
-            if self.cn != cn:
+            if cn is not None and self.cn != cn:
                 print("Aspec:init: given cn different from Asig cn: using Asig.cn")
         elif type(x) == list or type(x) == np.ndarray:
             self.rfftspec = np.array(x)
