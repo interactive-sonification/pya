@@ -10,7 +10,7 @@ class TestPya(TestCase):
     def setUp(self):
         self.sig = np.sin(2*np.pi* 100 * np.linspace(0,1,44100))
         self.asine = Asig(self.sig, sr=44100,label="test_sine")
-        self.asineWithName = Asig(self.sig, sr=44100,label="test_sine", cn = 'sine')
+        self.asineWithName = Asig(self.sig, sr=44100,label="test_sine", cn = ['sine'])
         self.sig2ch = np.repeat(self.sig, 2).reshape(((44100, 2)))
         self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=['l', 'r'])
         # self.astereo = Asig("/examples/samples/stereoTest.wav", label='stereo', cn=['l','r'])
@@ -31,3 +31,12 @@ class TestPya(TestCase):
 
         result = self.asine.fade_out(dur=0.2)
         self.assertIsInstance(result, Asig)
+
+    def test_samples(self):
+        as1 = Asig(np.ones((100, 4)), sr=100)
+
+        self.assertEqual(100, as1.samples)
+
+    def test_channels(self):
+        as1 = Asig(np.ones((100, 4)), sr=100)
+        self.assertEqual(4, as1.channels)

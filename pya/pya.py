@@ -79,25 +79,21 @@ class Asig:
         self.sr = sr
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
-        self.channels = channels  # TODO discuss to remove channels as an argument
         if isinstance(sig, str):
             self.load_wavfile(sig)
         elif isinstance(sig, int):  # sample length
-            if self.channels == 1:
+            if channels == 1:
                 self.sig = np.zeros(sig)
             else:
-                self.sig = np.zeros((sig, self.channels))
+                self.sig = np.zeros((sig, channels))
         elif isinstance(sig, float):  # if float interpret as duration
-            if self.channels == 1:
+            if channels == 1:
                 self.sig = np.zeros(int(sig * sr))
             else:
-                self.sig = np.zeros((int(sig * sr), self.channels))
+                self.sig = np.zeros((int(sig * sr), channels))
         else:
             self.sig = np.array(sig)
-            try:
-                self.channels = self.sig.shape[1]
-            except IndexError:
-                self.channels = 1
+
         self.label = label
         self.device = 1  # TODO this seems uncessary
         # make a copy for any processing events e.g. (panning, filtering)
@@ -105,32 +101,32 @@ class Asig:
         self.sig_copy = np.copy(self.sig)  # It takes around 100ms to copy a 17min audio at 44.1khz
         # TODO discuss whether copy is necessary as it is not memory efficient
         self.cn = cn
+        if self.cn is not None and len(self.cn) != self.channels:
+            raise ValueError("cn size {} does not match the number of channels {}.".format(len(self.cn), self.channels))
         self._set_col_names()
 
     @property
+    def channels(self):
+        try:
+            return self.sig.shape[1]
+        except IndexError:
+            return 1
+
+    @property
     def samples(self):  # Getter
-        _LOGGER.debug("signal length getter")
-        self._samples = np.shape(self.sig)[0]  # Update it.
-        return self._samples
+        return np.shape(self.sig)[0]  # Update it.
 
     def load_wavfile(self, fname):
         # Discuss to change to float32 .
         self.sr, self.sig = wavfile.read(fname)  # load the sample data
         if self.sig.dtype == np.dtype('int16'):
             self.sig = self.sig.astype('float32') / 32768
-            try:
-                self.channels = self.sig.shape[1]
-            except IndexError:
-                self.channels = 1
+
         elif self.sig.dtype != np.dtype('float32'):
             self.sig = self.sig.astype('float32')
-            try:
-                self.channels = self.sig.shape[1]
-            except IndexError:
-                self.channels = 1
+
         else:
             print("load_wavfile: TODO: add format")
-        # ToDo: set channels here
 
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         if dtype == 'int16':
@@ -580,7 +576,8 @@ class Asig:
             return self
         else:
             sig = np.sum(self.sig_copy * blend, axis=1)
-            return Asig(sig, self.sr, label=self.label + '_blended', cn=[self.cn[np.argmax(blend)]])
+            col_names = [self.cn[np.argmax(blend)]] if self.cn is not None else None
+            return Asig(sig, self.sr, label=self.label + '_blended', cn=col_names)
 
     def to_stereo(self, blend=None):
         """Blend any channel of signal to stereo.
@@ -1310,7 +1307,7 @@ class Aserver:
         if len(asig.sig.shape) == 1:
             asig.sig = asig.sig.reshape(asig.samples, 1)
         asig.sig = asig.sig[:, :nchn].reshape(asig.samples, nchn)
-        asig.channels = nchn
+        # asig.channels = nchn
         # so now in callback safely copy to out:out+asig.sig.shape[1]
         self.srv_asigs.insert(idx, asig)
         self.srv_curpos.insert(idx, 0)
