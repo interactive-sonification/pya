@@ -19,30 +19,30 @@ def _normalize(d):
     return d
 
 
-def sine(freq=440, amp=1.0, dur=1.0, sr=44100, channels=1, cn=None):
+def sine(freq=440, amp=1.0, dur=1.0, sr=44100, channels=1, cn=None, label="sine"):
     from .pya import Asig
     length = _get_length(dur, sr)
     sig = amp * np.sin(2 * np.pi * freq * np.linspace(0, dur, length))
-    return Asig(sig, sr=sr, label="sine", channels=channels, cn=cn)
+    return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
 
-def square(freq=440, amp=1.0, dur=1.0, duty=0.4, sr=44100, channels=1, cn=None):
+def square(freq=440, amp=1.0, dur=1.0, duty=0.4, sr=44100, channels=1, cn=None, label="square"):
     from .pya import Asig
     length = _get_length(dur, sr)
     sig = amp * signal.square(2 * np.pi * freq * np.linspace(0, dur, length, endpoint=False),
                               duty=duty)
-    return Asig(sig, sr=sr, label="square", channels=channels, cn=cn)
+    return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
 
-def sawtooth(freq=440, amp=1.0, dur=1.0, width=1., sr=44100, channels=1, cn=None):
+def sawtooth(freq=440, amp=1.0, dur=1.0, width=1., sr=44100, channels=1, cn=None, label="sawtooth"):
     from .pya import Asig
     length = _get_length(dur, sr)
     sig = amp * signal.sawtooth(2 * np.pi * freq * np.linspace(0, dur, length, endpoint=False),
                                 width=width)
-    return Asig(sig, sr=sr, label="sawtooth", channels=channels, cn=cn)
+    return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
 
-def noise(typ="white", amp=1.0, dur=1.0, sr=44100, channels=1, cn=None):
+def noise(typ="white", amp=1.0, dur=1.0, sr=44100, channels=1, cn=None, label="noise"):
     from .pya import Asig
     length = _get_length(dur, sr)
     # Question is that will be that be too slow.
@@ -64,6 +64,6 @@ def noise(typ="white", amp=1.0, dur=1.0, sr=44100, channels=1, cn=None):
             sig.append(b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362)
             b6 = white * 0.115926
         sig = _normalize(sig) * amp
-    return Asig(sig, sr=sr, label=typ, channels=channels, cn=cn)
+    return Asig(sig, sr=sr, channels=channels, cn=cn, label=label)
 
 # TODO, FM AM Additive Subtractive But for the future. This is not necessary right now.

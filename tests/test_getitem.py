@@ -10,7 +10,6 @@ class TestSlicing(TestCase):
     def setUp(self):
         self.sig = np.sin(2*np.pi* 100 * np.linspace(0,1,44100))
         self.asine = Asig(self.sig, sr=44100,label="test_sine")
-        # self.astereo = Asig("../examples/samples/stereoTest.wav", label='stereo', cn = ['l','r'])
         self.sig4 = np.sin(2*np.pi* 100 * np.linspace(0,4,44100 * 4))  # 4second sine
         self.asine4 = Asig(self.sig4, sr=44100,label="test_sine")
         self.sig2ch = np.repeat(self.sig, 2).reshape(((44100, 2)))
@@ -48,12 +47,8 @@ class TestSlicing(TestCase):
         expected_sig = self.astereo.sig[0:44100:2, 0]
         self.assertTrue(np.array_equal(result.sig, expected_sig))
 
-        # Channel as string slice.
-        print("single channel using col_name")
         result = self.astereo[0:10:2, ['l']]
         expected_sig = self.astereo.sig[0:10:2, 0]
-        print(result.sig.shape)
-        print(expected_sig.shape)
         self.assertTrue(np.array_equal(result.sig, expected_sig))  # Check if signal equal
         self.assertEqual(result.cn, ['l'])  # Check whether the new column name is correct
 
@@ -65,7 +60,6 @@ class TestSlicing(TestCase):
 
         # Bool slice
         print("bool list channel selection")
-
         # This is a special case for scling as numpy return (n, 1) rather than (n,) if we use
         # bool list to single out a channel.
         result = self.astereo[360:368, [False, True]]
@@ -77,7 +71,7 @@ class TestSlicing(TestCase):
         self.assertEqual(expect, result)
 
         # time slicing
+        print("time slicing.")
         result = self.astereo[{1: -1}, :]  # Play from 1s. to the last 1.s
         expect = self.astereo[44100: -44100, :]
         self.assertEqual(expect, result)
-
