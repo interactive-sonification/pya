@@ -13,7 +13,6 @@ class TestPya(TestCase):
         self.asineWithName = Asig(self.sig, sr=44100,label="test_sine", cn = ['sine'])
         self.sig2ch = np.repeat(self.sig, 2).reshape(((44100, 2)))
         self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=['l', 'r'])
-        # self.astereo = Asig("/examples/samples/stereoTest.wav", label='stereo', cn=['l','r'])
         self.sig16ch = np.repeat(self.sig, 16).reshape(((44100, 16)))
         self.asine16ch = Asig(self.sig16ch, sr=44100, label="test_sine_16ch")
 
@@ -40,3 +39,19 @@ class TestPya(TestCase):
     def test_channels(self):
         as1 = Asig(np.ones((100, 4)), sr=100)
         self.assertEqual(4, as1.channels)
+
+    def test_cn(self):
+
+        self.assertEqual(self.astereo.cn, ['l', 'r'])
+        self.astereo.cn = ['left', 'right']  # Test changing the cn
+        self.assertEqual(self.astereo.cn, ['left', 'right'])
+        with self.assertRaises(ValueError):
+            self.astereo.cn = ['left', 'right', 'middle']
+
+        with self.assertRaises(TypeError):  # If list is not string only, TypeError
+            self.astereo.cn = ["b", 10]
+
+        self.assertEqual(self.astereo.cn, ['left', 'right'])
+
+
+

@@ -116,6 +116,23 @@ class Asig:
     def samples(self):  # Getter
         return np.shape(self.sig)[0]  # Update it.
 
+    @property
+    def cn(self):  # Channel names
+        return self._cn
+
+    @cn.setter
+    def cn(self, val):
+        if val is None:
+            self._cn = None
+        else:
+            if len(val) == self.channels:
+                if all(isinstance(x, str) for x in val):
+                    self._cn = val
+                else:
+                    raise TypeError("channel names cn need to be a list of string(s).")
+            else:
+                raise ValueError("list size doesn't match channel numbers {}".format(self.channels))
+
     def load_wavfile(self, fname):
         # Discuss to change to float32 .
         self.sr, self.sig = wavfile.read(fname)  # load the sample data
@@ -127,6 +144,7 @@ class Asig:
 
         else:
             print("load_wavfile: TODO: add format")
+
 
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         if dtype == 'int16':
