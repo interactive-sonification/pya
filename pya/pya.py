@@ -145,7 +145,6 @@ class Asig:
         else:
             print("load_wavfile: TODO: add format")
 
-
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         if dtype == 'int16':
             data = (self.sig * 32767).astype('int16')
