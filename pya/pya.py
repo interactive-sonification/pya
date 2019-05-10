@@ -101,8 +101,6 @@ class Asig:
         self.sig_copy = np.copy(self.sig)  # It takes around 100ms to copy a 17min audio at 44.1khz
         # TODO discuss whether copy is necessary as it is not memory efficient
         self.cn = cn
-        if self.cn is not None and len(self.cn) != self.channels:
-            raise ValueError("cn size {} does not match the number of channels {}.".format(len(self.cn), self.channels))
         self._set_col_names()
 
     @property
@@ -126,7 +124,7 @@ class Asig:
             self._cn = None
         else:
             if len(val) == self.channels:
-                if all(isinstance(x, str) for x in val):
+                if all(isinstance(x, str) for x in val):  # check if all elements are str
                     self._cn = val
                 else:
                     raise TypeError("channel names cn need to be a list of string(s).")
