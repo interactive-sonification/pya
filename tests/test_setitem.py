@@ -92,12 +92,12 @@ class TestSetitem(TestCase):
     def test_replace(self):
         b = np.ones(290)
         a = pya.sine(40, sr=100)
-        a.replace[40:50] = b
+        a.overwrite[40:50] = b
         self.assertEqual(a.samples, 100 - 10 + 290)  # First make sure size is correct
         c = np.sum(a[50:60].sig)   # Then make sure replace value is correct
         self.assertEqual(c, 10)
         with self.assertRaises(ValueError):
             # Passing 2 chan to 4 chan asig should raise ValueError
-            self.ak.replace[{1.: 1.5}] = np.zeros((int(44100 * 0.6), 2))
+            self.ak.overwrite[{1.: 1.5}] = np.zeros((int(44100 * 0.6), 2))
 
 

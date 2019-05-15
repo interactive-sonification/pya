@@ -6,7 +6,6 @@ processing & sonification.
 """
 
 import copy
-import logging
 import time
 import numbers
 from itertools import compress
@@ -22,6 +21,7 @@ from scipy.io import wavfile
 from .helpers import ampdb, dbamp, linlin, timeit
 from .pyaudiostream import PyaudioStream
 from .ugen import *  # newly added ugen
+import logging
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -285,9 +285,10 @@ class Asig:
     bound = b  # better readable synonym
 
     @property
-    def replace(self):
-        self.mix_mode = 'replace'
+    def o(self):
+        self.mix_mode = 'overwrite'
         return self
+    overwrite = o
 
     def __setitem__(self, index, value):
         """setitem: asig[index] = value.
@@ -474,7 +475,7 @@ class Asig:
                     self.sig = np.r_[self.sig, np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:])]
                     self.sig[-sn:, cidx] = src
 
-        elif mode == 'replace':
+        elif mode == 'overwrite':
             start_idx = ridx.start if isinstance(ridx, slice) else 0  # Start index of the ridx,
             stop_idx = ridx.stop if isinstance(ridx, slice) else 0  # Stop index of the rdix
             # This mode is to replace a subset with an any given shape.
@@ -666,17 +667,6 @@ class Asig:
             else:
                 _LOGGER.warning("Scalar panning need to be in the range -1. to 1. nothing changed.")
                 return self
-
-    def overwrite(self, sig, sr=None):  # TODO may be obselete now
-        """
-        Overwrite the sig with new signal, then readjust the shape.
-        """
-        self.sig = sig
-        try:
-            self.channels = self.sig.shape[1]
-        except IndexError:
-            self.channels = 1
-        return self
 
     def norm(self, norm=1, dcflag=False):
         """Normalize signal"""
