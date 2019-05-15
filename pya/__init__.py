@@ -1,7 +1,19 @@
 """Collection of classes and functions for processing audio signals
  in python and jupyter notebooks, for synthesis, effects, analysis and plotting.
 """
-from .pya import Asig, Aspec, Astft, Aserver
+# from .pya import Asig, Aspec, Astft, Aserver
+from .Asig import Asig
+from .Astft import Astft
+from .Aspec import Aspec
+from .Aserver import Aserver
+# from .pya import *
+
 from .helpers import ampdb, dbamp, cpsmidi, midicps, linlin, clip, record, timeit
-from .pyaudiostream import *
-# from .ugen import sine
+
+
+def startup(**kwargs):
+    return Aserver.startup_default_server(**kwargs)
+
+
+def shutdown(**kwargs):
+    Aserver.shutdown_default_server(**kwargs)

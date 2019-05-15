@@ -1,26 +1,13 @@
-"""Asig, Aspec and Astft classes.
-
-This file contains the A* classes to enable sample-precise
-audio coding with numpy/scipy/python for multi-channel audio 
-processing & sonification.
-"""
-
-import copy
-import time
+from .Aserver import Aserver
 import numbers
 from itertools import compress
-
 import matplotlib.pyplot as plt
 import numpy as np
-import pyaudio
 import scipy.interpolate
 import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
-
 from .helpers import ampdb, dbamp, linlin, timeit
-from .pyaudiostream import PyaudioStream
-from .ugen import *  # newly added ugen
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -157,9 +144,9 @@ class Asig:
 
     def _set_col_names(self):
         # Problem is by doing that generating a new instance will no longer preserve cn.
-        # TODO: discuss above problem with Jiajun, 
+        # TODO: discuss above problem with Jiajun,
         if self.cn is None:
-            # TODO: set a meaningful list e.g. cn = [str(i) for i in range(self.channels)] instead of 
+            # TODO: set a meaningful list e.g. cn = [str(i) for i in range(self.channels)] instead of
             pass
         else:
             if type(self.cn[0]) is str:
@@ -230,7 +217,7 @@ class Asig:
             if isinstance(cindex[0], str):
                 cidx = [self.col_name.get(s) for s in cindex]
                 if cidx is None:
-                    _LOGGER.error("Input column names does not exist") 
+                    _LOGGER.error("Input column names does not exist")
                 cn_new = [self.cn[i] for i in cidx] if self.cn is not None else None
             elif isinstance(cindex[0], bool):
                 cidx = cindex
@@ -294,9 +281,9 @@ class Asig:
         """setitem: asig[index] = value.
 
         This allows all the methods from getitem:
-            * Numpy style slicing 
+            * Numpy style slicing
             * String/string_list slicing for subsetting channels based on channel name self.cn
-            * time slicing (unit seconds) via dict. 
+            * time slicing (unit seconds) via dict.
         3 possible modes: (referring to asig as 'dest', and value as 'src'
             1. standard pythonic way that the src und dest dimensions need to match
                 asig[...] = value
@@ -304,14 +291,14 @@ class Asig:
                 asig.b[...] = value
             3. extend mode where dest is dynamically extended to make space for src
                 asig.x[...] = value
-        Notes - Remarks - Bugs - ToDos: 
+        Notes - Remarks - Bugs - ToDos:
 
-        row index: 
+        row index:
         - list [1,2,3,4,5,6,7,8] or [True, ..., False]
             -> list    -> b ok, no x
 
         - int 0
-            -> int     -> allow both b and x? 
+            -> int     -> allow both b and x?
 
         - slice 100:5000:2
             -> slice, see slice below
@@ -331,7 +318,7 @@ class Asig:
             a[:,[0,1]] *= [[1,3] --> WORKS! but needs testing
             check if mix_mode copy required on each fn output: if yes implement
             check all sig = [[no numpy array]] cases
-            a.x[300:,1:2] = 0.5*b with 1-ch b to 4-ch a: shape problem (600, ) to (600, 1)   
+            a.x[300:,1:2] = 0.5*b with 1-ch b to 4-ch a: shape problem (600, ) to (600, 1)
         """
         # check if @property x or b used
         mode = self.mix_mode
@@ -373,7 +360,7 @@ class Asig:
         if type(cindex) is list:
             if isinstance(cindex[0], str):
                 cidx = [self.col_name.get(s) for s in cindex]
-                cidx = cidx[0] if len(cidx) == 1 else cidx  # hotfix for now. 
+                cidx = cidx[0] if len(cidx) == 1 else cidx  # hotfix for now.
             elif isinstance(cindex[0], bool):
                 cidx = cindex
             elif isinstance(cindex[0], int):
@@ -431,7 +418,7 @@ class Asig:
 
         elif mode == 'bound':
             _LOGGER.debug("setitem bound mode")
-            dshape = self.sig[final_index].shape 
+            dshape = self.sig[final_index].shape
             dn = dshape[0]  # ToDo: howto get that faster from ridx alone?
             sn = src.shape[0]
             if sn > dn:
@@ -452,7 +439,7 @@ class Asig:
                 if ridx.step not in [1, None]:
                     print("Asig.setitem Error: extend mode only available for step-1 slices")
                     return self
-                if ridx.stop is not None: 
+                if ridx.stop is not None:
                     print("Asig.setitem Error: extend mode only available if stop is None")
                     return self
             dshape = self.sig[final_index].shape
@@ -480,15 +467,15 @@ class Asig:
             stop_idx = ridx.stop if isinstance(ridx, slice) else 0  # Stop index of the rdix
             # This mode is to replace a subset with an any given shape.
             _LOGGER.info("setitem replace mode")
-            end = start_idx + src.shape[0]  # Where the end point of the newly insert signal should be. 
-            # Create a new signal 
+            end = start_idx + src.shape[0]  # Where the end point of the newly insert signal should be.
+            # Create a new signal
             # New row is: original samples + (new_signal_sample - the range to be replace)
-            # This line is slow. 
+            # This line is slow.
             sig = np.ndarray(shape=(self.sig.shape[0] + src.shape[0] - (stop_idx - start_idx), self.channels))
             if sig.ndim == 2 and sig.shape[1] == 1:
                 sig = np.squeeze(sig)
             if isinstance(sig, numbers.Number):
-                sig = np.array(sig) 
+                sig = np.array(sig)
 
             sig[:start_idx] = self.sig[:start_idx]  # Copy the first part over
             sig[start_idx:end] = src                       # The second part is the new signal
@@ -576,7 +563,7 @@ class Asig:
 
         """
         # TODO: change name to mono()
-        # TODO: change code to accept empty cn - alternatively, make 
+        # TODO: change code to accept empty cn - alternatively, make
         # sure that signals always get a default cn, see ToDo for Asig.__init__()
         if self.channels == 1:
             _LOGGER.warning("Signal is already mono")
@@ -641,7 +628,7 @@ class Asig:
         return Asig(new_sig, self.sr, label=self.label + '_rewire', cn=self.cn)
 
     def pan2(self, pan=0.):
-        """pan2 only creates output in stereo, mono will be copy to stereo, 
+        """pan2 only creates output in stereo, mono will be copy to stereo,
         stereo works as it should, larger channel signal will only has 0 and 1 being changed.
         panning is based on constant power panning.
 
@@ -1007,356 +994,3 @@ class Asig:
         """custom function method."""
         func(self, **kwargs)
         return self
-
-
-class Aspec:
-    'audio spectrum class using rfft'
-
-    def __init__(self, x, sr=44100, label=None, cn=None):
-        self.cn = cn
-        if type(x) == Asig:
-            self.sr = x.sr
-            self.rfftspec = np.fft.rfft(x.sig)
-            self.label = x.label + "_spec"
-            self.samples = x.samples
-            self.channels = x.channels
-            self.cn = x.cn
-            if cn is not None and self.cn != cn:
-                print("Aspec:init: given cn different from Asig cn: using Asig.cn")
-        elif type(x) == list or type(x) == np.ndarray:
-            self.rfftspec = np.array(x)
-            self.sr = sr
-            self.samples = (len(x) - 1) * 2
-            self.channels = 1
-            if len(np.shape(x)) > 1:
-                self.channels = np.shape(x)[1]
-        else:
-            print("error: unknown initializer")
-        if label:
-            self.label = label
-        self.nr_freqs = self.samples // 2 + 1
-        self.freqs = np.linspace(0, self.sr / 2, self.nr_freqs)
-
-    def to_sig(self):
-        return Asig(np.fft.irfft(self.rfftspec), sr=self.sr, label=self.label + '_2sig', cn=self.cn)
-
-    def weight(self, weights, freqs=None, curve=1, kind='linear'):
-        nfreqs = len(weights)
-        if not freqs:
-            given_freqs = np.linspace(0, self.freqs[-1], nfreqs)
-        else:
-            if nfreqs != len(freqs):
-                print("Aspec.weight error: len(weights)!=len(freqs)")
-                return self
-            if all(freqs[i] < freqs[i + 1] for i in range(len(freqs) - 1)):  # check if list is monotonous
-                if freqs[0] > 0:
-                    freqs = np.insert(np.array(freqs), 0, 0)
-                    weights = np.insert(np.array(weights), 0, weights[0])
-                if freqs[-1] < self.sr / 2:
-                    freqs = np.insert(np.array(freqs), -1, self.sr / 2)
-                    weights = np.insert(np.array(weights), -1, weights[-1])
-            else:
-                print("Aspec.weight error: freqs not sorted")
-                return self
-            given_freqs = freqs
-        if nfreqs != self.nr_freqs:
-            interp_fn = scipy.interpolate.interp1d(given_freqs, weights, kind=kind)
-            rfft_new = self.rfftspec * interp_fn(self.freqs) ** curve  # ToDo: curve segmentwise!!!
-        else:
-            rfft_new = self.rfftspec * weights ** curve
-        return Aspec(rfft_new, self.sr, label=self.label + "_weighted")
-
-    def plot(self, fn=np.abs, **kwargs):
-        plt.plot(self.freqs, fn(self.rfftspec), **kwargs)
-        plt.xlabel('freq (Hz)')
-        plt.ylabel(f'{fn.__name__}(freq)')
-        return self
-
-    def __repr__(self):
-        return "Aspec('{}'): {} x {} @ {} Hz = {:.3f} s".format(
-            self.label, self.channels, self.samples, self.sr, self.samples / self.sr)
-
-
-# TODO, check with multichannel
-class Astft:
-    'audio spectrogram (STFT) class'
-
-    def __init__(self, x, sr=None, label=None, window='hann', nperseg=256,
-                 noverlap=None, nfft=None, detrend=False, return_onesided=True,
-                 boundary='zeros', padded=True, axis=-1, cn=None):
-        self.window = window
-        self.nperseg = nperseg
-        self.noverlap = noverlap
-        self.nfft = nfft
-        self.detrend = detrend
-        self.return_onesided = return_onesided
-        self.boundary = boundary
-        self.padded = padded
-        self.axis = axis
-        self.cn = cn
-        if type(x) == Asig:
-            self.sr = x.sr
-            if sr:
-                self.sr = sr  # explicitly given sr overwrites Asig
-            self.freqs, self.times, self.stft = scipy.signal.stft(
-                x.sig, fs=self.sr, window=window, nperseg=nperseg, noverlap=noverlap, nfft=nfft,
-                detrend=detrend, return_onesided=return_onesided, boundary=boundary, padded=padded, axis=axis)
-            self.label = x.label + "_stft"
-            self.samples = x.samples
-            self.channels = x.channels
-        elif type(x) == np.ndarray and np.shape(x) >= 2:
-            self.stft = x
-            self.sr = 44100
-            if sr:
-                self.sr = sr
-            self.samples = (len(x) - 1) * 2
-            self.channels = 1
-            if len(np.shape(x)) > 2:
-                self.channels = np.shape(x)[2]
-            # TODO: set other values, particularly check if self.times and self.freqs are correct
-            self.ntimes, self.nfreqs, = np.shape(self.stft)
-            self.times = np.linspace(0, (self.nperseg - self.noverlap) * self.ntimes / self.sr, self.ntimes)
-            self.freqs = np.linspace(0, self.sr // 2, self.nfreqs)
-        else:
-            print("error: unknown initializer or wrong stft shape ")
-        if label:
-            self.label = label
-
-    def to_sig(self, **kwargs):
-        """ create signal from stft, i.e. perform istft, kwargs overwrite Astft values for istft
-        """
-        for k in ['sr', 'window', 'nperseg', 'noverlap', 'nfft', 'input_onesided', 'boundary']:
-            if k in kwargs.keys():
-                kwargs[k] = self.__getattribute__(k)
-
-        if 'sr' in kwargs.keys():
-            kwargs['fs'] = kwargs['sr']
-            del kwargs['sr']
-
-        _, sig = scipy.signal.istft(self.stft, **kwargs)  # _ since 1st return value 'times' unused
-        return Asig(sig, sr=self.sr, label=self.label + '_2sig', cn=self.cn)
-
-    def plot(self, fn=lambda x: x, **kwargs):
-        plt.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)), **kwargs)
-        plt.colorbar()
-        return self
-
-    def __repr__(self):
-        return "Astft('{}'): {} x {} @ {} Hz = {:.3f} s".format(
-            self.label, self.channels, self.samples, self.sr, self.samples / self.sr, cn=self.cn)
-
-
-# global pya.startup() and shutdown() functions
-def startup(**kwargs):
-    return Aserver.startup_default_server(**kwargs)
-
-
-def shutdown(**kwargs):
-    Aserver.shutdown_default_server(**kwargs)
-
-
-class Aserver:
-
-    default = None  # that's the default Aserver if Asigs play via it
-
-    @staticmethod
-    def startup_default_server(**kwargs):
-        if Aserver.default is None:
-            print("Aserver startup_default_server: create and boot")
-            Aserver.default = Aserver(**kwargs)  # using all default settings
-            Aserver.default.boot()
-            print(Aserver.default)
-        else:
-            print("Aserver default_server already set.")
-        return Aserver.default
-
-    @staticmethod
-    def shutdown_default_server():
-        if isinstance(Aserver.default, Aserver):
-            Aserver.default.quit()
-            del(Aserver.default)
-            Aserver.default = None
-        else:
-            print("Aserver:shutdown_default_server: no default_server to shutdown")
-
-    """
-    Aserver manages an pyaudio stream, using its aserver callback
-    to feed dispatched signals to output at the right time
-    """
-    def __init__(self, sr=44100, bs=256, device=1, channels=2, format=pyaudio.paFloat32):
-        self.sr = sr
-        self.bs = bs
-        self.device = device
-        self.pa = pyaudio.PyAudio()
-        self.channels = channels
-        self.device_dict = self.pa.get_device_info_by_index(self.device)
-        """
-            self.max_out_chn is not that useful: there can be multiple devices having the same mu
-        """
-        self.max_out_chn = self.device_dict['maxOutputChannels']
-        if self.max_out_chn < self.channels:
-            print(f"Aserver: warning: {channels}>{self.max_out_chn} channels requested - truncated.")
-            self.channels = self.max_out_chn
-        self.format = format
-        self.gain = 1.0
-        self.srv_onsets = []
-        self.srv_asigs = []
-        self.srv_curpos = []  # start of next frame to deliver
-        self.srv_outs = []  # output channel offset for that asig
-        self.pastream = None
-        self.dtype = 'float32'  # for pyaudio.paFloat32
-        self.range = 1.0
-        self.boot_time = None  # time.time() when stream starts
-        self.block_cnt = None  # nr. of callback invocations
-        self.block_duration = self.bs / self.sr  # nominal time increment per callback
-        self.block_time = None  # estimated time stamp for current block
-        if self.format == pyaudio.paInt16:
-            self.dtype = 'int16'
-            self.range = 32767
-        if self.format not in [pyaudio.paInt16, pyaudio.paFloat32]:
-            print(f"Aserver: currently unsupported pyaudio format {self.format}")
-        self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.dtype)
-        self.input_devices = []
-        self.output_devices = []
-        for i in range(self.pa.get_device_count()):
-            if self.pa.get_device_info_by_index(i)['maxInputChannels'] > 0:
-                self.input_devices.append(self.pa.get_device_info_by_index(i))
-            if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
-                self.output_devices.append(self.pa.get_device_info_by_index(i))
-
-    def __repr__(self):
-        state = False
-        if self.pastream:
-            state = self.pastream.is_active()
-        msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state} Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
-        return msg
-
-    def get_devices(self):
-        print("Input Devices: ")
-        [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}")
-         for i in self.input_devices]
-        print("Output Devices: ")
-        [print(f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}")
-         for i in self.output_devices]
-        return self.input_devices, self.output_devices
-
-    def print_device_info(self):
-        print("Input Devices: ")
-        [print(i) for i in self.input_devices]
-        print("\n")
-        print("Output Devices: ")
-        [print(o) for o in self.output_devices]
-
-    def set_device(self, idx, reboot=True):
-        self.device = idx
-        self.device_dict = self.pa.get_device_info_by_index(self.device)
-        if reboot:
-            self.quit()
-            try:
-                self.boot()
-            except OSError:
-                print("Error: Invalid device. Server did not boot.")
-
-    def boot(self):
-        """boot Aserver = start stream, setting its callback to this callback."""
-        if self.pastream is not None and self.pastream.is_active():
-            print("Aserver:boot: already running...")
-            return -1
-        self.pastream = self.pa.open(format=self.format, channels=self.channels, rate=self.sr,
-                                     input=False, output=True, frames_per_buffer=self.bs,
-                                     output_device_index=self.device, stream_callback=self._play_callback)
-
-        self.boot_time = time.time()
-        self.block_time = self.boot_time
-        self.block_cnt = 0
-        self.pastream.start_stream()
-        print("Server Booted")
-        return self
-
-    def quit(self):
-        """Aserver quit server: stop stream and terminate pa"""
-        if not self.pastream.is_active():
-            print("Aserver:quit: stream not active")
-            return -1
-        try:
-            self.pastream.stop_stream()
-            self.pastream.close()
-        except AttributeError:
-            print("No stream...")
-        print("Aserver stopped.")
-        self.pastream = None
-
-    def __del__(self):
-        self.pa.terminate()
-
-    def play(self, asig, onset=0, out=0, **kwargs):
-        """Dispatch asigs or arrays for given onset."""
-        if out < 0:
-            print("Aserver:play: illegal out<0")
-            return
-        sigid = id(asig)  # for copy check
-        if asig.sr != self.sr:
-            asig = asig.resample(self.sr)
-        if onset < 1e6:
-            onset = time.time() + onset
-        idx = np.searchsorted(self.srv_onsets, onset)
-        self.srv_onsets.insert(idx, onset)
-        if asig.sig.dtype != self.dtype:
-            if id(asig) == sigid:
-                asig = copy.copy(asig)
-            asig.sig = asig.sig.astype(self.dtype)
-        # copy only relevant channels...
-        nchn = min(asig.channels, self.channels - out)  # max number of copyable channels
-        # in: [:nchn] out: [out:out+nchn]
-        if id(asig) == sigid:
-            asig = copy.copy(asig)
-        if len(asig.sig.shape) == 1:
-            asig.sig = asig.sig.reshape(asig.samples, 1)
-        asig.sig = asig.sig[:, :nchn].reshape(asig.samples, nchn)
-        # asig.channels = nchn
-        # so now in callback safely copy to out:out+asig.sig.shape[1]
-        self.srv_asigs.insert(idx, asig)
-        self.srv_curpos.insert(idx, 0)
-        self.srv_outs.insert(idx, out)
-        return self
-
-    def _play_callback(self, in_data, frame_count, time_info, flag):
-        """callback function, called from pastream thread when data needed."""
-        tnow = self.block_time
-        self.block_time += self.block_duration
-        self.block_cnt += 1
-        self.timejitter = time.time() - self.block_time  # just curious - not needed but for time stability check
-        if self.timejitter > 3 * self.block_duration:
-            _LOGGER.warning(f"Aserver late by {self.timejitter} seconds: block_time reseted!")
-            self.block_time = time.time()
-
-        if len(self.srv_asigs) == 0 or self.srv_onsets[0] > tnow:  # to shortcut computing
-            return (self.empty_buffer, pyaudio.paContinue)
-
-        data = np.zeros((self.bs, self.channels), dtype=self.dtype)
-        # iterate through all registered asigs, adding samples to play
-        dellist = []  # memorize completed items for deletion
-        t_next_block = tnow + self.bs / self.sr
-        for i, t in enumerate(self.srv_onsets):
-            if t > t_next_block:  # doesn't begin before next block
-                break  # since list is always onset-sorted
-            a = self.srv_asigs[i]
-            c = self.srv_curpos[i]
-            if t > tnow:  # first block: apply precise zero padding
-                io0 = int((t - tnow) * self.sr)
-            else:
-                io0 = 0
-            tmpsig = a.sig[c:c + self.bs - io0]
-            n, nch = tmpsig.shape
-            out = self.srv_outs[i]
-            data[io0:io0 + n, out:out + nch] += tmpsig  # .reshape(n, nch) not needed as moved to play
-            self.srv_curpos[i] += n
-            if self.srv_curpos[i] >= a.samples:
-                dellist.append(i)  # store for deletion
-        # clean up lists
-        for i in dellist[::-1]:  # traverse backwards!
-            del(self.srv_asigs[i])
-            del(self.srv_onsets[i])
-            del(self.srv_curpos[i])
-            del(self.srv_outs[i])
-        return (data * (self.range * self.gain), pyaudio.paContinue)

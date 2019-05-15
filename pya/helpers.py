@@ -1,9 +1,6 @@
 """Collection of small helper functions"""
-
 import numpy as np
 import pyaudio
-import simpleaudio as sa
-from .pyaudiostream import PyaudioStream
 import time
 
 

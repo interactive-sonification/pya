@@ -77,7 +77,8 @@ class TestSetitem(TestCase):
     def test_extend(self):
         """Testing of extend mode, longer array will force the taker to extend its shape."""
         a = Asig(0.8, sr=1000, channels=4, cn=['a', 'b', 'c', 'd'])
-        b = pya.sine(dur=0.6, freq=100, sr=1000).fade_in(0.3).fade_out(0.3)
+        b = np.sin(2 * np.pi * 100 * np.linspace(0, 0.6, int(1000 * 0.6)))
+        b = Asig(b).fade_in(0.3).fade_out(0.3)
         # test with extend set mono signal to a, initially only 0.8secs long...
         a.x[:, 0] = 0.2 * b  # this fits in without need to extend
         self.assertEqual(a.samples, 800)
@@ -91,7 +92,8 @@ class TestSetitem(TestCase):
 
     def test_replace(self):
         b = np.ones(290)
-        a = pya.sine(40, sr=100)
+        a = np.sin(2 * np.pi * 40 * np.linspace(0, 1, 100))
+        a = Asig(a)
         a.overwrite[40:50] = b
         self.assertEqual(a.samples, 100 - 10 + 290)  # First make sure size is correct
         c = np.sum(a[50:60].sig)   # Then make sure replace value is correct

@@ -2,13 +2,13 @@ from unittest import TestCase
 from pya import *
 import numpy as np
 import logging
-logging.basicConfig(level = logging.DEBUG)
-
+logging.basicConfig(level = logging.WARNING)
+import time
 
 class TestPlay(TestCase):
 
     def setUp(self):
-        self.sig = np.sin(2*np.pi* 100 * np.linspace(0,1,44100))
+        self.sig = np.sin(2*np.pi* 440 * np.linspace(0,1,44100))
         self.asine = Asig(self.sig, sr=44100,label="test_sine")
         self.asineWithName = Asig(self.sig, sr=44100,label="test_sine", cn = ['sine'])
         # self.astereo = Asig("../examples/samples/stereoTest.wav", label='stereo', cn = ['l','r'])
@@ -23,7 +23,9 @@ class TestPlay(TestCase):
         # Shift a mono signal to chan 4 should result in a 4 channels signals
         s = Aserver()
         s.boot()
-        self.asine.play(server = s)
+        self.asine.gain(db=-3).play(server=s)
+        time.sleep(2)
+
 
     def test_gain(self):
         result = (self.asine * 0.2).sig
