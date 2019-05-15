@@ -1070,6 +1070,7 @@ class Aspec:
         plt.plot(self.freqs, fn(self.rfftspec), **kwargs)
         plt.xlabel('freq (Hz)')
         plt.ylabel(f'{fn.__name__}(freq)')
+        return self
 
     def __repr__(self):
         return "Aspec('{}'): {} x {} @ {} Hz = {:.3f} s".format(
