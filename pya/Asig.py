@@ -1,4 +1,6 @@
 from .Aserver import Aserver
+from .Aspec import Aspec
+from .Astft import Astft
 import numbers
 from itertools import compress
 import matplotlib.pyplot as plt
@@ -333,7 +335,7 @@ class Asig:
             cindex = None
 
         # parse row index rindex into ridx
-        sr = self.sr  # default case for conversion if not changed by special case
+        # sr = self.sr  # unused default case for conversion if not changed by special case
         if isinstance(rindex, list):  # e.g. a[[4,5,7,8,9]], or a[[True, False, True...]]
             ridx = rindex
         elif isinstance(rindex, int):  # picking a single row
@@ -989,6 +991,8 @@ class Asig:
         self.sig = np.vstack([self.sig] * chan)
         self.sig = self.sig.transpose()
         return self.overwrite(self.sig, self.sr)  # Overwrite the signal
+        # TODO: replace this (old) overwrite by a hidden private _transplant_sig(ndarr, sr)
+        # since overwrite is now a property for setitem...
 
     def custom(self, func, **kwargs):
         """custom function method."""

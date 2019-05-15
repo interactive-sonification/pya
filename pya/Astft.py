@@ -1,3 +1,5 @@
+from .Asig import Asig
+from .Aspec import Aspec
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate
