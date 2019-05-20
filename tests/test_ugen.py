@@ -1,5 +1,5 @@
 from unittest import TestCase
-from pya import *
+from pya import Ugen
 import numpy as np
 import logging
 logging.basicConfig(level = logging.DEBUG)
@@ -14,7 +14,7 @@ class TestSlicing(TestCase):
         pass
 
     def test_sine(self):
-        pass
+        pas
         # sine = ugen.sine(freq=440, amp=1.0, dur=1.0, sr=44100, channels=1, cn=["sine"], label="sine")
         # self.assertEqual(44100, sine.samples)
         #
