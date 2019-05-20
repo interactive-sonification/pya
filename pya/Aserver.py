@@ -1,15 +1,7 @@
-
 import copy
 import time
-
-import matplotlib.pyplot as plt
 import numpy as np
 import pyaudio
-import scipy.interpolate
-import scipy.signal
-from scipy.fftpack import fft, fftfreq, ifft
-from scipy.io import wavfile
-from .helpers import ampdb, dbamp, linlin, timeit
 
 import logging
 

@@ -1,20 +1,22 @@
-from .Asig import Asig
-from .Astft import Astft
-from .Aserver import Aserver
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate
 import scipy.signal
 import logging
 
+
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
 
 class Aspec:
+
     'audio spectrum class using rfft'
 
     def __init__(self, x, sr=44100, label=None, cn=None):
+        from .Asig import Asig
+        from .Astft import Astft
+        from .Aserver import Aserver
         self.cn = cn
         if type(x) == Asig:
             self.sr = x.sr

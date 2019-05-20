@@ -1,5 +1,3 @@
-from .Asig import Asig
-from .Aspec import Aspec
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate
@@ -17,6 +15,8 @@ class Astft:
     def __init__(self, x, sr=None, label=None, window='hann', nperseg=256,
                  noverlap=None, nfft=None, detrend=False, return_onesided=True,
                  boundary='zeros', padded=True, axis=-1, cn=None):
+        from .Asig import Asig
+        from .Aspec import Aspec
         self.window = window
         self.nperseg = nperseg
         self.noverlap = noverlap
