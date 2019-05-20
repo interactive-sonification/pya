@@ -82,7 +82,6 @@ class Asig:
             self.sig = np.array(sig)
 
         self.label = label
-        self.device = 1  # TODO this seems uncessary
         # make a copy for any processing events e.g. (panning, filtering)
         # that needs to process the signal without permanent change.
         self.sig_copy = np.copy(self.sig)  # It takes around 100ms to copy a 17min audio at 44.1khz
