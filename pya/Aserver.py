@@ -58,16 +58,10 @@ class Aserver:
             if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
                 self.output_devices.append(self.pa.get_device_info_by_index(i))
 
-        """If device is None (default), find the device index with 'default' in name for Linux
-        , set device index to 1 for OSX, TODO check what to do for windows. 
-        """
-        if platform == "linux" or platform == "linux2":
-            default_device = [d['index'] for i, d in enumerate(self.output_devices) if 'Built-in' in d['name']]
-            self.device = default_device[0] if device is None else device
-        elif platform == "darwin":  # default device on OSX is 1: Build-in Output
-            self.device = 1 if device is None else device
-        elif platform == "win32":  # TODO test what is the default device for windows.
-            self.device = 1 if device is None else device
+        if device is None:
+            self.device = self.pa.get_default_output_device_info()['index']
+        else:
+            self.device = device
 
         self.device_dict = self.pa.get_device_info_by_index(self.device)
         """
