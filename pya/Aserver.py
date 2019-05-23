@@ -2,7 +2,7 @@ import copy
 import time
 import numpy as np
 import pyaudio
-
+from sys import platform
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,16 +33,42 @@ class Aserver:
         else:
             print("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    """
-    Aserver manages an pyaudio stream, using its aserver callback
-    to feed dispatched signals to output at the right time
-    """
-    def __init__(self, sr=44100, bs=256, device=1, channels=2, format=pyaudio.paFloat32):
+    def __init__(self, sr=44100, bs=256, device=None, channels=2, format=pyaudio.paFloat32):
+        """Aserver manages an pyaudio stream, using its aserver callback
+        to feed dispatched signals to output at the right time.
+
+        :param sr: sampling rate
+        :param bs: block size, aka buffer size
+        :param device: audio output device
+        :param channels: signal channels #TODO This may not be necessary as it is limited by the output device
+        :param format: pyaudio format, default is pyaudio.paFloat32
+        """
+
         self.sr = sr
         self.bs = bs
-        self.device = device
         self.pa = pyaudio.PyAudio()
         self.channels = channels
+
+        # Get audio devices to input_device and output_device
+        self.input_devices = []
+        self.output_devices = []
+        for i in range(self.pa.get_device_count()):
+            if self.pa.get_device_info_by_index(i)['maxInputChannels'] > 0:
+                self.input_devices.append(self.pa.get_device_info_by_index(i))
+            if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
+                self.output_devices.append(self.pa.get_device_info_by_index(i))
+
+        """If device is None (default), find the device index with 'default' in name for Linux
+        , set device index to 1 for OSX, TODO check what to do for windows. 
+        """
+        if platform == "linux" or platform == "linux2":
+            default_device = [d['index'] for i, d in enumerate(self.output_devices) if 'Built-in' in d['name']]
+            self.device = default_device[0] if device is None else device
+        elif platform == "darwin":  # default device on OSX is 1: Build-in Output
+            self.device = 1 if device is None else device
+        elif platform == "win32":  # TODO test what is the default device for windows.
+            self.device = 1 if device is None else device
+
         self.device_dict = self.pa.get_device_info_by_index(self.device)
         """
             self.max_out_chn is not that useful: there can be multiple devices having the same mu
@@ -70,19 +96,12 @@ class Aserver:
         if self.format not in [pyaudio.paInt16, pyaudio.paFloat32]:
             print(f"Aserver: currently unsupported pyaudio format {self.format}")
         self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.dtype)
-        self.input_devices = []
-        self.output_devices = []
-        for i in range(self.pa.get_device_count()):
-            if self.pa.get_device_info_by_index(i)['maxInputChannels'] > 0:
-                self.input_devices.append(self.pa.get_device_info_by_index(i))
-            if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
-                self.output_devices.append(self.pa.get_device_info_by_index(i))
 
     def __repr__(self):
         state = False
         if self.pastream:
             state = self.pastream.is_active()
-        msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state} Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
+        msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
 
     def get_devices(self):

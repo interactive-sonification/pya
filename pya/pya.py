@@ -501,7 +501,7 @@ class Asig:
 
     def play(self, rate=1, **kwargs):
         """Play Asig audio via Aserver, using Aserver.default (if existing)
-        kwargs are propagated to Aserver:play (onset=0, out=0)
+        kwargs are propagzated to Aserver:play (onset=0, out=0)
         IDEA/ToDo: allow to set server='stream' to create
           which terminates when finished using pyaudiostream
         """

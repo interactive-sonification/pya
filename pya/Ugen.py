@@ -20,6 +20,7 @@ def _normalize(d):
     d /= np.ptp(d, axis=0)
     return d
 
+
 class Ugen(Asig):
 
     def __init__(self):
@@ -30,20 +31,17 @@ class Ugen(Asig):
         sig = amp * np.sin(2 * np.pi * freq * np.linspace(0, dur, length))
         return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
-
     def square(self, freq=440, amp=1.0, dur=1.0, duty=0.4, sr=44100, channels=1, cn=None, label="square"):
         length = _get_length(dur, sr)
         sig = amp * signal.square(2 * np.pi * freq * np.linspace(0, dur, length, endpoint=False),
                                   duty=duty)
         return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
-
     def sawtooth(self, freq=440, amp=1.0, dur=1.0, width=1., sr=44100, channels=1, cn=None, label="sawtooth"):
         length = _get_length(dur, sr)
         sig = amp * signal.sawtooth(2 * np.pi * freq * np.linspace(0, dur, length, endpoint=False),
                                     width=width)
         return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
-
 
     def noise(self, typ="white", amp=1.0, dur=1.0, sr=44100, channels=1, cn=None, label="noise"):
         length = _get_length(dur, sr)

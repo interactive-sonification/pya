@@ -13,8 +13,8 @@ class TestSlicing(TestCase):
     def tearDown(self):
         pass
 
-    def test_sine(self):
-        pas
+    def test_ugen(self):
+        pass
         # sine = ugen.sine(freq=440, amp=1.0, dur=1.0, sr=44100, channels=1, cn=["sine"], label="sine")
         # self.assertEqual(44100, sine.samples)
         #
