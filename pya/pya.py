@@ -100,16 +100,6 @@ class Asig:
     #         result.__dict__.update(self.__dict__)
     #         return result
 
-    # def __deepcopy__(self, memo):
-    #     cls = self.__class__
-    #     result = cls.__new__(cls)
-    #     memo[id(self)] = result
-    #     for k, v in self.__dict__.items():
-    #         setattr(result, k, deepcopy(v, memo))
-    #     return result
-
-
-
     @property
     def channels(self):
         try:
@@ -146,7 +136,6 @@ class Asig:
 
         elif self.sig.dtype != np.dtype('float32'):
             self.sig = self.sig.astype('float32')
-
         else:
             print("load_wavfile: TODO: add format")
 
@@ -1085,7 +1074,6 @@ class Aspec:
         plt.xlabel('freq (Hz)')
         plt.ylabel(f'{fn.__name__}(freq)')
         return self
-
 
     def __repr__(self):
         return "Aspec('{}'): {} x {} @ {} Hz = {:.3f} s".format(

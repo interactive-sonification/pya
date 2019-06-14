@@ -84,6 +84,7 @@ class Aserver:
         self.block_cnt = None  # nr. of callback invocations
         self.block_duration = self.bs / self.sr  # nominal time increment per callback
         self.block_time = None  # estimated time stamp for current block
+        self._stop = True
         if self.format == pyaudio.paInt16:
             self.dtype = 'int16'
             self.range = 32767
@@ -132,7 +133,6 @@ class Aserver:
         self.pastream = self.pa.open(format=self.format, channels=self.channels, rate=self.sr,
                                      input=False, output=True, frames_per_buffer=self.bs,
                                      output_device_index=self.device, stream_callback=self._play_callback)
-
         self.boot_time = time.time()
         self.block_time = self.boot_time
         self.block_cnt = 0
@@ -158,6 +158,8 @@ class Aserver:
 
     def play(self, asig, onset=0, out=0, **kwargs):
         """Dispatch asigs or arrays for given onset."""
+        self._stop = False
+        self._status = pyaudio.paContinue
         if out < 0:
             print("Aserver:play: illegal out<0")
             return
@@ -200,6 +202,12 @@ class Aserver:
 
         if len(self.srv_asigs) == 0 or self.srv_onsets[0] > tnow:  # to shortcut computing
             return (self.empty_buffer, pyaudio.paContinue)
+        elif self._stop:
+            self.srv_asigs.clear()
+            self.srv_onsets.clear()
+            self.srv_curpos.clear()
+            self.srv_outs.clear()
+            return (self.empty_buffer, pyaudio.paContinue)
 
         data = np.zeros((self.bs, self.channels), dtype=self.dtype)
         # iterate through all registered asigs, adding samples to play
@@ -229,3 +237,5 @@ class Aserver:
             del(self.srv_outs[i])
         return (data * (self.range * self.gain), pyaudio.paContinue)
 
+    def stop(self):
+        self._stop = True
