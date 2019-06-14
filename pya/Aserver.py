@@ -69,7 +69,7 @@ class Aserver:
         """
         self.max_out_chn = self.device_dict['maxOutputChannels']
         if self.max_out_chn < self.channels:
-            print(f"Aserver: warning: {channels}>{self.max_out_chn} channels requested - truncated.")
+            _LOGGER.warning(f"Aserver: warning: {channels}>{self.max_out_chn} channels requested - truncated.")
             self.channels = self.max_out_chn
         self.format = format
         self.gain = 1.0
@@ -169,6 +169,7 @@ class Aserver:
         idx = np.searchsorted(self.srv_onsets, onset)
         self.srv_onsets.insert(idx, onset)
         if asig.sig.dtype != self.dtype:
+            _LOGGER.warning("Not the same type. ")
             if id(asig) == sigid:
                 asig = copy.copy(asig)
             asig.sig = asig.sig.astype(self.dtype)
@@ -227,3 +228,4 @@ class Aserver:
             del(self.srv_curpos[i])
             del(self.srv_outs[i])
         return (data * (self.range * self.gain), pyaudio.paContinue)
+
