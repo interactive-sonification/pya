@@ -549,7 +549,7 @@ class Asig:
         else:
             raise TypeError("Argument needs to be int")
 
-    def to_mono(self, blend=None):
+    def mono(self, blend=None):
         """Mix channels to mono signal.
 
         Perform sig = np.sum(self.sig_copy * blend, axis=1)
@@ -561,7 +561,6 @@ class Asig:
             if len(blend) not equal to self.channels
 
         """
-        # TODO: change name to mono()
         # TODO: change code to accept empty cn - alternatively, make
         # sure that signals always get a default cn, see ToDo for Asig.__init__()
         if self.channels == 1:
@@ -581,7 +580,7 @@ class Asig:
             col_names = [self.cn[np.argmax(blend)]] if self.cn is not None else None
             return Asig(sig, self.sr, label=self.label + '_blended', cn=col_names)
 
-    def to_stereo(self, blend=None):
+    def stereo(self, blend=None):
         """Blend any channel of signal to stereo.
 
         Usage: blend = [[list], [list]], e.g:
@@ -1054,10 +1053,17 @@ class Aspec:
             rfft_new = self.rfftspec * weights ** curve
         return Aspec(rfft_new, self.sr, label=self.label + "_weighted")
 
-    def plot(self, fn=np.abs, **kwargs):
+    def plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs):
         plt.plot(self.freqs, fn(self.rfftspec), **kwargs)
+        if xlim is not None:
+            plt.xlim([xlim[0], xlim[1]])
+
+        if ylim is not None:
+            plt.ylim([ylim[0], ylim[1]])
+
         plt.xlabel('freq (Hz)')
         plt.ylabel(f'{fn.__name__}(freq)')
+
 
     def __repr__(self):
         return "Aspec('{}'): {} x {} @ {} Hz = {:.3f} s".format(
@@ -1082,6 +1088,7 @@ class Astft:
         self.axis = axis
         self.cn = cn
         if type(x) == Asig:
+            # TODO multichannel.
             self.sr = x.sr
             if sr:
                 self.sr = sr  # explicitly given sr overwrites Asig
@@ -1123,9 +1130,19 @@ class Astft:
         _, sig = scipy.signal.istft(self.stft, **kwargs)  # _ since 1st return value 'times' unused
         return Asig(sig, sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
-    def plot(self, fn=lambda x: x, **kwargs):
-        plt.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)), **kwargs)
-        plt.colorbar()
+    def plot(self, fn=lambda x: x, ax=None, xlim=None, ylim=None, **kwargs):
+        if ax is None:
+            plt.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)), **kwargs)
+            plt.colorbar()
+            if ylim is not None:
+                plt.ylim([ylim[0], ylim[1]])
+
+        else:
+            ax.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)), **kwargs)
+            # plt.colorbar(ax=ax)
+            if ylim is not None:
+                ax.set_ylim(ylim[0], ylim[1])
+
         return self
 
     def __repr__(self):

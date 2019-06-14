@@ -1,5 +1,5 @@
 from unittest import TestCase
-from pya import Ugen
+from pya import *
 import numpy as np
 import logging
 logging.basicConfig(level = logging.DEBUG)
@@ -13,13 +13,9 @@ class TestSlicing(TestCase):
     def tearDown(self):
         pass
 
-    def test_ugen(self):
-        pass
-        # sine = ugen.sine(freq=440, amp=1.0, dur=1.0, sr=44100, channels=1, cn=["sine"], label="sine")
-        # self.assertEqual(44100, sine.samples)
-        #
-        # square = ugen.square(freq=440, amp=1.0, dur=1.0, duty=0.4, sr=44100, channels=1, cn=None, label="square")
-        # self.assertEqual(44100, square.samples)
-        #
-        # saw = ugen.sawtooth(freq=440, amp=1.0, dur=1.0, width=1., sr=100, channels=1, cn=None, label="sawtooth")
-        # self.assertEqual(100, saw.samples)
+    def test_sine(self):
+        sine = Ugen().sine(freq=200, amp=0.5, dur=1.0, sr=44100//2, channels=2)
+        self.assertEqual(44100//2, sine.sr)
+        self.assertAlmostEqual(0.5, np.max(sine.sig), places=6)
+        self.assertEqual((44100//2, 2), sine.sig.shape)
+

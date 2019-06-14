@@ -29,27 +29,37 @@ class Ugen(Asig):
     def sine(self, freq=440, amp=1.0, dur=1.0, sr=44100, channels=1, cn=None, label="sine"):
         length = _get_length(dur, sr)
         sig = amp * np.sin(2 * np.pi * freq * np.linspace(0, dur, length))
+        if channels > 1:
+            sig = np.repeat(sig, channels)
+            sig = sig.reshape((length, channels))
+
         return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
     def square(self, freq=440, amp=1.0, dur=1.0, duty=0.4, sr=44100, channels=1, cn=None, label="square"):
         length = _get_length(dur, sr)
         sig = amp * signal.square(2 * np.pi * freq * np.linspace(0, dur, length, endpoint=False),
                                   duty=duty)
+        if channels > 1:
+            sig = np.repeat(sig, channels)
+            sig = sig.reshape((length, channels))
         return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
     def sawtooth(self, freq=440, amp=1.0, dur=1.0, width=1., sr=44100, channels=1, cn=None, label="sawtooth"):
         length = _get_length(dur, sr)
         sig = amp * signal.sawtooth(2 * np.pi * freq * np.linspace(0, dur, length, endpoint=False),
                                     width=width)
+        if channels > 1:
+            sig = np.repeat(sig, channels)
+            sig = sig.reshape((length, channels))
         return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
-    def noise(self, typ="white", amp=1.0, dur=1.0, sr=44100, channels=1, cn=None, label="noise"):
+    def noise(self, type="white", amp=1.0, dur=1.0, sr=44100, channels=1, cn=None, label="noise"):
         length = _get_length(dur, sr)
         # Question is that will be that be too slow.
-        if typ == "white" or "white_noise":
+        if type== "white" or "white_noise":
             sig = np.random.rand(length) * amp  # oR may switch to normal
 
-        elif typ == "pink" or "pink_noise":
+        elif type == "pink" or "pink_noise":
             # Based on Paul Kellet's method
             b0, b1, b2, b3, b4, b5, b6 = 0, 0, 0, 0, 0, 0, 0
             sig = []
@@ -64,6 +74,9 @@ class Ugen(Asig):
                 sig.append(b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362)
                 b6 = white * 0.115926
             sig = _normalize(sig) * amp
+        if channels > 1:
+            sig = np.repeat(sig, channels)
+            sig = sig.reshape((length, channels))
         return Asig(sig, sr=sr, channels=channels, cn=cn, label=label)
 
     # TODO, FM AM Additive Subtractive But for the future. This is not necessary right now.
