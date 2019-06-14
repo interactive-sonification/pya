@@ -831,7 +831,7 @@ class Asig:
                   filter='lfilter', rp=None, rs=None):
         Wn = np.array(cutoff_freqs) * 2 / self.sr
         b, a = scipy.signal.iirfilter(order, Wn, rp=rp, rs=rs, btype=btype, ftype=ftype)
-        y = scipy.signal.__getattribute__(filter)(b, a, self.sig)
+        y = scipy.signal.__getattribute__(filter)(b, a, self.sig, axis=0)
         aout = Asig(y, self.sr, label=self.label + "_iir")
         aout._['b'] = b
         aout._['a'] = a
@@ -1063,6 +1063,7 @@ class Aspec:
 
         plt.xlabel('freq (Hz)')
         plt.ylabel(f'{fn.__name__}(freq)')
+        return self
 
 
     def __repr__(self):
