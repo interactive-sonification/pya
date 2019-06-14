@@ -366,7 +366,7 @@ class Asig:
             ridx = rindex
 
         # now parse cindex
-        if type(cindex) is list:
+        if isinstance(cindex, list):
             if isinstance(cindex[0], str):
                 cidx = [self.col_name.get(s) for s in cindex]
                 cidx = cidx[0] if len(cidx) == 1 else cidx  # hotfix for now.
@@ -644,33 +644,35 @@ class Asig:
         :param pan: float. range -1. to 1.
         :return: Asig
         """
-        pan = float(pan)
-        if type(pan) is float:
+        if isinstance(pan, float):
             # Stereo panning.
             if pan <= 1. and pan >= -1.:
                 angle = linlin(pan, -1, 1, 0, np.pi / 2.)
                 gain = [np.cos(angle), np.sin(angle)]
                 if self.channels == 1:
-                    newsig = np.repeat(self.sig_copy, 2)  # This is actually quite slow
+                    newsig = np.repeat(self.sig, 2)  # This is actually quite slow
                     newsig_shape = newsig.reshape(-1, 2) * gain
                     new_cn = [self.cn, self.cn]
                     return Asig(newsig_shape, self.sr,
                                 label=self.label + "_pan2ed", channels=2, cn=new_cn)
                 else:
-                    self.sig_copy[:, :2] *= gain
-                    return Asig(self.sig_copy, self.sr, label=self.label + "_pan2ed", cn=self.cn)
+                    return Asig(self.sig_copy[:, :2] * gain, self.sr, label=self.label + "_pan2ed", cn=self.cn)
             else:
-                _LOGGER.warning("Scalar panning need to be in the range -1. to 1. nothing changed.")
+                _LOGGER.warning("Panning need to be in the range -1. to 1. nothing changed.")
                 return self
+        else:
+            _LOGGER.error("pan needs to be a float number between -1. to 1.")
 
     def norm(self, norm=1, dcflag=False):
         """Normalize signal"""
         if dcflag:
-            self.sig = self.sig - np.mean(self.sig, 0)
+            sig = self.sig - np.mean(self.sig, 0)
+        else:
+            sig = self.sig
         if norm <= 0:  # take negative values as level in dB
             norm = dbamp(norm)
-        self.sig = norm * self.sig / np.max(np.abs(self.sig), 0)
-        return self
+        sig = norm * sig / np.max(np.abs(sig), 0)
+        return Asig(sig, self.sr, label=self.label + "_normalised", cn=self.cn)
 
     def gain(self, amp=None, db=None):
         """Apply gain in amplitude or dB"""
@@ -685,7 +687,7 @@ class Asig:
         """Return signal's RMS"""
         return np.sqrt(np.mean(np.square(self.sig), axis))
 
-    def plot(self, fn=None, offset=0, scale=1, **kwargs):
+    def plot(self, fn=None, offset=0, scale=1, xlim=None, ylim=[-1., 1.], **kwargs):
         """Display signal graph"""
         if fn:
             if fn == 'db':
@@ -706,6 +708,9 @@ class Asig:
                 plt.xlabel("time [s]")
                 if self.cn:
                     plt.text(0, (i + 0.1) * offset, self.cn[i])
+        plt.ylim([ylim[0], ylim[1]])
+        if xlim is not None:
+            plt.xlim([xlim[0], xlim[1]])
         return self
 
     def get_duration(self):
