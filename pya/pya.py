@@ -70,16 +70,16 @@ class Asig:
             self.load_wavfile(sig)
         elif isinstance(sig, int):  # sample length
             if channels == 1:
-                self.sig = np.zeros(sig)
+                self.sig = np.zeros(sig).astype("float32")
             else:
-                self.sig = np.zeros((sig, channels))
+                self.sig = np.zeros((sig, channels)).astype("float32")
         elif isinstance(sig, float):  # if float interpret as duration
             if channels == 1:
-                self.sig = np.zeros(int(sig * sr))
+                self.sig = np.zeros(int(sig * sr)).astype("float32")
             else:
-                self.sig = np.zeros((int(sig * sr), channels))
+                self.sig = np.zeros((int(sig * sr), channels)).astype("float32")
         else:
-            self.sig = np.array(sig)
+            self.sig = np.array(sig).astype("float32")
 
         self.label = label
         # make a copy for any processing events e.g. (panning, filtering)
@@ -121,7 +121,7 @@ class Asig:
         # Discuss to change to float32 .
         self.sr, self.sig = wavfile.read(fname)  # load the sample data
         if self.sig.dtype == np.dtype('int16'):
-            self.sig = self.sig.astype('float32') / 32768
+            self.sig = (self.sig / 32768.).astype('float32')
 
         elif self.sig.dtype != np.dtype('float32'):
             self.sig = self.sig.astype('float32')
