@@ -9,6 +9,7 @@ from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
 from .helpers import ampdb, dbamp, linlin, timeit
 import logging
+from copy import copy, deepcopy
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -62,7 +63,7 @@ class Asig:
 
     """
 
-    def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
+    def __init__(self, sig, sr=44100, label="", channels=1, cn=None, copy="default"):
         self.sr = sr
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
@@ -82,12 +83,32 @@ class Asig:
             self.sig = np.array(sig)
 
         self.label = label
-        # make a copy for any processing events e.g. (panning, filtering)
-        # that needs to process the signal without permanent change.
+        # # make a copy for any processing events e.g. (panning, filtering)
+        # # that needs to process the signal without permanent change.
         self.sig_copy = np.copy(self.sig)  # It takes around 100ms to copy a 17min audio at 44.1khz
-        # TODO discuss whether copy is necessary as it is not memory efficient
         self.cn = cn
         self._set_col_names()
+    #
+    # def __copy__(self):
+    #
+    #     if copy == 'default':
+    #         return self
+    #
+    #     elif copy == 'copy':
+    #         cls = self.__class__
+    #         result = cls.__new__(cls)
+    #         result.__dict__.update(self.__dict__)
+    #         return result
+
+    # def __deepcopy__(self, memo):
+    #     cls = self.__class__
+    #     result = cls.__new__(cls)
+    #     memo[id(self)] = result
+    #     for k, v in self.__dict__.items():
+    #         setattr(result, k, deepcopy(v, memo))
+    #     return result
+
+
 
     @property
     def channels(self):
@@ -533,9 +554,9 @@ class Asig:
 
             _LOGGER.debug("Shift to channel %d, new signal has %d channels", out, new_sig.shape[1])
             if self.channels == 1:
-                new_sig[:, out] = self.sig_copy
+                new_sig[:, out] = self.sig
             else:
-                new_sig[:, out:(out + self.channels)] = self.sig_copy
+                new_sig[:, out:(out + self.channels)] = self.sig
             _LOGGER.debug("Successfully assign signal to new_sig")
             if self.cn is None:
                 new_cn = self.cn
@@ -576,7 +597,7 @@ class Asig:
                             len(blend), self.channels)
             return self
         else:
-            sig = np.sum(self.sig_copy * blend, axis=1)
+            sig = np.sum(self.sig * blend, axis=1)
             col_names = [self.cn[np.argmax(blend)]] if self.cn is not None else None
             return Asig(sig, self.sr, label=self.label + '_blended', cn=col_names)
 
@@ -597,13 +618,13 @@ class Asig:
             right = blend[1]
         # [[0.1,0.2,0.3], [0.4,0.5,0.6]]
         if self.channels == 1:
-            left_sig = self.sig_copy * left
-            right_sig = self.sig_copy * right
+            left_sig = self.sig * left
+            right_sig = self.sig * right
             sig = np.stack((left_sig, right_sig), axis=1)
             return Asig(sig, self.sr, label=self.label + '_to_stereo', cn=self.cn)
         elif len(left) == self.channels and len(right) == self.channels:
-            left_sig = np.sum(self.sig_copy * left, axis=1)
-            right_sig = np.sum(self.sig_copy * right, axis=1)
+            left_sig = np.sum(self.sig * left, axis=1)
+            right_sig = np.sum(self.sig * right, axis=1)
             sig = np.stack((left_sig, right_sig), axis=1)
             return Asig(sig, self.sr, label=self.label + '_to_stereo', cn=self.cn)
         else:
@@ -618,9 +639,9 @@ class Asig:
         max_ch = max(dic, key=lambda x: x[1])[1] + 1  # Find what the largest channel in the newly rewired is .
         if max_ch > self.channels:
             new_sig = np.zeros((self.samples, max_ch))
-            new_sig[:, :self.channels] = self.sig_copy
+            new_sig[:, :self.channels] = self.sig
         else:
-            new_sig = self.sig_copy
+            new_sig = self.sig
         for key, val in dic.items():
             new_sig[:, key[1]] = self.sig[:, key[0]] * val
         return Asig(new_sig, self.sr, label=self.label + '_rewire', cn=self.cn)
