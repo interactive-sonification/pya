@@ -86,7 +86,7 @@ class Asig:
         self.label = label
         # # make a copy for any processing events e.g. (panning, filtering)
         # # that needs to process the signal without permanent change.
-        self.sig_copy = np.copy(self.sig)  # It takes around 100ms to copy a 17min audio at 44.1khz
+        # self.sig_copy = np.copy(self.sig)  # It takes around 100ms to copy a 17min audio at 44.1khz
         self.cn = cn
         self._set_col_names()
     #
@@ -671,7 +671,7 @@ class Asig:
                     return Asig(newsig_shape, self.sr,
                                 label=self.label + "_pan2ed", channels=2, cn=new_cn)
                 else:
-                    return Asig(self.sig_copy[:, :2] * gain, self.sr, label=self.label + "_pan2ed", cn=self.cn)
+                    return Asig(self.sig[:, :2] * gain, self.sr, label=self.label + "_pan2ed", cn=self.cn)
             else:
                 _LOGGER.warning("Panning need to be in the range -1. to 1. nothing changed.")
                 return self
