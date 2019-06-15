@@ -2,16 +2,16 @@ from unittest import TestCase
 from pya import *
 import numpy as np
 import logging
-logging.basicConfig(level = logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class TestSlicing(TestCase):
 
     def setUp(self):
-        self.sig = np.sin(2*np.pi* 100 * np.linspace(0,1,44100))
-        self.asine = Asig(self.sig, sr=44100,label="test_sine")
-        self.sig4 = np.sin(2*np.pi* 100 * np.linspace(0,4,44100 * 4))  # 4second sine
-        self.asine4 = Asig(self.sig4, sr=44100,label="test_sine")
+        self.sig = np.sin(2*np.pi* 100 * np.linspace(0, 1, 44100))
+        self.asine = Asig(self.sig, sr=44100, label="test_sine")
+        self.sig4 = np.sin(2*np.pi* 100 * np.linspace(0, 4, 44100 * 4))  # 4second sine
+        self.asine4 = Asig(self.sig4, sr=44100, label="test_sine")
         self.sig2ch = np.repeat(self.sig, 2).reshape(((44100, 2)))
         self.astereo = Asig(self.sig2ch, sr=44100, label="stereo", cn=['l', 'r'])
 
@@ -19,10 +19,12 @@ class TestSlicing(TestCase):
         pass
 
     def test_int(self):
+        """Integer getitem"""
         self.assertAlmostEqual(self.asine4[4].sig, self.sig4[4])
 
     def test_intlist(self):
-        self.assertTrue(np.array_equal(self.asine[[2, 4, 5]].sig, self.sig[[2, 4, 5]]))
+        """Integer list test. """
+        self.assertTrue(np.allclose(self.asine[[2, 4, 5]].sig, self.sig[[2, 4, 5]]))
 
     def test_namelist(self):
         """Check whether I can pass a list of column names and get the same result"""

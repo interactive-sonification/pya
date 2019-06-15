@@ -1,15 +1,28 @@
 import copy
 import time
+import logging
 import numpy as np
 import pyaudio
 from sys import platform
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
 
 class Aserver:
+    """Pya audio server
+    Based on pyaudio, works as a FIFO style audio stream pipeline,
+    allowing Asig.play() to send audio segement into the stream.
+
+    Examples:
+    -----------
+    from pya import *
+    ser = Aserver()
+    ser.boot()
+
+    asine = Ugen().sin().play(server=ser)
+    # To stop: use ser.stop() to keep stream alive but play silence or ser.quit() to shutdown stream.
+    """
 
     default = None  # that's the default Aserver if Asigs play via it
 
@@ -96,7 +109,8 @@ class Aserver:
         state = False
         if self.pastream:
             state = self.pastream.is_active()
-        msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
+        msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs},
+         Stream Active: {state}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
 
     def get_devices(self):
@@ -195,12 +209,13 @@ class Aserver:
         tnow = self.block_time
         self.block_time += self.block_duration
         self.block_cnt += 1
-        self.timejitter = time.time() - self.block_time  # just curious - not needed but for time stability check
+        # just curious - not needed but for time stability check
+        self.timejitter = time.time() - self.block_time  
         if self.timejitter > 3 * self.block_duration:
             _LOGGER.warning(f"Aserver late by {self.timejitter} seconds: block_time reseted!")
             self.block_time = time.time()
 
-        if len(self.srv_asigs) == 0 or self.srv_onsets[0] > tnow:  # to shortcut computing
+        if not self.srv_asigs or self.srv_onsets[0] > tnow:  # to shortcut computing
             return (self.empty_buffer, pyaudio.paContinue)
         elif self._stop:
             self.srv_asigs.clear()
