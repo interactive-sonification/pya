@@ -23,6 +23,7 @@ class TestSetitem(TestCase):
         self.anoise = Asig(self.noise, sr=self.sr, cn=['n'], label='noise')
         self.aramp = Asig(np.arange(1000), sr=self.sr, label='ramp')
 
+
     def tearDown(self):
         pass
 
@@ -65,7 +66,7 @@ class TestSetitem(TestCase):
 
         subject = Asig(np.arange(1000), sr=self.sr, label='ramp')
         subject.b[-10:] *= 2        # Test __mul__ also.
-        result =  np.arange(1000)[-10:] * 2
+        result = np.arange(1000)[-10:] * 2
         self.assertTrue(np.array_equal(subject[-10:].sig, result))
 
         # # Multi channel case

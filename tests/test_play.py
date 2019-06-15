@@ -26,15 +26,14 @@ class TestPlay(TestCase):
         self.asine.gain(db=-3).play(server=s)
         time.sleep(2)
 
-
     def test_gain(self):
         result = (self.asine * 0.2).sig
         expected = self.asine.sig * 0.2
-        self.assertTrue(np.array_equal(result, expected))
+        self.assertTrue(np.allclose(result, expected))  # float32 should use allclose for more forgiving precision
 
         expected = self.sig * self.sig
         result = (self.asine * self.asine).sig
-        self.assertTrue(np.array_equal(result, expected))
+        self.assertTrue(np.allclose(result, expected))
 
     def test_resample(self):
         # This test currently only check if there is error running the code, but not whether resampling is correct

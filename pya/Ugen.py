@@ -56,7 +56,7 @@ class Ugen(Asig):
     def noise(self, type="white", amp=1.0, dur=1.0, sr=44100, channels=1, cn=None, label="noise"):
         length = _get_length(dur, sr)
         # Question is that will be that be too slow.
-        if type== "white" or "white_noise":
+        if type == "white" or "white_noise":
             sig = np.random.rand(length) * amp  # oR may switch to normal
 
         elif type == "pink" or "pink_noise":
