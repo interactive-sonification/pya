@@ -2,6 +2,7 @@
 import numpy as np
 import pyaudio
 import time
+from scipy.fftpack import fft
 
 
 class _error(Exception):
@@ -161,3 +162,28 @@ def timeit(method):
                   (method.__name__, (te - ts) * 1000))
         return result
     return timed
+
+
+def spectrum(sig, samples, channels, sr):
+    """Return spectrum of a given signal
+    
+    Parameters:
+    -----------
+    sig: numpy array signal
+
+    samples: int length of signal
+
+    channels: int numbber of channels
+
+    sr: int sampling rate
+
+    """
+    nrfreqs = samples // 2 + 1
+    frq = np.linspace(0, 0.5 * sr, nrfreqs)  # one sides frequency range
+    if channels == 1:
+        Y = fft(sig)[:nrfreqs]  # / self.samples
+    else:
+        Y = np.array(np.zeros((nrfreqs, channels)), dtype=complex)
+        for i in range(channels):
+            Y[:, i] = fft(sig[:, i])[:nrfreqs]
+    return frq, Y

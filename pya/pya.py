@@ -7,7 +7,7 @@ import scipy.interpolate
 import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
-from .helpers import ampdb, dbamp, linlin, timeit
+from .helpers import ampdb, dbamp, linlin, timeit, spectrum
 import logging
 from copy import copy, deepcopy
 
@@ -723,7 +723,6 @@ class Asig:
                 plt.xlabel("time [s]")
                 if self.cn:
                     plt.text(0, (i + 0.1) * offset, self.cn[i])
-        plt.ylim([ylim[0], ylim[1]])
         if xlim is not None:
             plt.xlim([xlim[0], xlim[1]])
         if ylim is not None:
@@ -990,20 +989,38 @@ class Asig:
     def to_stft(self, **kwargs):
         return Astft(self, **kwargs)
 
-    def spectrum(self):
-        nrfreqs = self.samples // 2 + 1
-        frq = np.linspace(0, 0.5 * self.sr, nrfreqs)  # one sides frequency range
-        Y = fft(self.sig)[:nrfreqs]  # / self.samples
-        return frq, Y
+    def plot_spectrum(self, offset=0, scale=1., xlim=None, **kwargs):
+        frq, Y = spectrum(self.sig, self.samples, self.channels, self.sr)
+        if self.channels == 1 or (offset == 0 and scale == 1):
+            plt.subplot(211)
+            plt.plot(frq, np.abs(Y), **kwargs)
+            if xlim is not None:
+                plt.xlim(xlim[0], xlim[1])
+            plt.subplot(212)
+            self._['lines'] = plt.plot(frq, np.angle(Y), 'b.', markersize=0.2)
+            if xlim is not None:
+                plt.xlim(xlim[0], xlim[1])
 
-    def plot_spectrum(self, **kwargs):
-        frq, Y = self.spectrum()
-        plt.subplot(211)
-        plt.plot(frq, np.abs(Y), **kwargs)
-        plt.xlabel('freq (Hz)')
-        plt.ylabel('|F(freq)|')
-        plt.subplot(212)
-        self._['lines'] = plt.plot(frq, np.angle(Y), 'b.', markersize=0.2)
+        else:
+            # For multichannel signals, a stacked view is plotted
+            plt.subplot(211)
+            max_y = np.max(np.abs(Y))
+            p = []
+            for i in range(Y.shape[1]):
+                p.append(plt.plot(frq, np.abs(Y[:, i]) * scale + i * offset * max_y, **kwargs))  # + i * offset * max_y
+                plt.text(0, (i + 0.1) * offset * max_y, self.cn[i])
+            plt.xlabel('freq (Hz)')
+            plt.ylabel('|F(freq)|')
+            if xlim is not None:
+                plt.xlim(xlim[0], xlim[1])
+            plt.subplot(212)
+            p = []
+            for i in range(Y.shape[1]):
+                p.append(plt.plot(frq, np.angle(Y[:, i]) * scale + i * offset * np.pi * 2, 'b.', markersize=0.2))
+                plt.text(0, (i + 0.1) * offset * np.pi * 2, self.cn[i])
+            plt.ylabel('Angle')
+            if xlim is not None:
+                plt.xlim(xlim[0], xlim[1])
         return self
 
     def spectrogram(self, *argv, **kvarg):

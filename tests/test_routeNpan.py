@@ -51,8 +51,11 @@ class Test_route_pan(TestCase):
         expect = temp.copy()
         expect[:, 0] = temp[:, 1] * 0.5
         expect[:, 1] = temp[:, 0] * 0.5
-        print(expect[1000:10010, 1])
-        print(result.sig[1000:10010, 1])
         self.assertTrue(np.allclose(expect[1000:10010, 1], result.sig[1000:10010, 1]))
 
-    # TODO pan2 test:
+    def test_pan2(self):
+        result = self.astereo.pan2(-1.)
+        self.assertEqual(0, result.sig[:,1].sum())
+        result = self.astereo.pan2(1.)
+        self.assertEqual(0, result.sig[:,0].sum())
+

@@ -78,5 +78,3 @@ class Ugen(Asig):
             sig = np.repeat(sig, channels)
             sig = sig.reshape((length, channels))
         return Asig(sig, sr=sr, channels=channels, cn=cn, label=label)
-
-    # TODO, FM AM Additive Subtractive But for the future. This is not necessary right now.
