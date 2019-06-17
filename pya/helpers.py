@@ -1,3 +1,5 @@
+# helpers.py
+
 """Collection of small helper functions"""
 import numpy as np
 import pyaudio

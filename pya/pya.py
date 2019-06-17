@@ -14,6 +14,9 @@ from copy import copy, deepcopy
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
+# TODO as Asig is getting bigger and bigger, how about creating a asig_core class to 
+# host all the numpy like behaviour and with Asig (inherit asig_core) for more 
+# audio focused methods. 
 
 class Asig:
     """Audio signal class.
@@ -575,7 +578,8 @@ class Asig:
         Parameters:
         ----------
         blend : list
-            list of gain for each channel as a multiplier. Do nothing if signal is already mono, raise warning
+            list of gain for each channel as a multiplier. 
+            Do nothing if signal is already mono, raise warning
             if len(blend) not equal to self.channels
 
         """
@@ -790,14 +794,19 @@ class Asig:
             return Asig(self.sig + other, self.sr, label=self.label + "_added", cn=self.cn)
 
     # TODO not checked.
-    def find_events(self, step_dur=0.001, sil_thr=-20, sil_min_dur=0.1, sil_pad=[0.001, 0.1]):
+    def find_events(self, step_dur=0.001, sil_thr=-20, evt_min_dur=0, sil_min_dur=0.1, sil_pad=[0.001, 0.1]):
+        # TODO add a minimum duration of an event. 
         if self.channels > 1:
-            print("warning: works only with 1-channel signals")
+            print("warning: works only with 1-channel signals. " + 
+            "Tip: (1) convert to mono first with asig.mono(); "
+            "(2) select individual channel: asig[:,0].find_events")
             return -1
         step_samples = int(step_dur * self.sr)
+        
         sil_thr_amp = dbamp(sil_thr)
         sil_flag = True
         sil_min_steps = int(sil_min_dur / step_dur)
+        evt_min_steps = int(evt_min_dur * self.sr)
         if type(sil_pad) is list:
             sil_pad_samples = [int(v * self.sr) for v in sil_pad]
         else:
@@ -819,10 +828,13 @@ class Asig:
                 else:
                     sil_count = 0  # reset if there is outlier non-silence
                 if sil_count > sil_min_steps:  # event ended
-                    event_list.append([
-                        event_begin - sil_pad_samples[0],
-                        event_end - step_samples * sil_min_steps + sil_pad_samples[1]])
-                    sil_flag = True
+                    # The below line is new. 
+                    if event_end - event_begin >= evt_min_steps:
+                        event_list.append([
+                            event_begin - sil_pad_samples[0],
+                            event_end - step_samples * sil_min_steps + sil_pad_samples[1]])
+                        sil_flag = True
+                    # ---------------------
         self._['events'] = np.array(event_list)
         return self
 
@@ -1058,7 +1070,7 @@ class Aspec:
             self.channels = x.channels
             self.cn = x.cn
             if cn is not None and self.cn != cn:
-                print("Aspec:init: given cn different from Asig cn: using Asig.cn")
+                print("Aspec:init: given cn  different from Asig cn: using Asig.cn")
         elif type(x) == list or type(x) == np.ndarray:
             self.rfftspec = np.array(x)
             self.sr = sr
