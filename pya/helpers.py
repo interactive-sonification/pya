@@ -187,3 +187,20 @@ def spectrum(sig, samples, channels, sr):
         for i in range(channels):
             Y[:, i] = fft(sig[:, i])[:nrfreqs]
     return frq, Y
+
+
+def get_length(dur, sr):
+    if isinstance(dur, float):
+        length = int(dur * sr)
+    elif isinstance(dur, int):
+        length = dur
+    else:
+        raise TypeError("Unrecognise type for dur, int (samples) or float (seconds) only")
+    return length
+
+
+def normalize(d):
+    # d is a (n x dimension) np array
+    d -= np.min(d, axis=0)
+    d /= np.ptp(d, axis=0)
+    return d
