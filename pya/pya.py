@@ -539,10 +539,8 @@ class Asig:
             return
         if rate == 1 and self.sr == s.sr:
             asig = self
-            print(asig)
         else:
             asig = self.resample(s.sr, rate)
-            print(asig)
         s.play(asig, **kwargs)
         return self
 
