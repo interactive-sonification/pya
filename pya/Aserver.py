@@ -210,7 +210,7 @@ class Aserver:
         self.block_time += self.block_duration
         self.block_cnt += 1
         # just curious - not needed but for time stability check
-        self.timejitter = time.time() - self.block_time  
+        self.timejitter = time.time() - self.block_time
         if self.timejitter > 3 * self.block_duration:
             _LOGGER.warning(f"Aserver late by {self.timejitter} seconds: block_time reseted!")
             self.block_time = time.time()

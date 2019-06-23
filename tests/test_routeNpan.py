@@ -55,7 +55,8 @@ class Test_route_pan(TestCase):
 
     def test_pan2(self):
         result = self.astereo.pan2(-1.)
-        self.assertEqual(0, result.sig[:,1].sum())
+        self.assertAlmostEqual(0, result.sig[:,1].sum())
         result = self.astereo.pan2(1.)
-        self.assertEqual(0, result.sig[:,0].sum())
+        self.assertAlmostEqual(0, result.sig[:,0].sum())
+
 

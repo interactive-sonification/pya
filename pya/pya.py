@@ -483,7 +483,6 @@ class Asig:
                     else:
                         self.sig[-sn:, cidx] = src
 
-
         elif mode == 'overwrite':
             start_idx = ridx.start if isinstance(ridx, slice) else 0  # Start index of the ridx,
             stop_idx = ridx.stop if isinstance(ridx, slice) else 0  # Stop index of the rdix

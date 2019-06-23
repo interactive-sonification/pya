@@ -65,7 +65,6 @@ class TestSetitem(TestCase):
         result = np.sum(self.ak[{2:None}, ['a', 'b']].sig)
         self.assertEqual(result, 0.0)
 
-
     def test_extend(self):
         """Testing of extend mode, longer array will force the taker to extend its shape."""
         a = Asig(0.8, sr=1000, channels=4, cn=['a', 'b', 'c', 'd'])
@@ -80,6 +79,12 @@ class TestSetitem(TestCase):
         self.assertEqual(a.samples, 1600)
         a.x[1900:, 3] = 0.2 * b[300:]  # only end of tone in ch 'd'
         self.assertEqual(a.samples, 2200)
+
+        a = Asig(0.8, sr=1000, channels=1, cn=['a'])  # Test with mono signal
+        b = np.sin(2 * np.pi * 100 * np.linspace(0, 0.6, int(1000 * 0.6)))
+        b = Asig(b).fade_in(0.3).fade_out(0.3)
+        a.x[:, 0] = 0.2 * b  # this fits in without need to extend
+        self.assertEqual(a.samples, 800)
 
     def test_replace(self):
         b = np.ones(290)

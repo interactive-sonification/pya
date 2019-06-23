@@ -168,7 +168,7 @@ def timeit(method):
 
 def spectrum(sig, samples, channels, sr):
     """Return spectrum of a given signal
-    
+
     Parameters:
     -----------
     sig: numpy array signal
