@@ -767,7 +767,18 @@ class Asig:
                     selfsig = selfsig[:othersig.shape[0]]
                 elif selfsig.shape[0] < othersig.shape[0]:
                     othersig = othersig[:selfsig.shape[0]]
-            return Asig(selfsig * othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
+                result = selfsig * othersig
+            else:
+                if selfsig.shape[0] > othersig.shape[0]:
+                    result = selfsig.copy()
+                    result[:othersig.shape[0]] *= othersig
+
+                elif selfsig.shape[0] < othersig.shape[0]:
+                    result = othersig.copy()
+                    result[:selfsig.shape[0]] *= selfsig
+                else:
+                    result = selfsig * othersig
+            return Asig(result, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
     def __rmul__(self, other):
         if isinstance(other, Asig):
@@ -788,8 +799,21 @@ class Asig:
                     elif selfsig.shape[0] < othersig.shape[0]:
                         othersig = othersig[:selfsig.shape[0]]
                 except AttributeError:
-                    pass  # When othersig is just a scalar not
-            return Asig(selfsig + othersig, self.sr, label=self.label + "_added", cn=self.cn)
+                    pass  # When othersig is just a scalar
+                result = selfsig + othersig
+            else:
+                # Make the bigger one
+                if selfsig.shape[0] > othersig.shape[0]:
+                    result = selfsig.copy()
+                    result[:othersig.shape[0]] += othersig
+
+                elif selfsig.shape[0] < othersig.shape[0]:
+                    result = othersig.copy()
+                    result[:selfsig.shape[0]] += selfsig
+                else:
+                    result = selfsig + othersig
+
+            return Asig(result, self.sr, label=self.label + "_added", cn=self.cn)
 
     def __radd__(self, other):
         if isinstance(other, Asig):
