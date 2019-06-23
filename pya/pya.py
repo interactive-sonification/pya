@@ -188,6 +188,8 @@ class Asig:
             _LOGGER.info(" getitem: index is tuple")
             rindex = index[0]
             cindex = index[1] if len(index) > 1 else None
+        elif isinstance(index, str):  # added for compatibility with old pya versions
+            return self._[index]  # ToDo: decide whether to solve differently, e.g. only via ._[str] or via a .attribute(str) fn 
         else:  # if only slice, list, dict, int or float given for row selection
             rindex = index
             cindex = None
@@ -873,7 +875,7 @@ class Asig:
             index = np.argmin(np.abs(events[:, 0] - onset * self.sr))
         if index is not None:
             beg, end = events[index]
-            print(beg, end)
+            # print(beg, end)
             return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}", cn=self.cn)
         _LOGGER.warning('select_event: neither index nor onset given: return self')
         return self
