@@ -14,9 +14,6 @@ from copy import copy, deepcopy
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
-# TODO as Asig is getting bigger and bigger, how about creating a asig_core class to 
-# host all the numpy like behaviour and with Asig (inherit asig_core) for more 
-# audio focused methods. 
 
 class Asig:
     """Audio signal class.
@@ -387,6 +384,7 @@ class Asig:
             cidx = self.col_name.get(cindex)
         else:
             cidx = slice(None)
+            # cidx = None
 
         _LOGGER.debug("self.sig.ndim == %d", self.sig.ndim)
         if self.sig.ndim == 1:
@@ -465,19 +463,26 @@ class Asig:
                 # print(dshape, self.sig[final_index][:sn].shape, src.shape)
                 self.sig[final_index][:sn] = np.broadcast_to(src, (sn,) + dshape[1:])
             elif sn > dn:
-                # print("sn>dn shapes:", dshape, src[dn:].shape)
+                # print("sn>dn shapes:", src[dn:].shape, dshape)
                 self.sig[final_index] = src[:dn]
                 # now extend by nn = sn-dn additional rows
                 if dn > 0:
                     nn = sn - dn  # nr of needed additional rows
                     self.sig = np.r_[self.sig, np.zeros((nn,) + self.sig.shape[1:])]
-                    self.sig[-nn:, cidx] = src[dn:]
+                    if self.sig.ndim == 1:
+                        self.sig[-nn:] = src[dn:]
+                    else:
+                        self.sig[-nn:, cidx] = src[dn:]
                 else:  # this is when start is beyond length of dest...
                     # print(ridx.start, sn, dn)
                     nn = ridx.start + sn
                     self.sig = np.r_[
                         self.sig, np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:])]
-                    self.sig[-sn:, cidx] = src
+                    if self.sig.ndim == 1:
+                        self.sig[-sn:] = src
+                    else:
+                        self.sig[-sn:, cidx] = src
+
 
         elif mode == 'overwrite':
             start_idx = ridx.start if isinstance(ridx, slice) else 0  # Start index of the ridx,
@@ -793,16 +798,15 @@ class Asig:
         else:
             return Asig(self.sig + other, self.sr, label=self.label + "_added", cn=self.cn)
 
-    # TODO not checked.
     def find_events(self, step_dur=0.001, sil_thr=-20, evt_min_dur=0, sil_min_dur=0.1, sil_pad=[0.001, 0.1]):
         # TODO add a minimum duration of an event. 
         if self.channels > 1:
-            print("warning: works only with 1-channel signals. " + 
-            "Tip: (1) convert to mono first with asig.mono(); "
-            "(2) select individual channel: asig[:,0].find_events")
+            msg = """warning: works only with 1-channel signals. 
+            Tip:  (1) convert to mono first with asig.mono(); 
+            (2) select individual channel: asig[:,0].find_events"""
+            _LOGGER.warning(msg)
             return -1
         step_samples = int(step_dur * self.sr)
-        
         sil_thr_amp = dbamp(sil_thr)
         sil_flag = True
         sil_min_steps = int(sil_min_dur / step_dur)
@@ -850,14 +854,14 @@ class Asig:
             beg, end = events[index]
             print(beg, end)
             return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}", cn=self.cn)
-        print('select_event: neither index nor onset given: return self')
+        _LOGGER.warning('select_event: neither index nor onset given: return self')
         return self
 
     def fade_in(self, dur=0.1, curve=1):
         nsamp = int(dur * self.sr)
         if nsamp > self.samples:
             nsamp = self.samples
-            print("warning: Asig too short for fade_in - adapting fade_in time")
+            _LOGGER.warning("warning: Asig too short for fade_in - adapting fade_in time")
         return Asig(np.hstack((self.sig[:nsamp] * np.linspace(0, 1, nsamp) ** curve, self.sig[nsamp:])),
                     self.sr, label=self.label + "_fadein", cn=self.cn)
 
@@ -865,7 +869,7 @@ class Asig:
         nsamp = int(dur * self.sr)
         if nsamp > self.samples:
             nsamp = self.samples
-            print("warning: Asig too short for fade_out - adapting fade_out time")
+            _LOGGER.warning("warning: Asig too short for fade_out - adapting fade_out time")
         return Asig(np.hstack((self.sig[:-nsamp],
                                self.sig[-nsamp:] * np.linspace(1, 0, nsamp)**curve)),
                     self.sr, label=self.label + "_fadeout", cn=self.cn)
