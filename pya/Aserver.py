@@ -181,9 +181,11 @@ class Aserver:
         if asig.sr != self.sr:
             asig = asig.resample(self.sr)
         if onset < 1e6:
-            onset = time.time() + onset
+            rt_onset = time.time() + onset
+        else:
+            rt_onset = onset
         idx = np.searchsorted(self.srv_onsets, onset)
-        self.srv_onsets.insert(idx, onset)
+        self.srv_onsets.insert(idx, rt_onset)
         if asig.sig.dtype != self.dtype:
             _LOGGER.warning("Not the same type. ")
             if id(asig) == sigid:
@@ -202,6 +204,11 @@ class Aserver:
         self.srv_asigs.insert(idx, asig)
         self.srv_curpos.insert(idx, 0)
         self.srv_outs.insert(idx, out)
+        if 'block' in kwargs and kwargs['block']:
+            if onset>0:
+                print("Warning: blocking inactive with play(onset>0)")
+            else:
+                time.sleep(asig.get_duration())
         return self
 
     def _play_callback(self, in_data, frame_count, time_info, flag):
