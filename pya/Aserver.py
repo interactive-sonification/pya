@@ -184,7 +184,7 @@ class Aserver:
             rt_onset = time.time() + onset
         else:
             rt_onset = onset
-        idx = np.searchsorted(self.srv_onsets, onset)
+        idx = np.searchsorted(self.srv_onsets, rt_onset)
         self.srv_onsets.insert(idx, rt_onset)
         if asig.sig.dtype != self.dtype:
             _LOGGER.warning("Not the same type. ")
@@ -205,7 +205,7 @@ class Aserver:
         self.srv_curpos.insert(idx, 0)
         self.srv_outs.insert(idx, out)
         if 'block' in kwargs and kwargs['block']:
-            if onset>0:
+            if onset>0:  # here really omset and not rt_onset!
                 print("Warning: blocking inactive with play(onset>0)")
             else:
                 time.sleep(asig.get_duration())
