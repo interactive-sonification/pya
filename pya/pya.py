@@ -1087,8 +1087,7 @@ class Asig:
             atmp = asig.resample(self.sr)
         else:
             atmp = asig
-        return Asig(np.hstack((self.sig, atmp.sig)), self.sr, label=self.label+"+"+asig.label, cn=self.cn) 
-
+        return Asig(np.hstack((self.sig, atmp.sig)), self.sr, label=self.label + "+" + asig.label, cn=self.cn)
 
     def custom(self, func, **kwargs):
         """custom function method."""

@@ -4,17 +4,18 @@ from pya import *
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-class Test_route_pan(TestCase):
+
+class TestRoutePan(TestCase):
     """Test route, rewire, mono, stereo, pan2 methods"""
 
     def setUp(self):
         self.sig = np.sin(2 * np.pi * 100 * np.linspace(0, 1, 44100))
         self.asine = Asig(self.sig, sr=44100, label="test_sine")
         self.asineWithName = Asig(self.sig, sr=44100, label="test_sine", cn=['sine'])
-        self.sig2ch = np.repeat(self.sig, 2).reshape(((44100, 2)))
+        self.sig2ch = np.repeat(self.sig, 2).reshape((44100, 2))
         self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=['l', 'r'])
         # self.astereo = Asig("/examples/samples/stereoTest.wav", label='stereo', cn=['l','r'])
-        self.sig16ch = np.repeat(self.sig, 16).reshape(((44100, 16)))
+        self.sig16ch = np.repeat(self.sig, 16).reshape((44100, 16))
         self.asine16ch = Asig(self.sig16ch, sr=44100, label="test_sine_16ch")
 
     def tearDown(self):
@@ -55,8 +56,6 @@ class Test_route_pan(TestCase):
 
     def test_pan2(self):
         result = self.astereo.pan2(-1.)
-        self.assertAlmostEqual(0, result.sig[:,1].sum())
+        self.assertAlmostEqual(0, result.sig[:, 1].sum())
         result = self.astereo.pan2(1.)
-        self.assertAlmostEqual(0, result.sig[:,0].sum())
-
-
+        self.assertAlmostEqual(0, result.sig[:, 0].sum())

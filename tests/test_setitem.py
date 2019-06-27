@@ -2,7 +2,7 @@ from unittest import TestCase
 from pya import *
 import numpy as np
 import logging
-logging.basicConfig(level = logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class TestSetitem(TestCase):
@@ -13,8 +13,8 @@ class TestSetitem(TestCase):
         self.ts = np.linspace(0, self.dur, int(self.dur * self.sr))
         self.sig = np.sin(2 * np.pi * 50 * self.ts ** 1.9)
         self.a1 = Asig(self.sig, sr=self.sr, channels=1, cn=['a'], label='1ch-sig')
-        self.ak = Asig(np.tile(self.sig.reshape(3500, 1), (1, 4)), sr=self.sr, 
-        label='4ch-sig', cn=['a', 'b', 'c', 'd'])
+        self.ak = Asig(np.tile(self.sig.reshape(3500, 1), (1, 4)), sr=self.sr,
+                       label='4ch-sig', cn=['a', 'b', 'c', 'd'])
         self.one = np.ones(self.sr)
         self.aones = Asig(self.one, sr=self.sr, cn=['o'], label='ones')
         self.zero = np.zeros(self.sr)
@@ -33,16 +33,16 @@ class TestSetitem(TestCase):
         self.azeros[2] = self.aones[4].sig   # value as ndarray
         self.assertEqual(self.aones[4], self.azeros[2])
         self.azeros[3:6] = [1, 2, 3]  # value as list
-        self.assertTrue(np.array_equal(self.azeros[3:6].sig, [1,2,3]))
+        self.assertTrue(np.array_equal(self.azeros[3:6].sig, [1, 2, 3]))
         r = self.azeros
         r[3:6] = np.array([3, 4, 5])
-        self.assertTrue(np.array_equal(r[3:6].sig, np.array([3,4,5])))
+        self.assertTrue(np.array_equal(r[3:6].sig, np.array([3, 4, 5])))
         r = self.azeros[:10]  # value as asig
         self.assertTrue(r, self.azeros[:10])
-        self.azeros[{0.2:0.4}] = self.anoise[{0.5:0.7}]
-        self.ak[{1:2}, ['d']] = self.ak[{0:1}, ['a']]
-        self.assertTrue(np.array_equal(self.ak[{1:2}, ['d']], self.ak[{0:1}, ['a']]))
-        
+        self.azeros[{0.2: 0.4}] = self.anoise[{0.5: 0.7}]
+        self.ak[{1: 2}, ['d']] = self.ak[{0: 1}, ['a']]
+        self.assertTrue(np.array_equal(self.ak[{1: 2}, ['d']], self.ak[{0: 1}, ['a']]))
+
     def test_bound(self):
         """Testing of bound mode. Redundant array will not be assigned"""
         subject = self.aramp
@@ -52,7 +52,7 @@ class TestSetitem(TestCase):
 
         subject = self.aramp  # set 10 samples with 20 samples in bound mode
         subject.b[-10:] += np.arange(20)
-        result = np.arange(1000)[-10:]  + np.arange(10)
+        result = np.arange(1000)[-10:] + np.arange(10)
         self.assertTrue(np.array_equal(subject[-10:].sig, result))
 
         subject = Asig(np.arange(1000), sr=self.sr, label='ramp')
@@ -61,8 +61,8 @@ class TestSetitem(TestCase):
         self.assertTrue(np.array_equal(subject[-10:].sig, result))
 
         # # Multi channel case
-        self.ak.b[{2:None}, ['a', 'b']] = np.zeros(shape=(3000, 2))
-        result = np.sum(self.ak[{2:None}, ['a', 'b']].sig)
+        self.ak.b[{2: None}, ['a', 'b']] = np.zeros(shape=(3000, 2))
+        result = np.sum(self.ak[{2: None}, ['a', 'b']].sig)
         self.assertEqual(result, 0.0)
 
     def test_extend(self):

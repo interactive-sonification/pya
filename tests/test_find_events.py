@@ -1,5 +1,4 @@
 from pya import Asig, Ugen
-import numpy as np
 from unittest import TestCase
 
 
@@ -21,4 +20,3 @@ class TestFindEvents(TestCase):
         a.x[a.samples:] = Asig(0.2)
         a.find_events(sil_thr=-30, evt_min_dur=0.2, sil_min_dur=0.04)
         self.assertEqual(3, a._['events'].shape[0])
-

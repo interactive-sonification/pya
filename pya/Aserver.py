@@ -3,6 +3,8 @@ import time
 import logging
 import numpy as np
 import pyaudio
+from warnings import warn
+
 from sys import platform
 
 _LOGGER = logging.getLogger(__name__)
@@ -82,7 +84,7 @@ class Aserver:
         """
         self.max_out_chn = self.device_dict['maxOutputChannels']
         if self.max_out_chn < self.channels:
-            _LOGGER.warning(f"Aserver: warning: {channels}>{self.max_out_chn} channels requested - truncated.")
+            warn(f"Aserver: warning: {channels}>{self.max_out_chn} channels requested - truncated.")
             self.channels = self.max_out_chn
         self.format = format
         self.gain = 1.0
@@ -102,7 +104,7 @@ class Aserver:
             self.dtype = 'int16'
             self.range = 32767
         if self.format not in [pyaudio.paInt16, pyaudio.paFloat32]:
-            print(f"Aserver: currently unsupported pyaudio format {self.format}")
+            warn(f"Aserver: currently unsupported pyaudio format {self.format}")
         self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.dtype)
 
     def __repr__(self):
@@ -137,7 +139,7 @@ class Aserver:
             try:
                 self.boot()
             except OSError:
-                print("Error: Invalid device. Server did not boot.")
+                warn("Error: Invalid device. Server did not boot.")
 
     def boot(self):
         """boot Aserver = start stream, setting its callback to this callback."""
@@ -175,7 +177,7 @@ class Aserver:
         self._stop = False
         self._status = pyaudio.paContinue
         if out < 0:
-            print("Aserver:play: illegal out<0")
+            warn("Aserver:play: illegal out<0")
             return
         sigid = id(asig)  # for copy check
         if asig.sr != self.sr:
@@ -187,7 +189,7 @@ class Aserver:
         idx = np.searchsorted(self.srv_onsets, rt_onset)
         self.srv_onsets.insert(idx, rt_onset)
         if asig.sig.dtype != self.dtype:
-            _LOGGER.warning("Not the same type. ")
+            warn("Not the same type. ")
             if id(asig) == sigid:
                 asig = copy.copy(asig)
             asig.sig = asig.sig.astype(self.dtype)
@@ -205,8 +207,8 @@ class Aserver:
         self.srv_curpos.insert(idx, 0)
         self.srv_outs.insert(idx, out)
         if 'block' in kwargs and kwargs['block']:
-            if onset>0:  # here really omset and not rt_onset!
-                print("Warning: blocking inactive with play(onset>0)")
+            if onset > 0:  # here really omset and not rt_onset!
+                warn("blocking inactive with play(onset>0)")
             else:
                 time.sleep(asig.get_duration())
         return self

@@ -8,11 +8,11 @@ logging.basicConfig(level=logging.DEBUG)
 class TestSlicing(TestCase):
 
     def setUp(self):
-        self.sig = np.sin(2*np.pi* 100 * np.linspace(0, 1, 44100))
+        self.sig = np.sin(2 * np.pi * 100 * np.linspace(0, 1, 44100))
         self.asine = Asig(self.sig, sr=44100, label="test_sine")
-        self.sig4 = np.sin(2*np.pi* 100 * np.linspace(0, 4, 44100 * 4))  # 4second sine
+        self.sig4 = np.sin(2 * np.pi * 100 * np.linspace(0, 4, 44100 * 4))  # 4second sine
         self.asine4 = Asig(self.sig4, sr=44100, label="test_sine")
-        self.sig2ch = np.repeat(self.sig, 2).reshape(((44100, 2)))
+        self.sig2ch = np.repeat(self.sig, 2).reshape((44100, 2))
         self.astereo = Asig(self.sig2ch, sr=44100, label="stereo", cn=['l', 'r'])
 
     def tearDown(self):
@@ -28,13 +28,13 @@ class TestSlicing(TestCase):
 
     def test_namelist(self):
         """Check whether I can pass a list of column names and get the same result"""
-        result = self.astereo[:,["l", "r"]]
-        expect = self.astereo[:,[0, 1]]
+        result = self.astereo[:, ["l", "r"]]
+        expect = self.astereo[:, [0, 1]]
         self.assertEqual(result, expect)
 
     def test_timeSlicing(self):
         """Check whether time slicing equals sample slicing."""
-        result = self.asine[{0 : 1.0}]
+        result = self.asine[{0: 1.0}]
         expect = self.asine[:44100]
         self.assertEqual(expect, result)
 
@@ -74,6 +74,7 @@ class TestSlicing(TestCase):
 
         # time slicing
         print("time slicing.")
-        result = self.astereo[{1: -1}, :]  # Play from 1s. to the last 1.s
+        time_range = {1: -1}   # first to last second.
+        result = self.astereo[time_range, :]   # Play from 1s. to the last 1.s
         expect = self.astereo[44100: -44100, :]
         self.assertEqual(expect, result)

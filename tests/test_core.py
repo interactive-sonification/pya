@@ -8,12 +8,12 @@ import numpy as np
 class TestPya(TestCase):
 
     def setUp(self):
-        self.sig = np.sin(2*np.pi* 100 * np.linspace(0,1,44100))
-        self.asine = Asig(self.sig, sr=44100,label="test_sine")
-        self.asineWithName = Asig(self.sig, sr=44100,label="test_sine", cn = ['sine'])
-        self.sig2ch = np.repeat(self.sig, 2).reshape(((44100, 2)))
+        self.sig = np.sin(2 * np.pi * 100 * np.linspace(0, 1, 44100))
+        self.asine = Asig(self.sig, sr=44100, label="test_sine")
+        self.asineWithName = Asig(self.sig, sr=44100, label="test_sine", cn=['sine'])
+        self.sig2ch = np.repeat(self.sig, 2).reshape((44100, 2))
         self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=['l', 'r'])
-        self.sig16ch = np.repeat(self.sig, 16).reshape(((44100, 16)))
+        self.sig16ch = np.repeat(self.sig, 16).reshape((44100, 16))
         self.asine16ch = Asig(self.sig16ch, sr=44100, label="test_sine_16ch")
 
     def tearDown(self):
@@ -52,6 +52,3 @@ class TestPya(TestCase):
             self.astereo.cn = ["b", 10]
 
         self.assertEqual(self.astereo.cn, ['left', 'right'])
-
-
-
