@@ -13,6 +13,7 @@ class _error(Exception):
 
 def record(dur=2, channels=1, rate=44100, chunk=256):
     """Record audio
+
     Args:
         dur (int): Duration
         channels (int): Number of channels
@@ -35,6 +36,7 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
 
 # def play(sig, num_channels=1, sr=44100, block=False):
 #     """Plays audio signal via simpleaudio
+
 #     Arguments:
 #         sig {iterable} -- Signal to be played
 #     Keyword Arguments:
@@ -54,6 +56,7 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
 
 def linlin(x, smi, sma, dmi, dma):
     """linear mapping
+
     Args:
         x (float): input 
         smi (float): input range's minimum
@@ -68,6 +71,7 @@ def linlin(x, smi, sma, dmi, dma):
 
 def midicps(m):
     """midi to cycles per second
+
     Args:
         m: midi
     Returns:
@@ -78,6 +82,7 @@ def midicps(m):
 
 def cpsmidi(c):
     """Cycles per second to midi
+
     Args:
         c: cps
     Returns:
@@ -121,6 +126,7 @@ def dbamp(db):
 
 def ampdb(amp):
     """Convert amplitude to db
+
     Arguments:
         amp (float): amplitude
     Returns:
@@ -130,7 +136,8 @@ def ampdb(amp):
 
 
 def timeit(method):
-    """Decorator to time methods, print out the time for executing the method                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+    """Decorator to time methods, print out the time for executing the method
+
     Args:
     method (func): method to time
     """
@@ -150,6 +157,7 @@ def timeit(method):
 
 def spectrum(sig, samples, channels, sr):
     """Return spectrum of a given signal
+
     Args:
         sig (np.array): signal
         samples (int): length of signal
@@ -172,6 +180,7 @@ def spectrum(sig, samples, channels, sr):
 
 def get_length(dur, sr):
     """Get total number of samples
+
     Args:
         dur (float): duration in seconds
         sr (int): sampling rate
@@ -189,6 +198,7 @@ def get_length(dur, sr):
 
 def normalize(d):
     """Normalize array
+
     Args:
     d (np.array): input array
     Returns:

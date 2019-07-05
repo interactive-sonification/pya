@@ -18,53 +18,31 @@ _LOGGER.addHandler(logging.NullHandler())
 class Asig:
     """Audio signal class.
 
-    Parameters:
-    ----------
-    sig : numpy.array, str, int, float
-        * numpy array as the audio signal
-        * str as path to wave file. Currently only support .wav format.
-            Will add more in future version
-        * int creates a mono silent signal of sig samples
-        * float creates a mono silent signal of sig seconds
-
-    sr : int
-        sampling rate
-
-    label : str
-        label for the member
-
-    channels : int
-        signal channels
-
-    cn : list
-        channels names, length needs to match the signal's channels
-
     Attributes:
-    ----------
-    sig : numpy array
-        audio signal array
-
-    sig_copy: numpy array (to be discussed or removed)
-        a copy of the audio signal
-
-    channels : int
-        signal channels
-
-    sr : int
-        sampling rate
-
-    samples : int
-        length of signal
-
-    cn : list
-        channels names
-
-    label : str
-        label for the member
+    sig (numpy.array):  audio signal
+    sr (int): sampling rate
+    label (str): label for the member
+    channels (int): signal channels
+    cn (list): channels names, length needs to match the signal's channels
+    mix_mode (str): define how setitem works. By default it is the same as numpy.
+        But you can switch to 3 different modes:
+        1. 'extend': can extend a new length;
+        2. 'bound': excessive array will be cut off;
+        3. 'overwrite': can replace a slice with a new slice with any length
 
     """
 
     def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
+        """Init
+
+        Args:
+            sig: np.array for audio signal, str for filepath, int create x samples of silence
+                , float creates x seconds of seconds.
+            sr (int): sampling rate
+            label (str): label for the object
+            channels (int): number of channels, no need to set it if you already have a signal for the sig argument.
+            cn (list): a list of channel names, size should match the channels.
+        """
         self.sr = sr
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
@@ -120,7 +98,11 @@ class Asig:
 
     @cn.setter
     def cn(self, val):
-        """Channel names setter"""
+        """Channel names setter
+
+        Args:
+            val (list of string): list of the channel names
+        """
         if val is None:
             self._cn = None
         else:
@@ -133,8 +115,10 @@ class Asig:
                 raise ValueError("list size doesn't match channel numbers {}".format(self.channels))
 
     def load_wavfile(self, fname):
-        """Load .wav file"""
-        # Discuss to change to float32 .
+        """Load .wav file
+        Args:
+            fname (str): file name with path
+        """
         self.sr, self.sig = wavfile.read(fname)  # load the sample data
         if self.sig.dtype == np.dtype('int16'):
             self.sig = (self.sig / 32768.).astype('float32')
@@ -145,6 +129,13 @@ class Asig:
             print("load_wavfile: TODO: add format")
 
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
+        """Save signal as .wav file
+        Args:
+            fname (str): name of the file with .wav
+            dtype: data type, bydefault is float32
+        Returns:
+            self: Asig
+        """
         if dtype == 'int16':
             data = (self.sig * 32767).astype('int16')
         elif dtype == 'int32':
@@ -169,20 +160,16 @@ class Asig:
     def __getitem__(self, index):
         """ Perform numpy style slicing and time slicing and generate new asig.
 
-        Parameters:
-        ----------
-        index : int, slice, list, tuple, dict
-            Slicing argument. What are additional to numpy slicing:
-
-            * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :]
-            creates indexing of 1s to 2.5s.
-
-            * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig.
-            asig[['front', 'rear']], etc...
+        Args:
+            index : int, slice, list, tuple, dict
+                Slicing argument. What are additional to numpy slicing:
+                * Time slicing (unit in seconds) using dictionary asig[{1:2.5}] or asig[{1:2.5}, :]
+                creates indexing of 1s to 2.5s.
+                * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig.
+                asig[['front', 'rear']], etc...
 
         Returns:
-        ----------
-        Asig(sliced_signal, adjusted_sr, remarked_label, subset_channelnames)
+            a: a sliced Asig
         """
         if isinstance(index, tuple):
             _LOGGER.info(" getitem: index is tuple")
@@ -276,18 +263,21 @@ class Asig:
 
     @property
     def x(self):
+        # Set setitem mode to extend
         self.mix_mode = 'extend'
         return self
     extend = x  # better readable synonym
 
     @property
     def b(self):
+        # Set setitem mode to bound
         self.mix_mode = 'bound'
         return self
     bound = b  # better readable synonym
 
     @property
     def o(self):
+        # Set setitem mode to overwrite
         self.mix_mode = 'overwrite'
         return self
     overwrite = o
@@ -575,19 +565,16 @@ class Asig:
             raise TypeError("Argument needs to be int")
 
     def mono(self, blend=None):
-        """Mix channels to mono signal.
+        """Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)
 
-        Perform sig = np.sum(self.sig_copy * blend, axis=1)
+        Args:
+            blend (list): list of gain for each channel as a multiplier.
+                        Do nothing if signal is already mono, raise warning
+                        if len(blend) not equal to self.channels
 
-        Parameters:
-        ----------
-        blend : list
-            list of gain for each channel as a multiplier. 
-            Do nothing if signal is already mono, raise warning
-            if len(blend) not equal to self.channels
-
+        Returns:
+            Asig
         """
-        # TODO: change code to accept empty cn - alternatively, make
         # sure that signals always get a default cn, see ToDo for Asig.__init__()
         if self.channels == 1:
             _LOGGER.warning("Signal is already mono")
