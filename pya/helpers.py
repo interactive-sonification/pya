@@ -13,16 +13,11 @@ class _error(Exception):
 
 def record(dur=2, channels=1, rate=44100, chunk=256):
     """Record audio
-
-    (if you implement the for loop as a callback and put it to stream_callback = _,
-        if will be a non-blocking way. )
-
-    Keyword Arguments:
-        dur {int} -- Duration (default: {2})
-        channels {int} -- Number of channels (default: {1})
-        rate {int} -- Audio sample rate (default: {44100})
-        chunk {int} -- Chunk size (default: {256})
-
+    Args:
+        dur (int): Duration
+        channels (int): Number of channels
+        rate (int): Audio sample rate
+        chunk (int): Chunk size
     Returns:
         ndarray -- Recorded signal
     """
@@ -40,16 +35,13 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
 
 # def play(sig, num_channels=1, sr=44100, block=False):
 #     """Plays audio signal via simpleaudio
-
 #     Arguments:
 #         sig {iterable} -- Signal to be played
-
 #     Keyword Arguments:
 #         num_channels {int} -- Number of channels (default: {1})
 #         sr {int} -- Audio sample rate (default: {44100})
 #         block {bool} -- if True, block until playback is finished
 #                         (default: {False})
-
 #     Returns:
 #         simpleaudio play_obj -- see description in simpleaudio
 #     """
@@ -61,55 +53,44 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
 
 
 def linlin(x, smi, sma, dmi, dma):
-    """TODO
-
-    Arguments:
-        x {float} -- [description]
-        smi {float} -- [description]
-        sma {float} -- [description]
-        dmi {float} -- [description]
-        dma {float} -- [description]
-
+    """linear mapping
+    Args:
+        x (float): input 
+        smi (float): input range's minimum
+        sma (float): input range's maximum
+        dmi (float): input range's minimum
+        dma (float): input range's minimum
     Returns:
-        float -- [description]
+        (float) -- [description]
     """
-
     return (x - smi) / (sma - smi) * (dma - dmi) + dmi
 
 
 def midicps(m):
-    """TODO
-
-    Arguments:
-        m {int} -- [description]
-
+    """midi to cycles per second
+    Args:
+        m: midi
     Returns:
-        float -- [description]
+        (float): cps
     """
-
     return 440.0 * 2 ** ((m - 69) / 12.0)
 
 
 def cpsmidi(c):
-    """TODO
-
-    Arguments:
-        c {float} -- [description]
-
+    """Cycles per second to midi
+    Args:
+        c: cps
     Returns:
-        float -- [description]
+        (float): midi
     """
-
     return 69 + 12 * np.log2(c / 440.0)
 
 
 def clip(value, minimum=-float("inf"), maximum=float("inf")):
     """Clips a value to a certain range
 
-    Arguments:
+    Args:
         value {float} -- Value to clip
-
-    Keyword Arguments:
         minimum {float} -- Minimum value output can take
                            (default: {-float("inf")})
         maximum {float} -- Maximum value output can take
@@ -127,7 +108,8 @@ def clip(value, minimum=-float("inf"), maximum=float("inf")):
 
 
 def dbamp(db):
-    """TODO
+    """Convert db to amplitude 
+
     Arguments:
         db {[type]} -- [description]
 
@@ -138,19 +120,19 @@ def dbamp(db):
 
 
 def ampdb(amp):
-    """TODO
+    """Convert amplitude to db
     Arguments:
-        amp {[type]} -- [description]
-
+        amp (float): amplitude
     Returns:
-        [type] -- [description]
+        db (float): decibel
     """
     return 20 * np.log10(amp)
 
 
 def timeit(method):
-    """
-    decorator to time methods
+    """Decorator to time methods, print out the time for executing the method                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+    Args:
+    method (func): method to time
     """
     def timed(*args, **kw):
         ts = time.time()
@@ -168,17 +150,14 @@ def timeit(method):
 
 def spectrum(sig, samples, channels, sr):
     """Return spectrum of a given signal
-
-    Parameters:
-    -----------
-    sig: numpy array signal
-
-    samples: int length of signal
-
-    channels: int numbber of channels
-
-    sr: int sampling rate
-
+    Args:
+        sig (np.array): signal
+        samples (int): length of signal
+        channels (int): numbber of channels
+        sr (int): sampling rate
+    Returns:
+        frq (np.array): frequencies
+        Y (np.array): fft of the signal
     """
     nrfreqs = samples // 2 + 1
     frq = np.linspace(0, 0.5 * sr, nrfreqs)  # one sides frequency range
@@ -192,6 +171,13 @@ def spectrum(sig, samples, channels, sr):
 
 
 def get_length(dur, sr):
+    """Get total number of samples
+    Args:
+        dur (float): duration in seconds
+        sr (int): sampling rate
+    Returns
+        length (int): signal length
+    """
     if isinstance(dur, float):
         length = int(dur * sr)
     elif isinstance(dur, int):
@@ -202,6 +188,12 @@ def get_length(dur, sr):
 
 
 def normalize(d):
+    """Normalize array
+    Args:
+    d (np.array): input array
+    Returns:
+    d (np.array): normalized array
+    """
     # d is a (n x dimension) np array
     d -= np.min(d, axis=0)
     d /= np.ptp(d, axis=0)
