@@ -868,6 +868,14 @@ class Asig:
         return self
 
     def fade_in(self, dur=0.1, curve=1):
+        """Fade in the signal at the end
+        
+        Args:
+            dur (float, int): duration in seconds to fade in
+            curve (float, int): curvature of the fader
+        Returns:
+            (Asig): New asig with the fade in signal 
+        """
         nsamp = int(dur * self.sr)
         if nsamp > self.samples:
             nsamp = self.samples
@@ -876,6 +884,14 @@ class Asig:
                     self.sr, label=self.label + "_fadein", cn=self.cn)
 
     def fade_out(self, dur=0.1, curve=1):
+        """Fade out the signal at the end
+        
+        Args:
+            dur (float, int): duration in seconds to fade out
+            curve (float, int): curvature of the fader
+        Returns:
+            (Asig): New asig with the fade out signal 
+        """
         nsamp = int(dur * self.sr)
         if nsamp > self.samples:
             nsamp = self.samples
@@ -886,6 +902,7 @@ class Asig:
 
     def iirfilter(self, cutoff_freqs, btype='bandpass', ftype='butter', order=4,
                   filter='lfilter', rp=None, rs=None):
+        """iirfilter based on scipy.signal.iirfilter"""
         Wn = np.array(cutoff_freqs) * 2 / self.sr
         b, a = scipy.signal.iirfilter(order, Wn, rp=rp, rs=rs, btype=btype, ftype=ftype)
         y = scipy.signal.__getattribute__(filter)(b, a, self.sig, axis=0)
@@ -895,10 +912,21 @@ class Asig:
         return aout
 
     def plot_freqz(self, worN, **kwargs):
+        """Plot the frequency response of a digital filter. Perform scipy.signal.freqz then plot the response."""
         w, h = scipy.signal.freqz(self._['b'], self._['a'], worN)
         plt.plot(w * self.sr / 2 / np.pi, ampdb(abs(h)), **kwargs)
 
     def add(self, sig, pos=None, amp=1, onset=None):
+        """Add a signal
+        
+        Args:
+            sig (asig, numpy.array): signal to be added. This can be both an Asig or a numpy array. 
+            pos (int): sample location the signal to be added into. 
+            amp (float): amplitude
+            onset (float, int): similar to pos, but unit in second to decide where the signal to be added to
+        Return:
+            self but with updated signal. 
+        """
         if type(sig) == Asig:
             n = sig.samples
             sr = sig.sr
@@ -925,6 +953,10 @@ class Asig:
         return self
 
     def envelope(self, amps, ts=None, curve=1, kind='linear'):
+        """Create an envelop and multiply by the signal.
+            TODO: add docstring. 
+        """
+        # TODO Check multi-channels. 
         nsteps = len(amps)
         duration = self.samples / self.sr
         if nsteps == self.samples:
@@ -953,11 +985,32 @@ class Asig:
         return Asig(sig_new, self.sr, label=self.label + "_enveloped", cn=self.cn)
 
     def adsr(self, att=0, dec=0.1, sus=0.7, rel=0.1, curve=1, kind='linear'):
+        """Create and applied a ADSR evelope to signal. 
+        
+        Args:
+            att (float): attack
+            dec (float): decay
+            sus (float): sustain
+            rel (float): release. 
+            curve (float): affecting the curvature of the ramp. 
+            kind (str): kind of interpolation when creating the envelope. 
+        Returns:
+            (Asig): returns a new asig with the enveloped applied to its signal array
+        """
         dur = self.get_duration()
         return self.envelope([0, 1, sus, sus, 0], [0, att, att + dec, dur - rel, dur],
                              curve=curve, kind=kind)
 
     def window(self, win='triang', **kwargs):
+        """Apply windowing to self.sig
+        
+        Args:
+            win (str): type of window check scipy.signal.get_window for avaiable types. 
+            **kwargs: other available arguments e.g. 
+                Nx (int) The number of samples and fftbins (bool): period or symmetric window
+        Returns:
+            (Asig): new asig with window applied. 
+        """
         if not win:
             return self
         winstr = win
@@ -967,6 +1020,7 @@ class Asig:
             win, self.samples, **kwargs), self.sr, label=self.label + "_" + winstr, cn=self.cn)
 
     def window_op(self, nperseg=64, stride=32, win=None, fn='rms', pad='mirror'):
+        # TODO add docstring
         centerpos = np.arange(0, self.samples, stride)
         nsegs = len(centerpos)
         res = np.zeros((nsegs, ))
@@ -985,6 +1039,7 @@ class Asig:
 
     def overlap_add(self, nperseg=64, stride_in=32, stride_out=32, jitter_in=None, jitter_out=None,
                     win=None, pad='mirror'):
+        # TODO: add docstrings. 
         # TODO: check with multichannel ASigs
         # TODO: allow stride_in and stride_out to be arrays of indices
         # TODO: add jitter_in, jitter_out parameters to reduce spectral ringing effects
@@ -1010,12 +1065,25 @@ class Asig:
         return res
 
     def to_spec(self):
+        """Return Aspec object for signal spectrum"""
         return Aspec(self)
 
     def to_stft(self, **kwargs):
+        """Return Astft object for short-time fourier transform."""
         return Astft(self, **kwargs)
 
     def plot_spectrum(self, offset=0, scale=1., xlim=None, **kwargs):
+        """Plot spectrum of the signal
+        
+        Args:
+            offset (int, float): default is 0. If self.sig is multichannels, this will offset each
+                channels to create a stacked view for better viewing. 
+            scake (float): scale the y_axis
+            xlim (tuple, list): range of x_axis
+            **kwargs: kwargs used for plt.plot()
+        Returns:
+            self
+        """
         frq, Y = spectrum(self.sig, self.samples, self.channels, self.sr)
         if self.channels == 1 or (offset == 0 and scale == 1):
             plt.subplot(211)
@@ -1050,22 +1118,33 @@ class Asig:
         return self
 
     def spectrogram(self, *argv, **kvarg):
+        """Return spectrogram parameters. """s
         freqs, times, Sxx = scipy.signal.spectrogram(self.sig, self.sr, *argv, **kvarg)
         return freqs, times, Sxx
 
     def size(self):
-        # return samples and length in time:
+        """Return samples and length in time."""
         return self.sig.shape, self.sig.shape[0] / self.sr
 
-    def vstack(self, chan):
-        # Create multichannel signal from mono
-        self.sig = np.vstack([self.sig] * chan)
-        self.sig = self.sig.transpose()
-        return self.overwrite(self.sig, self.sr)  # Overwrite the signal
-        # TODO: replace this (old) overwrite by a hidden private _transplant_sig(ndarr, sr)
-        # since overwrite is now a property for setitem...
+    # TODO this method is currently commented. 
+    # def vstack(self, chan):
+    #     """Create multichannel signal from mono"""
+    #     self.sig = np.vstack([self.sig] * chan)
+    #     self.sig = self.sig.transpose()
+    #     return self.overwrite(self.sig, self.sr)  # Overwrite the signal
+    #     # TODO: replace this (old) overwrite by a hidden private _transplant_sig(ndarr, sr)
+    #     # since overwrite is now a property for setitem...
 
     def append(self, asig, amp=1):
+        """Apppend an asig with another. Conditions: the appended asig should have the same channels. If
+        appended asig has a different sampling rate, resample it to match the orginal.
+        
+        Args:
+            asig (Asig): another asig object to be appended
+        Returns:
+            (Asig): appended asig
+
+        """
         if self.channels != asig.channels:
             print("Asig.append: channels don't match")
             return self
@@ -1083,7 +1162,7 @@ class Asig:
 
 
 class Aspec:
-    'audio spectrum class using rfft'
+    'Audio spectrum class using rfft'
 
     def __init__(self, x, sr=44100, label=None, cn=None):
         self.cn = cn
@@ -1139,7 +1218,7 @@ class Aspec:
             rfft_new = self.rfftspec * weights ** curve
         return Aspec(rfft_new, self.sr, label=self.label + "_weighted")
 
-    def plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs):
+    def plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs):  # TODO add ax option
         plt.plot(self.freqs, fn(self.rfftspec), **kwargs)
         if xlim is not None:
             plt.xlim([xlim[0], xlim[1]])
@@ -1158,8 +1237,9 @@ class Aspec:
 
 # TODO, check with multichannel
 class Astft:
-    'audio spectrogram (STFT) class'
-
+    """Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
+    attribute cn being the list of channel names, and label being the name of the Asig
+    """
     def __init__(self, x, sr=None, label=None, window='hann', nperseg=256,
                  noverlap=None, nfft=None, detrend=False, return_onesided=True,
                  boundary='zeros', padded=True, axis=-1, cn=None):
@@ -1203,7 +1283,10 @@ class Astft:
             self.label = label
 
     def to_sig(self, **kwargs):
-        """ create signal from stft, i.e. perform istft, kwargs overwrite Astft values for istft
+        """Create signal from stft, i.e. perform istft, kwargs overwrite Astft values for istft
+
+        Returns:
+            Asig
         """
         for k in ['sr', 'window', 'nperseg', 'noverlap', 'nfft', 'input_onesided', 'boundary']:
             if k in kwargs.keys():
@@ -1217,6 +1300,15 @@ class Astft:
         return Asig(sig, sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
     def plot(self, fn=lambda x: x, ax=None, xlim=None, ylim=None, **kwargs):
+        """Plot spectrogram
+        
+        Args:
+            fn (func): a function, by default no function
+            ax (matplotlib axes): you can assign your plot to specific axes
+            xlim (tuple, list): x_axis range
+            ylim (tuple, list): y_axis range
+            **kwargs: keyward arguments
+            """
         if ax is None:
             plt.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)), **kwargs)
             plt.colorbar()
