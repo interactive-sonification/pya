@@ -571,11 +571,9 @@ class Asig:
             blend (list): list of gain for each channel as a multiplier.
                         Do nothing if signal is already mono, raise warning
                         if len(blend) not equal to self.channels
-
         Returns:
             Asig
         """
-        # sure that signals always get a default cn, see ToDo for Asig.__init__()
         if self.channels == 1:
             _LOGGER.warning("Signal is already mono")
             return self
@@ -650,9 +648,10 @@ class Asig:
         stereo works as it should, larger channel signal will only has 0 and 1 being changed.
         panning is based on constant power panning.
 
-        gain multiplication is the main computation cost.
-        :param pan: float. range -1. to 1.
-        :return: Asig
+        Args:
+            pan: float. range -1. to 1.
+        Return:
+            Asig
         """
         if isinstance(pan, float):
             # Stereo panning.
@@ -674,7 +673,14 @@ class Asig:
             _LOGGER.error("pan needs to be a float number between -1. to 1.")
 
     def norm(self, norm=1, dcflag=False):
-        """Normalize signal"""
+        """Normalize signal
+
+            Args:
+                norm (float): normalize threshold
+                dcflag (bool): if true, adjust dc offset
+            Returns:
+                new Asig with normalization applied.
+        """
         if dcflag:
             sig = self.sig - np.mean(self.sig, 0)
         else:
@@ -685,7 +691,8 @@ class Asig:
         return Asig(sig, self.sr, label=self.label + "_normalised", cn=self.cn)
 
     def gain(self, amp=None, db=None):
-        """Apply gain in amplitude or dB"""
+        """Apply gain in amplitude or dB, only use one or the other arguments. Argument can be either a scalar
+        or a list (to apply individual gain to each channel). The method returns a new asig with gain applied. """
         if db:  # overwrites amp
             amp = dbamp(db)
             _LOGGER.debug("gain in dB: %f, in amp: %f", float(db), amp)
@@ -694,11 +701,28 @@ class Asig:
         return Asig(self.sig * amp, self.sr, label=self.label + "_scaled", cn=self.cn)
 
     def rms(self, axis=0):
-        """Return signal's RMS"""
+        """Return signal's RMS
+
+            Args:
+                axis (int): axis to apply np.mean()
+            Returns:
+                (float): RMS value
+        """
         return np.sqrt(np.mean(np.square(self.sig), axis))
 
     def plot(self, fn=None, offset=0, scale=1, xlim=None, ylim=None, **kwargs):
-        """Display signal graph"""
+        """Display signal graph
+            Args:
+                fn (keyword or function): preprocess signal if needed. default is None
+                offset (int, float): default is 0. If self.sig is multichannels, this will offset each
+                    channels to create a stacked view for better viewing.
+                scale (float): scale y for better viewing if desired.
+                xlim (tuple, list): x_axis limit
+                ylim (tuple, list): y_axis limit
+                **kwargs: keyword arguments for matplotlib.pyplot.plot()
+            Return:
+                self, plt.show() to display the plot.
+        """
         if fn:
             if fn == 'db':
                 fn = lambda x: np.sign(x) * ampdb((abs(x) * 2 ** 16 + 1))
@@ -739,11 +763,16 @@ class Asig:
         return sig_eq and sr_eq
 
     def __repr__(self):
+        """Report key attributes"""
         return "Asig('{}'): {} x {} @ {}Hz = {:.3f}s cn={}".format(
             self.label, self.channels, self.samples, self.sr, self.samples / self.sr,
             self.cn)
 
     def __mul__(self, other):
+        """Magic method for multiplying. You can either multiply a numpy array or an Asig object. If adding an Asig,
+            you don't always need to have same size arrays as audio signals may different in length. If mix_mode
+            is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
+            bigger array is."""
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
         if isinstance(othersig, numbers.Number):
@@ -774,6 +803,10 @@ class Asig:
             return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
     def __add__(self, other):
+        """Magic method for adding. You can either add a numpy array or an Asig object. If adding an Asig,
+        you don't always need to have same size arrays as audio signals may different in length. If mix_mode
+        is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
+        bigger array is."""
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
         if isinstance(othersig, numbers.Number):  # When other is just a scalar
@@ -809,7 +842,20 @@ class Asig:
             return Asig(self.sig + other, self.sr, label=self.label + "_added", cn=self.cn)
 
     def find_events(self, step_dur=0.001, sil_thr=-20, evt_min_dur=0, sil_min_dur=0.1, sil_pad=[0.001, 0.1]):
-        # TODO add a minimum duration of an event. 
+        """Locate meaningfull 'events' in the signal and create event list. Onset detection.
+
+            Args:
+                step_dur (float): duration in seconds of each search step
+                sil_thr (int, float): silent threshold in dB
+                evt_min_dur (float): minimum duration to be counted as an event
+                sil_min_dur (float): minimum duration to be counted as silent
+                sil_pad (list, float): this allows you to add a small duration before and after the actual
+                    found event locations to the event ranges. If it is a list, you can set the padding
+                    time in second for begin and end individually. If a float, both will have equal padding.
+            Returns:
+                This method returns self. But the list of events can be accessed through self._['events']
+
+        """
         if self.channels > 1:
             msg = """warning: works only with 1-channel signals. 
             Tip:  (1) convert to mono first with asig.mono(); 
@@ -852,8 +898,8 @@ class Asig:
         self._['events'] = np.array(event_list)
         return self
 
-    # TODO not checked.
     def select_event(self, index=None, onset=None):
+        """This method can be called after find_event (aka onset detection)."""
         if 'events' not in self._:
             print('select_event: no events, return all')
             return self
@@ -869,7 +915,7 @@ class Asig:
 
     def fade_in(self, dur=0.1, curve=1):
         """Fade in the signal at the end
-        
+
         Args:
             dur (float, int): duration in seconds to fade in
             curve (float, int): curvature of the fader
@@ -885,7 +931,7 @@ class Asig:
 
     def fade_out(self, dur=0.1, curve=1):
         """Fade out the signal at the end
-        
+
         Args:
             dur (float, int): duration in seconds to fade out
             curve (float, int): curvature of the fader
@@ -902,7 +948,22 @@ class Asig:
 
     def iirfilter(self, cutoff_freqs, btype='bandpass', ftype='butter', order=4,
                   filter='lfilter', rp=None, rs=None):
-        """iirfilter based on scipy.signal.iirfilter"""
+        """iirfilter based on scipy.signal.iirfilter
+
+        Args:
+            cutoff_freqs (int, float, tuple, list): cutoff frequency or frequencies.
+            btype (str): filter type
+            ftype (str): the type of IIR filter. e.g. 'butter', 'cheby1', 'cheby2', 'elip', 'bessel'
+            order (int): filter order
+            filter (str): the scipy.signal method to call when applying the filter coeffs to the signal.
+                by default it is set to scipy.signal.lfilter (one-dimensional).
+            rp (float): For Chebyshev and elliptic filters, provides the maximum ripple in the passband. (dB)
+            rs (float): For Chebyshev and elliptic filters, provides the minimum attenuation in the stop band. (dB)
+
+        Returns:
+            (Asig): new Asig with the filter applied. also you can access b, a coefficients by doing self._['b']
+                and self._['a']
+        """
         Wn = np.array(cutoff_freqs) * 2 / self.sr
         b, a = scipy.signal.iirfilter(order, Wn, rp=rp, rs=rs, btype=btype, ftype=ftype)
         y = scipy.signal.__getattribute__(filter)(b, a, self.sig, axis=0)
@@ -918,7 +979,7 @@ class Asig:
 
     def add(self, sig, pos=None, amp=1, onset=None):
         """Add a signal
-        
+
         Args:
             sig (asig, numpy.array): signal to be added. This can be both an Asig or a numpy array. 
             pos (int): sample location the signal to be added into. 
@@ -954,7 +1015,14 @@ class Asig:
 
     def envelope(self, amps, ts=None, curve=1, kind='linear'):
         """Create an envelop and multiply by the signal.
-            TODO: add docstring. 
+
+        Args:
+            amps (array): amplitude of each breaking point
+            ts (array): indices of each breaking point
+            curve (int, float): affecting the curvature of the ramp.
+            kind (str): kind of interpolation when creating the envelope.
+        Returns:
+            (Asig): returns a new asig with the enveloped applied to its signal array
         """
         # TODO Check multi-channels. 
         nsteps = len(amps)
@@ -986,13 +1054,13 @@ class Asig:
 
     def adsr(self, att=0, dec=0.1, sus=0.7, rel=0.1, curve=1, kind='linear'):
         """Create and applied a ADSR evelope to signal. 
-        
+
         Args:
             att (float): attack
             dec (float): decay
             sus (float): sustain
             rel (float): release. 
-            curve (float): affecting the curvature of the ramp. 
+            curve (int, float): affecting the curvature of the ramp.
             kind (str): kind of interpolation when creating the envelope. 
         Returns:
             (Asig): returns a new asig with the enveloped applied to its signal array
@@ -1003,7 +1071,7 @@ class Asig:
 
     def window(self, win='triang', **kwargs):
         """Apply windowing to self.sig
-        
+
         Args:
             win (str): type of window check scipy.signal.get_window for avaiable types. 
             **kwargs: other available arguments e.g. 
@@ -1074,11 +1142,11 @@ class Asig:
 
     def plot_spectrum(self, offset=0, scale=1., xlim=None, **kwargs):
         """Plot spectrum of the signal
-        
+
         Args:
             offset (int, float): default is 0. If self.sig is multichannels, this will offset each
                 channels to create a stacked view for better viewing. 
-            scake (float): scale the y_axis
+            scale (float): scale the y_axis
             xlim (tuple, list): range of x_axis
             **kwargs: kwargs used for plt.plot()
         Returns:
@@ -1118,7 +1186,7 @@ class Asig:
         return self
 
     def spectrogram(self, *argv, **kvarg):
-        """Return spectrogram parameters. """s
+        """Return spectrogram parameters. """
         freqs, times, Sxx = scipy.signal.spectrogram(self.sig, self.sr, *argv, **kvarg)
         return freqs, times, Sxx
 
@@ -1138,7 +1206,7 @@ class Asig:
     def append(self, asig, amp=1):
         """Apppend an asig with another. Conditions: the appended asig should have the same channels. If
         appended asig has a different sampling rate, resample it to match the orginal.
-        
+
         Args:
             asig (Asig): another asig object to be appended
         Returns:
@@ -1301,7 +1369,7 @@ class Astft:
 
     def plot(self, fn=lambda x: x, ax=None, xlim=None, ylim=None, **kwargs):
         """Plot spectrogram
-        
+
         Args:
             fn (func): a function, by default no function
             ax (matplotlib axes): you can assign your plot to specific axes

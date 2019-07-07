@@ -3,9 +3,11 @@ from pya import *
 import numpy as np 
 
 
-# Basic testing.
-
 class TestPya(TestCase):
+    """Test the following:
+        duration, fader, samples, channels, channel names,
+        TODO, add the rest.
+    """
 
     def setUp(self):
         self.sig = np.sin(2 * np.pi * 100 * np.linspace(0, 1, 44100))
