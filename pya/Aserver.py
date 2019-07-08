@@ -116,6 +116,7 @@ class Aserver:
         return msg
 
     def get_devices(self):
+        """Print available input and output device."""
         print("Input Devices: ")
         [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}")
          for i in self.input_devices]
@@ -125,6 +126,7 @@ class Aserver:
         return self.input_devices, self.output_devices
 
     def print_device_info(self):
+        """Print device info"""
         print("Input Devices: ")
         [print(i) for i in self.input_devices]
         print("\n")
@@ -132,6 +134,15 @@ class Aserver:
         [print(o) for o in self.output_devices]
 
     def set_device(self, idx, reboot=True):
+        """Set audio device 
+
+        Parameters
+        ----------
+        idx : int
+            Index of the device
+        reboot : bool
+            If true the server will reboot. (Default value = True)
+        """
         self.device = idx
         self.device_dict = self.pa.get_device_info_by_index(self.device)
         if reboot:
