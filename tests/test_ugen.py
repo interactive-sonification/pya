@@ -19,6 +19,12 @@ class TestUgen(TestCase):
         self.assertAlmostEqual(0.5, np.max(sine.sig), places=6)
         self.assertEqual((44100 // 2, 2), sine.sig.shape)
 
+    def test_cos(self):
+        cos = Ugen().cos(freq=200, amp=0.5, dur=1.0, sr=44100 // 2, channels=2)
+        self.assertEqual(44100 // 2, cos.sr)
+        self.assertAlmostEqual(0.5, np.max(cos.sig), places=6)
+        self.assertEqual((44100 // 2, 2), cos.sig.shape)
+
     def test_square(self):
         square = Ugen().square(freq=200, amp=0.5, dur=1.0, sr=44100 // 2, channels=2)
         self.assertEqual(44100 // 2, square.sr)
