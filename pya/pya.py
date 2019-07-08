@@ -1515,28 +1515,46 @@ class Asig:
         return Asig(np.hstack((self.sig, atmp.sig)), self.sr, label=self.label + "+" + asig.label, cn=self.cn)
 
     def custom(self, func, **kwargs):
-        """custom function method.
-
-        Parameters
-        ----------
-        func :
-            
-        **kwargs :
-            
-
-        Returns
-        -------
-
-        """
+        """custom function method. TODO add example"""
         func(self, **kwargs)
         return self
 
 
 class Aspec:
-    """ """
-    'Audio spectrum class using rfft'
+    """Audio spectrum class using rfft
+    Attributes
+    ----------
+    rfftspec : numpy.array
+        returns of the numpy.fft.rfft() of the signal x
+    sr : int
+        sampling rate 
+    label : string or None
+        Asig label
+    cn : list or None
+        Channel names
+    samples : int
+        Sample length
+    channels : int
+        Number of channels
+    nr_freqs : int
+        This is the total number of the frequency array based on the sample length
+    freqs : numpy.array
+        Frequency array corresponding to the rfft. 
+    """
 
     def __init__(self, x, sr=44100, label=None, cn=None):
+        """__init__() method
+        Parameters
+        ----------
+        x : Asig or numpy.array
+            audio signal
+        sr : int
+            sampling rate (Default value = 44100)
+        label : string or None
+            Asig label (Default value = None)
+        cn : list or None
+            Channel names (Default value = None)
+        """
         self.cn = cn
         if type(x) == Asig:
             self.sr = x.sr
@@ -1562,11 +1580,11 @@ class Aspec:
         self.freqs = np.linspace(0, self.sr / 2, self.nr_freqs)
 
     def to_sig(self):
-        """ """
+        """Convert Aspec into Asig"""
         return Asig(np.fft.irfft(self.rfftspec), sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
     def weight(self, weights, freqs=None, curve=1, kind='linear'):
-        """
+        """TODO
 
         Parameters
         ----------
@@ -1609,22 +1627,22 @@ class Aspec:
         return Aspec(rfft_new, self.sr, label=self.label + "_weighted")
 
     def plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs):  # TODO add ax option
-        """
+        """Plot spectrum
 
         Parameters
         ----------
-        fn :
-             (Default value = np.abs)
-        xlim :
-             (Default value = None)
-        ylim :
-             (Default value = None)
+        fn : func
+            function for processing the rfft spectrum. (Default value = np.abs)
+        xlim : tuple, list, None
+            Set x axis range (Default value = None)
+        ylim : tuple, list, None
+            Set y axis range (Default value = None)
         **kwargs :
+            Keyword arguments for matplotlib.pyplot.plot()
             
-
         Returns
         -------
-
+        self
         """
         plt.plot(self.freqs, fn(self.rfftspec), **kwargs)
         if xlim is not None:
