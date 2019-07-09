@@ -16,8 +16,8 @@ _LOGGER.addHandler(logging.NullHandler())
 
 
 class Asig:
-    """Audio signal class. Asig allows you to manipulate audio signal in the style of numpy as more. You can also
-    use Asig for playing audio in combination with the Aserver object. 
+    """Audio signal class. Asig enables manipulation of audio signals in the style of numpy and more. 
+    Asig offer functions for plotting (via matplotlib) and playing audio (using the pya.Aserver class) 
 
     Attributes
     ----------
@@ -30,15 +30,15 @@ class Asig:
     channels : int
         Number of channels
     cn : list of str, None
-        A list of string with the size of channels to give each channel a unique name. You can use 
-        it to subset signal channels in a more readible way, e.g. asig[:, ['left', 'front']] subset the 
-        left and front channels of the signal. 
+        cn short for channel names is a list of string of size channels, 
+        to give each channel a unique name. 
+        channel names can be used to subset signal channels in a more readible way, 
+        e.g. asig[:, ['left', 'front']] subsets the left and front channels of the signal. 
     mix_mode : str or None
-        This is a special way to extend numpy functionalities in order to make in more suitable for audio 
-        mainupulation such as mixing. For example, you may want to sequence an audio into another. With 
-        standard numpy, operation can only happen if the two have the same shape. mix_mode allows you to 
-        be flexible with mixing different shapes of signal together. 3 modes are currently available: bound, extend, 
-        overwrite. 
+        used to extend numpy __setitem__() operation to frequent audio manipulations such as
+        mixing, extending, clipping, replacing. Current Asig supports the mix_modes: 
+        bound, extend, overwrite.  mix_mode should not be set directly but is set temporarilty when using 
+        the .bound, .extend and .overwrite properties.
     """
 
     def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
@@ -276,7 +276,7 @@ class Asig:
 
     @property
     def x(self):
-        """Extend mode, this mode allow sig size to be extended through setitem"""
+        """Extend mode: this mode allows destination sig size in assignment to be extended through setitem"""
         # Set setitem mode to extend
         self.mix_mode = 'extend'
         return self
@@ -284,8 +284,7 @@ class Asig:
 
     @property
     def b(self):
-        """Bound mode, you can do setitem with different shape input, but the result will always 
-        be limited to the shape of self.sig."""
+        """Bound mode: this mode allows to truncate a source signal in assignment to a limited destination in setitem."""
         # Set setitem mode to bound
         self.mix_mode = 'bound'
         return self
@@ -293,8 +292,7 @@ class Asig:
 
     @property
     def o(self):
-        """Overwrite mode, you can do setitem with different shape input, the result is always the shape 
-        of the new input."""
+        """Overwrite mode: this mode cuts and replaces target selection by source signal on assignment via setitem"""
         self.mix_mode = 'overwrite'
         return self
     overwrite = o
@@ -308,18 +306,18 @@ class Asig:
         In addition, there are 4 possible modes: (referring to asig as 'dest', and value as 'src'
             1. standard pythonic way that the src und dest dimensions need to match
                 asig[...] = value
-            2. bound mode where src is copied up to the bounds of src
+            2. bound mode where src is copied up to the bounds of dest
                 asig.b[...] = value
             3. extend mode where dest is dynamically extended to make space for src
                 asig.x[...] = value
-            4. overwrite mode replace dest with src regardless the length.
+            4. overwrite mode where selected dest subset is replaced by specified src regardless the length.
                 asig.o[...] = value
 
         row index:
-            * list: [1,2,3,4,5,6,7,8] or [True, ..., False] (b and x possible)
-            * int: 0  (No need for extra mode)
-            * slice: 100:5000:2  (all mode possible)
-            * dict: {0.5: 2.5}   (o, b possible, x only if step = 1 or None, and stop=None)
+            * list: e.g. [1,2,3,4,5,6,7,8] or [True, ..., False] (modes b and x possible)
+            * int:  e.g. 0  (i.e. a single sample, so no need for extra modes)
+            * slice: e.g. 100:5000:2  (can be used with all modes)
+            * dict: e.g. {0.5: 2.5}   (modes o, b possible, x only if step==1, or if step==None and stop=None)
 
         Parameters
         ----------
@@ -501,7 +499,6 @@ class Asig:
                 sig = np.squeeze(sig)
             if isinstance(sig, numbers.Number):
                 sig = np.array(sig)
-
             sig[:start_idx] = self.sig[:start_idx]  # Copy the first part over
             sig[start_idx:end] = src                       # The second part is the new signal
             sig[end:] = self.sig[stop_idx:]       # The final part is the remaining of self.sig
@@ -509,7 +506,7 @@ class Asig:
         return self
 
     def resample(self, target_sr=44100, rate=1, kind='linear'):
-        """Resample signal based on interpolation, can process multichannel
+        """Resample signal based on interpolation, can process multichannel signals.
 
         Parameters
         ----------
@@ -544,7 +541,7 @@ class Asig:
 
     def play(self, rate=1, **kwargs):
         """Play Asig audio via Aserver, using Aserver.default (if existing)
-        kwargs are propagzated to Aserver:play (onset=0, out=0)
+        kwargs are propagated to Aserver:play(onset=0, out=0)
 
         Parameters
         ----------
@@ -559,7 +556,7 @@ class Asig:
         _ : Asig
             return self
         """
-        # IDEA/ToDo: allow to set server='stream' to create
+        # IDEA/ToDo: allow to set server='stream' to create one
         #           which terminates when finished using pyaudiostream
         if 'server' in kwargs.keys():
             s = kwargs['server']
@@ -576,15 +573,15 @@ class Asig:
         return self
 
     def shift_channel(self, shift=0):
-        """Shift signal to other channels. This is particular useful for asigning a mono signal to a specific channel.
+        """Shift signal to other channels. This is particular useful for assigning a mono signal to a specific channel.
             * shift = 0: does nothing as the same signal is being routed to the same position
-            * shift > 0: move channels of self.sig to channels out [,out+1,...]
-            * shift < 0: reduce the channels. the first -out channels will be discard.
+            * shift > 0: shift channels of self.sig 'right', i.e. from [0,..channels-1] to channels [shift,shift+1,...]
+            * shift < 0: shift channels of self.sig 'left', i.e. the first shift channels will be discarded.
 
         Parameters
         ----------
         shift : int
-              shift channel amount   (Default value = 0)
+              shift channel amount (Default value = 0)
 
         Returns
         -------
@@ -647,14 +644,19 @@ class Asig:
             return Asig(sig, self.sr, label=self.label + '_blended', cn=col_names)
 
     def stereo(self, blend=None):
-        """Blend any channel of signal to stereo. You can create a stereo signal from any signal.
+        """Blend all channels of the signal to stereo. Applicable for any single-/ or multi-channel Asig.
 
         Parameters
         ----------
         blend : list or None
-            Usage: blend = [[list], [list]], e.g: Mix ch0,1,2 to the left channel with 
-            gain of 0.3 each, and ch0,1,2 to right with 0.25 gain. 
-            asig[[0.3, 0.3, 0.3], [0.25, 0.25, 0.25]] (Default value = None)
+            Usage: blend = [[list of gains for left channel], [list of gains for right channel]]
+            Default value = None, resulting in equal distribution to left and right channel
+
+        Example
+        -------
+        asig[:,['c1','c2','c3']].stereo[[1, 0.707, 0], [0, 0.707, 1]]
+            mixes channel 'c1' to left, 'c2' to center and 'c3' to right channel 
+            of a new stereo asig. Note that for equal loudness left**2+right**2=1 should be used
 
         Returns
         -------
@@ -683,14 +685,18 @@ class Asig:
             return self
 
     def rewire(self, dic):
-        """Rewire channels, this allows you to move one change to the other. 
+        """Rewire channels to flexibly allow weighted channel permutations.
 
         Parameters
         ----------
         dic : dict
-            Usage: {(target_channel, destination_channel): gain_in_amp}
-            Example:
-            {(0, 1): 0.5}: move channel 0 to 1 then reduce gain to 0.5
+            key = tuple of (source channel, destination channel)
+            value = amplitude gain
+
+        Example
+        -------
+        {(0, 1): 0.2, (5, 0): 0.4}: rewire channel 0 to 1 with gain 0.2, and 5 to 1 with gain 2
+        leaving other channels unmodified
 
         Returns
         -------
@@ -709,9 +715,12 @@ class Asig:
         return Asig(new_sig, self.sr, label=self.label + '_rewire', cn=self.cn)
 
     def pan2(self, pan=0.):
-        """pan2 only creates output in stereo, mono signal will be copy to stereo,
-        stereo works as it should, larger channel signal will only has 0 and 1 being changed.
-        panning is based on constant power panning.
+        """Stereo panning of asig to a stereo output.
+        Panning is based on constant power panning, see pan below
+        Behaviod depends on nr of channels self.channels
+        * multi-channel signals (self.channels>2) are cut back to stereo and treated as
+        * stereo signals (self.channels==2) are channelwise attenuated using cos(angle), sin(angle)
+        * mono signals (self.channels==1) result in stereo output asigs.
 
         Parameters
         ----------
