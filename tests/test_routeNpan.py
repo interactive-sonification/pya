@@ -21,12 +21,12 @@ class TestRoutePan(TestCase):
     def tearDown(self):
         pass
 
-    def test_route(self):
+    def test_shift_channel(self):
         """Shift a mono signal to chan 4 should result in a 4 channels signals"""
-        result = self.asine.route(3)
+        result = self.asine.shift_channel(3)
         self.assertEqual(4, result.channels)
 
-        result = self.asineWithName.route(3)
+        result = self.asineWithName.shift_channel(3)
         self.assertEqual(4, result.channels)
 
     def test_mono(self):

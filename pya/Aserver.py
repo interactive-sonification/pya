@@ -19,11 +19,13 @@ class Aserver:
     Examples:
     -----------
     from pya import *
+
     ser = Aserver()
+
     ser.boot()
 
     asine = Ugen().sin().play(server=ser)
-    # To stop: use ser.stop() to keep stream alive but play silence or ser.quit() to shutdown stream.
+
     """
 
     default = None  # that's the default Aserver if Asigs play via it
@@ -52,13 +54,23 @@ class Aserver:
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
 
-        :param sr: sampling rate
-        :param bs: block size, aka buffer size
-        :param device: audio output device
-        :param channels: signal channels #TODO This may not be necessary as it is limited by the output device
-        :param format: pyaudio format, default is pyaudio.paFloat32
-        """
+        Parameters
+        ----------
+        sr : int
+            Sampling rate (Default value = 44100)
+        bs : int
+            block size or buffer size (Default value = 256)
+        channels : int
+            number of channel (Default value = 2)
+        format : pyaudio.Format
+             Audio data format(Default value = pyaudio.paFloat32)
 
+        Returns
+        -------
+        _ : numpy.ndarray
+            numpy array of the recorded audio signal.
+        """
+        # TODO check if channels is overwritten by the device.
         self.sr = sr
         self.bs = bs
         self.pa = pyaudio.PyAudio()

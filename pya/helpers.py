@@ -26,7 +26,8 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
 
     Returns
     -------
-    numpy array of the recorded audio signal.
+    _ : numpy.ndarray
+        numpy array of the recorded audio signal.
     """
     p = pyaudio.PyAudio()
     stream = p.open(format=pyaudio.paInt16, channels=channels, rate=rate, input=True,
@@ -61,7 +62,7 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
 
 
 def linlin(x, smi, sma, dmi, dma):
-    """linear mapping
+    """Linear mapping
 
     Parameters
     ----------
@@ -77,8 +78,8 @@ def linlin(x, smi, sma, dmi, dma):
         
     Returns
     -------
-    float mapped output
-
+    _ : float
+        mapped output
     """
     return (x - smi) / (sma - smi) * (dma - dmi) + dmi
 
@@ -133,7 +134,7 @@ def spectrum(sig, samples, channels, sr):
 
     Parameters
     ----------
-    sig : numpy.array
+    sig : numpy.ndarray
         signal array
     samples : int
         total amount of samples
@@ -143,11 +144,11 @@ def spectrum(sig, samples, channels, sr):
         sampling rate
 
     Returns
-    -------
-    frq : numpy.array
+    ---------
+    frq : numpy.ndarray
         frequencies
-    Y : numpy.array
-        fft of the signal. 
+    Y : numpy.ndarray
+        FFT of the signal.
     """
     nrfreqs = samples // 2 + 1
     frq = np.linspace(0, 0.5 * sr, nrfreqs)  # one sides frequency range
