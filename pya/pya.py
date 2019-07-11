@@ -717,7 +717,7 @@ class Asig:
     def pan2(self, pan=0.):
         """Stereo panning of asig to a stereo output.
         Panning is based on constant power panning, see pan below
-        Behaviod depends on nr of channels self.channels
+        Behavior depends on nr of channels self.channels
         * multi-channel signals (self.channels>2) are cut back to stereo and treated as
         * stereo signals (self.channels==2) are channelwise attenuated using cos(angle), sin(angle)
         * mono signals (self.channels==1) result in stereo output asigs.
