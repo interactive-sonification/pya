@@ -28,6 +28,8 @@ pyA can be used for
 
 ## Installation
 
+**Disclaimer**: We are currently making sure that pyA can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .`
+
 Use pip to install pya via
 
     pip install pya
