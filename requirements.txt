@@ -1,4 +1,6 @@
 numpy>=1.15.4
-ipython>=7.2.0
-simpleaudio>=1.0.1
-pyaudio>=0.2.11
+scipy>=1.2.1
+matplotlib
+pyaudio>=0.2.11  # Portaudio is required beforehand, for linux: sudo apt-get install libasound-dev
+# Since portaudio is not a python package, the easiest way is to use Anaconda, conda install pyaudio
+# This will install both portaudio and pyaudio
