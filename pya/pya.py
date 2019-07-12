@@ -9,7 +9,7 @@ import scipy.interpolate
 import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
-from .helpers import ampdb, dbamp, linlin, timeit, spectrum
+from .helpers import ampdb, dbamp, linlin, timeit, spectrum, audioread_load
 from copy import copy, deepcopy
 
 _LOGGER = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class Asig:
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
         if isinstance(sig, str):
-            self.load_wavfile(sig)
+            self.load_audio_file(sig)
         elif isinstance(sig, int):  # sample length
             if channels == 1:
                 self.sig = np.zeros(sig).astype("float32")
@@ -112,22 +112,27 @@ class Asig:
             else:
                 raise ValueError("list size doesn't match channel numbers {}".format(self.channels))
 
-    def load_wavfile(self, fname):
-        """Load .wav file, and set self.sig to the signal and self.sr to the sampling rate. 
+    def load_audio_file(self, fname):
+        """Load WAV or MP3 file, and set self.sig to the signal and self.sr to the sampling rate. 
 
         Parameters
         ----------
         fname : str
             Path to file. .wav format is currently the only supported format. Will add more later.
         """
-        self.sr, self.sig = wavfile.read(fname)  # load the sample data
-        if self.sig.dtype == np.dtype('int16'):
-            self.sig = (self.sig / 32768.).astype('float32')
+        if fname.endswith('.wav'):
+            self.sr, self.sig = wavfile.read(fname)  # load the sample data
+            if self.sig.dtype == np.dtype('int16'):
+                self.sig = (self.sig / 32768.).astype('float32')
 
-        elif self.sig.dtype != np.dtype('float32'):
-            self.sig = self.sig.astype('float32')
+            elif self.sig.dtype != np.dtype('float32'):
+                self.sig = self.sig.astype('float32')
+            else:
+                warning("Unsupported data type.")
+        elif fname.endswith('.mp3'):
+            self.sig, self.sr = audioread_load(fname, dtype=np.float32)
         else:
-            warning("Unsupported data type.")
+            raise AttributeError("Unsupported file format, use WAV or MP3.")
 
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         """Save signal as .wav file

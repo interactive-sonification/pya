@@ -4,7 +4,7 @@ import numpy as np
 import pyaudio
 import time
 from scipy.fftpack import fft
-
+from audioread import audio_open
 
 class _error(Exception):    
     pass
@@ -178,3 +178,90 @@ def normalize(d):
     d -= np.min(d, axis=0)
     d /= np.ptp(d, axis=0)
     return d
+
+
+def audioread_load(path, offset=0, duration=None, dtype=np.float32):
+    '''Load an audio buffer using audioread.
+    This loads one block at a time, and then concatenates the results.
+    '''
+
+    y = []
+    with audio_open(path) as input_file:
+        sr_native = input_file.samplerate
+        n_channels = input_file.channels
+
+        s_start = int(np.round(sr_native * offset)) * n_channels
+
+        if duration is None:
+            s_end = np.inf
+        else:
+            s_end = s_start + (int(np.round(sr_native * duration))
+                               * n_channels)
+
+        n = 0
+
+        for frame in input_file:
+            frame = buf_to_float(frame, dtype=dtype)
+            n_prev = n
+            n = n + len(frame)
+
+            if n < s_start:
+                # offset is after the current frame
+                # keep reading
+                continue
+
+            if s_end < n_prev:
+                # we're off the end.  stop reading
+                break
+
+            if s_end < n:
+                # the end is in this frame.  crop.
+                frame = frame[:s_end - n_prev]
+
+            if n_prev <= s_start <= n:
+                # beginning is in this frame
+                frame = frame[(s_start - n_prev):]
+
+            # tack on the current frame
+            y.append(frame)
+
+    if y:
+        y = np.concatenate(y)
+        if n_channels > 1:
+            y = y.reshape((-1, n_channels)).T
+    else:
+        y = np.empty(0, dtype=dtype)
+
+    return y, sr_native
+
+
+def buf_to_float(x, n_bytes=2, dtype=np.float32):
+    """Convert an integer buffer to floating point values.
+    This is primarily useful when loading integer-valued wav data
+    into numpy arrays.
+    See Also
+    --------
+    buf_to_float
+    Parameters
+    ----------
+    x : np.ndarray [dtype=int]
+        The integer-valued data buffer
+    n_bytes : int [1, 2, 4]
+        The number of bytes per sample in `x`
+    dtype : numeric type
+        The target output type (default: 32-bit float)
+    Returns
+    -------
+    x_float : np.ndarray [dtype=float]
+        The input data buffer cast to floating point
+    """
+
+    # Invert the scale of the data
+    scale = 1./float(1 << ((8 * n_bytes) - 1))
+
+    # Construct the format string
+    fmt = '<i{:d}'.format(n_bytes)
+
+    # Rescale and format the data buffer
+    return scale * np.frombuffer(x, fmt).astype(dtype)
+
