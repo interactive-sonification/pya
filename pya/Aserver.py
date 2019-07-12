@@ -242,7 +242,7 @@ class Aserver:
         # just curious - not needed but for time stability check
         self.timejitter = time.time() - self.block_time
         if self.timejitter > 3 * self.block_duration:
-            _LOGGER.warning(f"Aserver late by {self.timejitter} seconds: block_time reseted!")
+            _LOGGER.debug(f"Aserver late by {self.timejitter} seconds: block_time reset!")
             self.block_time = time.time()
 
         if not self.srv_asigs or self.srv_onsets[0] > tnow:  # to shortcut computing
