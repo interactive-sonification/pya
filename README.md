@@ -59,6 +59,13 @@ A 1s / 440 Hz sine tone at sampling rate 44100 as channel name 'left':
     signal_array = np.sin(2 * np.pi * 440 * np.linspace(0, 1, 44100))
     atone = Asig(signal_array, sr=44100, label='1s sine tone', cn=['left'])
 
+In addition to passing numpy.ndarray as argument for Asig, it is also for possible to pass int as samples or float as seconds to create an Asig obj with silence audio. 
+
+Audio files are also possible using str file path. `WAV` should work without issue. `MP3` is supported but may raise error under Windows and Linux if FFmpeg is not installed. macOS should be fine thanks to CoreAudio.
+
+* On Linux --> sudo aot install ffmpeg
+* On Windows --> Download the latest distribution on https://ffmpeg.zeranoe.com/builds/ --> Unzip the folder, preferrably to C:\ --> Go to Advanced System Settings and Environment Variables --> add path\FFmpeg\bin (e.g. C:\ffmpeg\bin) to PATH. 
+
 ### Key attributes
 * `atone.sig`  --> The numpy array containing the signal is 
 * `atone.sr`  --> the sampling rate

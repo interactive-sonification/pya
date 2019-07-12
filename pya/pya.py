@@ -128,9 +128,13 @@ class Asig:
             elif self.sig.dtype != np.dtype('float32'):
                 self.sig = self.sig.astype('float32')
             else:
-                warning("Unsupported data type.")
+                warn("Unsupported data type.")
         elif fname.endswith('.mp3'):
-            self.sig, self.sr = audioread_load(fname, dtype=np.float32)
+            try:
+                self.sig, self.sr = audioread_load(fname, dtype=np.float32)
+            except Exception:
+                raise ValueError("Can't find a supported backend to encode mp3. This is likely to happen on Windows and Linux os" 
+                " if FFmpeg is not installed. Please refers to pyA github or README.md for installation guide.")
         else:
             raise AttributeError("Unsupported file format, use WAV or MP3.")
 
