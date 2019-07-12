@@ -33,12 +33,13 @@ class Aserver:
     @staticmethod
     def startup_default_server(**kwargs):
         if Aserver.default is None:
-            print("Aserver startup_default_server: create and boot")
+            _LOGGER.info("Aserver startup_default_server: create and boot")
             Aserver.default = Aserver(**kwargs)  # using all default settings
             Aserver.default.boot()
-            print(Aserver.default)
+            # print(Aserver.default)
+            _LOGGER.info("Default server info: %s", Aserver.default)
         else:
-            print("Aserver default_server already set.")
+            _LOGGER.info("Aserver default_server already set.")
         return Aserver.default
 
     @staticmethod
@@ -48,7 +49,7 @@ class Aserver:
             del(Aserver.default)
             Aserver.default = None
         else:
-            print("Aserver:shutdown_default_server: no default_server to shutdown")
+            warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
     def __init__(self, sr=44100, bs=256, device=None, channels=2, format=pyaudio.paFloat32):
         """Aserver manages an pyaudio stream, using its aserver callback
@@ -75,6 +76,7 @@ class Aserver:
         self.bs = bs
         self.pa = pyaudio.PyAudio()
         self.channels = channels
+        self._status = pyaudio.paComplete
 
         # Get audio devices to input_device and output_device
         self.input_devices = []
@@ -91,9 +93,7 @@ class Aserver:
             self.device = device
 
         self.device_dict = self.pa.get_device_info_by_index(self.device)
-        """
-            self.max_out_chn is not that useful: there can be multiple devices having the same mu
-        """
+        # self.max_out_chn is not that useful: there can be multiple devices having the same mu
         self.max_out_chn = self.device_dict['maxOutputChannels']
         if self.max_out_chn < self.channels:
             warn(f"Aserver: warning: {channels}>{self.max_out_chn} channels requested - truncated.")
@@ -167,7 +167,7 @@ class Aserver:
     def boot(self):
         """boot Aserver = start stream, setting its callback to this callback."""
         if self.pastream is not None and self.pastream.is_active():
-            print("Aserver:boot: already running...")
+            _LOGGER.info("Aserver already running...")
             return -1
         self.pastream = self.pa.open(format=self.format, channels=self.channels, rate=self.sr,
                                      input=False, output=True, frames_per_buffer=self.bs,
@@ -176,20 +176,20 @@ class Aserver:
         self.block_time = self.boot_time
         self.block_cnt = 0
         self.pastream.start_stream()
-        print("Server Booted")
+        _LOGGER.info("Server Booted")
         return self
 
     def quit(self):
         """Aserver quit server: stop stream and terminate pa"""
         if not self.pastream.is_active():
-            print("Aserver:quit: stream not active")
+            _LOGGER.info("Aserver:quit: stream not active")
             return -1
         try:
             self.pastream.stop_stream()
             self.pastream.close()
+            _LOGGER.info("Aserver stopped.")
         except AttributeError:
-            print("No stream...")
-        print("Aserver stopped.")
+            _LOGGER.info("No stream found...")
         self.pastream = None
 
     def __del__(self):
@@ -199,9 +199,7 @@ class Aserver:
         """Dispatch asigs or arrays for given onset."""
         self._stop = False
         self._status = pyaudio.paContinue
-        if out < 0:
-            warn("Aserver:play: illegal out<0")
-            return
+
         sigid = id(asig)  # for copy check
         if asig.sr != self.sr:
             asig = asig.resample(self.sr)

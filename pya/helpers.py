@@ -1,5 +1,5 @@
 # helpers.py
-#Collection of small helper functions
+# Collection of small helper functions
 import numpy as np
 import pyaudio
 import time
@@ -75,7 +75,7 @@ def linlin(x, smi, sma, dmi, dma):
     dmi : float
         input range's minimum
     dma :
-        
+
     Returns
     -------
     _ : float
