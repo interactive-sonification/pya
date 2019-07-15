@@ -118,7 +118,10 @@ class Asig:
         Parameters
         ----------
         fname : str
-            Path to file. .wav format is currently the only supported format. Will add more later.
+            Path to file. 
+            '.wav' files are loaded using scipy.signal.io.wavfile.read().
+            '.mp3' files are loaded using the (optional) audioread package, if available.
+            Other formats will be added later as needed.
         """
         if fname.endswith('.wav'):
             self.sr, self.sig = wavfile.read(fname)  # load the sample data
