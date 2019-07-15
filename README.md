@@ -98,7 +98,7 @@ to plot the spectrogram via the Astft class
 
 ### Selection of subsets
 * Asigs support multi-channel audio (as columns of the signal array)
-  * `a1[:100, [:3]]` would select the first 100 samples and the first 3 channels, 
+  * `a1[:100, :3]` would select the first 100 samples and the first 3 channels, 
   * `a1[{1.2:2}, ['left']]` would select the channel named 'left' using a time slice from 1
 
 ### Method chaining
