@@ -26,6 +26,12 @@ pyA can be used for
 * signal analysis and plotting
 * at this time more suitable for offline rendering than realtime.
 
+## Authors and Contributors
+
+* Thomas Hermann, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (author and maintainer)
+* Jiajun Yang, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (co-author)
+* Contributors will be acknowledged here, contributions are welcome.
+
 ## Installation
 
 **Disclaimer**: We are currently making sure that pyA can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .`
