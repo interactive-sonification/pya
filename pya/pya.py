@@ -135,7 +135,9 @@ class Asig:
         elif fname.endswith('.mp3'):
             try:
                 self.sig, self.sr = audioread_load(fname, dtype=np.float32)
-            except Exception:
+            except FileNotFoundError:
+                raise FileNotFoundError("File or directory not found")
+            except Exception:   # The other error is likely to be backend error from ffmpeg not installed or added to path
                 raise ValueError("Can't find a supported backend to encode mp3. This is likely to happen on Windows and Linux os" 
                 " if FFmpeg is not installed. Please refers to pyA github or README.md for installation guide.")
         else:
