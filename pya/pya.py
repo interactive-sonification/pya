@@ -738,7 +738,7 @@ class Asig:
                 if self.channels == 1:
                     newsig = np.repeat(self.sig, 2)  # This is actually quite slow
                     newsig_shape = newsig.reshape(-1, 2) * gain
-                    new_cn = [self.cn, self.cn]
+                    new_cn = [str(self.cn), str(self.cn)]
                     return Asig(newsig_shape, self.sr,
                                 label=self.label + "_pan2ed", channels=2, cn=new_cn)
                 else:
