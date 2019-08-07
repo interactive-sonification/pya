@@ -1,12 +1,11 @@
-# <a name="transitions-module"></a> transitions
 [![Version](https://img.shields.io/badge/version-v0.2-orange.svg)](https://github.com/Thomas-Hermann/pya)
-[![PyPi](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/transitions)
+[![PyPi](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
 [![License](https://img.shields.io/github/license/Thomas-Hermann/pya.svg)](LICENSE)
 <!-- 
 [![Build Status](https://travis-ci.org/Thomas-Hermann/pya.svg?branch=master)](https://travis-ci.org/Thomas-Hermann/pya)
 [![Coverage Status](https://coveralls.io/repos/Thomas-Hermann/pya/badge.svg?branch=master&service=github)](https://coveralls.io/github/Thomas-Hermann/pya?branch=master)
 
-[![GitHub commits](https://img.shields.io/github/commits-since/Thomas-Hermann/pya/0.2.svg)](https://github.com/pytransitions/transitions/compare/0.2...master) -->
+[![GitHub commits](https://img.shields.io/github/commits-since/Thomas-Hermann/pya/0.2.svg)](https://github.com/Thomas-Hermann/pya/compare/0.2...master) -->
 <!--[![Name](Image)](Link)-->
 
 # pyA
@@ -81,10 +80,10 @@ In addition to passing numpy.ndarray as argument for Asig, it is also for possib
 Audio files are also possible using the file path. `WAV` should work without issues. `MP3` is supported but may raise error under Windows and Linux if [FFmpeg](https://ffmpeg.org/) is not installed. MacOS should be fine thanks to CoreAudio.
 
 * On Linux
-    - Install ffmpeg via apt-get: `sudo apt install ffmpeg`
+    - Install FFmpeg via apt-get: `sudo apt install ffmpeg`
 * On Windows
     - Download the latest distribution from https://ffmpeg.zeranoe.com/builds/
-    - Unzip the folder, preferably to `C:\`.
+    - Unzip the folder, preferably to `C:\`
     - Append the FFmpeg binary folder (e.g. `C:\ffmpeg\bin`) to the PATH system variable ([How do I set or change the PATH system variable?](https://www.java.com/en/download/help/path.xml))
 ### Key attributes
 * `atone.sig`  --> The numpy array containing the signal is 
