@@ -1,8 +1,11 @@
 language: python
 
-script: AUDIODEV=null nosetests --with-coverage --cover-package=pya
+script: nosetests --with-coverage --cover-package=pya
 # after_success:
 #   - coveralls --config_file .coveragerc
+env:
+  global:
+    AUDIODEV=null
 
 include: &LINUX
   addons:
