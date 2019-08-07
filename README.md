@@ -1,5 +1,5 @@
 [![Version](https://img.shields.io/badge/version-v0.2-orange.svg)](https://github.com/Thomas-Hermann/pya)
-[![PyPi](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
+[![PyPI](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
 [![License](https://img.shields.io/github/license/Thomas-Hermann/pya.svg)](LICENSE)
 <!-- 
 [![Build Status](https://travis-ci.org/Thomas-Hermann/pya.svg?branch=master)](https://travis-ci.org/Thomas-Hermann/pya)
