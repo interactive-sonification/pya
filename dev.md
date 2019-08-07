@@ -12,6 +12,10 @@ pip3 install -U setuptools twine wheel
 ```
 tox
 ```
+* Remove old releases
+```
+rm dist/*
+```
 * Build releases
 ```
 python3 setup.py sdist bdist_wheel 
@@ -24,12 +28,14 @@ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 * Test install uploaded release
 ```
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple pya
+pip3 install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple pya
 ```
 * Upload the official release
 ```
 twine upload dist/*
 ```
+* [Check](https://pypi.org/project/pya/) the public project page 
+
 * Test install uploaded release
 ```
 pip install pya

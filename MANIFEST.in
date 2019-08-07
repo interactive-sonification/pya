@@ -1,5 +1,4 @@
-include README.md
-include Changelog.md
+include *.md
 include *.txt
 include .coveragerc
 include .pylintrc
