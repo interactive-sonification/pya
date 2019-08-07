@@ -1,3 +1,14 @@
+# <a name="transitions-module"></a> transitions
+[![Version](https://img.shields.io/badge/version-v0.2-orange.svg)](https://github.com/Thomas-Hermann/pya)
+[![Build Status](https://travis-ci.org/Thomas-Hermann/pya.svg?branch=master)](https://travis-ci.org/Thomas-Hermann/pya)
+[![PyPi](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/transitions)
+[![License](https://img.shields.io/github/license/Thomas-Hermann/pya.svg)](LICENSE)
+<!-- 
+[![Coverage Status](https://coveralls.io/repos/Thomas-Hermann/pya/badge.svg?branch=master&service=github)](https://coveralls.io/github/Thomas-Hermann/pya?branch=master)
+
+[![GitHub commits](https://img.shields.io/github/commits-since/Thomas-Hermann/pya/0.2.svg)](https://github.com/pytransitions/transitions/compare/0.2...master) -->
+<!--[![Name](Image)](Link)-->
+
 # pyA
 
 ## What is pyA?
