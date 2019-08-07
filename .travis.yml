@@ -5,6 +5,10 @@ script: nosetests --with-coverage --cover-package=pya
 #   - coveralls --config_file .coveragerc
 
 include: &LINUX
+  addons:
+    apt:
+      packages:
+        - portaudio19-dev
   os: linux
   install:
     - sudo apt-get update
