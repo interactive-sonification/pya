@@ -1,4 +1,4 @@
-language: python
+language: sh
 
 install:
   - sudo apt-get update
@@ -16,6 +16,7 @@ install:
 script: nosetests --with-coverage --cover-package=pya
 # after_success:
 #   - coveralls --config_file .coveragerc
+
 env:
   global:
     AUDIODEV=null
@@ -27,16 +28,17 @@ include: &LINUX
       packages:
         - portaudio19-dev
   env:
-    TRAVIS_OS=Linux
+    - TRAVIS_OS=Linux
 
 include: &OSX
   os: osx
   env:
-    TRAVIS_OS=MacOSX
+    - TRAVIS_OS=MacOSX
 
 matrix:
   include: &LINUX_37
     - <<: *LINUX
       python: 3.7
     - <<: *OSX
+      python: 3.7
 
