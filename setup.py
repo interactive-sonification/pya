@@ -21,8 +21,8 @@ with codecs.open(join(project_root, 'README.md'), 'r', 'utf-8') as f:
 setup(
     name='pya',
     version=version['__version__'],
-    description='python audio coding classes - for dsp and sonification',
-        long_description=long_description,
+    description='Python audio coding classes - for dsp and sonification',
+    long_description=long_description,
     long_description_content_type="text/markdown",
     license='MIT',
     packages=['pya'],
@@ -31,5 +31,14 @@ setup(
     author='Thomas Hermann',
     author_email='thermann@techfak.uni-bielefeld.de',
     keywords=['sonification, sound synthesis'],
-    url='https://github.com/thomas-hermann/pya'
+    url='https://github.com/thomas-hermann/pya',
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "Development Status :: 4 - Beta",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Topic :: Multimedia :: Sound/Audio",
+        "Topic :: Multimedia :: Sound/Audio :: Analysis",
+        "Topic :: Multimedia :: Sound/Audio :: Sound Synthesis"
+    ],
 )
