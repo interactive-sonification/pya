@@ -1,7 +1,6 @@
 language: sh
 
 install:
-  - sudo apt-get update
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-$TRAVIS_OS-x86_64.sh -O miniconda.sh;
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
@@ -36,7 +35,7 @@ include: &OSX
     - TRAVIS_OS=MacOSX
 
 matrix:
-  include: &LINUX_37
+  include:
     - <<: *LINUX
       python: 3.7
     - <<: *OSX
