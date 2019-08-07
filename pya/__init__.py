@@ -5,7 +5,7 @@ from .pya import Asig, Aspec, Astft
 from .Aserver import Aserver
 from .Ugen import Ugen
 from .helpers import ampdb, dbamp, cpsmidi, midicps, linlin, clip, record, timeit, audioread_load, buf_to_float
-
+from .version import __version__
 
 def startup(**kwargs):
     return Aserver.startup_default_server(**kwargs)
