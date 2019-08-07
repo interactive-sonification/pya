@@ -1,8 +1,13 @@
 from setuptools import setup
 import os
+import codecs
 from os.path import join
 
 project_root = os.path.dirname(os.path.abspath(__file__))
+
+version = {}
+with open(join(project_root, 'pya/version.py')) as read_file:
+    exec(read_file.read(), version)
 
 with open(join(project_root, 'requirements.txt')) as read_file:
     REQUIRED = read_file.read().splitlines()
@@ -10,10 +15,15 @@ with open(join(project_root, 'requirements.txt')) as read_file:
 with open(join(project_root, 'requirements_test.txt')) as read_file:
     REQUIRED_TEST = read_file.read().splitlines()
 
+with codecs.open(join(project_root, 'README.md'), 'r', 'utf-8') as f:
+    long_description = ''.join(f.readlines())
+
 setup(
     name='pya',
-    version='0.0.1',
+    version=version['__version__'],
     description='python audio coding classes - for dsp and sonification',
+        long_description=long_description,
+    long_description_content_type="text/markdown",
     license='MIT',
     packages=['pya'],
     install_requires=REQUIRED,
