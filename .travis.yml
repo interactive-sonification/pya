@@ -1,6 +1,6 @@
 language: python
 
-script: nosetests --with-coverage --cover-package=pya
+script: AUDIODEV=null nosetests --with-coverage --cover-package=pya
 # after_success:
 #   - coveralls --config_file .coveragerc
 
