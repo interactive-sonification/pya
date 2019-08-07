@@ -4,4 +4,4 @@ matplotlib
 pyaudio>=0.2.11  # Portaudio is required beforehand, for linux: sudo apt-get install libasound-dev
 # Since portaudio is not a python package, the easiest way is to use Anaconda, conda install pyaudio
 # This will install both portaudio and pyaudio
-audioread >= 2.0.0
+audioread>=2.0.0
