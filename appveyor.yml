@@ -20,7 +20,8 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - "conda create -c pkgs/main -q -n test-environment python=%PYTHON_VERSION% coverage --file=requirements.txt --file=requirements_test.txt"
+  - conda config --append channels conda-forge
+  - "conda create -q -n test-environment python=%PYTHON_VERSION% coverage --file=requirements.txt --file=requirements_test.txt"
   - activate test-environment
 
 test_script:
