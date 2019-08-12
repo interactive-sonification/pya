@@ -2,20 +2,24 @@ build: false
 
 environment:
   matrix:
-    - PYTHON_VERSION: 3.7
+    # August 2019: pyaudio (PyPI) does not provide precompiled portaudio
+    # libraries for Python 3.7; conda pyadudio package does not work as well
+
+    - PYTHON_VERSION: 3.6
       MINICONDA: C:\Miniconda3-x64
 
 init:
   - "ECHO %PYTHON_VERSION% %MINICONDA%"
 
 install:
-  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
+  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%MINICONDA%\\Library\\bin;%PATH%"
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
   - conda config --add channels conda-forge
-  - "conda create -q -n test-environment python=%PYTHON_VERSION% coverage --file=requirements.txt --file=requirements_test.txt"
+  - "conda create -q -n test-environment python=%PYTHON_VERSION%"
   - activate test-environment
+  - pip install coverage -r requirements.txt -r requirements_test.txt
 
 test_script:
   - nosetests --with-coverage --cover-package=pya
