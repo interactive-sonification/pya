@@ -14,7 +14,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda config --add channels conda-forge
+  - conda config --append channels conda-forge
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION coverage --file=requirements.txt --file=requirements_test.txt
   - source activate test-environment
 
