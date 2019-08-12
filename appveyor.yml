@@ -1,4 +1,11 @@
+# no dedicated build phase needed so far
 build: false
+
+branches:
+  only:
+    - master
+    - develop
+    - dev-appveyor
 
 environment:
   matrix:
@@ -16,7 +23,6 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda config --add channels conda-forge
   - "conda create -q -n test-environment python=%PYTHON_VERSION%"
   - activate test-environment
   - pip install coverage -r requirements.txt -r requirements_test.txt
