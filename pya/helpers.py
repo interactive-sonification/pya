@@ -4,7 +4,7 @@ import numpy as np
 import pyaudio
 import time
 from scipy.fftpack import fft
-from audioread import audio_open
+from .codec import audio_read
 
 class _error(Exception):    
     pass
@@ -180,16 +180,14 @@ def normalize(d):
     return d
 
 
-def audioread_load(path, offset=0, duration=None, dtype=np.float32):
+def audio_from_file(path, offset=0, duration=None, dtype=np.float32):
     '''Load an audio buffer using audioread.
     This loads one block at a time, and then concatenates the results.
     '''
-
-    y = []
-    with audio_open(path) as input_file:
+    y = []  # audio array
+    with audio_read(path) as input_file:
         sr_native = input_file.samplerate
         n_channels = input_file.channels
-
         s_start = int(np.round(sr_native * offset)) * n_channels
 
         if duration is None:
@@ -197,41 +195,32 @@ def audioread_load(path, offset=0, duration=None, dtype=np.float32):
         else:
             s_end = s_start + (int(np.round(sr_native * duration))
                                * n_channels)
-
         n = 0
-
         for frame in input_file:
             frame = buf_to_float(frame, dtype=dtype)
             n_prev = n
             n = n + len(frame)
-
             if n < s_start:
                 # offset is after the current frame
                 # keep reading
                 continue
-
             if s_end < n_prev:
                 # we're off the end.  stop reading
                 break
-
             if s_end < n:
                 # the end is in this frame.  crop.
                 frame = frame[:s_end - n_prev]
-
             if n_prev <= s_start <= n:
                 # beginning is in this frame
                 frame = frame[(s_start - n_prev):]
-
             # tack on the current frame
             y.append(frame)
-
     if y:
         y = np.concatenate(y)
         if n_channels > 1:
-            y = y.reshape((-1, n_channels)).T
+            y = y.reshape((-1, n_channels))
     else:
         y = np.empty(0, dtype=dtype)
-
     return y, sr_native
 
 
@@ -255,13 +244,9 @@ def buf_to_float(x, n_bytes=2, dtype=np.float32):
     x_float : np.ndarray [dtype=float]
         The input data buffer cast to floating point
     """
-
     # Invert the scale of the data
-    scale = 1./float(1 << ((8 * n_bytes) - 1))
-
+    scale = 1. / float(1 << ((8 * n_bytes) - 1))
     # Construct the format string
     fmt = '<i{:d}'.format(n_bytes)
-
     # Rescale and format the data buffer
     return scale * np.frombuffer(x, fmt).astype(dtype)
-
