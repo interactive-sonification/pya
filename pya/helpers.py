@@ -202,6 +202,7 @@ def audio_from_file(path, offset=0, duration=None, dtype=np.float32):
             y = y.reshape((-1, n_channels))
     else:
         y = np.empty(0, dtype=dtype)
+        sr_native = 0
     return y, sr_native
 
 
