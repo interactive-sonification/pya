@@ -1,4 +1,4 @@
-# This file handles opening audio files. 
+#  This file handles opening audio files. 
 import wave
 import aifc
 import sunau
@@ -10,36 +10,6 @@ import re
 import time
 import os
 import threading
-
-class DecodeError(Exception):
-    """The base exception class for all decoding errors raised by this
-    package."""
-
-class NoBackendError(DecodeError):
-    """The file could not be decoded by any backend. Either no backends
-    are available or each available backend failed to decode the file.
-    """
-
-class UnsupportedError(DecodeError):
-    """File is not an AIFF, WAV, or Au file."""
-
-class BitWidthError(DecodeError):
-    """The file uses an unsupported bit width."""
-
-class FFmpegError(DecodeError):
-    pass
-
-class CommunicationError(FFmpegError):
-    """Raised when the output of FFmpeg is not parseable."""
-
-
-class NotInstalledError(FFmpegError):
-    """Could not find the ffmpeg binary."""
-
-
-class ReadTimeoutError(FFmpegError):
-    """Reading from the ffmpeg command-line tool timed out."""
-
 try:
     import queue
 except ImportError:
@@ -55,6 +25,42 @@ if sys.version_info > (3, 4, 0):
 else:
     SUPPORTED_WIDTHS = (1, 2, 4)
 
+
+class DecodeError(Exception):
+    """The base exception class for all decoding errors raised by this
+    package."""
+
+
+class NoBackendError(DecodeError):
+    """The file could not be decoded by any backend. Either no backends
+    are available or each available backend failed to decode the file.
+    """
+
+
+class UnsupportedError(DecodeError):
+    """File is not an AIFF, WAV, or Au file."""
+
+
+class BitWidthError(DecodeError):
+    """The file uses an unsupported bit width."""
+
+
+class FFmpegError(DecodeError):
+    pass
+
+
+class CommunicationError(FFmpegError):
+    """Raised when the output of FFmpeg is not parseable."""
+
+
+class NotInstalledError(FFmpegError):
+    """Could not find the ffmpeg binary."""
+
+
+class ReadTimeoutError(FFmpegError):
+    """Reading from the ffmpeg command-line tool timed out."""
+
+
 def byteswap(s):
     """Swaps the endianness of the bytesting s, which must be an array
     of shorts (16-bit signed integers). This is probably less efficient
@@ -63,10 +69,11 @@ def byteswap(s):
     assert len(s) % 2 == 0
     parts = []
     for i in range(0, len(s), 2):
-        chunk = s[i:i + 2]
+        chunk = s[i: i + 2]
         newchunk = struct.pack('<h', *struct.unpack('>h', chunk))
         parts.append(newchunk)
     return b''.join(parts)
+
 
 class RawAudioFile(object):
     """An AIFF, WAV, or Au file that can be read by the Python standard
@@ -183,6 +190,7 @@ class QueueReaderThread(threading.Thread):
                 self.queue.put(data)
             if not data:
                 break  # Stream closed (EOF).
+
 
 def popen_multiple(commands, command_args, *args, **kwargs):
     """Like `subprocess.Popen`, but can try multiple commands in case
@@ -367,12 +375,7 @@ class FFmpegAudioFile(object):
         )
         if match:
             durparts = list(map(int, match.groups()))
-            duration = (
-                durparts[0] * 60 * 60 +
-                durparts[1] * 60 +
-                durparts[2] +
-                float(durparts[3]) / 10
-            )
+            duration = (durparts[0] * 60 * 60 + durparts[1] * 60 + durparts[2] + float(durparts[3]) / 10)
             self.duration = duration
         else:
             # No duration found.
@@ -404,8 +407,6 @@ class FFmpegAudioFile(object):
             # cleanly.
             self.proc.stdout.close()
             self.proc.stderr.close()
-
-
         # Close the handle to os.devnull, which is opened regardless of if
         # a subprocess is successfully created.
         self.devnull.close()
@@ -435,6 +436,7 @@ def available_backends():
     if ffmpeg_available():  # FFmpeg.
         ab.append(FFmpegAudioFile)
     return ab
+
 
 def audio_read(fp):
     backends = available_backends()
