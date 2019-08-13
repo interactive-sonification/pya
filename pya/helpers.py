@@ -1,10 +1,10 @@
-# helpers.py
 # Collection of small helper functions
 import numpy as np
 import pyaudio
 import time
 from scipy.fftpack import fft
 from .codec import audio_read
+
 
 class _error(Exception):    
     pass
@@ -40,25 +40,6 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
     stream.close()
     p.terminate()
     return np.frombuffer(b''.join(buflist), dtype=np.int16)
-
-# def play(sig, num_channels=1, sr=44100, block=False):
-#     """Plays audio signal via simpleaudio
-
-#     Arguments:
-#         sig {iterable} -- Signal to be played
-#     Keyword Arguments:
-#         num_channels {int} -- Number of channels (default: {1})
-#         sr {int} -- Audio sample rate (default: {44100})
-#         block {bool} -- if True, block until playback is finished
-#                         (default: {False})
-#     Returns:
-#         simpleaudio play_obj -- see description in simpleaudio
-#     """
-#     play_obj = sa.play_buffer((32767*sig).astype(np.int16), num_channels=num_channels,
-#     bytes_per_sample=2, sample_rate=sr)
-#     if block:
-#         play_obj.wait_done() # wait for playback to finish before returning
-#     return play_obj
 
 
 def linlin(x, smi, sma, dmi, dma):
@@ -193,8 +174,7 @@ def audio_from_file(path, offset=0, duration=None, dtype=np.float32):
         if duration is None:
             s_end = np.inf
         else:
-            s_end = s_start + (int(np.round(sr_native * duration))
-                               * n_channels)
+            s_end = s_start + (int(np.round(sr_native * duration)) * n_channels)
         n = 0
         for frame in input_file:
             frame = buf_to_float(frame, dtype=dtype)
@@ -215,6 +195,7 @@ def audio_from_file(path, offset=0, duration=None, dtype=np.float32):
                 frame = frame[(s_start - n_prev):]
             # tack on the current frame
             y.append(frame)
+
     if y:
         y = np.concatenate(y)
         if n_channels > 1:
