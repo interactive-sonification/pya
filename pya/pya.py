@@ -9,7 +9,7 @@ import scipy.interpolate
 import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
-from .helpers import ampdb, dbamp, linlin, timeit, spectrum, audioread_load
+from .helpers import ampdb, dbamp, linlin, timeit, spectrum, audio_from_file
 from copy import copy, deepcopy
 
 _LOGGER = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class Asig:
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
         if isinstance(sig, str):
-            self.load_audio_file(sig)
+            self._load_audio_file(sig)
         elif isinstance(sig, int):  # sample length
             if channels == 1:
                 self.sig = np.zeros(sig).astype("float32")
@@ -112,36 +112,16 @@ class Asig:
             else:
                 raise ValueError("list size doesn't match channel numbers {}".format(self.channels))
 
-    def load_audio_file(self, fname):
-        """Load WAV or MP3 file, and set self.sig to the signal and self.sr to the sampling rate. 
+    def _load_audio_file(self, fname):
+        """Load audio file, and set self.sig to the signal and self.sr to the sampling rate. 
+        Currently support two types of audio loader: 1) Standard library for .wav, .aiff, 
+        and ffmpeg for other such as .mp3.
 
         Parameters
         ----------
         fname : str
-            Path to file. 
-            '.wav' files are loaded using scipy.signal.io.wavfile.read().
-            '.mp3' files are loaded using the (optional) audioread package, if available.
-            Other formats will be added later as needed.
-        """
-        if fname.endswith('.wav'):
-            self.sr, self.sig = wavfile.read(fname)  # load the sample data
-            if self.sig.dtype == np.dtype('int16'):
-                self.sig = (self.sig / 32768.).astype('float32')
-
-            elif self.sig.dtype != np.dtype('float32'):
-                self.sig = self.sig.astype('float32')
-            else:
-                warn("Unsupported data type.")
-        elif fname.endswith('.mp3'):
-            try:
-                self.sig, self.sr = audioread_load(fname, dtype=np.float32)
-            except FileNotFoundError:
-                raise FileNotFoundError("File or directory not found")
-            except Exception:   # The other error is likely to be backend error from ffmpeg not installed or added to path
-                raise ValueError("Can't find a supported backend to encode mp3. This is likely to happen on Windows and Linux os" 
-                " if FFmpeg is not installed. Please refers to pyA github or README.md for installation guide.")
-        else:
-            raise AttributeError("Unsupported file format, use WAV or MP3.")
+            Path to file."""
+        self.sig, self.sr = audio_from_file(fname)
 
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         """Save signal as .wav file
