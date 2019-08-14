@@ -1,11 +1,11 @@
-[![Version](https://img.shields.io/badge/version-v0.2-orange.svg)](https://github.com/Thomas-Hermann/pya)
+[![Version](https://img.shields.io/badge/version-v0.2.1-orange.svg)](https://github.com/Thomas-Hermann/pya)
 [![PyPI](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
+[![GitHub commits](https://img.shields.io/github/commits-since/Thomas-Hermann/pya/v0.2.svg)](https://github.com/Thomas-Hermann/pya/compare/v0.2...master)
 [![License](https://img.shields.io/github/license/Thomas-Hermann/pya.svg)](LICENSE)
 <!-- 
 [![Build Status](https://travis-ci.org/Thomas-Hermann/pya.svg?branch=master)](https://travis-ci.org/Thomas-Hermann/pya)
 [![Coverage Status](https://coveralls.io/repos/Thomas-Hermann/pya/badge.svg?branch=master&service=github)](https://coveralls.io/github/Thomas-Hermann/pya?branch=master)
-
-[![GitHub commits](https://img.shields.io/github/commits-since/Thomas-Hermann/pya/0.2.svg)](https://github.com/Thomas-Hermann/pya/compare/0.2...master) -->
+ -->
 <!--[![Name](Image)](Link)-->
 
 # pyA
