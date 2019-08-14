@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-v0.2-orange.svg)](https://github.com/Thomas-Hermann/pya)
+[![Version](https://img.shields.io/badge/version-v0.2.1-orange.svg)](https://github.com/Thomas-Hermann/pya)
 [![PyPI](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
 [![GitHub commits](https://img.shields.io/github/commits-since/Thomas-Hermann/pya/v0.2.svg)](https://github.com/Thomas-Hermann/pya/compare/v0.2...master)
 [![License](https://img.shields.io/github/license/Thomas-Hermann/pya.svg)](LICENSE)
