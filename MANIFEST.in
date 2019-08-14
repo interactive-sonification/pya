@@ -10,5 +10,6 @@ recursive-include examples *.ipynb
 recursive-include examples *.py
 recursive-include examples *.wav
 recursive-include examples *.mp3
+recursive-include examples *.aif
 recursive-include tests *.py
 recursive-exclude examples/.ipynb_checkpoints *.ipynb
