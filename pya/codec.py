@@ -17,6 +17,11 @@ except ImportError:
 
 COMMANDS = ('ffmpeg', 'avconv')
 
+if sys.platform == "win32":
+    PROC_FLAGS = 0x08000000
+else:
+    PROC_FLAGS = 0
+
 # Produce two-byte (16-bit) output samples.
 TARGET_WIDTH = 2
 # Python 3.4 added support for 24-bit (3-byte) samples.
@@ -211,15 +216,30 @@ def popen_multiple(commands, command_args, *args, **kwargs):
 
 
 def ffmpeg_available():
-    """Detect if the FFmpeg backend can be used on this system."""
-    proc = popen_multiple(
-        COMMANDS,
-        ['-version'],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    proc.wait()
-    return (proc.returncode == 0)
+    # """Detect if the FFmpeg backend can be used on this system."""
+    # proc = popen_multiple(
+    #     COMMANDS,
+    #     ['-version'],
+    #     stdout=subprocess.PIPE,
+    #     stderr=subprocess.PIPE,
+    # )
+    # proc.wait()
+    # return (proc.returncode == 0)
+    """Detect whether the FFmpeg backend can be used on this system.
+    """
+    try:
+        proc = popen_multiple(
+            COMMANDS,
+            ['-version'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            creationflags=PROC_FLAGS,
+        )
+    except OSError:
+        return False
+    else:
+        proc.wait()
+        return proc.returncode == 0
 
 
 # For Windows error switch management, we need a lock to keep the mode
@@ -445,4 +465,4 @@ def audio_read(fp):
             return BackendClass(fp)
         except DecodeError:
             pass
-    raise NoBackendError()  # If all backends fails 
+    raise NoBackendError("Couldn't find a suitable backend to load the file.")  # If all backends fails 
