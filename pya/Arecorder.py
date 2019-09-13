@@ -1,7 +1,15 @@
 # Arecorder class 
 import time
+import logging
 from sys import platform
+from warnings import warn
+import numpy as np
 import pyaudio
+from . import Asig
+
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.addHandler(logging.NullHandler())
+
 
 class Arecorder:
     """pya audio recorder

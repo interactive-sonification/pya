@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 (September 2019)
+* Restructure Asig, Astft, Aspec into different files
+* Add Arecorder class
+
 ## 0.2.1 (August 2019)
 
 * 0.2.1 is a minor update that remove the audioread depedency and directly opt for standard library for .wav and .aif support, ffmpeg for .mp3 support. 

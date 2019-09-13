@@ -1,4 +1,4 @@
-from .pya import Asig
+from .Asig import Asig
 import numpy as np
 from scipy import signal
 from .helpers import get_length, normalize
