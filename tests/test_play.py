@@ -14,6 +14,7 @@ try:
 except OSError:
     pass
 
+
 class TestPlay(TestCase):
 
     def setUp(self):
@@ -27,7 +28,7 @@ class TestPlay(TestCase):
 
     def tearDown(self):
         pass
-    
+
     @skipUnless(has_output, "PyAudio found no output device.")
     def test_play(self):
         # Shift a mono signal to chan 4 should result in a 4 channels signals
