@@ -15,12 +15,12 @@ install:
   - conda update -q conda
   - conda info -a
   - conda config --append channels conda-forge
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION coverage --file=requirements.txt --file=requirements_test.txt
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION coverage python-coveralls --file=requirements.txt --file=requirements_test.txt
   - source activate test-environment
 
 script: nosetests --with-coverage --cover-package=pya
-# after_success:
-#   - coveralls --config_file .coveragerc
+after_success:
+  - coveralls --config_file .coveragerc
 
 env:
   global:
