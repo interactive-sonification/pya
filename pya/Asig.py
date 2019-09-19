@@ -1199,7 +1199,6 @@ class Asig:
         # TODO Check multi-channels. 
         nsteps = len(amps)
         duration = self.samples / self.sr
-        print(ts)
         if nsteps == self.samples:
             sig_new = self.sig * amps ** curve
         else:
