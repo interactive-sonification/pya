@@ -9,8 +9,6 @@ from .Arecorder import Arecorder
 from .Ugen import Ugen
 from .version import __version__
 
-__all__ = ['Asig', 'Aspec', 'Astft', 'Aserver', 'Arecorder', 'Ugen']
-
 
 def startup(**kwargs):
     return Aserver.startup_default_server(**kwargs)
@@ -18,3 +16,8 @@ def startup(**kwargs):
 
 def shutdown(**kwargs):
     Aserver.shutdown_default_server(**kwargs)
+    
+__all__ = ['Asig', 'Aspec', 'Astft', 'Aserver', 'Arecorder', 'Ugen',
+           'startup', 'shutdown']
+
+__all__ += ['helper']
