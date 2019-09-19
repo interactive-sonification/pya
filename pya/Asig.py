@@ -545,7 +545,7 @@ class Asig:
         if 'server' in kwargs.keys():
             s = kwargs['server']
         else:
-            s = Aserver.default
+            s = Aserver.Aserver.default
         if not isinstance(s, Aserver.Aserver):
             warn("Asig.play: no default server running, nor server arg specified.")
             return self
