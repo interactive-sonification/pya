@@ -30,7 +30,7 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
         numpy array of the recorded audio signal.
     """
     p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paInt16, channels=channels, rate=rate, input=True,
+    stream = p.open(format=pyaudio.paFloat32, channels=channels, rate=rate, input=True,
                     output=True, frames_per_buffer=chunk)
     buflist = []
     for _ in range(0, int(rate / chunk * dur)):
@@ -39,7 +39,7 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
     stream.stop_stream()
     stream.close()
     p.terminate()
-    return np.frombuffer(b''.join(buflist), dtype=np.int16)
+    return np.frombuffer(b''.join(buflist), dtype=np.float32)
 
 
 def linlin(x, smi, sma, dmi, dma):

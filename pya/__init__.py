@@ -10,7 +10,7 @@ from .Ugen import Ugen
 from .version import __version__
 from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, get_length,\
                     timeit, audio_from_file, buf_to_float, spectrum, audio_from_file, \
-                    normalize
+                    normalize, record
                     
 
 def startup(**kwargs):
@@ -23,4 +23,6 @@ def shutdown(**kwargs):
 __all__ = ['Asig', 'Aspec', 'Astft', 'Aserver', 'Arecorder', 'Ugen',
            'startup', 'shutdown']
 
-__all__ += ['helper']
+__all__ += ['ampdb', 'dbamp', 'cpsmidi', 'midicps', 'linlin', 'clip', 'get_length',\
+                    'audio_from_file', 'buf_to_float', 'spectrum', 'audio_from_file', \
+                        'normalize', 'record']
