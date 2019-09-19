@@ -9,7 +9,7 @@ import scipy.interpolate
 import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
-from . import Aserver
+from .Aserver import Aserver
 from . import Aspec
 from . import Astft
 from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, timeit, audio_from_file, buf_to_float
@@ -545,8 +545,8 @@ class Asig:
         if 'server' in kwargs.keys():
             s = kwargs['server']
         else:
-            s = Aserver.Aserver.default
-        if not isinstance(s, Aserver.Aserver):
+            s = Aserver.default
+        if not isinstance(s, Aserver):
             warn("Asig.play: no default server running, nor server arg specified.")
             return self
         if rate == 1 and self.sr == s.sr:
@@ -1199,6 +1199,7 @@ class Asig:
         # TODO Check multi-channels. 
         nsteps = len(amps)
         duration = self.samples / self.sr
+        print(ts)
         if nsteps == self.samples:
             sig_new = self.sig * amps ** curve
         else:
