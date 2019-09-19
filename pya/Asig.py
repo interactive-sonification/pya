@@ -1197,7 +1197,6 @@ class Asig:
 
         """
         # TODO Check multi-channels. 
-        print("Envelop method called. ")
         nsteps = len(amps)
         duration = self.samples / self.sr
         if nsteps == self.samples:
@@ -1248,7 +1247,6 @@ class Asig:
             returns a new asig with the enveloped applied to its signal array
 
         """
-        print('Adsr called. ')
         dur = self.get_duration()
         return self.envelope([0, 1, sus, sus, 0], [0, att, att + dec, dur - rel, dur],
                              curve=curve, kind=kind)
