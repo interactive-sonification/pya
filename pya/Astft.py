@@ -7,7 +7,7 @@ import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
 from . import Asig
-from .helpers import ampdb, dbamp, linlin, timeit, spectrum, audio_from_file
+from .helper import ampdb, dbamp, linlin, timeit, spectrum, audio_from_file
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())

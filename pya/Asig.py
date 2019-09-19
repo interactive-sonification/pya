@@ -12,8 +12,8 @@ from scipy.io import wavfile
 from . import Aserver
 from . import Aspec
 from . import Astft
-from .helpers import ampdb, dbamp, cpsmidi, midicps, linlin, clip, record, timeit, audio_from_file, buf_to_float
-from .helpers import spectrum, audio_from_file
+from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, timeit, audio_from_file, buf_to_float
+from .helper import spectrum, audio_from_file
 from copy import copy, deepcopy
 
 _LOGGER = logging.getLogger(__name__)
@@ -1197,6 +1197,7 @@ class Asig:
 
         """
         # TODO Check multi-channels. 
+        print("Envelop method called. ")
         nsteps = len(amps)
         duration = self.samples / self.sr
         if nsteps == self.samples:
@@ -1216,8 +1217,7 @@ class Asig:
                         ts = np.insert(np.array(ts), -1, duration)
                         amps = np.insert(np.array(amps), -1, amps[-1])
                 else:
-                    _LOGGER.error("Asig.envelope error: ts not sorted")
-                    return self
+                    raise AttributeError("Asig.envelope error: ts not sorted")
                 given_ts = ts
             if nsteps != self.samples:
                 interp_fn = scipy.interpolate.interp1d(given_ts, amps, kind=kind)
@@ -1248,6 +1248,7 @@ class Asig:
             returns a new asig with the enveloped applied to its signal array
 
         """
+        print('Adsr called. ')
         dur = self.get_duration()
         return self.envelope([0, 1, sus, sus, 0], [0, att, att + dec, dur - rel, dur],
                              curve=curve, kind=kind)

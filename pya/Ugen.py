@@ -1,7 +1,7 @@
 from .Asig import Asig
 import numpy as np
 from scipy import signal
-from .helpers import get_length, normalize
+from .helper import get_length, normalize
 
 
 class Ugen(Asig):
