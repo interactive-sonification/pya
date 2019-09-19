@@ -1209,7 +1209,7 @@ class Asig:
                 if nsteps != len(ts):
                     _LOGGER.error("Asig.envelope error: len(amps)!=len(ts)")
                     return self
-                if all(ts[i] < ts[i + 1] for i in range(len(ts) - 1)):  # if list is monotonous
+                if all(ts[i] <= ts[i + 1] for i in range(len(ts) - 1)):  # if list is monotonous
                     if ts[0] > 0:  # if first t > 0 extend amps/ts arrays prepending item
                         ts = np.insert(np.array(ts), 0, 0)
                         amps = np.insert(np.array(amps), 0, amps[0])
