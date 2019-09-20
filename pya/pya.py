@@ -1075,7 +1075,7 @@ class Asig:
 
         Parameters
         ----------
-        cutoff_freqs : int
+        cutoff_freqs : float or [float, float]
             Cutoff frequency or frequencies.
         btype : str
             Filter type (Default value = 'bandpass')
