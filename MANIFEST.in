@@ -1,5 +1,6 @@
 include *.md
 include *.txt
+include *.yml
 include .coveragerc
 include .pylintrc
 include LICENSE

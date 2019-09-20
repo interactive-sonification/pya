@@ -7,6 +7,8 @@ from .Ugen import Ugen
 from .helpers import ampdb, dbamp, cpsmidi, midicps, linlin, clip, record, timeit, audio_from_file, buf_to_float
 from .version import __version__
 
+__all__ = ['Asig', 'Aserver', 'Aspec', 'Astft', 'Ugen']
+
 
 def startup(**kwargs):
     return Aserver.startup_default_server(**kwargs)
