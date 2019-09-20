@@ -2,10 +2,12 @@
 [![PyPI](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
 [![GitHub commits](https://img.shields.io/github/commits-since/Thomas-Hermann/pya/v0.2.svg)](https://github.com/Thomas-Hermann/pya/compare/v0.2...master)
 [![License](https://img.shields.io/github/license/Thomas-Hermann/pya.svg)](LICENSE)
-<!-- 
-[![Build Status](https://travis-ci.org/Thomas-Hermann/pya.svg?branch=master)](https://travis-ci.org/Thomas-Hermann/pya)
+[![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=develop)](https://travis-ci.org/interactive-sonification/pya)
+[![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/develop?svg=true)](https://ci.appveyor.com/project/aleneum/pya-b7gkx/branch/develop)
+<!--
 [![Coverage Status](https://coveralls.io/repos/Thomas-Hermann/pya/badge.svg?branch=master&service=github)](https://coveralls.io/github/Thomas-Hermann/pya?branch=master)
- -->
+-->
+
 <!--[![Name](Image)](Link)-->
 
 # pyA

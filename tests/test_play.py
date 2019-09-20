@@ -1,9 +1,18 @@
 import time
-from unittest import TestCase
+from unittest import TestCase, skipUnless
 from pya import *
 import numpy as np
 import logging
+import pyaudio
 logging.basicConfig(level=logging.WARNING)
+
+# check if we have an output device
+has_output = False
+try:
+    pyaudio.PyAudio().get_default_output_device_info()['index']
+    has_output = True
+except OSError:
+    pass
 
 
 class TestPlay(TestCase):
@@ -20,6 +29,7 @@ class TestPlay(TestCase):
     def tearDown(self):
         pass
 
+    @skipUnless(has_output, "PyAudio found no output device.")
     def test_play(self):
         # Shift a mono signal to chan 4 should result in a 4 channels signals
         s = Aserver()
