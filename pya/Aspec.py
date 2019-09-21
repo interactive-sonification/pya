@@ -26,7 +26,7 @@ class Aspec:
             Channel names (Default value = None)
         """
         self.cn = cn
-        if type(x) == Asig:
+        if type(x) == Asig.Asig:
             self.sr = x.sr
             self.rfftspec = np.fft.rfft(x.sig)
             self.label = x.label + "_spec"
@@ -43,7 +43,7 @@ class Aspec:
             if len(np.shape(x)) > 1:
                 self.channels = np.shape(x)[1]
         else:
-            raise AttributeError("unknown initializer")
+            raise AttributeError("unknown initializer, argument x needs to be an Asig or array")
         if label:
             self.label = label
         self.nr_freqs = self.samples // 2 + 1
@@ -51,7 +51,7 @@ class Aspec:
 
     def to_sig(self):
         """Convert Aspec into Asig"""
-        return Asig(np.fft.irfft(self.rfftspec), sr=self.sr, label=self.label + '_2sig', cn=self.cn)
+        return Asig.Asig(np.fft.irfft(self.rfftspec), sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
     def weight(self, weights, freqs=None, curve=1, kind='linear'):
         """TODO

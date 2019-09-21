@@ -1362,12 +1362,12 @@ class Asig:
 
     def to_spec(self):
         """Return Aspec object which is the rfft of the signal."""
-        return Aspec(self)
+        return Aspec.Aspec(self)
 
     def to_stft(self, **kwargs):
         """Return Astft object which is the stft of the signal. Keyword arguments are the arguments for
         scipy.signal.stft(). """
-        return Astft(self, **kwargs)
+        return Astft.Astft(self, **kwargs)
 
     def plot_spectrum(self, offset=0, scale=1., xlim=None, **kwargs):
         """Plot spectrum of the signal

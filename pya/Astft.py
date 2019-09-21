@@ -74,7 +74,7 @@ class Astft:
         self.padded = padded
         self.axis = axis
         self.cn = cn
-        if type(x) == Asig:
+        if type(x) == Asig.Asig:
             # TODO multichannel.
             self.sr = x.sr
             if sr:
@@ -125,7 +125,7 @@ class Astft:
             kwargs['fs'] = kwargs['sr']
             del kwargs['sr']
         _, sig = scipy.signal.istft(self.stft, **kwargs)  # _ since 1st return value 'times' unused
-        return Asig(sig, sr=self.sr, label=self.label + '_2sig', cn=self.cn)
+        return Asig.Asig(sig, sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
     def plot(self, fn=lambda x: x, ax=None, xlim=None, ylim=None, **kwargs):
         """Plot spectrogram
