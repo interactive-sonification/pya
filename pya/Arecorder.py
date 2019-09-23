@@ -15,7 +15,7 @@ class Arecorder:
     """pya audio recorder
     Based on pyaudio, uses callbacks to save audio data
     for pyaudio signals into ASigs
-    
+
     Examples:
     -----------
     from pya import *
@@ -58,9 +58,8 @@ class Arecorder:
     def _recorder_callback(self, in_data, frame_count, time_info, flag):
         self.block_cnt += 1
         if self.recording_flag:
-            # print(self.block_cnt, len(in_data), )
             sigar = np.frombuffer(in_data, dtype=self.dtype)
-            data_float = np.reshape(sigar, (len(sigar)//self.channels, self.channels)) # (chunk length, chns)
+            data_float = np.reshape(sigar, (len(sigar) // self.channels, self.channels))  # (chunk length, chns)
             self.record_buffer.append(data_float)
             # E = 10 * np.log10(np.mean(data_float ** 2)) # energy in dB
             # os.write(1, f"\r{E}    | {self.block_cnt}".encode())
@@ -69,9 +68,9 @@ class Arecorder:
     def boot(self): 
         """boot recorder"""
         self.pastream = self.pa.open(format=self.format, channels=self.channels,
-                        frames_per_buffer=self.bs, rate=self.sr,
-                        input_device_index=self.device, output=False, input=True, 
-                        stream_callback=self._recorder_callback)        
+                                     frames_per_buffer=self.bs, rate=self.sr,
+                                     input_device_index=self.device, output=False, 
+                                     input=True, stream_callback=self._recorder_callback)        
         self.boot_time = time.time()
         self.block_time = self.boot_time
         self.block_cnt = 0
@@ -93,7 +92,7 @@ class Arecorder:
         except AttributeError:
             _LOGGER.info("No stream found...")
         self.pastream = None
-    
+
     def record(self):
         if self.recording_flag:
             _LOGGER.info("Arecorder:record: is already recording")
@@ -137,4 +136,3 @@ class Arecorder:
         msg = f"""Arecorder: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}, 
             Device: {self.device_dict["name"]}, Index: {self.device_dict['index']}"""
         return msg
-

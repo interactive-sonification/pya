@@ -13,7 +13,6 @@ _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
 
-
 # TODO, check with multichannel
 class Astft:
     """Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
