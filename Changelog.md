@@ -2,8 +2,11 @@
 
 
 ## 0.3.0 (September 2019)
+
 * Restructure Asig, Astft, Aspec into different files
 * Add Arecorder class
+* Introduced CI testing with travis (*nix) and appveyor (Windows)
+* Introduced coveralls test coverage analysis
 
 
 ## 0.2.1 (August 2019)
