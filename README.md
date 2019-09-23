@@ -1,6 +1,6 @@
-[![Version](https://img.shields.io/badge/version-v0.2.1-orange.svg)](https://github.com/Thomas-Hermann/pya)
+[![Version](https://img.shields.io/badge/version-v0.3.0-orange.svg)](https://github.com/Thomas-Hermann/pya)
 [![PyPI](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
-[![GitHub commits](https://img.shields.io/github/commits-since/Thomas-Hermann/pya/v0.2.svg)](https://github.com/Thomas-Hermann/pya/compare/v0.2...master)
+[![GitHub commits](https://img.shields.io/github/commits-since/Thomas-Hermann/pya/v0.2.1.svg)](https://github.com/Thomas-Hermann/pya/compare/v0.2.1...master)
 [![License](https://img.shields.io/github/license/Thomas-Hermann/pya.svg)](LICENSE)
 [![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=develop)](https://travis-ci.org/interactive-sonification/pya)
 [![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/develop?svg=true)](https://ci.appveyor.com/project/aleneum/pya-b7gkx/branch/develop)
