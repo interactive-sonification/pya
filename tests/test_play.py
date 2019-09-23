@@ -2,14 +2,12 @@ import time
 from unittest import TestCase, skipUnless
 from pya import *
 import numpy as np
-import logging
 import pyaudio
-logging.basicConfig(level=logging.WARNING)
 
 # check if we have an output device
 has_output = False
 try:
-    pyaudio.PyAudio().get_default_output_device_info()['index']
+    pyaudio.PyAudio().get_default_output_device_info()
     has_output = True
 except OSError:
     pass

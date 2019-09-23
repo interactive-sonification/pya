@@ -7,10 +7,11 @@ import pyaudio
 # check if we have an output device
 has_input = False
 try:
-    pyaudio.PyAudio().get_default_input_device_info()['index']
+    pyaudio.PyAudio().get_default_input_device_info()
     has_input = True
 except OSError:
     pass
+
 
 class TestArecorder(TestCase):
 
@@ -20,7 +21,7 @@ class TestArecorder(TestCase):
     def tearDown(self):
         pass
 
-    @skipUnless(has_input, "PyAudio found no output device.")
+    @skipUnless(has_input, "PyAudio found no input device.")
     def test_arecorder(self):
         ar = Arecorder(channels=1).boot()
         self.assertEqual(ar.sr, 44100)
