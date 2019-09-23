@@ -1,0 +1,29 @@
+# no dedicated build phase needed so far
+build: false
+version: "0.2.1-{build}"
+
+branches:
+  only:
+    - master
+    - develop
+    - dev-appveyor
+
+environment:
+  matrix:
+    - PYTHON_VERSION: 3.7
+      MINICONDA: C:\Miniconda3-x64
+
+init:
+  - "ECHO %PYTHON_VERSION% %MINICONDA%"
+
+install:
+  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%MINICONDA%\\Library\\bin;%PATH%"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - conda config --append channels conda-forge
+  - "conda create -q -n test-environment python=%PYTHON_VERSION% coverage --file=requirements.txt --file=requirements_test.txt"
+  - activate test-environment
+
+test_script:
+  - nosetests --with-coverage --cover-package=pya
