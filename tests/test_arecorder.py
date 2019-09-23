@@ -1,8 +1,16 @@
 # Test arecorder class. 
 import time
 from pya import Arecorder
-from unittest import TestCase
+from unittest import TestCase, skipUnless
+import pyaudio
 
+# check if we have an output device
+has_input = False
+try:
+    pyaudio.PyAudio().get_default_input_device_info()['index']
+    has_input = True
+except OSError:
+    pass
 
 class TestArecorder(TestCase):
 
@@ -12,6 +20,7 @@ class TestArecorder(TestCase):
     def tearDown(self):
         pass
 
+    @skipUnless(has_input, "PyAudio found no output device.")
     def test_arecorder(self):
         ar = Arecorder(channels=1).boot()
         self.assertEqual(ar.sr, 44100)
