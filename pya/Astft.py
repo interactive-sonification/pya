@@ -81,7 +81,7 @@ class Astft:
             self.samples = x.samples
             if sr:
                 self.sr = sr  # explicitly given sr overwrites Asig
-            
+
             if self.channels == 1:
                 self.freqs, self.times, self.stft = stft(
                     x.sig, fs=self.sr, window=window, nperseg=nperseg, noverlap=noverlap, nfft=nfft,
@@ -91,15 +91,14 @@ class Astft:
                 # self.freqs and self.times will be the same on each channel. 
                 self.stft = []
                 for i in range(self.channels):
-                    self.freqs, self.times, s = stft(x.sig[:, i], fs=self.sr, window=window, 
-                                                nperseg=nperseg, noverlap=noverlap, nfft=nfft, 
-                                                detrend=detrend, return_onesided=return_onesided, 
-                                                boundary=boundary, padded=padded, axis=axis)
+                    self.freqs, self.times, s = stft(x.sig[:, i], fs=self.sr, 
+                                                     window=window, nperseg=nperseg, noverlap=noverlap, 
+                                                     nfft=nfft, detrend=detrend, return_onesided=return_onesided, 
+                                                     boundary=boundary, padded=padded, axis=axis)
                     self.stft.append(s)
                 self.stft = np.array(self.stft)
             else:
                 raise ValueError("Channels need to be a possitive integer.")
-
 
         elif isinstance(x, np.ndarray) and x.ndim >= 2:
             # TODO, needs to be work
@@ -119,7 +118,7 @@ class Astft:
             raise TypeError("Unknown initializer or wrong stft shape ")
         if label:
             self.label = label
-            
+
         if cn:
             if len(cn) == self.channels:
                 self.cn = cn
@@ -154,8 +153,6 @@ class Astft:
             _, sig = istft(self.stft, **kwargs)
             return Asig.Asig(np.transpose(sig), sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
-
-
     def plot(self, fn=lambda x: x, ch=None, ax=None, xlim=None, ylim=None, **kwargs):
         """Plot spectrogram
 
@@ -179,7 +176,7 @@ class Astft:
         _ : Asig
             self
         """
-        if self.channels ==1:
+        if self.channels == 1:
             stft = self.stft
         else:
             if ch is None:
@@ -187,7 +184,7 @@ class Astft:
                 msg = """ Plotting a multichannel stft should set to particular channel ch, e.g. ch=1 or ch='left'. 
                         Currently ch is not set therefore the first channel is plotted."""
                 warn(msg)
-                
+
             elif isinstance(ch, int):
                 stft = self.stft[ch]
             elif isinstance(ch, str):
@@ -197,7 +194,7 @@ class Astft:
                     stft = self.stft[self.cn.index(ch)]
                 else:
                     raise AttributeError("ch is not a valid channel name.")
-            
+
         if ax is None:
             plt.pcolormesh(self.times, self.freqs, fn(np.abs(stft)), **kwargs)
             plt.colorbar()
@@ -207,10 +204,9 @@ class Astft:
             ax.pcolormesh(self.times, self.freqs, fn(np.abs(stft)), **kwargs)
             if ylim is not None:
                 ax.set_ylim(ylim[0], ylim[1])
-                
+
         return self
 
     def __repr__(self):
         return "Astft('{}'): {} x {} @ {} Hz = {:.3f} s cn={}".format(
             self.label, self.channels, self.samples, self.sr, self.samples / self.sr, self.cn)
-

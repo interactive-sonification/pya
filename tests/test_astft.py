@@ -25,6 +25,6 @@ class TestAstft(TestCase):
         # Test conversion of a multi channel asig's astft. 
         asine = Ugen().sawtooth(channels=3)
         astft = asine.to_stft()
-        
+
     # def test_input_as_stft(self):
     #     x = np.random.rand(100, 3) 
