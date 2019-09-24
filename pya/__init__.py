@@ -8,7 +8,7 @@ from .Aserver import Aserver
 from .Arecorder import Arecorder
 from .Ugen import Ugen
 from .version import __version__
-from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, get_length
+from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip
 from .helper import timeit, audio_from_file, buf_to_float, spectrum, audio_from_file
 from .helper import normalize, record
 
@@ -25,5 +25,5 @@ __all__ = ['Asig', 'Aspec', 'Astft', 'Aserver', 'Arecorder', 'Ugen',
            'startup', 'shutdown']
 
 __all__ += ['ampdb', 'dbamp', 'cpsmidi', 'midicps', 'linlin', 'clip', 
-            'get_length', 'audio_from_file', 'buf_to_float', 'spectrum', 
+            'audio_from_file', 'buf_to_float', 'spectrum', 
             'audio_from_file', 'normalize', 'record']
