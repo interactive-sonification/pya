@@ -25,7 +25,6 @@ class Aspec:
         cn : list or None
             Channel names (Default value = None)
         """
-        self.cn = cn
         if type(x) == Asig.Asig:
             self.sr = x.sr
             self.rfftspec = np.fft.rfft(x.sig)
@@ -39,13 +38,13 @@ class Aspec:
             self.rfftspec = np.array(x)
             self.sr = sr
             self.samples = (len(x) - 1) * 2
-            self.channels = 1
-            if len(np.shape(x)) > 1:
-                self.channels = np.shape(x)[1]
+            self.channels = x.ndim
         else:
             raise AttributeError("unknown initializer, argument x needs to be an Asig or array")
         if label:
             self.label = label
+        if cn:
+            self.cn = cn
         self.nr_freqs = self.samples // 2 + 1
         self.freqs = np.linspace(0, self.sr / 2, self.nr_freqs)
 
