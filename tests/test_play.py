@@ -12,11 +12,11 @@ try:
 except OSError:
     pass
 
+
 class MockAudio(mock.MagicMock):
-   
     channels_in = 1
     channels_out = 4
-    
+
     def get_device_info_by_index(self, *args):
         return {'maxInputChannels': self.channels_in, 'maxOutputChannels': self.channels_out,
                 'name': 'MockAudio', 'index': 42}
@@ -52,7 +52,7 @@ class TestPlay(TestCase):
             d2 = np.linspace(0, 1, 44100)
             asig = Asig(d1)
             s.play(asig)
-            self.assertTrue(np.allclose(s.srv_asigs[0].sig, d2.reshape(44100,1)))
+            self.assertTrue(np.allclose(s.srv_asigs[0].sig, d2.reshape(44100, 1)))
         with mock.patch('pyaudio.PyAudio', return_value=mock_audio):
             s = Aserver(channels=6)
             s.boot()

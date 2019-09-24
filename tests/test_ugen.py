@@ -18,7 +18,7 @@ class TestUgen(TestCase):
         self.assertEqual(44100 // 2, sine.sr)
         self.assertAlmostEqual(0.5, np.max(sine.sig), places=6)
         self.assertEqual((44100 // 2, 2), sine.sig.shape)
-        
+
         sine = Ugen().sine(freq=200, amp=0.5, n_rows= 44100 // 2, sr=44100 // 2, channels=2)
         self.assertEqual(44100 // 2, sine.sr)
         self.assertAlmostEqual(0.5, np.max(sine.sig), places=6)
@@ -51,14 +51,12 @@ class TestUgen(TestCase):
         pink = Ugen().noise(type="pink")
         self.assertEqual(white.sr, 1000)
         self.assertAlmostEqual(np.max(white.sig), 0.2, places=3)
-        self.assertAlmostEqual(white.get_duration(), 1.0, places=7)
         self.assertEqual(white.cn, ['white'])
         self.assertEqual(white.label, 'white_noise')
         white_2ch = Ugen().noise(type="pink", channels=2)
         self.assertEqual(white_2ch.channels, 2)
-        
+
     def test_dur_n_rows_exception(self):
         # An exception should be raised if both dur and n_rows are define. 
         with self.assertRaises(AttributeError):
             asig = Ugen().sine(dur=1., n_rows=400)
-        

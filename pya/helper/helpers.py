@@ -142,8 +142,6 @@ def spectrum(sig, samples, channels, sr):
     return frq, Y
 
 
-    
-
 def normalize(d):
     """Return the normalized input array"""
     # d is a (n x dimension) np array

@@ -16,8 +16,8 @@ def get_num_of_rows(dur, n_rows, sr):
         return int(n_rows)
     else:
         raise AttributeError("Only use either dur or n_rows to specify the number of rows of the signal.")
-    
-    
+
+
 class Ugen(Asig):
     """Unit Generator for to create Asig with predefined signal"""
     def __init__(self):
@@ -123,9 +123,9 @@ class Ugen(Asig):
         Asig object
         """
         length = get_num_of_rows(dur, n_rows, sr)
-        sig = amp * signal.square(2 * np.pi * freq * 
-                                  ((sample_shift / length) + np.linspace(0, length / sr, length, endpoint=False)),
-                                  duty=duty)
+        sig = amp * signal.square(
+            2 * np.pi * freq * ((sample_shift / length) + np.linspace(0, length / sr, length, endpoint=False)), 
+            duty=duty)
         if channels > 1:
             sig = np.repeat(sig, channels)
             sig = sig.reshape((length, channels))

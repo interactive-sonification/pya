@@ -27,7 +27,8 @@ class Astft:
         Parameters
         ----------
         x : Asig or numpy.ndarray
-            signal to be converted to stft domain. This can be either a numpy array or an Asig object. 
+            x can be two forms, the most commonly used is an Asig object. 
+            Such as directly acquired from an Asig object via Asig.to_stft().
         sr : int
             sampling rate, this is only necessary if x is not Asig. (Default value = None)
         label : str
@@ -73,6 +74,7 @@ class Astft:
         self.padded = padded
         self.axis = axis
         self.cn = cn
+
         if type(x) == Asig.Asig:
             # TODO multichannel.
             self.sr = x.sr
@@ -84,7 +86,7 @@ class Astft:
             self.label = x.label + "_stft"
             self.samples = x.samples
             self.channels = x.channels
-        elif type(x) == np.ndarray and np.shape(x) >= 2:
+        elif isinstance(x, np.ndarray) and x.ndim >= 2:
             self.stft = x
             self.sr = 44100
             if sr:
@@ -98,7 +100,7 @@ class Astft:
             self.times = np.linspace(0, (self.nperseg - self.noverlap) * self.ntimes / self.sr, self.ntimes)
             self.freqs = np.linspace(0, self.sr // 2, self.nfreqs)
         else:
-            print("error: unknown initializer or wrong stft shape ")
+            raise TypeError("Unknown initializer or wrong stft shape ")
         if label:
             self.label = label
 
