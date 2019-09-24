@@ -164,11 +164,11 @@ class Ugen(Asig):
         Asig object
         """
         length = get_length(dur, sr)
-        # Question is that will be that be too slow.
-        if type == "white" or "white_noise":
+        # Question is that will be that be too slow.]
+        if type == "white" or type == "white_noise":
             sig = np.random.rand(length) * amp  # oR may switch to normal
 
-        elif type == "pink" or "pink_noise":
+        elif type == "pink" or type == "pink_noise":
             # Based on Paul Kellet's method
             b0, b1, b2, b3, b4, b5, b6 = 0, 0, 0, 0, 0, 0, 0
             sig = []
