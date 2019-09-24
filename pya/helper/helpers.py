@@ -142,16 +142,7 @@ def spectrum(sig, samples, channels, sr):
     return frq, Y
 
 
-def get_length(dur, sr):
-    """Return total number of samples based on duration in second (dur) and sampling rate (sr)"""
-    if isinstance(dur, float):
-        length = int(dur * sr)
-    elif isinstance(dur, int):
-        length = dur
-    else:
-        raise TypeError("Unrecognise type for dur, int (samples) or float (seconds) only")
-    return length
-
+    
 
 def normalize(d):
     """Return the normalized input array"""
