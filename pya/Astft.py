@@ -81,41 +81,54 @@ class Astft:
             self.samples = x.samples
             if sr:
                 self.sr = sr  # explicitly given sr overwrites Asig
+            sig = x.sig
 
-            if self.channels == 1:
-                self.freqs, self.times, self.stft = stft(
-                    x.sig, fs=self.sr, window=window, nperseg=nperseg, noverlap=noverlap, nfft=nfft,
-                    detrend=detrend, return_onesided=return_onesided, boundary=boundary, padded=padded, axis=axis)
-            elif self.channels > 1:
-                # For multichannels, put stack stft to self.stft. Since every channel shares the same, sr and length. 
-                # self.freqs and self.times will be the same on each channel. 
-                self.stft = []
-                for i in range(self.channels):
-                    self.freqs, self.times, s = stft(x.sig[:, i], fs=self.sr, 
-                                                     window=window, nperseg=nperseg, noverlap=noverlap, 
-                                                     nfft=nfft, detrend=detrend, return_onesided=return_onesided, 
-                                                     boundary=boundary, padded=padded, axis=axis)
-                    self.stft.append(s)
-                self.stft = np.array(self.stft)
+        elif isinstance(x, np.ndarray):
+            # x is a numpy array instead of asig. 
+            self.channels = x.ndim
+            self.samples = len(x)
+            if sr is None:
+                raise AttributeError("sr (sampling rate) is required as an argument if input is a numpy array rather than Asig.")
             else:
-                raise ValueError("Channels need to be a possitive integer.")
-
-        elif isinstance(x, np.ndarray) and x.ndim >= 2:
-            # TODO, needs to be work
-            self.stft = x
-            self.sr = 44100
-            if sr:
                 self.sr = sr
-            self.samples = (len(x) - 1) * 2
-            self.channels = 1
-            if len(np.shape(x)) > 2:
-                self.channels = np.shape(x)[2]
-            # TODO: set other values, particularly check if self.times and self.freqs are correct
-            self.ntimes, self.nfreqs, = np.shape(self.stft)
-            self.times = np.linspace(0, (self.nperseg - self.noverlap) * self.ntimes / self.sr, self.ntimes)
-            self.freqs = np.linspace(0, self.sr // 2, self.nfreqs)
+            sig = x
+
         else:
-            raise TypeError("Unknown initializer or wrong stft shape ")
+            raise TypeError("Unknown data type x, x should be either Asig or numpy.ndarray")
+
+        if self.channels == 1:
+            self.freqs, self.times, self.stft = stft(sig, fs=self.sr, window=window, 
+                                                     nperseg=nperseg, noverlap=noverlap, nfft=nfft,
+                                                     detrend=detrend, return_onesided=return_onesided, 
+                                                     boundary=boundary, padded=padded, axis=axis)
+        elif self.channels > 1:
+            # For multichannels, put stack stft to self.stft. Since every channel shares the same, sr and length. 
+            # self.freqs and self.times will be the same on each channel. 
+            self.stft = []
+            for i in range(self.channels):
+                self.freqs, self.times, s = stft(sig[:, i], fs=self.sr, window=window, 
+                                                 nperseg=nperseg, noverlap=noverlap, nfft=nfft, 
+                                                 detrend=detrend, return_onesided=return_onesided, 
+                                                 boundary=boundary, padded=padded, axis=axis)
+                self.stft.append(s)
+            self.stft = np.array(self.stft)
+        else:
+            raise ValueError("Channels need to be a possitive integer.")
+        # elif isinstance(x, np.ndarray) and x.ndim >= 2:
+        #     # TODO, needs to be work
+        #     self.stft = x
+        #     self.sr = 44100
+        #     if sr:
+        #         self.sr = sr
+        #     self.samples = (len(x) - 1) * 2
+        #     self.channels = 1
+        #     if len(np.shape(x)) > 2:
+        #         self.channels = np.shape(x)[2]
+        #     # TODO: set other values, particularly check if self.times and self.freqs are correct
+        #     self.ntimes, self.nfreqs, = np.shape(self.stft)
+        #     self.times = np.linspace(0, (self.nperseg - self.noverlap) * self.ntimes / self.sr, self.ntimes)
+        #     self.freqs = np.linspace(0, self.sr // 2, self.nfreqs)
+
         if label:
             self.label = label
 
