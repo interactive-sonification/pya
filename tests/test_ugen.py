@@ -18,8 +18,7 @@ class TestUgen(TestCase):
         self.assertEqual(44100 // 2, sine.sr)
         self.assertAlmostEqual(0.5, np.max(sine.sig), places=6)
         self.assertEqual((44100 // 2, 2), sine.sig.shape)
-
-        sine = Ugen().sine(freq=200, amp=0.5, n_rows= 44100 // 2, sr=44100 // 2, channels=2)
+        sine = Ugen().sine(freq=200, amp=0.5, n_rows=44100 // 2, sr=44100 // 2, channels=2)
         self.assertEqual(44100 // 2, sine.sr)
         self.assertAlmostEqual(0.5, np.max(sine.sig), places=6)
         self.assertEqual((44100 // 2, 2), sine.sig.shape)
