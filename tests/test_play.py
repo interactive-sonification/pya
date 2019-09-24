@@ -53,6 +53,7 @@ class TestPlay(TestCase):
             asig = Asig(d1)
             s.play(asig)
             self.assertTrue(np.allclose(s.srv_asigs[0].sig, d2.reshape(44100, 1)))
+
         with mock.patch('pyaudio.PyAudio', return_value=mock_audio):
             s = Aserver(channels=6)
             s.boot()
@@ -60,6 +61,14 @@ class TestPlay(TestCase):
             # 4 output channels
             assert mock_audio.open.call_count == 2
             self.assertEqual(mock_audio.open.call_args_list[1][1]["channels"], 4)
+        with mock.patch('pyaudio.PyAudio', return_value=mock_audio): 
+            s = Aserver(channels=6)   
+            print(s)
+            s.print_device_info()
+            s.get_devices()
+            # Set device is not tested. 
+            # s.set_device(idx=1)
+            # s.set_device(idx=1, reboot=True)
 
     @skipUnless(has_output, "PyAudio found no output device.")
     def test_play(self):
@@ -89,5 +98,3 @@ class TestPlay(TestCase):
         # This test currently only check if there is error running the code, but not whether resampling is correct
         result = self.asine.resample(target_sr=44100 // 2, rate=1, kind='linear')
         self.assertIsInstance(result, Asig)
-
-

@@ -21,6 +21,18 @@ class TestPya(TestCase):
     def tearDown(self):
         pass
 
+    def test_asig_constructor(self):
+        # Integer constructor
+        asig = Asig(1000)
+        asig = Asig(1000, channels=3)
+        self.assertEqual(asig.samples, 1000)
+        self.assertEqual(asig.channels, 3)
+        print(self.asine)
+
+    def test_asig_plot(self):
+        self.asine.plot()
+        self.astereo.plot(offset=1., scale=0.5)
+
     def test_duration(self):
         result = self.asine.get_duration()
         expected = 1.
@@ -43,7 +55,6 @@ class TestPya(TestCase):
         self.assertEqual(4, as1.channels)
 
     def test_cn(self):
-
         self.assertEqual(self.astereo.cn, ['l', 'r'])
         self.astereo.cn = ['left', 'right']  # Test changing the cn
         self.assertEqual(self.astereo.cn, ['left', 'right'])
@@ -52,5 +63,8 @@ class TestPya(TestCase):
 
         with self.assertRaises(TypeError):  # If list is not string only, TypeError
             self.astereo.cn = ["b", 10]
+
+        with self.assertRaises(TypeError):  # If list is not string only, TypeError
+            asig = Asig(1000, channels=3, cn=3)
 
         self.assertEqual(self.astereo.cn, ['left', 'right'])

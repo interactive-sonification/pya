@@ -40,7 +40,7 @@ class Aspec:
             self.samples = (len(x) - 1) * 2
             self.channels = x.ndim
         else:
-            raise AttributeError("unknown initializer, argument x needs to be an Asig or array")
+            raise TypeError("unknown initializer, argument x needs to be an Asig or array")
         if label:
             self.label = label
         if cn:
