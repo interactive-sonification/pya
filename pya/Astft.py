@@ -87,6 +87,8 @@ class Astft:
             # x is a numpy array instead of asig. 
             self.channels = x.ndim
             self.samples = len(x)
+            self.label = 'stft'
+            self.cn = []
             if sr is None:
                 raise AttributeError("sr (sampling rate) is required as an argument if input is a numpy array rather than Asig.")
             else:
