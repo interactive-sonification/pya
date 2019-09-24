@@ -14,12 +14,17 @@ class TestAstft(TestCase):
     def tearDown(self):
         pass
 
-    def test_constructor(self):
+    def test_input_as_asig(self):
         astft = self.asig.to_stft()
         self.assertEqual(astft.sr, 44100)
         astft = self.asig.to_stft(sr=2000)
         self.assertEqual(astft.sr, 2000)
         signal = self.asig2.sig        
-        # astft = Astft(signal, sr=44100, window='hamming')
-        # self.assertEqual(astft.sr, 44100)
-        # self.assertEqual(astft.window, 'hamming')
+
+    def test_multichannel_asig(self):
+        # Test conversion of a multi channel asig's astft. 
+        asine = Ugen().sawtooth(channels=3)
+        astft = asine.to_stft()
+        
+    # def test_input_as_stft(self):
+    #     x = np.random.rand(100, 3) 

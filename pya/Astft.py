@@ -3,11 +3,9 @@ from warnings import warn
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy.signal
-from scipy.fftpack import fft, fftfreq, ifft
-from scipy.io import wavfile
+from scipy.signal import stft, istft
 from . import Asig
-from .helper import ampdb, dbamp, linlin, timeit, spectrum, audio_from_file
+
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -73,20 +71,38 @@ class Astft:
         self.boundary = boundary
         self.padded = padded
         self.axis = axis
-        self.cn = cn
+        # self.cn = cn
 
         if type(x) == Asig.Asig:
-            # TODO multichannel.
             self.sr = x.sr
+            self.channels = x.channels
+            self.label = x.label + "_stft"
+            self.cn = x.cn
+            self.samples = x.samples
             if sr:
                 self.sr = sr  # explicitly given sr overwrites Asig
-            self.freqs, self.times, self.stft = scipy.signal.stft(
-                x.sig, fs=self.sr, window=window, nperseg=nperseg, noverlap=noverlap, nfft=nfft,
-                detrend=detrend, return_onesided=return_onesided, boundary=boundary, padded=padded, axis=axis)
-            self.label = x.label + "_stft"
-            self.samples = x.samples
-            self.channels = x.channels
+            
+            if self.channels == 1:
+                self.freqs, self.times, self.stft = stft(
+                    x.sig, fs=self.sr, window=window, nperseg=nperseg, noverlap=noverlap, nfft=nfft,
+                    detrend=detrend, return_onesided=return_onesided, boundary=boundary, padded=padded, axis=axis)
+            elif self.channels > 1:
+                # For multichannels, put stack stft to self.stft. Since every channel shares the same, sr and length. 
+                # self.freqs and self.times will be the same on each channel. 
+                self.stft = []
+                for i in range(self.channels):
+                    self.freqs, self.times, s = stft(x.sig[:, i], fs=self.sr, window=window, 
+                                                nperseg=nperseg, noverlap=noverlap, nfft=nfft, 
+                                                detrend=detrend, return_onesided=return_onesided, 
+                                                boundary=boundary, padded=padded, axis=axis)
+                    self.stft.append(s)
+                self.stft = np.array(self.stft)
+            else:
+                raise ValueError("Channels need to be a possitive integer.")
+
+
         elif isinstance(x, np.ndarray) and x.ndim >= 2:
+            # TODO, needs to be work
             self.stft = x
             self.sr = 44100
             if sr:
@@ -103,6 +119,12 @@ class Astft:
             raise TypeError("Unknown initializer or wrong stft shape ")
         if label:
             self.label = label
+            
+        if cn:
+            if len(cn) == self.channels:
+                self.cn = cn
+            else:
+                raise AttributeError("Length of cn should equal channels.")
 
     def to_sig(self, **kwargs):
         """Create signal from stft, i.e. perform istft, kwargs overwrite Astft values for istft
@@ -125,16 +147,24 @@ class Astft:
         if 'sr' in kwargs.keys():
             kwargs['fs'] = kwargs['sr']
             del kwargs['sr']
-        _, sig = scipy.signal.istft(self.stft, **kwargs)  # _ since 1st return value 'times' unused
-        return Asig.Asig(sig, sr=self.sr, label=self.label + '_2sig', cn=self.cn)
+        if self.channels == 1:
+            _, sig = istft(self.stft, **kwargs)  # _ since 1st return value 'times' unused
+            return Asig.Asig(sig, sr=self.sr, label=self.label + '_2sig', cn=self.cn)
+        else:
+            _, sig = istft(self.stft, **kwargs)
+            return Asig.Asig(np.transpose(sig), sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
-    def plot(self, fn=lambda x: x, ax=None, xlim=None, ylim=None, **kwargs):
+
+
+    def plot(self, fn=lambda x: x, ch=None, ax=None, xlim=None, ylim=None, **kwargs):
         """Plot spectrogram
 
         Parameters
         ----------
         fn : func
             a function, by default is bypass
+        ch : int or str or None
+            By default it is None, 
         ax : matplotlib.axes
             you can assign your plot to specific axes (Default value = None)
         xlim : tuple or list
@@ -149,18 +179,38 @@ class Astft:
         _ : Asig
             self
         """
+        if self.channels ==1:
+            stft = self.stft
+        else:
+            if ch is None:
+                stft = self.stft[0]
+                msg = """ Plotting a multichannel stft should set to particular channel ch, e.g. ch=1 or ch='left'. 
+                        Currently ch is not set therefore the first channel is plotted."""
+                warn(msg)
+                
+            elif isinstance(ch, int):
+                stft = self.stft[ch]
+            elif isinstance(ch, str):
+                if self.cn is None:
+                    raise AttributeError("There is no channel name defined. Use integer as ch for channel indexing instead.")
+                if ch in self.cn:
+                    stft = self.stft[self.cn.index(ch)]
+                else:
+                    raise AttributeError("ch is not a valid channel name.")
+            
         if ax is None:
-            plt.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)), **kwargs)
+            plt.pcolormesh(self.times, self.freqs, fn(np.abs(stft)), **kwargs)
             plt.colorbar()
             if ylim is not None:
                 plt.ylim([ylim[0], ylim[1]])
         else:
-            ax.pcolormesh(self.times, self.freqs, fn(np.abs(self.stft)), **kwargs)
+            ax.pcolormesh(self.times, self.freqs, fn(np.abs(stft)), **kwargs)
             if ylim is not None:
                 ax.set_ylim(ylim[0], ylim[1])
+                
         return self
 
     def __repr__(self):
-        return "Astft('{}'): {} x {} @ {} Hz = {:.3f} s".format(
-            self.label, self.channels, self.samples, self.sr, self.samples / self.sr, cn=self.cn)
+        return "Astft('{}'): {} x {} @ {} Hz = {:.3f} s cn={}".format(
+            self.label, self.channels, self.samples, self.sr, self.samples / self.sr, self.cn)
 
