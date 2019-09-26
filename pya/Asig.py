@@ -906,7 +906,7 @@ class Asig:
     def __truediv__(self, other):
         """Magic method for division. You can either divide a scalar or an Asig object. 
         Use division with caution, audio signal is common to reach 0 or near, avoid zero division or extremely large result. 
-        
+
         If dividing an Asig, you don't always need to have same size arrays as audio signals 
         may different in length. If mix_mode is set to 'bound' the size is fixed to respect self. 
         If not, the result will respect to whichever the bigger array is."""

@@ -151,6 +151,9 @@ class TestAsig(TestCase):
         self.assertTrue(np.array_equal([0, 4, 8, 12], (4 * a).sig))
         self.assertTrue(np.array_equal([0, 1, 4, 9], (a * a).sig))
         self.assertTrue(np.array_equal([0, 1, 4, 9], (a.bound * a2).sig))
+
+        a = Asig(np.arange(4), sr=2)
+        a2 = Asig(np.arange(8), sr=2)
         self.assertTrue(np.array_equal([0., 1., 4., 9., 4., 5., 6., 7.], (a * a2).sig))
 
     def test_subtract(self):
