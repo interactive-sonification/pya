@@ -878,7 +878,6 @@ class Asig:
             bigger array is."""
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
-        # print('multiplier. ')
         if isinstance(othersig, numbers.Number):
             return Asig(selfsig * othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
         else:
@@ -888,6 +887,7 @@ class Asig:
                 elif selfsig.shape[0] < othersig.shape[0]:
                     othersig = othersig[:selfsig.shape[0]]
                 result = selfsig * othersig
+                self.mix_mode = None
             else:
                 if selfsig.shape[0] > othersig.shape[0]:
                     result = selfsig.copy()
@@ -921,6 +921,7 @@ class Asig:
                 elif selfsig.shape[0] < othersig.shape[0]:
                     othersig = othersig[:selfsig.shape[0]]
                 result = selfsig / othersig
+                self.mix_mode = None
             else:
                 if selfsig.shape[0] > othersig.shape[0]:
                     result = selfsig.copy()
@@ -955,6 +956,7 @@ class Asig:
                 except AttributeError:
                     pass  # When othersig is just a scalar
                 result = selfsig + othersig
+                self.mix_mode = None
             else:
                 # Make the bigger one
                 if selfsig.shape[0] > othersig.shape[0]:
@@ -990,6 +992,7 @@ class Asig:
                 except AttributeError:
                     pass  # When othersig is just a scalar
                 result = selfsig - othersig
+                self.mix_mode = None
             else:
                 # Make the bigger one
                 if selfsig.shape[0] > othersig.shape[0]:
