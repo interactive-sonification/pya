@@ -719,7 +719,7 @@ class Asig:
         _ : Asig
             Asig
         """
-        if isinstance(pan, float):
+        if isinstance(pan, float) or isinstance(pan, int):
             # Stereo panning.
             if pan <= 1. and pan >= -1.:
                 angle = linlin(pan, -1, 1, 0, np.pi / 2.)
@@ -733,11 +733,9 @@ class Asig:
                 else:
                     return Asig(self.sig[:, :2] * gain, self.sr, label=self.label + "_pan2ed", cn=self.cn)
             else:
-                warn("Panning need to be in the range -1. to 1. Nothing changed.")
-                return self
+                raise ValueError("Panning need to be in the range -1. to 1.")
         else:
-            warn("pan needs to be a float number between -1. to 1. Nothing changed.")
-            return self
+            raise TypeError("pan needs to be a float number between -1. to 1.")
 
     def norm(self, norm=1, in_db=False, dcflag=False):
         """Normalize signal
@@ -874,12 +872,13 @@ class Asig:
             self.cn)
 
     def __mul__(self, other):
-        """Magic method for multiplying. You can either multiply a numpy array or an Asig object. If adding an Asig,
+        """Magic method for multiplying. You can either multiply a scalar or an Asig object. If muliplying an Asig,
             you don't always need to have same size arrays as audio signals may different in length. If mix_mode
             is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
             bigger array is."""
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
+        # print('multiplier. ')
         if isinstance(othersig, numbers.Number):
             return Asig(selfsig * othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
         else:
@@ -903,9 +902,40 @@ class Asig:
 
     def __rmul__(self, other):
         return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
+    
+    def __truediv__(self, other):
+        """Magic method for division. You can either divide a scalar or an Asig object. If dividing an Asig,
+        you don't always need to have same size arrays as audio signals may different in length. If mix_mode
+        is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
+        bigger array is."""
+        selfsig = self.sig
+        othersig = other.sig if isinstance(other, Asig) else other
+        if isinstance(othersig, numbers.Number):
+            return Asig(selfsig / othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
+        else:
+            if self.mix_mode is 'bound':
+                if selfsig.shape[0] > othersig.shape[0]:
+                    selfsig = selfsig[:othersig.shape[0]]
+                elif selfsig.shape[0] < othersig.shape[0]:
+                    othersig = othersig[:selfsig.shape[0]]
+                result = selfsig / othersig
+            else:
+                if selfsig.shape[0] > othersig.shape[0]:
+                    result = selfsig.copy()
+                    result[:othersig.shape[0]] /= othersig
+
+                elif selfsig.shape[0] < othersig.shape[0]:
+                    result = othersig.copy()  # might not be deep enough. 
+                    result[:selfsig.shape[0]] /= selfsig
+                else:
+                    result = selfsig * othersig
+            return Asig(result, self.sr, label=self.label + "_divided", cn=self.cn)
+
+    def __rtruediv__(self, other):
+        return Asig(other / self.sig, self.sr, label=self.label + "_divided", cn=self.cn)
 
     def __add__(self, other):
-        """Magic method for adding. You can either add a numpy array or an Asig object. If adding an Asig,
+        """Magic method for adding. You can either add a scalar or an Asig object. If adding an Asig,
         you don't always need to have same size arrays as audio signals may different in length. If mix_mode
         is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
         bigger array is."""
@@ -940,7 +970,7 @@ class Asig:
         return Asig(other + self.sig, self.sr, label=self.label + "_added", cn=self.cn)
 
     def __sub__(self, other):
-        """Magic method for subtraction. You can either minus a numpy array or an Asig object. If subtracting an Asig,
+        """Magic method for subtraction. You can either minus a scalar or an Asig object. If subtracting an Asig,
         you don't always need to have same size arrays as audio signals may different in length. If mix_mode
         is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
         bigger array is."""
@@ -1168,51 +1198,52 @@ class Asig:
         w, h = scipy.signal.freqz(self._['b'], self._['a'], worN)
         plt.plot(w * self.sr / 2 / np.pi, ampdb(abs(h)), **kwargs)
 
-    def add(self, sig, pos=None, amp=1, onset=None):
-        """Add a signal
+    # TODO remove add() for now as same functionality can be done by __add__()
+    # def add(self, sig, pos=None, amp=1, onset=None):
+    #     """Add a signal ToDo is this even necessary anymore. 
 
-        Parameters
-        ----------
-        sig : asig
-            Signal to add
-        pos : int, None
-            Postion to add (Default value = None)
-        amp : float
-            Aplitude (Default value = 1)
-        onset : float or None
-            Similar to pos but in time rather sample, 
-            given a value to this will overwrite pos (Default value = None)
+    #     Parameters
+    #     ----------
+    #     sig : asig
+    #         Signal to add
+    #     pos : int, None
+    #         Postion to add (Default value = None)
+    #     amp : float
+    #         Aplitude (Default value = 1)
+    #     onset : float or None
+    #         Similar to pos but in time rather sample, 
+    #         given a value to this will overwrite pos (Default value = None)
 
-        Returns
-        -------
-        _ : Asig
-            Asig with the added signal.
+    #     Returns
+    #     -------
+    #     _ : Asig
+    #         Asig with the added signal.
 
-        """
-        if type(sig) == Asig:
-            n = sig.samples
-            sr = sig.sr
-            sigar = sig.sig
-            if sig.channels != self.channels:
-                warn("channel mismatch!")
-                return -1
-            if sr != self.sr:
-                warn("sr mismatch: use resample")
-                return -1
-        else:
-            n = np.shape(sig)[0]
-            sr = self.sr  # assume same sr as self
-            sigar = sig
-        if onset:   # onset overwrites pos, time has priority
-            pos = int(onset * self.sr)
-        if not pos:
-            pos = 0  # add to begin if neither pos nor onset have been specified
-        last = pos + n
-        if last > self.samples:
-            last = self.samples
-            sigar = sigar[:last - pos]
-        self.sig[pos:last] += amp * sigar
-        return self
+    #     """
+    #     if type(sig) == Asig:
+    #         n = sig.samples
+    #         sr = sig.sr
+    #         sigar = sig.sig
+    #         if sig.channels != self.channels:
+    #             warn("channel mismatch!")
+    #             return -1
+    #         if sr != self.sr:
+    #             warn("sr mismatch: use resample")
+    #             return -1
+    #     else:
+    #         n = np.shape(sig)[0]
+    #         sr = self.sr  # assume same sr as self
+    #         sigar = sig
+    #     if onset:   # onset overwrites pos, time has priority
+    #         pos = int(onset * self.sr)
+    #     if not pos:
+    #         pos = 0  # add to begin if neither pos nor onset have been specified
+    #     last = pos + n
+    #     if last > self.samples:
+    #         last = self.samples
+    #         sigar = sigar[:last - pos]
+    #     self.sig[pos:last] += amp * sigar
+    #     return self
 
     def envelope(self, amps, ts=None, curve=1, kind='linear'):
         """Create an envelop and multiply by the signal.

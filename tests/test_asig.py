@@ -1,6 +1,7 @@
 from unittest import TestCase
 from pya import *
 import numpy as np 
+from math import inf
 
 
 class TestAsig(TestCase):
@@ -34,8 +35,11 @@ class TestAsig(TestCase):
         self.astereo.plot(offset=1., scale=0.5)
 
     def test_duration(self):
-        result = self.asine.get_duration()
-        self.assertEqual(result, 1.)
+        self.assertEqual(self.asine.get_duration(), 1.)
+        get_time = self.asine.get_times()
+        self.assertTrue(np.array_equal(np.linspace(0, 
+                                                   (self.asine.samples - 1) / self.asine.sr, 
+                                                   self.asine.samples), self.asine.get_times()))
 
     def test_fader(self):
         result = self.asine.fade_in(dur=0.2)
@@ -86,6 +90,7 @@ class TestAsig(TestCase):
         result = self.astereo.gain(db=3.)
         with self.assertRaises(AttributeError):
             _ = self.astereo.gain(amp=1, db=3.)
+        result = self.astereo.gain()  # by default amp=1. nothing change. 
 
     def test_rms(self):
         result = self.asine16ch.rms()
@@ -101,27 +106,68 @@ class TestAsig(TestCase):
         a = Asig(np.arange(4), sr=2, label="", channels=1)
         b0 = np.arange(4) + 10
         b1 = Asig(b0, sr=2, label="", channels=1)
-        b2 = np.arange(4) + 10
-
         adding = a + b1  # asig + asig
         self.assertIsInstance(adding, Asig)
         self.assertTrue(np.array_equal([10, 12, 14, 16], adding.sig))
 
         # asig + ndarray  actually we don't encourage that. Because of sampling rate may differ
+        # also because ndarray + asig works. so it is strongly against adding asig with ndarray. 
+        # just maker another asig and add both together. 
         adding = a + b0
         self.assertIsInstance(adding, Asig)
         self.assertTrue(np.array_equal([10, 12, 14, 16], adding.sig))
 
         # adding with different size will extend to the new size. 
-        b3 = Asig(np.arange(6), sr=2)
-        adding = a + b3
-        self.assertEqual(b3.samples, 6)
+        b2 = Asig(np.arange(6), sr=2)
+        adding = a + b2
+        self.assertEqual(b2.samples, 6)
 
         # TODO  to decide what to do with different channels. Currently not allow. 
         # so that it wont get too messy. 
-        b4 = Asig(np.ones((4, 2)), sr=2)
-        with self.assertRaises(ValueError):  # If list is not string only, TypeError
-            adding = a + b4
+        b3 = Asig(np.ones((4, 2)), sr=2)
+        # adding different channels asigs are not allowed. 
+        with self.assertRaises(ValueError): 
+            adding = a + b3
 
-        adding = b4 + b4
+        # Both multichannels are ok. 
+        adding = b3 + b3
         self.assertTrue(np.array_equal(np.ones((4, 2)) + np.ones((4, 2)), adding.sig))
+
+        # Test bound mode. In the audio is not extended. but bound to the lower one.  
+        adding = a.bound + b2
+        self.assertEqual(adding.samples, 4)
+
+        adding = b2.bound + a
+        self.assertEqual(adding.samples, 4)
+
+    def test_mul(self):
+        # Testing multiplication beween asig and asig, or asig with a scalar.
+        a = Asig(np.arange(4), sr=2)
+        a2 = Asig(np.arange(8), sr=2)
+        a4ch = Asig(np.ones((4, 4)), sr=2)
+        a4ch2 = Asig(np.ones((8, 4)), sr=2)
+
+        self.assertTrue(np.array_equal([0, 4, 8, 12], (a * 4).sig))
+        self.assertTrue(np.array_equal([0, 4, 8, 12], (4 * a).sig))
+        self.assertTrue(np.array_equal([0, 1, 4, 9], (a * a).sig))
+        self.assertTrue(np.array_equal([0, 1, 4, 9], (a.bound * a2).sig))
+        self.assertTrue(np.array_equal([0., 1., 4., 9., 4., 5., 6., 7.], (a * a2).sig))
+
+    def test_subtract(self):
+        a = Asig(np.arange(4), sr=2)
+        b = Asig(np.ones(4), sr=2)
+        self.assertTrue(np.array_equal([-1, 0, 1, 2], (a - 1).sig))
+        self.assertTrue(np.array_equal([1, 0, -1, -2], (1 - a).sig))
+        self.assertTrue(np.array_equal([-1, 0, 1, 2], (a - b).sig))
+        self.assertTrue(np.array_equal([1, 0, -1, -2], (b - a).sig))
+
+    def test_division(self):
+        # Testing multiplication beween asig and asig, or asig with a scalar.
+        a = Asig(np.arange(4), sr=2)
+        a2 = Asig(np.arange(8), sr=2)
+        a4ch = Asig(np.ones((4, 4)), sr=2)
+        a4ch2 = Asig(np.ones((8, 4)), sr=2)
+
+        self.assertTrue(np.array_equal([0, 0.25, 0.5, 0.75], (a / 4).sig))
+        self.assertTrue(np.allclose([inf, 4, 2, 1.33333333], (4 / a).sig))
+        self.assertTrue(np.array_equal(np.ones((4, 4)) / 2, (a4ch / 2).sig))

@@ -58,7 +58,14 @@ class TestRoutePan(TestCase):
         self.assertTrue(np.allclose(expect[1000:10010, 1], result.sig[1000:10010, 1]))
 
     def test_pan2(self):
-        result = self.astereo.pan2(-1.)
-        self.assertAlmostEqual(0, result.sig[:, 1].sum())
-        result = self.astereo.pan2(1.)
-        self.assertAlmostEqual(0, result.sig[:, 0].sum())
+        pan2 = self.astereo.pan2(-1.)
+        self.assertAlmostEqual(0, pan2.sig[:, 1].sum())
+        pan2 = self.astereo.pan2(1.)
+        self.assertAlmostEqual(0, pan2.sig[:, 0].sum())
+
+        pan2 = self.asine.pan2(-0.5)
+        self.assertEqual(pan2.channels, 2)
+        with self.assertRaises(TypeError):
+            self.astereo.pan2([2., 4.])
+        with self.assertRaises(ValueError):
+            self.astereo.pan2(3.)
