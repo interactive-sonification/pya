@@ -41,6 +41,8 @@ class TestRoutePan(TestCase):
         result = self.asine.stereo([0.5, 0.5])
         self.assertEqual(result.channels, 2)
 
+        result = self.astereo.stereo()
+        result = self.astereo.stereo(blend=(0.2, 0.4))
         # result = self.asine16ch.stereo([np.ones(16), np.zeros(16)])
         # self.assertEqual(result.channels, 2)
 
