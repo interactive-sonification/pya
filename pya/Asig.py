@@ -1502,7 +1502,7 @@ class Asig:
         freqs, times, Sxx = scipy.signal.spectrogram(self.sig, self.sr, *argv, **kvarg)
         return freqs, times, Sxx
 
-    def size(self):
+    def get_size(self):
         """Return signal array shape and duration in seconds."""
         return self.sig.shape, self.sig.shape[0] / self.sr
 
