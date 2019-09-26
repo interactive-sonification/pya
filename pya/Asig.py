@@ -618,9 +618,7 @@ class Asig:
         if blend is None:
             blend = np.ones(self.channels) / self.channels
         if len(blend) != self.channels:
-            warn("Asig.to_mono(): len(blend)=%d != %d=Asig.channels -> no action",
-                 len(blend), self.channels)
-            return self
+            raise AttributeError("len(blend) != self.channels")
         else:
             sig = np.sum(self.sig * blend, axis=1)
             col_names = [self.cn[np.argmax(blend)]] if self.cn is not None else None
