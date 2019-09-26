@@ -163,6 +163,7 @@ class TestAsig(TestCase):
 
     def test_division(self):
         # Testing multiplication beween asig and asig, or asig with a scalar.
+        # 
         a = Asig(np.arange(4), sr=2)
         a2 = Asig(np.arange(8), sr=2)
         a4ch = Asig(np.ones((4, 4)), sr=2)
