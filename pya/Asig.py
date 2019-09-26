@@ -632,7 +632,9 @@ class Asig:
         Parameters
         ----------
         blend : list or None
-            Usage: blend = [[list of gains for left channel], [list of gains for right channel]]
+            Usage: For mono signal, blend=(g1, g2), the mono channel will be broadcated to left, right with g1, g2 gains.
+            For stereo signal, blend=(g1, g2), each channel is gain adjusted by g1, g2.
+            For multichannel: blend = [[list of gains for left channel], [list of gains for right channel]]
             Default value = None, resulting in equal distribution to left and right channel
 
         Example
@@ -647,24 +649,30 @@ class Asig:
             A stereo Asig object
         """
         if blend is None:
-            left, right = (1, 1)
+            left = 1
+            right = 1
         else:
             left = blend[0]
             right = blend[1]
+
         if self.channels == 1:
             left_sig = self.sig * left
             right_sig = self.sig * right
-            sig = np.stack((left_sig, right_sig), axis=1)
-            return Asig(sig, self.sr, label=self.label + '_to_stereo', cn=['l', 'r'])
-        elif len(left) == self.channels and len(right) == self.channels:
-            left_sig = np.sum(self.sig * left, axis=1)
-            right_sig = np.sum(self.sig * right, axis=1)
-            sig = np.stack((left_sig, right_sig), axis=1)
-            return Asig(sig, self.sr, label=self.label + '_to_stereo', cn=['l', 'r'])
+        elif self.channels == 2:
+            left_sig = self.sig[:, 0] * left
+            right_sig = self.sig[:, 1] * right
         else:
-            warn("Arg needs to be a list of 2 lists for left right. e.g. a[[0.2, 0.3, 0.2],[0.5]:" 
-                 "Blend ch[0,1,2] to left and ch0 to right")
-            return self
+            if len(left) == self.channels and len(right) == self.channels:
+                left_sig = np.sum(self.sig * left, axis=1)
+                right_sig = np.sum(self.sig * right, axis=1)
+            else:
+                msg = """For signal channels > 2, argument blend should be a tuple of two lists,
+                        each list contains the gain for each channel to be mixed. 
+                        """
+                raise AttributeError(msg)
+
+        sig = np.stack((left_sig, right_sig), axis=1)
+        return Asig(sig, self.sr, label=self.label + '_to_stereo', cn=['l', 'r'])
 
     def rewire(self, dic):
         """Rewire channels to flexibly allow weighted channel permutations.
@@ -685,7 +693,6 @@ class Asig:
         _ : Asig
             Asig with rewired channels..
         """
-        # Find what the largest channel in the newly rewired is .
         max_ch = max(dic, key=lambda x: x[1])[1] + 1 
         if max_ch > self.channels:
             new_sig = np.zeros((self.samples, max_ch))
@@ -734,13 +741,15 @@ class Asig:
             warn("pan needs to be a float number between -1. to 1. Nothing changed.")
             return self
 
-    def norm(self, norm=1, dcflag=False):
+    def norm(self, norm=1, in_db=False, dcflag=False):
         """Normalize signal
 
         Parameters
         ----------
         norm : float
             normalize threshold (Default value = 1)
+        in_db : bool
+            Normally, norm takes amplitude, if in_db, norm's unit is in dB. 
         dcflag : bool
             If true, remove dc offset (Default value = False)
 
@@ -750,12 +759,12 @@ class Asig:
             normalized Asig.
 
         """
+        if in_db:
+            norm = dbamp(norm)
         if dcflag:
             sig = self.sig - np.mean(self.sig, 0)
         else:
             sig = self.sig
-        if norm <= 0:  # take negative values as level in dB
-            norm = dbamp(norm)
         sig = norm * sig / np.max(np.abs(sig), 0)
         return Asig(sig, self.sr, label=self.label + "_normalised", cn=self.cn)
 
@@ -777,7 +786,7 @@ class Asig:
         """
         if db:  # overwrites amp
             amp = dbamp(db)
-        elif not amp:  # default 1 if neither is given
+        elif amp is None:  # default 1 if neither is given
             amp = 1
         return Asig(self.sig * amp, self.sr, label=self.label + "_scaled", cn=self.cn)
 
