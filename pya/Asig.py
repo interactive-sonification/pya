@@ -784,7 +784,9 @@ class Asig:
         _ : Asig
             Gain adjusted Asig.
         """
-        if db:  # overwrites amp
+        if (db is not None and amp is not None):
+            raise AttributeError("Both amp and db are set, use one only.")
+        elif db is not None:  # overwrites amp
             amp = dbamp(db)
         elif amp is None:  # default 1 if neither is given
             amp = 1
@@ -895,17 +897,14 @@ class Asig:
                     result[:othersig.shape[0]] *= othersig
 
                 elif selfsig.shape[0] < othersig.shape[0]:
-                    result = othersig.copy()
+                    result = othersig.copy()  # might not be deep enough. 
                     result[:selfsig.shape[0]] *= selfsig
                 else:
                     result = selfsig * othersig
             return Asig(result, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
     def __rmul__(self, other):
-        if isinstance(other, Asig):
-            return Asig(self.sig * other.sig, self.sr, label=self.label + "_multiplied", cn=self.cn)
-        else:
-            return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
+        return Asig(self.sig * other, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
     def __add__(self, other):
         """Magic method for adding. You can either add a numpy array or an Asig object. If adding an Asig,
@@ -940,10 +939,42 @@ class Asig:
             return Asig(result, self.sr, label=self.label + "_added", cn=self.cn)
 
     def __radd__(self, other):
-        if isinstance(other, Asig):
-            return Asig(self.sig + other.sig, self.sr, label=self.label + "_added", cn=self.cn)
+        return Asig(other + self.sig, self.sr, label=self.label + "_added", cn=self.cn)
+
+    def __sub__(self, other):
+        """Magic method for subtraction. You can either minus a numpy array or an Asig object. If subtracting an Asig,
+        you don't always need to have same size arrays as audio signals may different in length. If mix_mode
+        is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
+        bigger array is."""
+        selfsig = self.sig
+        othersig = other.sig if isinstance(other, Asig) else other
+        if isinstance(othersig, numbers.Number):  # When other is just a scalar
+            return Asig(selfsig - othersig, self.sr, label=self.label + "_subtracted", cn=self.cn)
         else:
-            return Asig(self.sig + other, self.sr, label=self.label + "_added", cn=self.cn)
+            if self.mix_mode is 'bound':
+                try:
+                    if selfsig.shape[0] > othersig.shape[0]:
+                        selfsig = selfsig[:othersig.shape[0]]
+                    elif selfsig.shape[0] < othersig.shape[0]:
+                        othersig = othersig[:selfsig.shape[0]]
+                except AttributeError:
+                    pass  # When othersig is just a scalar
+                result = selfsig - othersig
+            else:
+                # Make the bigger one
+                if selfsig.shape[0] > othersig.shape[0]:
+                    result = selfsig.copy()
+                    result[:othersig.shape[0]] -= othersig
+
+                elif selfsig.shape[0] < othersig.shape[0]:
+                    result = othersig.copy()
+                    result[:selfsig.shape[0]] -= selfsig
+                else:
+                    result = selfsig - othersig
+            return Asig(result, self.sr, label=self.label + "_subtracted", cn=self.cn)
+
+    def __rsub__(self, other):
+        return Asig(other - self.sig, self.sr, label=self.label + "_subtracted", cn=self.cn)
 
     def find_events(self, step_dur=0.001, sil_thr=-20, evt_min_dur=0, sil_min_dur=0.1, sil_pad=[0.001, 0.1]):
         """Locate meaningful 'events' in the signal and create event list. Onset detection.
