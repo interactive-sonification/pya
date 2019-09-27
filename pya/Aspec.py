@@ -93,7 +93,7 @@ class Aspec:
             rfft_new = self.rfftspec * interp_fn(self.freqs) ** curve  # ToDo: curve segmentwise!!!
         else:
             rfft_new = self.rfftspec * weights ** curve
-        return Aspec(rfft_new, self.sr, label=self.label + "_weighted")
+        return Aspec(rfft_new, self.sr, label=self.label + "_weighted", cn=self.cn)
 
     def plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs):  # TODO add ax option
         """Plot spectrum
