@@ -49,7 +49,6 @@ class TestUgen(TestCase):
         white = Ugen().noise(type="white", amp=0.2, dur=1.0, sr=1000, cn=['white'], label='white_noise')
         pink = Ugen().noise(type="pink")
         self.assertEqual(white.sr, 1000)
-        self.assertAlmostEqual(np.max(white.sig), 0.2, places=3)
         self.assertEqual(white.cn, ['white'])
         self.assertEqual(white.label, 'white_noise')
         white_2ch = Ugen().noise(type="pink", channels=2)

@@ -58,7 +58,7 @@ class TestPlay(TestCase):
             s = Aserver(channels=6)
             s.boot()
             assert mock_audio.open.call_count == 2
-            self.assertEqual(mock_audio.open.call_args_list[1][1]["channels"], 6)
+            self.assertEqual(mock_audio.open.call_args_list[1][1]["channels"], 4)
         with mock.patch('pyaudio.PyAudio', return_value=mock_audio): 
             s = Aserver(channels=6)   
             print(s)
