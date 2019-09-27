@@ -192,9 +192,6 @@ class Aserver:
             _LOGGER.info("No stream found...")
         self.pastream = None
 
-    def __del__(self):
-        self.pa.terminate()
-
     def play(self, asig, onset=0, out=0, **kwargs):
         """Dispatch asigs or arrays for given onset."""
         self._stop = False

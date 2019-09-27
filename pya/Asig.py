@@ -1541,6 +1541,52 @@ class Asig:
             atmp = asig
         return Asig(np.hstack((self.sig, atmp.sig)), self.sr, label=self.label + "+" + asig.label, cn=self.cn)
 
+    def add(self, sig, pos=None, amp=1, onset=None):
+        """Add a signal
+
+        Parameters
+        ----------
+        sig : asig
+            Signal to add
+        pos : int, None
+            Postion to add (Default value = None)
+        amp : float
+            Aplitude (Default value = 1)
+        onset : float or None
+            Similar to pos but in time rather sample, 
+            given a value to this will overwrite pos (Default value = None)
+
+        Returns
+        -------
+        _ : Asig
+            Asig with the added signal.
+
+        """
+        if type(sig) == Asig:
+            n = sig.samples
+            sr = sig.sr
+            sigar = sig.sig
+            if sig.channels != self.channels:
+                warn("channel mismatch!")
+                return -1
+            if sr != self.sr:
+                warn("sr mismatch: use resample")
+                return -1
+        else:
+            n = np.shape(sig)[0]
+            sr = self.sr  # assume same sr as self
+            sigar = sig
+        if onset:   # onset overwrites pos, time has priority
+            pos = int(onset * self.sr)
+        if not pos:
+            pos = 0  # add to begin if neither pos nor onset have been specified
+        last = pos + n
+        if last > self.samples:
+            last = self.samples
+            sigar = sigar[:last - pos]
+        self.sig[pos:last] += amp * sigar
+        return self
+
     def custom(self, func, **kwargs):
         """custom function method. TODO add example"""
         func(self, **kwargs)
