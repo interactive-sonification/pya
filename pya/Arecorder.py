@@ -51,6 +51,7 @@ class Arecorder(Aserver):
 
     def boot(self): 
         """boot recorder"""
+        # when input = True, the channels refers to the input channels. 
         self.pastream = self.pa.open(format=self.format, channels=self.channels,
                                      frames_per_buffer=self.bs, rate=self.sr,
                                      input_device_index=self.input_device, output=False, 

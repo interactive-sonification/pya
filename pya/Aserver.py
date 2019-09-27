@@ -129,10 +129,9 @@ class Aserver:
         self._device = val
         self.device_dict = self.pa.get_device_info_by_index(self._device)
         self.max_out_chn = self.device_dict['maxOutputChannels']
-        # self.max_in_chn = self.device_dict['maxInputChannels']
-        # if self.max_in_chn < self.channels:
-        #     warn(f"Aserver: warning: {self.channels}>{self.max_in_chn} channels requested - truncated.")
-        #     self.channels = self.max_in_chn
+        if self.max_out_chn < self.channels:
+            warn(f"Aserver: warning: {self.channels}>{self.max_out_chn} channels requested - truncated.")
+            self.channels = self.max_out_chn
 
     def __repr__(self):
         state = False
