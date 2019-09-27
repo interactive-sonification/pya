@@ -77,6 +77,7 @@ class Aserver:
         self.pa = pyaudio.PyAudio()
         self.channels = channels
         self._status = pyaudio.paComplete
+        self._device = 1
 
         # Get audio devices to input_device and output_device
         self.input_devices = []
@@ -92,12 +93,11 @@ class Aserver:
         else:
             self.device = device
 
-        self.device_dict = self.pa.get_device_info_by_index(self.device)
-        # self.max_out_chn is not that useful: there can be multiple devices having the same mu
-        self.max_out_chn = self.device_dict['maxOutputChannels']
-        if self.max_out_chn < self.channels:
-            warn(f"Aserver: warning: {channels}>{self.max_out_chn} channels requested - truncated.")
-            self.channels = self.max_out_chn
+        # self.device_dict = self.pa.get_device_info_by_index(self.device)
+        # # self.max_out_chn is not that useful: there can be multiple devices having the same mu
+        # self.max_out_chn = self.device_dict['maxOutputChannels']
+        # self.max_in_chn = self.device_dict['maxInputChannels']
+
         self.format = format
         self.gain = 1.0
         self.srv_onsets = []
@@ -118,6 +118,21 @@ class Aserver:
         if self.format not in [pyaudio.paInt16, pyaudio.paFloat32]:
             warn(f"Aserver: currently unsupported pyaudio format {self.format}")
         self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.dtype)
+
+    @property
+    def device(self):
+        return self._device
+
+    @device.setter 
+    def device(self, val):
+        # Setter for the output device. 
+        self._device = val
+        self.device_dict = self.pa.get_device_info_by_index(self._device)
+        self.max_out_chn = self.device_dict['maxOutputChannels']
+        # self.max_in_chn = self.device_dict['maxInputChannels']
+        # if self.max_in_chn < self.channels:
+        #     warn(f"Aserver: warning: {self.channels}>{self.max_in_chn} channels requested - truncated.")
+        #     self.channels = self.max_in_chn
 
     def __repr__(self):
         state = False
@@ -281,3 +296,6 @@ class Aserver:
 
     def stop(self):
         self._stop = True
+
+    def __del__(self):
+        self.pa.terminate()
