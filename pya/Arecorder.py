@@ -35,11 +35,11 @@ class Arecorder(Aserver):
             self.input_device = self.pa.get_default_input_device_info()['index']
         else:
             self.input_device = input_device
-        
+
     @property
     def input_device(self):
         return self._input_device
-    
+
     @input_device.setter
     def input_device(self, val):
         self._input_device = val
@@ -48,7 +48,7 @@ class Arecorder(Aserver):
         if self.max_in_chn < self.channels:
             warn(f"Aserver: warning: {self.channels}>{self.max_in_chn} channels requested - truncated.")
             self.channels = self.max_in_chn
-        
+
     def boot(self): 
         """boot recorder"""
         self.pastream = self.pa.open(format=self.format, channels=self.channels,
