@@ -167,9 +167,7 @@ class TestAsig(TestCase):
         self.assertTrue(np.array_equal([-1, 0, 1, 2], (a.bound - b).sig))
         with self.assertRaises(ValueError): 
             adding = a - b
-        print()
         self.assertTrue(np.array_equal([-1, 0, 1, 2, -1, -1], (a.x - b).sig))
-
 
     def test_division(self):
         # Testing multiplication beween asig and asig, or asig with a scalar.
