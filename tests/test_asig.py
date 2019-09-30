@@ -2,7 +2,7 @@ from unittest import TestCase
 from pya import *
 import numpy as np 
 from math import inf
-
+import os
 
 class TestAsig(TestCase):
     """Test the following:
@@ -29,6 +29,15 @@ class TestAsig(TestCase):
         self.assertEqual(asig.samples, 1000)
         self.assertEqual(asig.channels, 3)
         print(self.asine)
+
+    def test_load_wav_file(self):
+        """MP3 is optional based on whether ffmpeg is installed. But .wav 
+        should work."""
+        print(os.getcwd())
+        asig = Asig("./examples/samples/stereoTest.wav")
+        self.assertEqual(asig.channels, 2)
+        asig = Asig("./examples/samples/snap.wav")
+        self.assertEqual(asig.channels, 1)
 
     def test_asig_plot(self):
         self.asine.plot()
