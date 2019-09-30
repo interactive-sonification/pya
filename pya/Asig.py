@@ -882,14 +882,14 @@ class Asig:
         if isinstance(othersig, numbers.Number):
             return Asig(selfsig * othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
         else:
-            if self.mix_mode is 'bound':
+            if self.mix_mode == 'bound':
                 if selfsig.shape[0] > othersig.shape[0]:
                     selfsig = selfsig[:othersig.shape[0]]
                 elif selfsig.shape[0] < othersig.shape[0]:
                     othersig = othersig[:selfsig.shape[0]]
                 result = selfsig * othersig
                 self.mix_mode = None
-            else:
+            elif self.mix_mode == 'extend':
                 if selfsig.shape[0] > othersig.shape[0]:
                     result = selfsig.copy()
                     result[:othersig.shape[0]] *= othersig
@@ -899,6 +899,8 @@ class Asig:
                     result[:selfsig.shape[0]] *= selfsig
                 else:
                     result = selfsig * othersig
+            else:
+                result = selfsig * othersig
             return Asig(result, self.sr, label=self.label + "_multiplied", cn=self.cn)
 
     def __rmul__(self, other):
@@ -916,23 +918,27 @@ class Asig:
         if isinstance(othersig, numbers.Number):
             return Asig(selfsig / othersig, self.sr, label=self.label + "_multiplied", cn=self.cn)
         else:
-            if self.mix_mode is 'bound':
+            if self.mix_mode == 'bound':
                 if selfsig.shape[0] > othersig.shape[0]:
                     selfsig = selfsig[:othersig.shape[0]]
                 elif selfsig.shape[0] < othersig.shape[0]:
                     othersig = othersig[:selfsig.shape[0]]
                 result = selfsig / othersig
                 self.mix_mode = None
-            else:
+            elif self.mix_mode == 'extend':
                 if selfsig.shape[0] > othersig.shape[0]:
                     result = selfsig.copy()
                     result[:othersig.shape[0]] /= othersig
 
                 elif selfsig.shape[0] < othersig.shape[0]:
+                    # a / b = 1 / (b/a)
                     result = othersig.copy()  # might not be deep enough. 
                     result[:selfsig.shape[0]] /= selfsig
+                    result = 1. / result
                 else:
-                    result = selfsig * othersig
+                    result = selfsig / othersig
+            else:
+                result = selfsig / othersig
             return Asig(result, self.sr, label=self.label + "_divided", cn=self.cn)
 
     def __rtruediv__(self, other):
@@ -948,7 +954,7 @@ class Asig:
         if isinstance(othersig, numbers.Number):  # When other is just a scalar
             return Asig(selfsig + othersig, self.sr, label=self.label + "_added", cn=self.cn)
         else:
-            if self.mix_mode is 'bound':
+            if self.mix_mode == 'bound':
                 try:
                     if selfsig.shape[0] > othersig.shape[0]:
                         selfsig = selfsig[:othersig.shape[0]]
@@ -958,7 +964,7 @@ class Asig:
                     pass  # When othersig is just a scalar
                 result = selfsig + othersig
                 self.mix_mode = None
-            else:
+            elif self.mix_mode == 'extend':
                 # Make the bigger one
                 if selfsig.shape[0] > othersig.shape[0]:
                     result = selfsig.copy()
@@ -969,6 +975,8 @@ class Asig:
                     result[:selfsig.shape[0]] += selfsig
                 else:
                     result = selfsig + othersig
+            else:
+                result = selfsig + othersig
             return Asig(result, self.sr, label=self.label + "_added", cn=self.cn)
 
     def __radd__(self, other):
@@ -984,7 +992,7 @@ class Asig:
         if isinstance(othersig, numbers.Number):  # When other is just a scalar
             return Asig(selfsig - othersig, self.sr, label=self.label + "_subtracted", cn=self.cn)
         else:
-            if self.mix_mode is 'bound':
+            if self.mix_mode == 'bound':
                 try:
                     if selfsig.shape[0] > othersig.shape[0]:
                         selfsig = selfsig[:othersig.shape[0]]
@@ -994,17 +1002,21 @@ class Asig:
                     pass  # When othersig is just a scalar
                 result = selfsig - othersig
                 self.mix_mode = None
-            else:
+            elif self.mix_mode == 'extend':
                 # Make the bigger one
                 if selfsig.shape[0] > othersig.shape[0]:
                     result = selfsig.copy()
                     result[:othersig.shape[0]] -= othersig
 
                 elif selfsig.shape[0] < othersig.shape[0]:
+                    # a - b = - (b - a)
                     result = othersig.copy()
                     result[:selfsig.shape[0]] -= selfsig
+                    result *= -1
                 else:
                     result = selfsig - othersig
+            else:
+                result = selfsig - othersig
             return Asig(result, self.sr, label=self.label + "_subtracted", cn=self.cn)
 
     def __rsub__(self, other):

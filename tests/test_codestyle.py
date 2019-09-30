@@ -9,8 +9,9 @@ class TestCodeFormat(unittest.TestCase):
         # E731 ignores lamda, W291 trailing whitespace
         # W391 blank line at end of file
         # W292 no newline at end of file
+        # E722 bare except
         style = pycodestyle.StyleGuide(quiet=False, 
-                                       ignore=['E501', 'E731', 'W291', 'W391', 'W292'])
+                                       ignore=['E501', 'E731', 'W291', 'W391', 'W292', 'E722'])
         # style.input_dir('../../pya')
         style.input_dir('./')
         # style.input_dir('tests')

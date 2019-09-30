@@ -4,6 +4,7 @@ import numpy as np
 from math import inf
 import os
 
+
 class TestAsig(TestCase):
     """Test the following:
         duration, fader, samples, channels, channel names,
@@ -28,16 +29,6 @@ class TestAsig(TestCase):
         asig = Asig(1000, channels=3)
         self.assertEqual(asig.samples, 1000)
         self.assertEqual(asig.channels, 3)
-        print(self.asine)
-
-    def test_load_wav_file(self):
-        """MP3 is optional based on whether ffmpeg is installed. But .wav 
-        should work."""
-        print(os.getcwd())
-        asig = Asig("./examples/samples/stereoTest.wav")
-        self.assertEqual(asig.channels, 2)
-        asig = Asig("./examples/samples/snap.wav")
-        self.assertEqual(asig.channels, 1)
 
     def test_asig_plot(self):
         self.asine.plot()
@@ -128,7 +119,9 @@ class TestAsig(TestCase):
 
         # adding with different size will extend to the new size. 
         b2 = Asig(np.arange(6), sr=2)
-        adding = a + b2
+        with self.assertRaises(ValueError):
+            adding = a + b2
+        adding = a.x + b2
         self.assertEqual(b2.samples, 6)
 
         # TODO  to decide what to do with different channels. Currently not allow. 
@@ -160,13 +153,7 @@ class TestAsig(TestCase):
         self.assertTrue(np.array_equal([0, 4, 8, 12], (4 * a).sig))
         self.assertTrue(np.array_equal([0, 1, 4, 9], (a * a).sig))
         self.assertTrue(np.array_equal([0, 1, 4, 9], (a.bound * a2).sig))
-
-        # # a = Asig(np.arange(4), sr=2)
-        # # a2 = Asig(np.arange(8), sr=2)
-        # c = a * a2
-        # print(a2.sig)
-        # print((a * a2).sig)
-        self.assertTrue(np.array_equal([0., 1., 4., 9., 4., 5., 6., 7.], (a * a2).sig))
+        self.assertTrue(np.array_equal([0., 1., 4., 9., 4., 5., 6., 7.], (a.x * a2).sig))
 
     def test_subtract(self):
         a = Asig(np.arange(4), sr=2)
@@ -175,6 +162,14 @@ class TestAsig(TestCase):
         self.assertTrue(np.array_equal([1, 0, -1, -2], (1 - a).sig))
         self.assertTrue(np.array_equal([-1, 0, 1, 2], (a - b).sig))
         self.assertTrue(np.array_equal([1, 0, -1, -2], (b - a).sig))
+        a = Asig(np.arange(4), sr=2)
+        b = Asig(np.ones(6), sr=2)
+        self.assertTrue(np.array_equal([-1, 0, 1, 2], (a.bound - b).sig))
+        with self.assertRaises(ValueError): 
+            adding = a - b
+        print()
+        self.assertTrue(np.array_equal([-1, 0, 1, 2, -1, -1], (a.x - b).sig))
+
 
     def test_division(self):
         # Testing multiplication beween asig and asig, or asig with a scalar.
