@@ -10,6 +10,7 @@ import re
 import time
 import os
 import threading
+from warnings import warn
 try:
     import queue
 except ImportError:
@@ -453,8 +454,11 @@ def available_backends():
     ab = [RawAudioFile]
     # Audioread also supports other backends such as coreaudio and gst. But 
     # to simplify, we only use the standard library and ffmpeg. 
-    if ffmpeg_available():  # FFmpeg.
-        ab.append(FFmpegAudioFile)
+    try:
+        if ffmpeg_available():  # FFmpeg.
+            ab.append(FFmpegAudioFile)
+    except:
+        warn("Fail to find FFMPEG backend, please refer to project Github page for installation guide. For now Mp3 is not supported.")
     return ab
 
 

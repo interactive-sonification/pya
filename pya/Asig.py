@@ -738,6 +738,7 @@ class Asig:
             raise TypeError("pan needs to be a float number between -1. to 1.")
 
     def norm(self, norm=1, in_db=False, dcflag=False):
+        # ToDO add channel_wise argument . default True, currently it is the false. 
         """Normalize signal
 
         Parameters
