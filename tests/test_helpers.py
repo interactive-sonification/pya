@@ -1,5 +1,5 @@
 from unittest import TestCase
-from pya import midicps, cpsmidi, Asig, spectrum
+from pya import midicps, cpsmidi, Asig, spectrum, record
 import numpy as np 
 from math import inf
 import os
@@ -35,5 +35,5 @@ class TestHelpers(TestCase):
 
     def test_spectrum(self):
         # Not tested expected outcome yet. 
-        frq, Y = spectrum(self.asine.sig)
-        frqs, Ys = spectrum(self.astereo.sig)
+        frq, Y = spectrum(self.asine.sig, self.asine.samples, self.asine.channels, self.asine.sr)
+        frqs, Ys = spectrum(self.astereo.sig, self.astereo.samples, self.astereo.channels, self.astereo.sr)
