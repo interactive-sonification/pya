@@ -12,7 +12,7 @@ from scipy.io import wavfile
 from .Aserver import Aserver
 from . import Aspec
 from . import Astft
-from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, timeit, audio_from_file, buf_to_float
+from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, audio_from_file, buf_to_float
 from .helper import spectrum, audio_from_file
 from copy import copy, deepcopy
 

@@ -9,7 +9,7 @@ from .Arecorder import Arecorder
 from .Ugen import Ugen
 from .version import __version__
 from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip
-from .helper import timeit, audio_from_file, buf_to_float, spectrum, audio_from_file
+from .helper import audio_from_file, buf_to_float, spectrum, audio_from_file
 from .helper import normalize, record
 
 
