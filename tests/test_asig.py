@@ -180,3 +180,9 @@ class TestAsig(TestCase):
         self.assertTrue(np.array_equal([0, 0.25, 0.5, 0.75], (a / 4).sig))
         self.assertTrue(np.allclose([inf, 4, 2, 1.33333333], (4 / a).sig))
         self.assertTrue(np.array_equal(np.ones((4, 4)) / 2, (a4ch / 2).sig))
+
+    def test_record(self):
+        """This record method doesn't require Arecorder but is a helpder function"""
+        araw = Asig(record(3), 44100, 'vocal').norm()
+        self.assertEqual(araw.sr, 44100)
+        self.assertAlmostEquals(araw.samples / (3 * 44100), 1, places=2)
