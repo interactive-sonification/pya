@@ -5,6 +5,8 @@
 
 * Restructure Asig, Astft, Aspec into different files
 * Add Arecorder class
+* Several bug fixes
+* Made ffmpeg optional
 * Introduced CI testing with travis (*nix) and appveyor (Windows)
 * Introduced coveralls test coverage analysis
 
