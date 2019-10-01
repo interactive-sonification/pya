@@ -1,8 +1,18 @@
-from unittest import TestCase
+from unittest import TestCase, skipUnless
 from pya import midicps, cpsmidi, Asig, spectrum, record
 import numpy as np 
 from math import inf
+import pyaudio
 import os
+
+
+# check if we have an output device
+has_output = False
+try:
+    pyaudio.PyAudio().get_default_output_device_info()
+    has_output = True
+except OSError:
+    pass
 
 
 class TestHelpers(TestCase):
@@ -21,6 +31,7 @@ class TestHelpers(TestCase):
     def tearDown(self):
         pass
 
+    @skipUnless(has_output, "PyAudio found no output device.")  
     def test_record(self):
         """This record method doesn't require Arecorder but is a helpder function"""
         araw = Asig(record(3), 44100, 'vocal').norm()
