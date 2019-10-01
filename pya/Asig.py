@@ -12,7 +12,7 @@ from scipy.io import wavfile
 from .Aserver import Aserver
 from . import Aspec
 from . import Astft
-from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, audio_from_file, buf_to_float
+from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, buf_to_float
 from .helper import spectrum, audio_from_file
 from copy import copy, deepcopy
 
@@ -41,7 +41,7 @@ class Asig:
         e.g. asig[:, ['left', 'front']] subsets the left and front channels of the signal. 
     mix_mode : str or None
         used to extend numpy __setitem__() operation to frequent audio manipulations such as
-        mixing, extending, clipping, replacing. Current Asig supports the mix_modes: 
+        mixing, extending, boundary, replacing. Current Asig supports the mix_modes: 
         bound, extend, overwrite.  mix_mode should not be set directly but is set temporarilty when using 
         the .bound, .extend and .overwrite properties.
     """
