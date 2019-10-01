@@ -29,8 +29,9 @@ class Arecorder(Aserver):
         super().__init__(sr=sr, bs=bs, device=output_device, channels=channels, format=format)
         self.record_buffer = []
         self.recordings = []  # store recorded Asigs, time stamp in label
-        self.recording_flag = False
         self._input_device = 0
+        self.states = {"stop": 0, "record": 1, "pause": 2}
+        self.cuurent_state = self.states['stop']
         if input_device is None:
             self.input_device = self.pa.get_default_input_device_info()['index']
         else:
@@ -60,7 +61,7 @@ class Arecorder(Aserver):
         self.block_time = self.boot_time
         self.block_cnt = 0
         self.record_buffer = []
-        self.recording_flag = False
+        self.cuurent_state = self.states['stop']
         self.pastream.start_stream()
         _LOGGER.info("Server Booted")
         return self
@@ -68,7 +69,7 @@ class Arecorder(Aserver):
     def _recorder_callback(self, in_data, frame_count, time_info, flag):
         """Callback function during streaming. """
         self.block_cnt += 1
-        if self.recording_flag:
+        if self.cuurent_state == self.states['record']:
             sigar = np.frombuffer(in_data, dtype=self.dtype)
             data_float = np.reshape(sigar, (len(sigar) // self.channels, self.channels))  # (chunk length, chns)
             self.record_buffer.append(data_float)
@@ -77,32 +78,33 @@ class Arecorder(Aserver):
         return None, pyaudio.paContinue 
 
     def record(self):
-        if self.recording_flag:
+        if self.cuurent_state == self.states['record']:
             _LOGGER.info("Arecorder:record: is already recording")
         else:
             _LOGGER.info("Arecorder:record activate")
             self.record_buffer = []
-            self.recording_flag = True
+            # self.recording_flag = True
+            self.cuurent_state = self.states['record']
 
     def pause(self):
-        if self.recording_flag:
-            self.recording_flag = False
+        if self.cuurent_state != self.states['pause']:
+            self.cuurent_state = self.states['pause']
         else:
-            _LOGGER.info("Arecorder:pause: can pause only when recording")
+            _LOGGER.info(" Arecorder already paused.")
 
     def resume(self):
-        if self.recording_flag:
-            _LOGGER.info("Arecorder:resume: can only resume when paused or stopped")
+        if self.cuurent_state == self.states['stop'] or self.cuurent_state == self.states['pause']:
+            self.cuurent_state = self.states['record']
         else:
-            self.recording_flag = True
+            _LOGGER.info(" Arecorder:resume: can only resume when paused or stopped")
 
     def stop(self):
-        if self.recording_flag:
-            self.recording_flag = False
+        if self.cuurent_state == self.states['record']:
+            self.cuurent_state = self.states['stop']
             sig = np.squeeze(np.vstack(self.record_buffer))
             self.recordings.append(Asig(sig, self.sr, label=""))
         else:
-            _LOGGER.info("Arecorder:stop: can only stop when recording")
+            _LOGGER.info(" Arecorder:stop: can only stop when recording")
 
     def reset_recordings(self):
         self.recordings = []
