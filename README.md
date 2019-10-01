@@ -27,6 +27,7 @@ It provides:
       * Ugen - a subclass of Asig, which offers unit generators 
         such as sine, square, swatooth, noise
   * Aserver - an audio server class for queuing and playing Asigs
+  * Arecorder - an audio recorder class
   * Aspec - an audio spectrum class, using rfft as real-valued signals are always implied
   * Astft - an audio STFT (short-term Fourier transform) class
 
@@ -46,19 +47,32 @@ pyA can be used for
 
 ## Installation
 
-**Disclaimer**: We are currently making sure that pyA can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .`
+<!-- **Disclaimer**: We are currently making sure that pyA can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .` -->
+
+**Note**: pya can be installed using **pip**. But pya uses PyAudio for audio playback and record, and PyAudio 0.2.11 has yet to fully support Python 3.7. So using pip install with Python 3.7 may encounter issues such as portaudio. Solution
 
 Use pip to install pya via
 
     pip install pya
 
-Besides numpy, scipy and matplotlib, pyA requires pyaudio which in turn requires portaudio. Note that Linux/Windows users should make sure that the corresponding binary packages are installed.
+**Note**: pyA requires PyAudio, for playback and record, which in turn requires portaudio. Since PyAudio 0.2.11 has yet to fully support Python 3.7, you maybe encounter portaudio related error under Python 3.7. Lower versions of Python should be fine. A few solutions are:
 
-See pyaudio installation http://people.csail.mit.edu/hubert/pyaudio/#downloads
 
-Anaconda can install non-python packages, so that the easiest way (if applicable) would be to 
+1. Anaconda can install non-python packages, so that the easiest way (if applicable) would be to 
 
     conda install pyaudio
+
+2. For Mac users, you can `brew install portaudio` beforehand. 
+
+3. For Linux users, try `sudo apt-get install portaudio19-dev` or equivalent to your distro.
+
+4. For Windows users, you can install PyAudio wheel at:
+https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
+
+
+
+
+See pyaudio installation http://people.csail.mit.edu/hubert/pyaudio/#downloads
 
 ## A simple example
 
@@ -77,10 +91,17 @@ A 1s / 440 Hz sine tone at sampling rate 44100 as channel name 'left':
     signal_array = np.sin(2 * np.pi * 440 * np.linspace(0, 1, 44100))
     atone = Asig(signal_array, sr=44100, label='1s sine tone', cn=['left'])
 
-In addition to passing numpy.ndarray as argument for Asig, it is also for possible to pass int as samples or float as seconds to create an Asig obj with silence audio. 
+Other ways of creating an Asig object:
 
-Audio files are also possible using the file path. `WAV` should work without issues. `MP3` is supported but may raise error under Windows and Linux if [FFmpeg](https://ffmpeg.org/) is not installed. MacOS should be fine thanks to CoreAudio.
+    asig_int = Asig(44100, sr=44100)  # zero array with 44100 samples
+    asig_float = Asig(2., sr=44100)  # float argument, 2 seconds of zero array
+    asig_str = Asig('./song.wav')  # load audio file
+    asig_ugen = Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen class to create common waveforms
 
+Audio files are also possible using the file path. `WAV` should work without issues. `MP3` is supported but may raise error if [FFmpeg](https://ffmpeg.org/).
+
+* Mac or Linux with brew
+    - `brew install ffmpeg`
 * On Linux
     - Install FFmpeg via apt-get: `sudo apt install ffmpeg`
 * On Windows

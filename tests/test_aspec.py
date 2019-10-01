@@ -31,3 +31,6 @@ class TestAspec(TestCase):
     def test_plot(self):
         self.asig.to_spec().plot()
         self.asig.to_spec().plot(xlim=(0, 0.5), ylim=(0., 1.0))
+
+    def test_cn_conflict(self):
+        aspec = Aspec(self.asig, cn=['jf', 'dj'])
