@@ -737,6 +737,21 @@ class Asig:
         else:
             raise TypeError("pan needs to be a float number between -1. to 1.")
 
+    def remove_DC(self):
+        """remove DC offset
+
+        Parameters
+        ----------
+        none
+
+        Returns
+        -------
+        _ : Asig
+            channelwise DC-free Asig.            
+        """
+        sig = self.sig - np.mean(self.sig, 0)
+        return Asig(sig, sr=self.sr, label=self.label + "_DCfree", cn=self.cn)
+
     def norm(self, norm=1, in_db=False, dcflag=False):
         # ToDO add channel_wise argument . default True, currently it is the false. 
         """Normalize signal
@@ -748,7 +763,7 @@ class Asig:
         in_db : bool
             Normally, norm takes amplitude, if in_db, norm's unit is in dB. 
         dcflag : bool
-            If true, remove dc offset (Default value = False)
+            If true, remove DC offset (Default value = False)
 
         Returns
         -------

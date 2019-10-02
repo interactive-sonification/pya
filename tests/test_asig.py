@@ -14,6 +14,7 @@ class TestAsig(TestCase):
         self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=['l', 'r'])
         self.sig16ch = np.repeat(self.sig, 16).reshape((44100, 16))
         self.asine16ch = Asig(self.sig16ch, sr=44100, label="test_sine_16ch")
+        self.asigconst = Asig(1.0, sr=100, label="constant signal", cn=['0']) + 0.5
 
     def tearDown(self):
         pass
@@ -67,6 +68,15 @@ class TestAsig(TestCase):
 
         self.assertEqual(self.astereo.cn, ['left', 'right'])
 
+    def test_remove_DC(self):
+        result = self.asigconst.remove_DC()
+        self.assertEqual(0, np.max(result.sig))
+        result = Asig(100, channels=2) + 0.25
+        print(result)
+        result[:,1] = 0.5
+        self.assertEqual([0.25, 0.5], list(np.max(result.sig, 0)))
+        self.assertEqual([0,0], list(result.remove_DC()))
+
     def test_norm(self):
         result = self.astereo.norm()
         result = self.astereo.norm(norm=1., dcflag=True)
@@ -76,6 +86,7 @@ class TestAsig(TestCase):
         result = self.astereo.norm(norm=-3, dcflag=True)
         self.assertEqual(3, np.max(result.sig))
         result = self.astereo.norm(norm=-4, in_db=True, dcflag=True)
+        self.assertEqual(4, np.max(result.sig))
 
     def test_gain(self):
         result = self.astereo.gain(amp=0.)
