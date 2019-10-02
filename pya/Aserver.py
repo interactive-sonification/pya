@@ -141,23 +141,27 @@ class Aserver:
          Stream Active: {state}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
 
-    def get_devices(self):
-        """Print available input and output device."""
-        print("Input Devices: ")
-        [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}")
-         for i in self.input_devices]
-        print("Output Devices: ")
-        [print(f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}")
-         for i in self.output_devices]
+    def get_devices(self, verbose=False):
+        """Return (and optionally print) available input and output device"""
+        if verbose:
+            print("Input Devices: ")
+            [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}")
+            for i in self.input_devices]
+            print("Output Devices: ")
+            [print(f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}")
+             for i in self.output_devices]
         return self.input_devices, self.output_devices
 
     def print_device_info(self):
         """Print device info"""
-        print("Input Devices: ")
-        [print(i) for i in self.input_devices]
-        print("\n")
-        print("Output Devices: ")
-        [print(o) for o in self.output_devices]
+        print(f"idx {'Device Name':21}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
+        devs = [self.pa.get_device_info_by_index(i) for i in range(self.pa.get_device_count())]
+        for i, d in enumerate(devs):
+            print(f"{i:<4g}{d['name'].strip():20}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}", 
+                end="")
+            print(f" {int(d['defaultSampleRate'])}", end="")
+            print(f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}", end="")
+            print(f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}")
 
     def set_device(self, idx, reboot=True):
         """Set audio device 
