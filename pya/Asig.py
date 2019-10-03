@@ -1117,14 +1117,13 @@ class Asig:
             self
         """
         if 'events' not in self._:
-            print('select_event: no events, return all')
+            warn('select_event: no events, return all')
             return self
         events = self._['events']
         if onset:
             index = np.argmin(np.abs(events[:, 0] - onset * self.sr))
         if index is not None:
             beg, end = events[index]
-            # print(beg, end)
             return Asig(self.sig[beg:end], self.sr, label=self.label + f"event_{index}", cn=self.cn)
         _LOGGER.warning('select_event: neither index nor onset given: return self')
         return self
@@ -1383,8 +1382,13 @@ class Asig:
         winstr = win
         if type(winstr) == tuple:
             winstr = win[0]
-        return Asig(self.sig * scipy.signal.get_window(
-            win, self.samples, **kwargs), self.sr, label=self.label + "_" + winstr, cn=self.cn)
+        if self.channels == 1:
+            return Asig(self.sig * scipy.signal.get_window(win, self.samples, **kwargs), 
+                        self.sr, label=self.label + "_" + winstr, cn=self.cn)
+        else:
+            for i in range(self.channels):
+                self.sig[:, i] *= scipy.signal.get_window(win, self.samples, **kwargs)
+            return Asig(self.sig, self.sr, label=self.label + "_" + winstr, cn=self.cn)
 
     def window_op(self, nperseg=64, stride=32, win=None, fn='rms', pad='mirror'):
         """TODO add docstring
@@ -1408,7 +1412,9 @@ class Asig:
         """
         centerpos = np.arange(0, self.samples, stride)
         nsegs = len(centerpos)
-        res = np.zeros((nsegs, ))
+
+        # Probably can simplify this. 
+        res = np.zeros((nsegs, )) if self.channels == 1 else np.zeros((nsegs, self.channels))
         for i, cp in enumerate(centerpos):
             i0 = cp - nperseg // 2
             i1 = cp + nperseg // 2
@@ -1416,14 +1422,20 @@ class Asig:
                 i0 = 0   # ToDo: correct padding!!!
             if i1 >= self.samples:
                 i1 = self.samples - 1  # ToDo: correct padding!!!
-            if isinstance(fn, str):
-                res[i] = self[i0:i1].window(win).__getattribute__(fn)()
-            else:  # assume fn to be a function on Asig
-                res[i] = fn(self[i0:i1])
+            if self.channels == 1:
+                if isinstance(fn, str):
+                    res[i] = self[i0:i1].window(win).__getattribute__(fn)()
+                else:  # assume fn to be a function on Asig
+                    res[i] = fn(self[i0:i1])
+            else:
+                if isinstance(fn, str):
+                    res[i, :] = self[i0:i1].window(win).__getattribute__(fn)()
+                else:  # assume fn to be a function on Asig
+                    res[i, :] = fn(self[i0:i1])
         return Asig(np.array(res), sr=self.sr // stride, label='window_oped', cn=self.cn)
 
-    def overlap_add(self, nperseg=64, stride_in=32, stride_out=32, jitter_in=None, jitter_out=None,
-                    win=None, pad='mirror'):
+    def overlap_add(self, nperseg=64, stride_in=32, stride_out=32, 
+                    jitter_in=None, jitter_out=None, win=None, pad='mirror'):
         """TODO
 
         Parameters

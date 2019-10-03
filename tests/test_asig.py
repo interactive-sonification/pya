@@ -185,3 +185,20 @@ class TestAsig(TestCase):
         self.assertTrue(np.array_equal([0, 0.25, 0.5, 0.75], (a / 4).sig))
         self.assertTrue(np.allclose([inf, 4, 2, 1.33333333], (4 / a).sig))
         self.assertTrue(np.array_equal(np.ones((4, 4)) / 2, (a4ch / 2).sig))
+
+    def test_windowing(self):
+        asig = Asig(np.ones(10), sr=2)
+        asig_windowed = asig.window_op(nperseg=2, stride=1, 
+                                       win='hanning', fn='rms', pad='mirror')
+        self.assertTrue(np.allclose([1., 0.70710677, 0.70710677, 0.70710677,
+                                    0.70710677, 0.70710677, 0.70710677, 
+                                    0.70710677, 0.70710677, 1.], 
+                                    asig_windowed.sig))
+
+        asig2ch = Asig(np.ones((10, 2)), sr=2)
+        asig2ch.window_op(nperseg=2, stride=1, win='hanning', fn='rms', pad='mirror')
+        a = [1., 0.70710677, 0.70710677, 0.70710677, 
+             0.70710677, 0.70710677, 0.70710677, 
+             0.70710677, 0.70710677, 1.]
+        res = np.array([a, a]).T
+        self.assertTrue(np.allclose(a, asig_windowed.sig))
