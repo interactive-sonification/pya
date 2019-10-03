@@ -72,10 +72,9 @@ class TestAsig(TestCase):
         result = self.asigconst.remove_DC()
         self.assertEqual(0, np.max(result.sig))
         result = Asig(100, channels=2) + 0.25
-        print(result)
-        result[:,1] = 0.5
+        result[:, 1] = 0.5
         self.assertEqual([0.25, 0.5], list(np.max(result.sig, 0)))
-        self.assertEqual([0,0], list(result.remove_DC()))
+        self.assertEqual([0., 0.], list(result.remove_DC().sig.max(axis=0)))
 
     def test_norm(self):
         result = self.astereo.norm()
@@ -86,7 +85,7 @@ class TestAsig(TestCase):
         result = self.astereo.norm(norm=-3, dcflag=True)
         self.assertEqual(3, np.max(result.sig))
         result = self.astereo.norm(norm=-4, in_db=True, dcflag=True)
-        self.assertEqual(4, np.max(result.sig))
+        self.assertAlmostEqual(0.6309, np.max(result.sig), places=3)
 
     def test_gain(self):
         result = self.astereo.gain(amp=0.)

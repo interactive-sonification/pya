@@ -61,9 +61,6 @@ class TestPlay(TestCase):
             self.assertEqual(mock_audio.open.call_args_list[1][1]["channels"], 4)
         with mock.patch('pyaudio.PyAudio', return_value=mock_audio): 
             s = Aserver(channels=6)   
-            print(s)
-            s.print_device_info()
-            s.get_devices()
             # Set device is not tested. 
             # s.set_device(idx=1)
             # s.set_device(idx=1, reboot=True)

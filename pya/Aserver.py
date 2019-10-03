@@ -145,10 +145,10 @@ class Aserver:
         """Return (and optionally print) available input and output device"""
         if verbose:
             print("Input Devices: ")
-            [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}")
-            for i in self.input_devices]
+            [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}") 
+             for i in self.input_devices]
             print("Output Devices: ")
-            [print(f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}")
+            [print(f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}") 
              for i in self.output_devices]
         return self.input_devices, self.output_devices
 
@@ -158,9 +158,10 @@ class Aserver:
         devs = [self.pa.get_device_info_by_index(i) for i in range(self.pa.get_device_count())]
         for i, d in enumerate(devs):
             print(f"{i:<4g}{d['name'].strip():20}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}", 
-                end="")
+                  end="")
             print(f" {int(d['defaultSampleRate'])}", end="")
-            print(f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}", end="")
+            print(f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}", 
+                  end="")
             print(f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}")
 
     def set_device(self, idx, reboot=True):
