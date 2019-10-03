@@ -1129,6 +1129,15 @@ class Asig:
         _LOGGER.warning('select_event: neither index nor onset given: return self')
         return self
 
+    def plot_events(self):
+        try:
+            plt.plot(self.sig)
+            for event in self._['events']:
+                plt.axvline(x=event[0])
+                plt.axvline(x=event[1], color='r')
+        except KeyError:
+            raise ValueError("No events found, use find_events() before plotting.")
+
     def fade_in(self, dur=0.1, curve=1):
         """Fade in the signal at the beginning
 
