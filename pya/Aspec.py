@@ -50,7 +50,8 @@ class Aspec:
 
     def to_sig(self):
         """Convert Aspec into Asig"""
-        return Asig.Asig(np.fft.irfft(self.rfftspec), sr=self.sr, label=self.label + '_2sig', cn=self.cn)
+        return Asig.Asig(np.fft.irfft(self.rfftspec), 
+                         sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
     def weight(self, weights, freqs=None, curve=1, kind='linear'):
         """TODO
@@ -90,7 +91,8 @@ class Aspec:
             given_freqs = freqs
         if nfreqs != self.nr_freqs:
             interp_fn = scipy.interpolate.interp1d(given_freqs, weights, kind=kind)
-            rfft_new = self.rfftspec * interp_fn(self.freqs) ** curve  # ToDo: curve segmentwise!!!
+            # ToDo: curve segmentwise!!!
+            rfft_new = self.rfftspec * interp_fn(self.freqs) ** curve  
         else:
             rfft_new = self.rfftspec * weights ** curve
         return Aspec(rfft_new, self.sr, label=self.label + "_weighted", cn=self.cn)
@@ -127,5 +129,6 @@ class Aspec:
 
     def __repr__(self):
         return "Aspec('{}'): {} x {} @ {} Hz = {:.3f} s".format(
-            self.label, self.channels, self.samples, self.sr, self.samples / self.sr)
+            self.label, self.channels, self.samples, 
+            self.sr, self.samples / self.sr)
 
