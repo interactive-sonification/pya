@@ -49,8 +49,7 @@ class Arecorder(Aserver):
             self._input_device)
         self.max_in_chn = self.input_device_dict['maxInputChannels']
         if self.max_in_chn < self.channels:
-            warn(
-                f"Aserver: warning: {self.channels}>{self.max_in_chn} channels requested - truncated.")
+            warn(f"Aserver: warning: {self.channels}>{self.max_in_chn} channels requested - truncated.")
             self.channels = self.max_in_chn
 
     def print_active_device_info(self):

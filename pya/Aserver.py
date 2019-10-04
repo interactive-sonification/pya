@@ -180,7 +180,7 @@ class Aserver:
             try:
                 self.boot()
             except OSError:
-                warn("Error: Invalid device. Server did not boot.")
+                raise OSError("Error: Invalid device. Server did not boot.")
 
     def boot(self):
         """boot Aserver = start stream, setting its callback to this callback."""
@@ -244,7 +244,7 @@ class Aserver:
         self.srv_outs.insert(idx, out)
         if 'block' in kwargs and kwargs['block']:
             if onset > 0:  # here really omset and not rt_onset!
-                warn("blocking inactive with play(onset>0)")
+                _LOGGER.warning("blocking inactive with play(onset>0)")
             else:
                 time.sleep(asig.get_duration())
         return self
