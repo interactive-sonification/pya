@@ -207,3 +207,18 @@ def buf_to_float(x, n_bytes=2, dtype=np.float32):
     fmt = '<i{:d}'.format(n_bytes)
     # Rescale and format the data buffer
     return scale * np.frombuffer(x, fmt).astype(dtype)
+
+
+def device_info():
+    """Return a formatted string about available audio devices and their info"""
+    pa = pyaudio.PyAudio()
+    line1 = (f"idx {'Device Name':25}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
+    devs = [pa.get_device_info_by_index(i) for i in range(pa.get_device_count())]
+    lines = [line1]
+    for i, d in enumerate(devs):
+        p1 = f"{i:<4g}{d['name'].strip():24}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}"
+        p2 = f" {int(d['defaultSampleRate'])}"
+        p3 = f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}"
+        p4 = f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}"
+        lines.append(p1 + p2 + p3 + p4)
+    return lines

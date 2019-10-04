@@ -10,7 +10,7 @@ from .Ugen import Ugen
 from .version import __version__
 from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip
 from .helper import audio_from_file, buf_to_float, spectrum, audio_from_file
-from .helper import normalize, record
+from .helper import normalize, record, device_info
 
 
 def startup(**kwargs):
@@ -26,4 +26,4 @@ __all__ = ['Asig', 'Aspec', 'Astft', 'Aserver', 'Arecorder', 'Ugen',
 
 __all__ += ['ampdb', 'dbamp', 'cpsmidi', 'midicps', 'linlin', 'clip', 
             'audio_from_file', 'buf_to_float', 'spectrum', 
-            'audio_from_file', 'normalize', 'record']
+            'audio_from_file', 'normalize', 'record', 'device_info']
