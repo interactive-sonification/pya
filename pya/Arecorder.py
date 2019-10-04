@@ -25,9 +25,9 @@ class Arecorder(Aserver):
 
     """
 
-    def __init__(self, sr=44100, bs=256, input_device=None, output_device=None, channels=2, format=pyaudio.paFloat32):
+    def __init__(self, sr=44100, bs=256, input_device=None, channels=2, format=pyaudio.paFloat32):
         # TODO I think the channel should not be set.
-        super().__init__(sr=sr, bs=bs, device=output_device, channels=channels, format=format)
+        super().__init__(sr=sr, bs=bs, channels=channels, format=format)
         self.record_buffer = []
         self.recordings = []  # store recorded Asigs, time stamp in label
         self._input_device = 0
@@ -51,18 +51,6 @@ class Arecorder(Aserver):
         if self.max_in_chn < self.channels:
             warn(f"Aserver: warning: {self.channels}>{self.max_in_chn} channels requested - truncated.")
             self.channels = self.max_in_chn
-
-    def print_active_device_info(self):
-        """Print currently selected input and output info"""
-        print(f"idx {'Device Name':21}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
-        devs = [self.pa.get_device_info_by_index(self.input_device), self.pa.get_device_info_by_index(self.device)]
-        for i, d in enumerate(devs):
-            print(f"{i:<4g}{name:20}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}", 
-                  end="")
-            print(f" {int(d['defaultSampleRate'])}", end="")
-            print(f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}", 
-                  end="")
-            print(f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}")
 
     def boot(self):
         """boot recorder"""
@@ -122,5 +110,5 @@ class Arecorder(Aserver):
             state = self.pastream.is_active()
         msg = f"""Arecorder: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}
            Input: {self.input_device_dict['name']}, Index: {self.input_device_dict['index']}
-           Output: {self.device_dict['name']}, Index: {self.device_dict['index']}"""        
+           """        
         return msg
