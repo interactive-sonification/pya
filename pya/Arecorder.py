@@ -14,15 +14,6 @@ _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
 
-@unique
-class State(Enum):
-    ERROR = -1
-    DEFAULT = 0
-    STOPPED = 1
-    RECORDING = 2
-    PAUSED = 3
-
-
 class Arecorder(Aserver):
     """pya audio recorder
     Based on pyaudio, uses callbacks to save audio data
@@ -45,7 +36,7 @@ class Arecorder(Aserver):
                 'index']
         else:
             self.input_device = input_device
-        self.state = State.DEFAULT
+        self.recording_flag = False
 
     @property
     def input_device(self):
@@ -62,6 +53,18 @@ class Arecorder(Aserver):
                 f"Aserver: warning: {self.channels}>{self.max_in_chn} channels requested - truncated.")
             self.channels = self.max_in_chn
 
+    def print_active_device_info(self):
+        """Print currently selected input and output info"""
+        print(f"idx {'Device Name':21}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
+        devs = [self.pa.get_device_info_by_index(self.input_device), self.pa.get_device_info_by_index(self.device)]
+        for i, d in enumerate(devs):
+            print(f"{i:<4g}{name:20}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}", 
+                  end="")
+            print(f" {int(d['defaultSampleRate'])}", end="")
+            print(f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}", 
+                  end="")
+            print(f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}")
+
     def boot(self):
         """boot recorder"""
         # when input = True, the channels refers to the input channels.
@@ -73,6 +76,7 @@ class Arecorder(Aserver):
         self.block_time = self.boot_time
         self.block_cnt = 0
         self.record_buffer = []
+        self.recording_flag = False
         self.pastream.start_stream()
         _LOGGER.info("Server Booted")
         return self
@@ -80,7 +84,7 @@ class Arecorder(Aserver):
     def _recorder_callback(self, in_data, frame_count, time_info, flag):
         """Callback function during streaming. """
         self.block_cnt += 1
-        if self.state == State.RECORDING:
+        if self.recording_flag:
             sigar = np.frombuffer(in_data, dtype=self.dtype)
             # (chunk length, chns)
             data_float = np.reshape(sigar, (len(sigar) // self.channels, self.channels))
@@ -90,37 +94,46 @@ class Arecorder(Aserver):
         return None, pyaudio.paContinue
 
     def record(self):
-        self.record_buffer = []
-        self.state = State.RECORDING
+        """Start a new recording. _record_callback will start storing incoming data
+        into the record_buffer. 
+        """
+        if self.recording_flag:
+            _LOGGER.info(" is already recording.")
+        else:
+            _LOGGER.info(" record activated.")
+            self.record_buffer = []
+            self.recording_flag = True
 
     def pause(self):
-        self.state = State.PAUSED
+        """Pause the recording, but the record_buffer remains"""
+        self.recording_flag = False
 
     def resume(self):
-        """If state is at paused, continue recording. Otherwise do nothing"""
-        if self.state == State.PAUSED:
-            self.state = State.RECORDING
+        """Resume continues recording. It doesn't clear the recording_buffer"""
+        self.recording_flag = True
 
     def stop(self):
-        self.state = State.STOPPED
+        """Stop recording, then stores the data from record_buffer into recordings"""
+        self.recording_flag = False
         if len(self.record_buffer) > 0:
             sig = np.squeeze(np.vstack(self.record_buffer))
             self.recordings.append(Asig(sig, self.sr, label=""))
+            # self.record_buffer = []
         else:
             _LOGGER.info(" Stopped. There is no recording in the record_buffer")
 
     def reset_recordings(self):
         self.recordings = []
-        self.state = State.DEFAULT
+        self.record_buffer = []
 
     def get_latest_recording(self):
         return self.recordings[-1]
 
-    def __getattr__(self, item):
-        if item.startswith('is_'):
-            return self.state == getattr(State, item[3:])
-        else:
-            return super().__getattr__(item)
-
-    def __dir__(self):  # for code completion
-        return super().__dir__() + ['is_{}'.format(s.name) for s in State]
+    def __repr__(self):
+        state = False
+        if self.pastream:
+            state = self.pastream.is_active()
+        msg = f"""Arecorder: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}
+           Input: {self.input_device_dict['name']}, Index: {self.input_device_dict['index']}
+           Output: {self.device_dict['name']}, Index: {self.device_dict['index']}"""        
+        return msg
