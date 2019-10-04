@@ -151,18 +151,6 @@ class Aserver:
              for i in self.output_devices]
         return self.input_devices, self.output_devices
 
-    def print_device_info(self):
-        """Print device info"""
-        print(f"idx {'Device Name':25}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
-        devs = [self.pa.get_device_info_by_index(i) for i in range(self.pa.get_device_count())]
-        for i, d in enumerate(devs):
-            print(f"{i:<4g}{d['name'].strip():24}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}", 
-                  end="")
-            print(f" {int(d['defaultSampleRate'])}", end="")
-            print(f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}", 
-                  end="")
-            print(f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}")
-
     def set_device(self, idx, reboot=True):
         """Set audio device 
 
