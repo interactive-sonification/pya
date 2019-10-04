@@ -36,7 +36,7 @@ class Arecorder(Aserver):
                 'index']
         else:
             self.input_device = input_device
-        self.recording_flag = False
+        self._recording = False
 
     @property
     def input_device(self):
@@ -76,7 +76,7 @@ class Arecorder(Aserver):
         self.block_time = self.boot_time
         self.block_cnt = 0
         self.record_buffer = []
-        self.recording_flag = False
+        self._recording = False
         self.pastream.start_stream()
         _LOGGER.info("Server Booted")
         return self
@@ -84,7 +84,7 @@ class Arecorder(Aserver):
     def _recorder_callback(self, in_data, frame_count, time_info, flag):
         """Callback function during streaming. """
         self.block_cnt += 1
-        if self.recording_flag:
+        if self._recording:
             sigar = np.frombuffer(in_data, dtype=self.dtype)
             # (chunk length, chns)
             data_float = np.reshape(sigar, (len(sigar) // self.channels, self.channels))
@@ -94,37 +94,25 @@ class Arecorder(Aserver):
         return None, pyaudio.paContinue
 
     def record(self):
-        """Start a new recording. _record_callback will start storing incoming data
-        into the record_buffer. 
-        """
-        if self.recording_flag:
-            _LOGGER.info(" is already recording.")
-        else:
-            _LOGGER.info(" record activated.")
-            self.record_buffer = []
-            self.recording_flag = True
+        """Activate recording"""
+        self._recording = True
 
     def pause(self):
         """Pause the recording, but the record_buffer remains"""
-        self.recording_flag = False
-
-    def resume(self):
-        """Resume continues recording. It doesn't clear the recording_buffer"""
-        self.recording_flag = True
+        self._recording = False
 
     def stop(self):
         """Stop recording, then stores the data from record_buffer into recordings"""
-        self.recording_flag = False
+        self._recording = False
         if len(self.record_buffer) > 0:
             sig = np.squeeze(np.vstack(self.record_buffer))
             self.recordings.append(Asig(sig, self.sr, label=""))
-            # self.record_buffer = []
+            self.record_buffer = []
         else:
             _LOGGER.info(" Stopped. There is no recording in the record_buffer")
 
     def reset_recordings(self):
         self.recordings = []
-        self.record_buffer = []
 
     def get_latest_recording(self):
         return self.recordings[-1]

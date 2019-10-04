@@ -68,7 +68,7 @@ class TestArecorder(TestCase):
         time.sleep(1.)
         ar.pause()
         time.sleep(0.2)
-        ar.resume()
+        ar.record()
         time.sleep(1.)
         ar.stop()
         asig = ar.recordings
@@ -90,7 +90,7 @@ class TestArecorder(TestCase):
             ar.record()
             # time.sleep(0.5)
             ar.pause()
-            ar.resume()
+            ar.record()
             ar.reset_recordings()
             self.assertEqual(0, len(ar.recordings))
 
