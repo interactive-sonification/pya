@@ -36,7 +36,6 @@ class Aserver:
             _LOGGER.info("Aserver startup_default_server: create and boot")
             Aserver.default = Aserver(**kwargs)  # using all default settings
             Aserver.default.boot()
-            # print(Aserver.default)
             _LOGGER.info("Default server info: %s", Aserver.default)
         else:
             _LOGGER.info("Aserver default_server already set.")
@@ -154,10 +153,10 @@ class Aserver:
 
     def print_device_info(self):
         """Print device info"""
-        print(f"idx {'Device Name':21}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
+        print(f"idx {'Device Name':25}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
         devs = [self.pa.get_device_info_by_index(i) for i in range(self.pa.get_device_count())]
         for i, d in enumerate(devs):
-            print(f"{i:<4g}{d['name'].strip():20}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}", 
+            print(f"{i:<4g}{d['name'].strip():24}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}", 
                   end="")
             print(f" {int(d['defaultSampleRate'])}", end="")
             print(f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}", 
