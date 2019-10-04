@@ -7,10 +7,20 @@ import numpy as np
 import pyaudio
 from . import Asig
 from . import Aserver
+from enum import Enum, unique
 
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
+
+
+@unique
+class State(Enum):
+    ERROR = -1
+    DEFAULT = 0
+    STOPPED = 1
+    RECORDING = 2
+    PAUSED = 3
 
 
 class Arecorder(Aserver):
@@ -30,13 +40,12 @@ class Arecorder(Aserver):
         self.record_buffer = []
         self.recordings = []  # store recorded Asigs, time stamp in label
         self._input_device = 0
-        self.states = {"stopped": 0, "recording": 1, "paused": 2}
-        self.current_state = self.states['stopped']
         if input_device is None:
             self.input_device = self.pa.get_default_input_device_info()[
                 'index']
         else:
             self.input_device = input_device
+        self.state = State.DEFAULT
 
     @property
     def input_device(self):
@@ -64,7 +73,6 @@ class Arecorder(Aserver):
         self.block_time = self.boot_time
         self.block_cnt = 0
         self.record_buffer = []
-        self.current_state = self.states['stopped']
         self.pastream.start_stream()
         _LOGGER.info("Server Booted")
         return self
@@ -72,48 +80,47 @@ class Arecorder(Aserver):
     def _recorder_callback(self, in_data, frame_count, time_info, flag):
         """Callback function during streaming. """
         self.block_cnt += 1
-        if self.current_state == self.states['recording']:
+        if self.state == State.RECORDING:
             sigar = np.frombuffer(in_data, dtype=self.dtype)
             # (chunk length, chns)
-            data_float = np.reshape(
-                sigar, (len(sigar) // self.channels, self.channels))
+            data_float = np.reshape(sigar, (len(sigar) // self.channels, self.channels))
             self.record_buffer.append(data_float)
             # E = 10 * np.log10(np.mean(data_float ** 2)) # energy in dB
             # os.write(1, f"\r{E}    | {self.block_cnt}".encode())
         return None, pyaudio.paContinue
 
     def record(self):
-        if self.current_state == self.states['recording']:
-            _LOGGER.info("Arecorder:record: is already recording")
-        else:
-            _LOGGER.info("Arecorder:record activate")
-            self.record_buffer = []
-            # self.recording_flag = True
-            self.current_state = self.states['recording']
+        self.record_buffer = []
+        self.state = State.RECORDING
 
     def pause(self):
-        if self.current_state != self.states['paused']:
-            self.current_state = self.states['paused']
-        else:
-            _LOGGER.info(" Arecorder already paused.")
+        self.state = State.PAUSED
 
     def resume(self):
-        if self.current_state == self.states['stopped'] or self.current_state == self.states['paused']:
-            self.current_state = self.states['recording']
-        else:
-            _LOGGER.info(
-                " Arecorder:resume: can only resume when paused or stopped")
+        """If state is at paused, continue recording. Otherwise do nothing"""
+        if self.state == State.PAUSED:
+            self.state = State.RECORDING
 
     def stop(self):
-        if self.current_state == self.states['recording']:
-            self.current_state = self.states['stopped']
+        self.state = State.STOPPED
+        if len(self.record_buffer) > 0:
             sig = np.squeeze(np.vstack(self.record_buffer))
             self.recordings.append(Asig(sig, self.sr, label=""))
         else:
-            _LOGGER.info(" Arecorder:stop: can only stop when recording")
+            _LOGGER.info(" Stopped. There is no recording in the record_buffer")
 
     def reset_recordings(self):
         self.recordings = []
+        self.state = State.DEFAULT
 
     def get_latest_recording(self):
         return self.recordings[-1]
+
+    def __getattr__(self, item):
+        if item.startswith('is_'):
+            return self.state == getattr(State, item[3:])
+        else:
+            return super().__getattr__(item)
+
+    def __dir__(self):  # for code completion
+        return super().__dir__() + ['is_{}'.format(s.name) for s in State]

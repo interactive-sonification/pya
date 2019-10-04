@@ -97,4 +97,4 @@ class TestArecorder(TestCase):
             with self.assertRaises(IndexError): 
                 ar.get_latest_recording()
             # ar.stop()  # Dont know how to mock the stop. 
-            # How to mock a result. 
+            # TODO How to mock a result. 
