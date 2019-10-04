@@ -15,7 +15,7 @@ except OSError:
 
 FAKE_INPUT = {'index': 0,
               'structVersion': 2,
-              'name': 'MacBook Pro Microphone',
+              'name': 'Mock Input',
               'hostApi': 0,
               'maxInputChannels': 1,
               'maxOutputChannels': 0,
@@ -83,15 +83,15 @@ class TestArecorder(TestCase):
         with mock.patch('pyaudio.PyAudio', return_value=mock_recorder):
             ar = Arecorder()
             self.assertEqual(
-                "Mock Output", 
-                ar.pa.get_default_output_device_info()['name'])
+                "Mock Input", 
+                ar.pa.get_default_input_device_info()['name'])
             ar.boot()
             self.assertTrue(mock_recorder.open.called)
             ar.record()
             # time.sleep(0.5)
             ar.pause()
             ar.record()
-            ar.reset_recordings()
+            ar.recordings.clear()
             self.assertEqual(0, len(ar.recordings))
 
             with self.assertRaises(IndexError): 
