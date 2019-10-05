@@ -98,12 +98,6 @@ class Arecorder(Aserver):
         else:
             _LOGGER.info(" Stopped. There is no recording in the record_buffer")
 
-    def reset_recordings(self):
-        self.recordings = []
-
-    def get_latest_recording(self):
-        return self.recordings[-1]
-
     def __repr__(self):
         state = False
         if self.pastream:

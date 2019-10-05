@@ -75,7 +75,7 @@ class TestArecorder(TestCase):
         self.assertIsInstance(asig, list)
         a1_last = ar.get_latest_recording()
         self.assertEqual(a1_last.sr, 44100)
-        ar.reset_recordings()
+        ar.recordings.clear()
         ar.quit()
 
     def test_mock_arecorder(self):
