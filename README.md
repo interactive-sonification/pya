@@ -1,11 +1,11 @@
-[![Version](https://img.shields.io/badge/version-v0.3.0-orange.svg)](https://github.com/Thomas-Hermann/pya)
+[![Version](https://img.shields.io/badge/version-v0.3.0-orange.svg)](https://github.com/interactive-sonification/pya)
 [![PyPI](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
-[![GitHub commits](https://img.shields.io/github/commits-since/Thomas-Hermann/pya/v0.2.1.svg)](https://github.com/Thomas-Hermann/pya/compare/v0.2.1...master)
-[![License](https://img.shields.io/github/license/Thomas-Hermann/pya.svg)](LICENSE)
+[![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.2.1.svg)](https://github.com/interactive-sonification/pya/compare/v0.2.1...master)
+[![License](https://img.shields.io/github/license/interactive-sonification/pya.svg)](LICENSE)
 [![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=develop)](https://travis-ci.org/interactive-sonification/pya)
 [![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/develop?svg=true)](https://ci.appveyor.com/project/aleneum/pya-b7gkx/branch/develop)
 <!--
-[![Coverage Status](https://coveralls.io/repos/Thomas-Hermann/pya/badge.svg?branch=master&service=github)](https://coveralls.io/github/Thomas-Hermann/pya?branch=master)
+[![Coverage Status](https://coveralls.io/repos/interactive-sonification/pya/badge.svg?branch=master&service=github)](https://coveralls.io/github/interactive-sonification/pya?branch=master)
 -->
 
 <!--[![Name](Image)](Link)-->
@@ -19,7 +19,7 @@ It uses numpy arrays to store and compute audio signals.
 
   * Website: --
   * Documentation: see examples/pya-examples.ipynb and help(pya)
-  * Source code: https://github.com/thomas-hermann/pya
+  * Source code: https://github.com/interactive-sonification/pya
 
 It provides:
 
