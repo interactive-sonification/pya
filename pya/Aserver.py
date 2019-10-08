@@ -36,7 +36,6 @@ class Aserver:
             _LOGGER.info("Aserver startup_default_server: create and boot")
             Aserver.default = Aserver(**kwargs)  # using all default settings
             Aserver.default.boot()
-            # print(Aserver.default)
             _LOGGER.info("Default server info: %s", Aserver.default)
         else:
             _LOGGER.info("Aserver default_server already set.")
@@ -77,6 +76,7 @@ class Aserver:
         self.pa = pyaudio.PyAudio()
         self.channels = channels
         self._status = pyaudio.paComplete
+        self._device = 1
 
         # Get audio devices to input_device and output_device
         self.input_devices = []
@@ -92,12 +92,11 @@ class Aserver:
         else:
             self.device = device
 
-        self.device_dict = self.pa.get_device_info_by_index(self.device)
-        # self.max_out_chn is not that useful: there can be multiple devices having the same mu
-        self.max_out_chn = self.device_dict['maxOutputChannels']
-        if self.max_out_chn < self.channels:
-            warn(f"Aserver: warning: {channels}>{self.max_out_chn} channels requested - truncated.")
-            self.channels = self.max_out_chn
+        # self.device_dict = self.pa.get_device_info_by_index(self.device)
+        # # self.max_out_chn is not that useful: there can be multiple devices having the same mu
+        # self.max_out_chn = self.device_dict['maxOutputChannels']
+        # self.max_in_chn = self.device_dict['maxInputChannels']
+
         self.format = format
         self.gain = 1.0
         self.srv_onsets = []
@@ -119,6 +118,20 @@ class Aserver:
             warn(f"Aserver: currently unsupported pyaudio format {self.format}")
         self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.dtype)
 
+    @property
+    def device(self):
+        return self._device
+
+    @device.setter 
+    def device(self, val):
+        # Setter for the output device. 
+        self._device = val
+        self.device_dict = self.pa.get_device_info_by_index(self._device)
+        self.max_out_chn = self.device_dict['maxOutputChannels']
+        if self.max_out_chn < self.channels:
+            warn(f"Aserver: warning: {self.channels}>{self.max_out_chn} channels requested - truncated.")
+            self.channels = self.max_out_chn
+
     def __repr__(self):
         state = False
         if self.pastream:
@@ -127,23 +140,16 @@ class Aserver:
          Stream Active: {state}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
 
-    def get_devices(self):
-        """Print available input and output device."""
-        print("Input Devices: ")
-        [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}")
-         for i in self.input_devices]
-        print("Output Devices: ")
-        [print(f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}")
-         for i in self.output_devices]
+    def get_devices(self, verbose=False):
+        """Return (and optionally print) available input and output device"""
+        if verbose:
+            print("Input Devices: ")
+            [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}") 
+             for i in self.input_devices]
+            print("Output Devices: ")
+            [print(f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}") 
+             for i in self.output_devices]
         return self.input_devices, self.output_devices
-
-    def print_device_info(self):
-        """Print device info"""
-        print("Input Devices: ")
-        [print(i) for i in self.input_devices]
-        print("\n")
-        print("Output Devices: ")
-        [print(o) for o in self.output_devices]
 
     def set_device(self, idx, reboot=True):
         """Set audio device 
@@ -162,7 +168,7 @@ class Aserver:
             try:
                 self.boot()
             except OSError:
-                warn("Error: Invalid device. Server did not boot.")
+                raise OSError("Error: Invalid device. Server did not boot.")
 
     def boot(self):
         """boot Aserver = start stream, setting its callback to this callback."""
@@ -191,9 +197,6 @@ class Aserver:
         except AttributeError:
             _LOGGER.info("No stream found...")
         self.pastream = None
-
-    def __del__(self):
-        self.pa.terminate()
 
     def play(self, asig, onset=0, out=0, **kwargs):
         """Dispatch asigs or arrays for given onset."""
@@ -229,7 +232,7 @@ class Aserver:
         self.srv_outs.insert(idx, out)
         if 'block' in kwargs and kwargs['block']:
             if onset > 0:  # here really omset and not rt_onset!
-                warn("blocking inactive with play(onset>0)")
+                _LOGGER.warning("blocking inactive with play(onset>0)")
             else:
                 time.sleep(asig.get_duration())
         return self
@@ -284,3 +287,6 @@ class Aserver:
 
     def stop(self):
         self._stop = True
+
+    def __del__(self):
+        self.pa.terminate()

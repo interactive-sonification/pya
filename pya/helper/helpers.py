@@ -30,7 +30,7 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
         numpy array of the recorded audio signal.
     """
     p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paInt16, channels=channels, rate=rate, input=True,
+    stream = p.open(format=pyaudio.paFloat32, channels=channels, rate=rate, input=True,
                     output=True, frames_per_buffer=chunk)
     buflist = []
     for _ in range(0, int(rate / chunk * dur)):
@@ -39,7 +39,7 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
     stream.stop_stream()
     stream.close()
     p.terminate()
-    return np.frombuffer(b''.join(buflist), dtype=np.int16)
+    return np.frombuffer(b''.join(buflist), dtype=np.float32)
 
 
 def linlin(x, smi, sma, dmi, dma):
@@ -94,20 +94,20 @@ def ampdb(amp):
     return 20 * np.log10(amp)
 
 
-def timeit(method):
-    """Decorator to time methods, print out the time for executing the method"""
-    def timed(*args, **kw):
-        ts = time.time()
-        result = method(*args, **kw)
-        te = time.time()
-        if 'log_time' in kw:
-            name = kw.get('log_name', method.__name__.upper())
-            kw['log_time'][name] = int((te - ts) * 1000)
-        else:
-            print('%r  %2.2f ms' %
-                  (method.__name__, (te - ts) * 1000))
-        return result
-    return timed
+# def timeit(method):
+#     """Decorator to time methods, print out the time for executing the method"""
+#     def timed(*args, **kw):
+#         ts = time.time()
+#         result = method(*args, **kw)
+#         te = time.time()
+#         if 'log_time' in kw:
+#             name = kw.get('log_name', method.__name__.upper())
+#             kw['log_time'][name] = int((te - ts) * 1000)
+#         else:
+#             print('%r  %2.2f ms' %
+#                   (method.__name__, (te - ts) * 1000))
+#         return result
+#     return timed
 
 
 def spectrum(sig, samples, channels, sr):
@@ -142,17 +142,6 @@ def spectrum(sig, samples, channels, sr):
     return frq, Y
 
 
-def get_length(dur, sr):
-    """Return total number of samples based on duration in second (dur) and sampling rate (sr)"""
-    if isinstance(dur, float):
-        length = int(dur * sr)
-    elif isinstance(dur, int):
-        length = dur
-    else:
-        raise TypeError("Unrecognise type for dur, int (samples) or float (seconds) only")
-    return length
-
-
 def normalize(d):
     """Return the normalized input array"""
     # d is a (n x dimension) np array
@@ -161,7 +150,7 @@ def normalize(d):
     return d
 
 
-def audio_from_file(path, offset=0, duration=None, dtype=np.float32):
+def audio_from_file(path, dtype=np.float32):
     '''Load an audio buffer using audioread.
     This loads one block at a time, and then concatenates the results.
     '''
@@ -169,27 +158,13 @@ def audio_from_file(path, offset=0, duration=None, dtype=np.float32):
     with audio_read(path) as input_file:
         sr_native = input_file.samplerate
         n_channels = input_file.channels
-        s_start = int(np.round(sr_native * offset)) * n_channels
-
-        if duration is None:
-            s_end = np.inf
-        else:
-            s_end = s_start + (int(np.round(sr_native * duration)) * n_channels)
+        s_start = 0
+        s_end = np.inf
         n = 0
         for frame in input_file:
             frame = buf_to_float(frame, dtype=dtype)
             n_prev = n
             n = n + len(frame)
-            if n < s_start:
-                # offset is after the current frame
-                # keep reading
-                continue
-            if s_end < n_prev:
-                # we're off the end.  stop reading
-                break
-            if s_end < n:
-                # the end is in this frame.  crop.
-                frame = frame[:s_end - n_prev]
             if n_prev <= s_start <= n:
                 # beginning is in this frame
                 frame = frame[(s_start - n_prev):]
@@ -232,3 +207,18 @@ def buf_to_float(x, n_bytes=2, dtype=np.float32):
     fmt = '<i{:d}'.format(n_bytes)
     # Rescale and format the data buffer
     return scale * np.frombuffer(x, fmt).astype(dtype)
+
+
+def device_info():
+    """Return a formatted string about available audio devices and their info"""
+    pa = pyaudio.PyAudio()
+    line1 = (f"idx {'Device Name':25}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
+    devs = [pa.get_device_info_by_index(i) for i in range(pa.get_device_count())]
+    lines = [line1]
+    for i, d in enumerate(devs):
+        p1 = f"{i:<4g}{d['name'].strip():24}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}"
+        p2 = f" {int(d['defaultSampleRate'])}"
+        p3 = f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}"
+        p4 = f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}"
+        lines.append(p1 + p2 + p3 + p4)
+    return lines

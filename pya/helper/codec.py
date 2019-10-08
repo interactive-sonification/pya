@@ -10,12 +10,18 @@ import re
 import time
 import os
 import threading
+from warnings import warn
 try:
     import queue
 except ImportError:
     import Queue as queue
 
 COMMANDS = ('ffmpeg', 'avconv')
+
+if sys.platform == "win32":
+    PROC_FLAGS = 0x08000000
+else:
+    PROC_FLAGS = 0
 
 # Produce two-byte (16-bit) output samples.
 TARGET_WIDTH = 2
@@ -211,15 +217,30 @@ def popen_multiple(commands, command_args, *args, **kwargs):
 
 
 def ffmpeg_available():
-    """Detect if the FFmpeg backend can be used on this system."""
-    proc = popen_multiple(
-        COMMANDS,
-        ['-version'],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    proc.wait()
-    return (proc.returncode == 0)
+    # """Detect if the FFmpeg backend can be used on this system."""
+    # proc = popen_multiple(
+    #     COMMANDS,
+    #     ['-version'],
+    #     stdout=subprocess.PIPE,
+    #     stderr=subprocess.PIPE,
+    # )
+    # proc.wait()
+    # return (proc.returncode == 0)
+    """Detect whether the FFmpeg backend can be used on this system.
+    """
+    try:
+        proc = popen_multiple(
+            COMMANDS,
+            ['-version'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            creationflags=PROC_FLAGS,
+        )
+    except OSError:
+        return False
+    else:
+        proc.wait()
+        return proc.returncode == 0
 
 
 # For Windows error switch management, we need a lock to keep the mode
@@ -433,8 +454,11 @@ def available_backends():
     ab = [RawAudioFile]
     # Audioread also supports other backends such as coreaudio and gst. But 
     # to simplify, we only use the standard library and ffmpeg. 
-    if ffmpeg_available():  # FFmpeg.
-        ab.append(FFmpegAudioFile)
+    try:
+        if ffmpeg_available():  # FFmpeg.
+            ab.append(FFmpegAudioFile)
+    except:
+        warn("Fail to find FFMPEG backend, please refer to project Github page for installation guide. For now Mp3 is not supported.")
     return ab
 
 
@@ -445,4 +469,4 @@ def audio_read(fp):
             return BackendClass(fp)
         except DecodeError:
             pass
-    raise NoBackendError()  # If all backends fails 
+    raise NoBackendError("Couldn't find a suitable backend to load the file.")  # If all backends fails 

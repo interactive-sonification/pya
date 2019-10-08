@@ -31,7 +31,7 @@ setup(
     author='Thomas Hermann',
     author_email='thermann@techfak.uni-bielefeld.de',
     keywords=['sonification, sound synthesis'],
-    url='https://github.com/thomas-hermann/pya',
+    url='https://github.com/interactive-sonification/pya',
     classifiers=[
         "Programming Language :: Python :: 3",
         "Development Status :: 4 - Beta",

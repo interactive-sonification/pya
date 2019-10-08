@@ -14,7 +14,6 @@ class TestRoutePan(TestCase):
         self.asineWithName = Asig(self.sig, sr=44100, label="test_sine", cn=['sine'])
         self.sig2ch = np.repeat(self.sig, 2).reshape((44100, 2))
         self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=['l', 'r'])
-        # self.astereo = Asig("/examples/samples/stereoTest.wav", label='stereo', cn=['l','r'])
         self.sig16ch = np.repeat(self.sig, 16).reshape((44100, 16))
         self.asine16ch = Asig(self.sig16ch, sr=44100, label="test_sine_16ch")
 
@@ -31,6 +30,7 @@ class TestRoutePan(TestCase):
 
     def test_mono(self):
         """Convert any signal dimension to mono"""
+        self.asine.mono()
         result = self.astereo.mono([0.5, 0.5])
         self.assertEqual(result.channels, 1)
         result = self.asine16ch.mono(np.ones(16) * 0.1)
@@ -38,11 +38,14 @@ class TestRoutePan(TestCase):
 
     def test_stereo(self):
         """Convert any signal dimension to stereo"""
-        result = self.asine.stereo([0.5, 0.5])
-        self.assertEqual(result.channels, 2)
+        stereo_mix = self.asine.stereo([0.5, 0.5])
+        self.assertEqual(stereo_mix.channels, 2)
 
-        # result = self.asine16ch.stereo([np.ones(16), np.zeros(16)])
-        # self.assertEqual(result.channels, 2)
+        stereo_mix = self.astereo.stereo()
+        stereo_mix = self.astereo.stereo(blend=(0.2, 0.4))
+
+        stereo_mix = self.asine16ch.stereo([np.ones(16), np.zeros(16)])
+        self.assertEqual(stereo_mix.channels, 2)
 
     def test_rewire(self):
         """Rewire channels, e.g. move 0 to 1 with a gain of 0.5"""
@@ -55,7 +58,14 @@ class TestRoutePan(TestCase):
         self.assertTrue(np.allclose(expect[1000:10010, 1], result.sig[1000:10010, 1]))
 
     def test_pan2(self):
-        result = self.astereo.pan2(-1.)
-        self.assertAlmostEqual(0, result.sig[:, 1].sum())
-        result = self.astereo.pan2(1.)
-        self.assertAlmostEqual(0, result.sig[:, 0].sum())
+        pan2 = self.astereo.pan2(-1.)
+        self.assertAlmostEqual(0, pan2.sig[:, 1].sum())
+        pan2 = self.astereo.pan2(1.)
+        self.assertAlmostEqual(0, pan2.sig[:, 0].sum())
+
+        pan2 = self.asine.pan2(-0.5)
+        self.assertEqual(pan2.channels, 2)
+        with self.assertRaises(TypeError):
+            self.astereo.pan2([2., 4.])
+        with self.assertRaises(ValueError):
+            self.astereo.pan2(3.)

@@ -1,5 +1,6 @@
 include *.md
 include *.txt
+include *.yml
 include .coveragerc
 include .pylintrc
 include LICENSE
@@ -13,3 +14,4 @@ recursive-include examples *.mp3
 recursive-include examples *.aif
 recursive-include tests *.py
 recursive-exclude examples/.ipynb_checkpoints *.ipynb
+recursive-include pya *.py
