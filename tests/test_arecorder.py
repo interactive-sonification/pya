@@ -73,8 +73,7 @@ class TestArecorder(TestCase):
         ar.stop()
         asig = ar.recordings
         self.assertIsInstance(asig, list)
-        a1_last = ar.get_latest_recording()
-        self.assertEqual(a1_last.sr, 44100)
+        self.assertEqual(asig[-1].sr, 44100)
         ar.recordings.clear()
         ar.quit()
 
@@ -93,8 +92,5 @@ class TestArecorder(TestCase):
             ar.record()
             ar.recordings.clear()
             self.assertEqual(0, len(ar.recordings))
-
-            with self.assertRaises(IndexError): 
-                ar.get_latest_recording()
             # ar.stop()  # Dont know how to mock the stop. 
             # TODO How to mock a result. 
