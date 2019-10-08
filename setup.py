@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import os
 import codecs
 from os.path import join
@@ -25,7 +25,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     license='MIT',
-    packages=['pya'],
+    packages=find_packages(exclude=["tests"]),
     install_requires=REQUIRED,
     tests_require=REQUIRED_TEST,
     author='Thomas Hermann',
