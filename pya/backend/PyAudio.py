@@ -28,10 +28,16 @@ class PyAudioBackend(BackendBase):
     def get_default_output_device_info(self):
         return self.pa.get_default_output_device_info()
 
-    def open(self, channels, rate, input_flag, output_flag, frames_per_buffer, input_device_index=None,
-             output_device_index=None, stream_callback=None):
-        return self.pa.open(format=self.format, channels=channels, rate=rate, input=input_flag, output=output_flag,
-                            frames_per_buffer=frames_per_buffer, output_device_index=output_device_index,
+    def open(self, rate, channels, input_flag, output_flag, frames_per_buffer, 
+             input_device_index=None, output_device_index=None, start=True, 
+             input_host_api_specific_stream_info=None, output_host_api_specific_stream_info=None, 
+             stream_callback=None):
+
+        return self.pa.open(rate=rate, channels=channels, format=self.format, input=input_flag, output=output_flag, 
+                            input_device_index=input_device_index, output_device_index=output_device_index, 
+                            frames_per_buffer=frames_per_buffer, start=start, 
+                            input_host_api_specific_stream_info=None, 
+                            output_host_api_specific_stream_info=None, 
                             stream_callback=stream_callback)
 
     def process_buffer(self, buffer):
