@@ -37,13 +37,32 @@ FAKE_OUTPUT = {'index': 1,
                'defaultHighOutputLatency': 0.04,
                'defaultSampleRate': 44100.0}
 
+FAKE_AUDIO_INTERFACE = {'index': 2,
+                        'structVersion': 2,
+                        'name': 'Mock Audio Interface',
+                        'hostApi': 0,
+                        'maxInputChannels': 14,
+                        'maxOutputChannels': 14,
+                        'defaultLowInputLatency': 0.01,
+                        'defaultLowOutputLatency': 0.02,
+                        'defaultHighInputLatency': 0.03,
+                        'defaultHighOutputLatency': 0.04,
+                        'defaultSampleRate': 48000.0}
+
 
 class MockRecorder(mock.MagicMock):
     def get_device_count(self):
         return 2
 
     def get_device_info_by_index(self, arg):
-        return FAKE_INPUT if arg == 0 else FAKE_OUTPUT
+        if arg == 0:
+            return FAKE_INPUT
+        elif arg == 1:
+            return FAKE_OUTPUT
+        elif arg == 2:
+            return FAKE_AUDIO_INTERFACE
+        else:
+            raise AttributeError("Invalid device index.")
 
     def get_default_input_device_info(self):
         return FAKE_INPUT
