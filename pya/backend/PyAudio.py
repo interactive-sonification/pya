@@ -16,14 +16,6 @@ class PyAudioBackend(BackendBase):
         else:
             raise AttributeError(f"Aserver: currently unsupported pyaudio format {self.format}")
 
-    @property
-    def status(self):
-        return self._status
-
-    @status.setter
-    def status(self, value):
-        self._status = value
-
     def get_device_count(self):
         return self.pa.get_device_count()
 
