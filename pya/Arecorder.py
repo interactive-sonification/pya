@@ -1,13 +1,11 @@
 # Arecorder class
 import time
 import logging
-from sys import platform
 from warnings import warn
 import numpy as np
 import pyaudio
 from . import Asig
 from . import Aserver
-from enum import Enum, unique
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -21,18 +19,19 @@ class Arecorder(Aserver):
 
     Examples:
     -----------
-    from pya import *
+    from pya import Arecorder
 
     """
 
-    def __init__(self, sr=44100, bs=256, input_device=None, channels=2, format=pyaudio.paFloat32):
+    def __init__(self, sr=44100, bs=256, input_device=None, input_channels=None, backend=None, **kwargs):
         # TODO I think the channel should not be set.
-        super().__init__(sr=sr, bs=bs, channels=channels, format=format)
+        super().__init__(sr=sr, bs=bs, backend=backend, **kwargs)
         self.record_buffer = []
         self.recordings = []  # store recorded Asigs, time stamp in label
         self._input_device = 0
+        self.input_channels = input_channels
         if input_device is None:
-            self.input_device = self.pa.get_default_input_device_info()[
+            self.input_device = self.backend.get_default_input_device_info()[
                 'index']
         else:
             self.input_device = input_device
@@ -45,26 +44,26 @@ class Arecorder(Aserver):
     @input_device.setter
     def input_device(self, val):
         self._input_device = val
-        self.input_device_dict = self.pa.get_device_info_by_index(
-            self._input_device)
+        self.input_device_dict = self.backend.get_device_info_by_index(self._input_device)
         self.max_in_chn = self.input_device_dict['maxInputChannels']
-        if self.max_in_chn < self.channels:
+        if self.input_channels is None:
+            self.input_channels = self.max_in_chn
+        if self.max_in_chn < self.input_channels:
             warn(f"Aserver: warning: {self.channels}>{self.max_in_chn} channels requested - truncated.")
-            self.channels = self.max_in_chn
+            self.input_channels = self.max_in_chn
 
     def boot(self):
         """boot recorder"""
         # when input = True, the channels refers to the input channels.
-        self.pastream = self.pa.open(format=self.format, channels=self.channels,
-                                     frames_per_buffer=self.bs, rate=self.sr,
-                                     input_device_index=self.input_device, output=False,
-                                     input=True, stream_callback=self._recorder_callback)
+        self.stream = self.backend.open(rate=self.sr, channels=self.input_channels, frames_per_buffer=self.bs, 
+                                        input_device_index=self.input_device, output_flag=False,
+                                        input_flag=True, stream_callback=self._recorder_callback)
         self.boot_time = time.time()
         self.block_time = self.boot_time
         self.block_cnt = 0
         self.record_buffer = []
         self._recording = False
-        self.pastream.start_stream()
+        self.stream.start_stream()
         _LOGGER.info("Server Booted")
         return self
 
@@ -72,7 +71,7 @@ class Arecorder(Aserver):
         """Callback function during streaming. """
         self.block_cnt += 1
         if self._recording:
-            sigar = np.frombuffer(in_data, dtype=self.dtype)
+            sigar = np.frombuffer(in_data, dtype=self.backend.dtype)
             # (chunk length, chns)
             data_float = np.reshape(sigar, (len(sigar) // self.channels, self.channels))
             self.record_buffer.append(data_float)
@@ -100,8 +99,8 @@ class Arecorder(Aserver):
 
     def __repr__(self):
         state = False
-        if self.pastream:
-            state = self.pastream.is_active()
+        if self.stream:
+            state = self.stream.is_active()
         msg = f"""Arecorder: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}
            Input: {self.input_device_dict['name']}, Index: {self.input_device_dict['index']}
            """        

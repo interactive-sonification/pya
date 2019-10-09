@@ -2,10 +2,7 @@ import copy
 import time
 import logging
 import numpy as np
-import pyaudio
 from warnings import warn
-
-from sys import platform
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -45,12 +42,12 @@ class Aserver:
     def shutdown_default_server():
         if isinstance(Aserver.default, Aserver):
             Aserver.default.quit()
-            del(Aserver.default)
+            del Aserver.default
             Aserver.default = None
         else:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    def __init__(self, sr=44100, bs=256, device=None, channels=2, format=pyaudio.paFloat32):
+    def __init__(self, sr=44100, bs=256, device=None, channels=2, backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
 
@@ -62,8 +59,7 @@ class Aserver:
             block size or buffer size (Default value = 256)
         channels : int
             number of channel (Default value = 2)
-        format : pyaudio.Format
-             Audio data format(Default value = pyaudio.paFloat32)
+        kwargs : backend parameter
 
         Returns
         -------
@@ -73,50 +69,45 @@ class Aserver:
         # TODO check if channels is overwritten by the device.
         self.sr = sr
         self.bs = bs
-        self.pa = pyaudio.PyAudio()
+        if backend is None:
+            from .backend.PyAudio import PyAudioBackend
+            self.backend = PyAudioBackend(**kwargs)
+        else:
+            self.backend = backend
         self.channels = channels
-        self._status = pyaudio.paComplete
         self._device = 1
 
         # Get audio devices to input_device and output_device
         self.input_devices = []
         self.output_devices = []
-        for i in range(self.pa.get_device_count()):
-            if self.pa.get_device_info_by_index(i)['maxInputChannels'] > 0:
-                self.input_devices.append(self.pa.get_device_info_by_index(i))
-            if self.pa.get_device_info_by_index(i)['maxOutputChannels'] > 0:
-                self.output_devices.append(self.pa.get_device_info_by_index(i))
+        for i in range(self.backend.get_device_count()):
+            if self.backend.get_device_info_by_index(i)['maxInputChannels'] > 0:
+                self.input_devices.append(self.backend.get_device_info_by_index(i))
+            if self.backend.get_device_info_by_index(i)['maxOutputChannels'] > 0:
+                self.output_devices.append(self.backend.get_device_info_by_index(i))
 
         if device is None:
-            self.device = self.pa.get_default_output_device_info()['index']
+            self.device = self.backend.get_default_output_device_info()['index']
         else:
             self.device = device
 
-        # self.device_dict = self.pa.get_device_info_by_index(self.device)
+        # self.device_dict = self.backend.get_device_info_by_index(self.device)
         # # self.max_out_chn is not that useful: there can be multiple devices having the same mu
         # self.max_out_chn = self.device_dict['maxOutputChannels']
         # self.max_in_chn = self.device_dict['maxInputChannels']
 
-        self.format = format
         self.gain = 1.0
         self.srv_onsets = []
         self.srv_asigs = []
         self.srv_curpos = []  # start of next frame to deliver
         self.srv_outs = []  # output channel offset for that asig
-        self.pastream = None
-        self.dtype = 'float32'  # for pyaudio.paFloat32
-        self.range = 1.0
+        self.stream = None
         self.boot_time = None  # time.time() when stream starts
         self.block_cnt = None  # nr. of callback invocations
         self.block_duration = self.bs / self.sr  # nominal time increment per callback
         self.block_time = None  # estimated time stamp for current block
         self._stop = True
-        if self.format == pyaudio.paInt16:
-            self.dtype = 'int16'
-            self.range = 32767
-        if self.format not in [pyaudio.paInt16, pyaudio.paFloat32]:
-            warn(f"Aserver: currently unsupported pyaudio format {self.format}")
-        self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.dtype)
+        self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
 
     @property
     def device(self):
@@ -124,9 +115,8 @@ class Aserver:
 
     @device.setter 
     def device(self, val):
-        # Setter for the output device. 
         self._device = val
-        self.device_dict = self.pa.get_device_info_by_index(self._device)
+        self.device_dict = self.backend.get_device_info_by_index(self._device)
         self.max_out_chn = self.device_dict['maxOutputChannels']
         if self.max_out_chn < self.channels:
             warn(f"Aserver: warning: {self.channels}>{self.max_out_chn} channels requested - truncated.")
@@ -134,8 +124,8 @@ class Aserver:
 
     def __repr__(self):
         state = False
-        if self.pastream:
-            state = self.pastream.is_active()
+        if self.stream:
+            state = self.stream.is_active()
         msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs},
          Stream Active: {state}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
@@ -162,7 +152,7 @@ class Aserver:
             If true the server will reboot. (Default value = True)
         """
         self.device = idx
-        self.device_dict = self.pa.get_device_info_by_index(self.device)
+        self.device_dict = self.backend.get_device_info_by_index(self.device)
         if reboot:
             self.quit()
             try:
@@ -172,36 +162,35 @@ class Aserver:
 
     def boot(self):
         """boot Aserver = start stream, setting its callback to this callback."""
-        if self.pastream is not None and self.pastream.is_active():
+        if self.stream is not None and self.stream.is_active():
             _LOGGER.info("Aserver already running...")
             return -1
-        self.pastream = self.pa.open(format=self.format, channels=self.channels, rate=self.sr,
-                                     input=False, output=True, frames_per_buffer=self.bs,
-                                     output_device_index=self.device, stream_callback=self._play_callback)
+        self.stream = self.backend.open(channels=self.channels, rate=self.sr,
+                                        input_flag=False, output_flag=True, frames_per_buffer=self.bs,
+                                        output_device_index=self.device, stream_callback=self._play_callback)
         self.boot_time = time.time()
         self.block_time = self.boot_time
         self.block_cnt = 0
-        self.pastream.start_stream()
+        self.stream.start_stream()
         _LOGGER.info("Server Booted")
         return self
 
     def quit(self):
         """Aserver quit server: stop stream and terminate pa"""
-        if not self.pastream.is_active():
+        if not self.stream.is_active():
             _LOGGER.info("Aserver:quit: stream not active")
             return -1
         try:
-            self.pastream.stop_stream()
-            self.pastream.close()
+            self.stream.stop_stream()
+            self.stream.close()
             _LOGGER.info("Aserver stopped.")
         except AttributeError:
             _LOGGER.info("No stream found...")
-        self.pastream = None
+        self.stream = None
 
     def play(self, asig, onset=0, out=0, **kwargs):
         """Dispatch asigs or arrays for given onset."""
         self._stop = False
-        self._status = pyaudio.paContinue
 
         sigid = id(asig)  # for copy check
         if asig.sr != self.sr:
@@ -212,11 +201,11 @@ class Aserver:
             rt_onset = onset
         idx = np.searchsorted(self.srv_onsets, rt_onset)
         self.srv_onsets.insert(idx, rt_onset)
-        if asig.sig.dtype != self.dtype:
+        if asig.sig.dtype != self.backend.dtype:
             warn("Not the same type. ")
             if id(asig) == sigid:
                 asig = copy.copy(asig)
-            asig.sig = asig.sig.astype(self.dtype)
+            asig.sig = asig.sig.astype(self.backend.dtype)
         # copy only relevant channels...
         nchn = min(asig.channels, self.channels - out)  # max number of copyable channels
         # in: [:nchn] out: [out:out+nchn]
@@ -249,15 +238,15 @@ class Aserver:
             self.block_time = time.time()
 
         if not self.srv_asigs or self.srv_onsets[0] > tnow:  # to shortcut computing
-            return (self.empty_buffer, pyaudio.paContinue)
+            return self.backend.process_buffer(self.empty_buffer)
         elif self._stop:
             self.srv_asigs.clear()
             self.srv_onsets.clear()
             self.srv_curpos.clear()
             self.srv_outs.clear()
-            return (self.empty_buffer, pyaudio.paContinue)
+            return self.backend.process_buffer(self.empty_buffer)
 
-        data = np.zeros((self.bs, self.channels), dtype=self.dtype)
+        data = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
         # iterate through all registered asigs, adding samples to play
         dellist = []  # memorize completed items for deletion
         t_next_block = tnow + self.bs / self.sr
@@ -283,10 +272,10 @@ class Aserver:
             del(self.srv_onsets[i])
             del(self.srv_curpos[i])
             del(self.srv_outs[i])
-        return (data * (self.range * self.gain), pyaudio.paContinue)
+        return self.backend.process_buffer(data * (self.backend.range * self.gain))
 
     def stop(self):
         self._stop = True
 
     def __del__(self):
-        self.pa.terminate()
+        self.backend.terminate()
