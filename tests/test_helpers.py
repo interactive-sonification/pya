@@ -6,11 +6,10 @@ import pyaudio
 import os
 
 
-# check if we have an output device
-has_output = False
+has_input = False
 try:
-    pyaudio.PyAudio().get_default_output_device_info()
-    has_output = True
+    pyaudio.PyAudio().get_default_input_device_info()
+    has_input = True
 except OSError:
     pass
 
@@ -31,7 +30,7 @@ class TestHelpers(TestCase):
     def tearDown(self):
         pass
 
-    @skipUnless(has_output, "PyAudio found no output device.")  
+    @skipUnless(has_input, "PyAudio found no input device.")  
     def test_record(self):
         """This record method doesn't require Arecorder but is a helpder function"""
         araw = Asig(record(3), 44100, 'vocal').norm()
