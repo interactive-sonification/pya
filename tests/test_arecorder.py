@@ -83,7 +83,7 @@ class TestArecorder(TestCase):
             ar = Arecorder()
             self.assertEqual(
                 "Mock Input", 
-                ar.pa.get_default_input_device_info()['name'])
+                ar.backend.get_default_input_device_info()['name'])
             ar.boot()
             self.assertTrue(mock_recorder.open.called)
             ar.record()
