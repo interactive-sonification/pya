@@ -52,17 +52,14 @@ class MockRecorder(mock.MagicMock):
         return FAKE_OUTPUT
 
 
-class TestArecorder(TestCase):
+class TestArecorderBase(TestCase):
 
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
+    __test__ = False
+    backend = None
 
     @skipUnless(has_input, "PyAudio found no input device.")
     def test_arecorder(self):
-        ar = Arecorder(channels=1).boot()
+        ar = Arecorder(channels=1, backend=self.backend).boot()
         self.assertEqual(ar.sr, 44100)
         ar.record()
         time.sleep(1.)
@@ -77,12 +74,20 @@ class TestArecorder(TestCase):
         ar.recordings.clear()
         ar.quit()
 
+
+class TestArecorder(TestArecorderBase):
+
+    __test__ = True
+
+
+class TestMockArecorder(TestCase):
+
     def test_mock_arecorder(self):
         mock_recorder = MockRecorder()
         with mock.patch('pyaudio.PyAudio', return_value=mock_recorder):
             ar = Arecorder()
             self.assertEqual(
-                "Mock Input", 
+                "Mock Input",
                 ar.backend.get_default_input_device_info()['name'])
             ar.boot()
             self.assertTrue(mock_recorder.open.called)
@@ -92,5 +97,5 @@ class TestArecorder(TestCase):
             ar.record()
             ar.recordings.clear()
             self.assertEqual(0, len(ar.recordings))
-            # ar.stop()  # Dont know how to mock the stop. 
-            # TODO How to mock a result. 
+            # ar.stop()  # Dont know how to mock the stop.
+            # TODO How to mock a result.
