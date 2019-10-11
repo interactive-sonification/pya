@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1
+
+* Remove ffmpeg from requirement, and it has to be installed via conda or manually
+* Decouple pyaudio from Aserver and Arecorder.
+* Introduce backends interface: PyAudio(), Dummy()
+
+
 ## 0.3.0 (October 2019)
 
 * Restructure Asig, Astft, Aspec into different files

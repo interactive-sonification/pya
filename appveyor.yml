@@ -1,6 +1,6 @@
 # no dedicated build phase needed so far
 build: false
-version: "0.3.0-{build}"
+version: "0.3.1-{build}"
 
 branches:
   only:
