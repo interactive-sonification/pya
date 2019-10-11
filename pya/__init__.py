@@ -1,7 +1,7 @@
 """Collection of classes and functions for processing audio signals
  in python and jupyter notebooks, for synthesis, effects, analysis and plotting.
 """
-from .Asig import Asig
+from .Asig import Asig, Metadata
 from .Astft import Astft
 from .Aspec import Aspec
 from .Aserver import Aserver
@@ -22,7 +22,7 @@ def shutdown(**kwargs):
 
 
 __all__ = ['Asig', 'Aspec', 'Astft', 'Aserver', 'Arecorder', 'Ugen',
-           'startup', 'shutdown']
+           'startup', 'shutdown', 'Metadata']
 
 __all__ += ['ampdb', 'dbamp', 'cpsmidi', 'midicps', 'linlin', 'clip', 
             'audio_from_file', 'buf_to_float', 'spectrum', 

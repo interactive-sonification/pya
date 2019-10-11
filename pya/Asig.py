@@ -1,4 +1,3 @@
-
 import numbers
 from warnings import warn
 import logging
@@ -15,9 +14,50 @@ from . import Astft
 from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, buf_to_float
 from .helper import spectrum, audio_from_file
 from copy import copy, deepcopy
+import time
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
+
+class Metadata:
+    """Metadata class for Asigs - allows 'dot' access to frequent metadata types
+    """ 
+    def __init__(self, **kwargs):
+        self.sr = 44100
+        self.author = None
+        self.cn = None
+        self.context = {}
+        self.device = None
+        self.description = None
+        self.genre = None
+        self.label = None
+        self.revision = []
+        self.source = None
+        self.timestamp = None
+        self.__dict__.update(kwargs)
+
+    def __getitem__(self, index):
+        if isinstance(index, str):
+            return self.context[index]
+    
+    def __setitem__(self, index, value):
+        if isinstance(index, str):
+            self.context[index] = value        
+
+    @property
+    def _(self):
+        return self.context
+
+    def __repr__(self):
+        str = "Asig metadata:\n"
+        for attr, value in self.__dict__.items():
+            if (value is None) or (value == []):
+                continue
+            else:
+                if attr == 'timestamp':
+                    value = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(value))
+                str += f"   {attr:>15} = {value}\n"
+        return str        
 
 
 class Asig:
@@ -28,13 +68,13 @@ class Asig:
     ----------
     sig : numpy.array
         Array for the audio signal. Can be mono or multichannel. 
-    sr : int
+    sr : int   => MOVED TO Metadata
         Sampling rate
     label : str
-        A string label to give the object a unique identifier.
+        A string label to give the object a unique identifier. => MOVED TO Metadata
     channels : int
         Number of channels
-    cn : list of str, None
+    cn : list of str, None  => MOVED TO Metadata
         cn short for channel names is a list of string of size channels, 
         to give each channel a unique name. 
         channel names can be used to subset signal channels in a more readible way, 
@@ -46,7 +86,7 @@ class Asig:
         the .bound, .extend and .overwrite properties.
     """
 
-    def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
+    def __init__(self, sig, sr=44100, channels=1, md=None, **kwargs):
         """__init__ method
 
         Parameters
@@ -63,9 +103,12 @@ class Asig:
             cn : list or None
                 A list of channel names, size should match the channels.
         """
+        if md is None:
+            self.md = Metadata(**kwargs)
+        # problem: explicit md sr could be overwritten by explicit sr!
+        if self.md.timestamp==None: self.md.timestamp = time.time()
         self.sr = sr
         self.mix_mode = None
-        self._ = {}  # dictionary for further return values
         if isinstance(sig, str):
             self._load_audio_file(sig)
         elif isinstance(sig, int):  # sample length
@@ -81,9 +124,60 @@ class Asig:
                     (int(sig * sr), channels)).astype("float32")
         else:
             self.sig = np.array(sig).astype("float32")
-        self.label = label
-        self.cn = cn
         self._set_col_names()
+
+    def _copy_update(self, commit_msg=None, **kwargs):
+        if 'sig' in list(kwargs.keys()):
+            atmp = copy(self)  # shallow copy, fast!
+            atmp.sig = None
+            anew = deepcopy(atmp)  # avoids unwanted copy of atmp.sig!
+        else:
+            anew = deepcopy(self)
+        anew.__dict__.update(kwargs)
+        if commit_msg:
+            anew.md.revision.append(commit_msg)
+        return anew
+
+    @property
+    def sr(self):
+        return self.md.sr
+
+    @sr.setter
+    def sr(self, val):
+        self.md.sr = val
+
+    @property
+    def label(self):
+        return self.md.label
+
+    @label.setter
+    def label(self, val):
+        self.md.label = val
+
+    @property
+    def cn(self):
+        """Channel names getter"""
+        return self.md.cn
+
+    @cn.setter
+    def cn(self, val):
+        """Channel names setter"""
+        if val is None:
+            self.md.cn = None
+        else:
+            if len(val) == self.channels:
+                if all(isinstance(x, str) for x in val):  # check if all elements are str
+                    self.md.cn = val
+                else:
+                    raise TypeError(
+                        "channel names cn need to be a list of string(s).")
+            else:
+                raise ValueError(
+                    "list size doesn't match channel numbers {}".format(self.channels))
+
+    @property
+    def _(self):
+        return self.md.context
 
     @property
     def channels(self):
@@ -97,27 +191,6 @@ class Asig:
     def samples(self):
         """Return the length of signal in samples"""
         return np.shape(self.sig)[0]  # Update it.
-
-    @property
-    def cn(self):
-        """Channel names getter"""
-        return self._cn
-
-    @cn.setter
-    def cn(self, val):
-        """Channel names setter"""
-        if val is None:
-            self._cn = None
-        else:
-            if len(val) == self.channels:
-                if all(isinstance(x, str) for x in val):  # check if all elements are str
-                    self._cn = val
-                else:
-                    raise TypeError(
-                        "channel names cn need to be a list of string(s).")
-            else:
-                raise ValueError(
-                    "list size doesn't match channel numbers {}".format(self.channels))
 
     def _load_audio_file(self, fname):
         """Load audio file, and set self.sig to the signal and self.sr to the sampling rate. 
@@ -157,11 +230,11 @@ class Asig:
 
     def _set_col_names(self):
         # Currently, every newly returned asig has a cn argument that is the same as self.
-        if self.cn is None:
-            self.cn = [str(i) for i in range(self.channels)]
+        if self.md.cn is None:
+            self.md.cn = [str(i) for i in range(self.channels)]
         else:
-            if isinstance(self.cn[0], str):
-                self.col_name = {self.cn[i]: i for i in range(len(self.cn))}
+            if isinstance(self.md.cn[0], str):
+                self.col_name = {self.md.cn[i]: i for i in range(len(self.md.cn))}
             else:
                 raise TypeError("column names need to be a list of strings")
 
@@ -193,7 +266,7 @@ class Asig:
         elif isinstance(index, str):
             _LOGGER.debug(" getitem: index is string")
             # ToDo: decide whether to solve differently, e.g. only via ._[str] or via a .attribute(str) fn
-            return self._[index]
+            return self.md._[index]
         else:  # if only slice, list, dict, int or float given for row selection
             rindex = index
             cindex = None
@@ -280,7 +353,8 @@ class Asig:
             _LOGGER.debug("signal is scalar, convert to array")
             sig = np.array(sig)
 
-        a = Asig(sig, sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
+        # a = Asig(sig, sr=sr, label=self.label + '_arrayindexed', cn=cn_new)
+        a = self._copy_update('arrayindexed', sig=sig, cn=cn_new)
         a.mix_mode = self.mix_mode
         return a
 
@@ -809,7 +883,7 @@ class Asig:
         else:
             sig = self.sig
         sig = norm * sig / np.max(np.abs(sig), 0)
-        return Asig(sig, self.sr, label=self.label + "_normalised", cn=self.cn)
+        return self._copy_update("normalized", sig=sig)
 
     def gain(self, amp=None, db=None):
         """Apply gain in amplitude or dB, only use one or the other arguments. Argument can be either a scalar
@@ -916,8 +990,8 @@ class Asig:
     def __repr__(self):
         """Report key attributes"""
         return "Asig('{}'): {} x {} @ {}Hz = {:.3f}s cn={}".format(
-            self.label, self.channels, self.samples, self.sr, self.samples / self.sr,
-            self.cn)
+            self.md.label, self.channels, self.samples, self.sr, self.samples / self.sr,
+            self.md.cn)
 
     def __mul__(self, other):
         """Magic method for multiplying. You can either multiply a scalar or an Asig object. If muliplying an Asig,
@@ -1211,9 +1285,8 @@ class Asig:
         if nsamp > self.samples:
             nsamp = self.samples
             warn("Asig too short for fade_out - adapting fade_out time")
-        return Asig(np.hstack((self.sig[:-nsamp],
-                               self.sig[-nsamp:] * np.linspace(1, 0, nsamp)**curve)),
-                    self.sr, label=self.label + "_fadeout", cn=self.cn)
+        newsig = np.hstack((self.sig[:-nsamp], self.sig[-nsamp:] * np.linspace(1, 0, nsamp, dtype="float32")**curve))
+        return self._copy_update("fade_out", sig=newsig)
 
     def iirfilter(self, cutoff_freqs, btype='bandpass', ftype='butter', order=4,
                   filter='lfilter', rp=None, rs=None):
