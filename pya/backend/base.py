@@ -3,6 +3,8 @@ from abc import abstractmethod, ABC
 
 class BackendBase(ABC):
 
+    bs = 1024
+
     @abstractmethod
     def get_device_count(self):
         pass

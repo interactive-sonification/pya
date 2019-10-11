@@ -47,7 +47,7 @@ class Aserver:
         else:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    def __init__(self, sr=44100, bs=256, device=None, channels=2, backend=None, **kwargs):
+    def __init__(self, sr=44100, bs=None, device=None, channels=2, backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
 
@@ -74,6 +74,7 @@ class Aserver:
             self.backend = PyAudioBackend(**kwargs)
         else:
             self.backend = backend
+        self.bs = bs if bs is not None else self.backend.bs
         self.channels = channels
         self._device = 1
 
