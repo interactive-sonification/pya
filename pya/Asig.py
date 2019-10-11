@@ -1189,7 +1189,7 @@ class Asig:
         if nsamp > self.samples:
             nsamp = self.samples
             warn("warning: Asig too short for fade_in - adapting fade_in time")
-        return Asig(np.hstack((self.sig[:nsamp] * np.linspace(0, 1, nsamp) ** curve, self.sig[nsamp:])),
+        return Asig(np.hstack((self.sig[:nsamp] * np.linspace(0, 1, nsamp, dtype="float32") ** curve, self.sig[nsamp:])),
                     self.sr, label=self.label + "_fadein", cn=self.cn)
 
     def fade_out(self, dur=0.1, curve=1):
@@ -1212,7 +1212,7 @@ class Asig:
             nsamp = self.samples
             warn("Asig too short for fade_out - adapting fade_out time")
         return Asig(np.hstack((self.sig[:-nsamp],
-                               self.sig[-nsamp:] * np.linspace(1, 0, nsamp)**curve)),
+                               self.sig[-nsamp:] * np.linspace(1, 0, nsamp, dtype="float32")**curve)),
                     self.sr, label=self.label + "_fadeout", cn=self.cn)
 
     def iirfilter(self, cutoff_freqs, btype='bandpass', ftype='butter', order=4,
