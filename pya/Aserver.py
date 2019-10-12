@@ -154,7 +154,11 @@ class Aserver:
         self.device = idx
         self.device_dict = self.backend.get_device_info_by_index(self.device)
         if reboot:
-            self.quit()
+            try:
+                self.quit()
+            except AttributeError:
+                print("reboot while no")
+                _LOGGER.warning(" Reboot while no active stream")
             try:
                 self.boot()
             except OSError:
