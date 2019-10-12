@@ -75,8 +75,6 @@ class Aserver:
         else:
             self.backend = backend
         self.channels = channels
-        self._device = 1
-
         # Get audio devices to input_device and output_device
         self.input_devices = []
         self.output_devices = []
@@ -86,10 +84,8 @@ class Aserver:
             if self.backend.get_device_info_by_index(i)['maxOutputChannels'] > 0:
                 self.output_devices.append(self.backend.get_device_info_by_index(i))
 
-        if device is None:
-            self.device = self.backend.get_default_output_device_info()['index']
-        else:
-            self.device = device
+        self._device = 1
+        self.device = device
 
         # self.device_dict = self.backend.get_device_info_by_index(self.device)
         # # self.max_out_chn is not that useful: there can be multiple devices having the same mu
@@ -115,7 +111,7 @@ class Aserver:
 
     @device.setter 
     def device(self, val):
-        self._device = val
+        self._device = val if val is not None else self.backend.get_default_output_device_info()['index']
         self.device_dict = self.backend.get_device_info_by_index(self._device)
         self.max_out_chn = self.device_dict['maxOutputChannels']
         if self.max_out_chn < self.channels:

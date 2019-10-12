@@ -24,17 +24,10 @@ class Arecorder(Aserver):
     """
 
     def __init__(self, sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs):
-        # TODO I think the channel should not be set.
-        super().__init__(sr=sr, bs=bs, backend=backend, **kwargs)
+        super().__init__(sr=sr, bs=bs, device=device, channels=channels,
+                         backend=backend, **kwargs)
         self.record_buffer = []
         self.recordings = []  # store recorded Asigs, time stamp in label
-        self._device = 0
-        self.channels = channels
-        if device is None:
-            self.device = self.backend.get_default_input_device_info()[
-                'index']
-        else:
-            self.device = device
         self._recording = False
 
     @property
@@ -43,7 +36,7 @@ class Arecorder(Aserver):
 
     @device.setter
     def device(self, val):
-        self._device = val
+        self._device = val if val is not None else self.backend.get_default_input_device_info()['index']
         self.device_dict = self.backend.get_device_info_by_index(self._device)
         self.max_in_chn = self.device_dict['maxInputChannels']
         if self.channels is None:
