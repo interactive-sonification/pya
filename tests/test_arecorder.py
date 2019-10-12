@@ -70,6 +70,8 @@ class MockRecorder(mock.MagicMock):
     def get_default_output_device_info(self):
         return FAKE_OUTPUT
 
+    # def open(self, *args, **kwargs):
+
 
 class TestArecorderBase(TestCase):
 
@@ -111,10 +113,14 @@ class TestMockArecorder(TestCase):
             ar.boot()
             self.assertTrue(mock_recorder.open.called)
             ar.record()
-            # time.sleep(0.5)
+            # time.sleep(2)
             ar.pause()
             ar.record()
             ar.recordings.clear()
             self.assertEqual(0, len(ar.recordings))
             # ar.stop()  # Dont know how to mock the stop.
             # TODO How to mock a result.
+
+        # Mock multiple input devices. 
+        ar.set_device(2, reboot=True)  # Set to multiple device
+        self.assertEqual(ar.max_in_chn, 14)
