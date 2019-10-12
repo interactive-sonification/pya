@@ -1,8 +1,6 @@
 from unittest import TestCase
 from pya import *
 import numpy as np
-import logging
-logging.basicConfig(level=logging.DEBUG)
 
 
 class TestUgen(TestCase):

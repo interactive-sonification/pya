@@ -1,8 +1,9 @@
 from unittest import TestCase
+import warnings
 import numpy as np
 from pya import *
-import logging
-logging.basicConfig(level=logging.DEBUG)
+# import logging
+# logging.basicConfig(level=logging.DEBUG)
 
 
 class TestRoutePan(TestCase):
@@ -21,7 +22,7 @@ class TestRoutePan(TestCase):
         pass
 
     def test_shift_channel(self):
-        """Shift a mono signal to chan 4 should result in a 4 channels signals"""
+        # Shift a mono signal to chan 4 should result in a 4 channels signals"""
         result = self.asine.shift_channel(3)
         self.assertEqual(4, result.channels)
 
@@ -29,15 +30,16 @@ class TestRoutePan(TestCase):
         self.assertEqual(4, result.channels)
 
     def test_mono(self):
-        """Convert any signal dimension to mono"""
-        self.asine.mono()
+        # Convert any signal dimension to mono"""
+        with warnings.catch_warnings(record=True):
+            self.asine.mono()
         result = self.astereo.mono([0.5, 0.5])
         self.assertEqual(result.channels, 1)
         result = self.asine16ch.mono(np.ones(16) * 0.1)
         self.assertEqual(result.channels, 1)
 
     def test_stereo(self):
-        """Convert any signal dimension to stereo"""
+        # Convert any signal dimension to stereo"""
         stereo_mix = self.asine.stereo([0.5, 0.5])
         self.assertEqual(stereo_mix.channels, 2)
 
@@ -48,7 +50,7 @@ class TestRoutePan(TestCase):
         self.assertEqual(stereo_mix.channels, 2)
 
     def test_rewire(self):
-        """Rewire channels, e.g. move 0 to 1 with a gain of 0.5"""
+        # Rewire channels, e.g. move 0 to 1 with a gain of 0.5"""
         result = self.astereo.rewire({(0, 1): 0.5,
                                       (1, 0): 0.5})
         temp = self.astereo.sig
