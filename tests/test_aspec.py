@@ -1,5 +1,6 @@
 from unittest import TestCase
 from pya import Ugen, Aspec, Asig
+import warnings
 import numpy as np
 
 
@@ -33,4 +34,5 @@ class TestAspec(TestCase):
         self.asig.to_spec().plot(xlim=(0, 0.5), ylim=(0., 1.0))
 
     def test_cn_conflict(self):
-        aspec = Aspec(self.asig, cn=['jf', 'dj'])
+        with warnings.catch_warnings(record=True):
+            aspec = Aspec(self.asig, cn=['jf', 'dj'])
