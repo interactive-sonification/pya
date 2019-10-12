@@ -12,7 +12,8 @@ class TestClassTransform(TestCase):
         pass
 
     def test_asig_aspec(self):
-        """Create a signale with 3 sine waves and gaps inbetween, So that it will finds 3 events"""
+        # Create a signale with 3 sine waves and gaps inbetween, 
+        # So that it will finds 3 events
         a = Ugen().sine()
         a_spec = a.to_spec()
         a_sig_from_aspec = a_spec.to_sig()

@@ -1,8 +1,8 @@
 from unittest import TestCase
 from pya import *
 import numpy as np
-import logging
-logging.basicConfig(level=logging.DEBUG)
+# import logging
+# logging.basicConfig(level=logging.DEBUG)
 
 
 class TestSetitem(TestCase):
@@ -27,7 +27,7 @@ class TestSetitem(TestCase):
         pass
 
     def test_default(self):
-        """Testing of default mode, which should behave as Numpy should."""
+        # Testing of default mode, which should behave as Numpy should."""
         self.azeros[10] = self.aones[10].sig   # value as asig
         self.assertEqual(self.aones[10], self.azeros[10])
         self.azeros[2] = self.aones[4].sig   # value as ndarray
@@ -44,7 +44,7 @@ class TestSetitem(TestCase):
         self.assertTrue(np.array_equal(self.ak[{1: 2}, ['d']], self.ak[{0: 1}, ['a']]))
 
     def test_bound(self):
-        """Testing of bound mode. Redundant array will not be assigned"""
+        # Testing of bound mode. Redundant array will not be assigned"""
         subject = self.aramp
         subject.b[:10] += self.aones[:10]  # This case should be the same as default
         result = np.arange(10) + np.ones(10)
@@ -66,10 +66,10 @@ class TestSetitem(TestCase):
         self.assertEqual(result, 0.0)
 
     def test_extend(self):
-        """Testing of extend mode, longer array will force the taker to extend its shape."""
+        # Testing of extend mode, longer array will force the taker to extend its shape."""
         a = Asig(0.8, sr=1000, channels=4, cn=['a', 'b', 'c', 'd'])
         b = np.sin(2 * np.pi * 100 * np.linspace(0, 0.6, int(1000 * 0.6)))
-        b = Asig(b).fade_in(0.3).fade_out(0.3)
+        b = Asig(b)
         # test with extend set mono signal to a, initially only 0.8secs long...
         a.x[:, 0] = 0.2 * b  # this fits in without need to extend
         self.assertEqual(a.samples, 800)
@@ -82,7 +82,7 @@ class TestSetitem(TestCase):
 
         a = Asig(0.8, sr=1000, channels=1, cn=['a'])  # Test with mono signal
         b = np.sin(2 * np.pi * 100 * np.linspace(0, 0.6, int(1000 * 0.6)))
-        b = Asig(b).fade_in(0.3).fade_out(0.3)
+        b = Asig(b)
         a.x[:, 0] = 0.2 * b  # this fits in without need to extend
         self.assertEqual(a.samples, 800)
 

@@ -23,7 +23,6 @@ class TestAstft(TestCase):
         astft = self.asig.to_stft(sr=2000)
         self.assertEqual(astft.sr, 2000)
         signal = self.asig2.sig
-        print(astft)
 
     def test_wrong_input_type(self):
         with self.assertRaises(TypeError):

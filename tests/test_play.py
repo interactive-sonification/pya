@@ -3,6 +3,7 @@ from unittest import TestCase, skipUnless, mock
 from pya import *
 import numpy as np
 import pyaudio
+import warnings
 
 # check if we have an output device
 has_output = False
@@ -90,12 +91,14 @@ class MockAudioTest(TestCase):
             self.assertTrue(np.allclose(s.srv_asigs[0].sig, d2.reshape(44100, 1)))
 
         with mock.patch('pyaudio.PyAudio', return_value=mock_audio):
-            s = Aserver(channels=6)
-            s.boot()
-            assert mock_audio.open.call_count == 2
-            self.assertEqual(mock_audio.open.call_args_list[1][1]["channels"], 4)
-        with mock.patch('pyaudio.PyAudio', return_value=mock_audio):
-            s = Aserver(channels=6)
-            # Set device is not tested.
-            # s.set_device(idx=1)
-            # s.set_device(idx=1, reboot=True)
+            with warnings.catch_warnings(record=True):
+                s = Aserver(channels=6)
+                s.boot()
+                assert mock_audio.open.call_count == 2
+                self.assertEqual(mock_audio.open.call_args_list[1][1]["channels"], 4)
+        # with mock.patch('pyaudio.PyAudio', return_value=mock_audio):
+        #     with warnings.catch_warnings(record=True):
+        #         s = Aserver(channels=6)
+        #     # Set device is not tested.
+        #     # s.set_device(idx=1)
+        #     # s.set_device(idx=1, reboot=True)
