@@ -152,7 +152,6 @@ class Aserver:
             If true the server will reboot. (Default value = True)
         """
         self.device = idx
-        self.device_dict = self.backend.get_device_info_by_index(self.device)
         if reboot:
             try:
                 self.quit()
