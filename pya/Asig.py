@@ -1657,7 +1657,7 @@ class Asig:
             sr = sig.sr
             sigar = sig.sig
             if sig.channels != self.channels:
-                raise AttributeError("Agument asig has different channels.!")
+                raise AttributeError("Argument asig has different channels.!")
             if sr != self.sr:
                 raise AttributeError(
                     "Dangerous operation, samping rate (sr) not matched. Use resample() first.")
