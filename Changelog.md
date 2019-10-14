@@ -5,7 +5,7 @@
 * Remove ffmpeg from requirement, and it has to be installed via conda or manually
 * Decouple pyaudio from Aserver and Arecorder.
 * Introduce backends interface: PyAudio(), Dummy()
-
+* fix bugs that arecorder.record() return incorrect signal length when channels > 2
 
 ## 0.3.0 (October 2019)
 
