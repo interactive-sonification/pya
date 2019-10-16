@@ -1,6 +1,6 @@
 [![Version](https://img.shields.io/badge/version-v0.3.1-orange.svg)](https://github.com/interactive-sonification/pya)
 [![PyPI](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
-[![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.2.1.svg)](https://github.com/interactive-sonification/pya/compare/v0.3.1...master)
+[![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.2.1.svg)](https://github.com/interactive-sonification/pya/compare/v0.3.0...master)
 [![License](https://img.shields.io/github/license/interactive-sonification/pya.svg)](LICENSE)
 [![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=develop)](https://travis-ci.org/interactive-sonification/pya)
 [![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/develop?svg=true)](https://ci.appveyor.com/project/aleneum/pya-b7gkx/branch/develop)
@@ -43,7 +43,7 @@ pyA can be used for
 
 * Thomas Hermann, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (author and maintainer)
 * Jiajun Yang, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (co-author)
-* Alexander Neumann, Neurocognitions and Action - Biomechanics, Bielefeld University
+* Contributors will be acknowledged here, contributions are welcome.
 
 ## Installation
 
