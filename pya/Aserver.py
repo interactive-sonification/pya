@@ -152,7 +152,6 @@ class Aserver:
             try:
                 self.quit()
             except AttributeError:
-                print("reboot while no")
                 _LOGGER.warning(" Reboot while no active stream")
             try:
                 self.boot()
