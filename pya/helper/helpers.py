@@ -217,8 +217,8 @@ def device_info():
     lines = [line1]
     for i, d in enumerate(devs):
         p1 = f"{i:<4g}{d['name'].strip():24}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}"
-        p2 = f" {int(d['defaultSampleRate'])}"
+        p2 = f" {int(d['defaultSampleRate'])} "
         p3 = f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}"
         p4 = f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}"
         lines.append(p1 + p2 + p3 + p4)
-    return lines
+    print(*lines, sep='\n')

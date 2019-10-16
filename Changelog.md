@@ -3,8 +3,9 @@
 ## 0.3.1
 
 * Remove ffmpeg from requirement, and it has to be installed via conda or manually
-* Decouple pyaudio from Aserver and Arecorder.
+* Decouple pyaudio from Aserver and Arecorder
 * Introduce backends interface: PyAudio(), Dummy()
+* add device_info() helper function which prints audio device information in a tabular form
 
 
 ## 0.3.0 (October 2019)
