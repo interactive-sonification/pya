@@ -7,6 +7,7 @@
 * Introduce backends interface: PyAudio(), Dummy()
 * add device_info() helper function which prints audio device information in a tabular form
 * Bugfix #23: Add a small delay to server booting to prevent issues when Aserver and Arecorder are initialized back-to-back 
+* Helper function `record` has been dropped due to legacy reasons. An improved version will be introduced in 0.3.2.
 
 
 ## 0.3.0 (October 2019)
