@@ -1,8 +1,9 @@
 # Test arecorder class.
 import time
-from pya import Arecorder
+from pya import Arecorder, Aserver, find_device
 from unittest import TestCase, skipUnless, mock
 import pyaudio
+import time
 
 # check if we have an output device
 has_input = False
@@ -94,6 +95,32 @@ class TestArecorderBase(TestCase):
         self.assertEqual(asig[-1].sr, 44100)
         ar.recordings.clear()
         ar.quit()
+
+    @skipUnless(has_input, "PyAudio found no input device.")
+    def test_combined_inout(self):
+        # test if two streams can be opened on the same device
+        # can only be tested when a device with in- and output capabilities is available
+        devices = find_device(min_input=1, min_output=1)
+        if devices:
+            # set the buffer size low to provoke racing condition
+            # observed in https://github.com/interactive-sonification/pya/issues/23
+            # the occurrence of this bug depends on the machine load and will only appear when two streams
+            # are initialized back-to-back
+            bs = 128
+            d = devices[0]  # we only need to test one device, we take the first one
+            recorder = Arecorder(device=d['index'], bs=bs)
+            player = Aserver(device=d['index'], bs=bs)
+            player.boot()
+            recorder.boot()  # initialized record and boot sequentially to provoke racing condition
+            recorder.record()
+            time.sleep(0.5)  # wait and record some samples
+            recorder.stop()
+            player.quit()
+            self.assertEqual(len(recorder.recordings), 1)  # we should have one Asig recorded
+            # check whether a realistic amount of samples has been recorded
+            # we assume that a recording ten times the buffer size is a fair indicator of a working process
+            self.assertGreater(recorder.recordings[0].sig.shape[0], 10 * bs)
+            recorder.quit()
 
 
 class TestArecorder(TestArecorderBase):
