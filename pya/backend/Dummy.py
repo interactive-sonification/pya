@@ -26,7 +26,9 @@ class DummyBackend(BackendBase):
         return self.dummy_devices[0]
 
     def open(self, *args, input_flag, output_flag, rate, stream_callback=None, **kwargs):
-        return DummyStream(input_flag=input_flag, output_flag=output_flag, rate=rate, stream_callback=stream_callback)
+        stream = DummyStream(input_flag=input_flag, output_flag=output_flag, rate=rate, stream_callback=stream_callback)
+        stream.start_stream()
+        return stream
 
     def process_buffer(self, buffer):
         return buffer
