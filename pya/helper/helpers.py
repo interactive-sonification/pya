@@ -1,47 +1,12 @@
 # Collection of small helper functions
 import numpy as np
 import pyaudio
-import time
 from scipy.fftpack import fft
 from .codec import audio_read
 
 
 class _error(Exception):    
     pass
-
-
-def record(dur=2, channels=1, rate=44100, chunk=256, exception_on_overflow=True):
-    """Record audio
-
-    Parameters
-    ----------
-    dur : int
-        Duration (Default value = 2)
-    channels : int
-        Number of channels (Default value = 1)
-    rate : int
-        Audio sample rate (Default value = 44100)
-    chunk :
-         (Default value = 256)
-    exception_on_overflow : bool
-        Whether PyAudio should raise an exception when input buffers cannot processed in time (Default value = True)
-
-    Returns
-    -------
-    _ : numpy.ndarray
-        numpy array of the recorded audio signal.
-    """
-    p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paFloat32, channels=channels, rate=rate, input=True,
-                    output=True, frames_per_buffer=chunk)
-    buflist = []
-    for _ in range(0, int(rate / chunk * dur)):
-        data = stream.read(chunk, exception_on_overflow=exception_on_overflow)
-        buflist.append(data)
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
-    return np.frombuffer(b''.join(buflist), dtype=np.float32)
 
 
 def linlin(x, smi, sma, dmi, dma):
