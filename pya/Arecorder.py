@@ -48,15 +48,14 @@ class Arecorder(Aserver):
     def boot(self):
         """boot recorder"""
         # when input = True, the channels refers to the input channels.
-        self.stream = self.backend.open(rate=self.sr, channels=self.channels, frames_per_buffer=self.bs, 
-                                        input_device_index=self.device, output_flag=False,
-                                        input_flag=True, stream_callback=self._recorder_callback)
         self.boot_time = time.time()
         self.block_time = self.boot_time
         self.block_cnt = 0
         self.record_buffer = []
         self._recording = False
-        self.stream.start_stream()
+        self.stream = self.backend.open(rate=self.sr, channels=self.channels, frames_per_buffer=self.bs, 
+                                        input_device_index=self.device, output_flag=False,
+                                        input_flag=True, stream_callback=self._recorder_callback)
         _LOGGER.info("Server Booted")
         return self
 

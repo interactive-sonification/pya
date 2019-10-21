@@ -163,13 +163,12 @@ class Aserver:
         if self.stream is not None and self.stream.is_active():
             _LOGGER.info("Aserver already running...")
             return -1
-        self.stream = self.backend.open(channels=self.channels, rate=self.sr,
-                                        input_flag=False, output_flag=True, frames_per_buffer=self.bs,
-                                        output_device_index=self.device, stream_callback=self._play_callback)
         self.boot_time = time.time()
         self.block_time = self.boot_time
         self.block_cnt = 0
-        self.stream.start_stream()
+        self.stream = self.backend.open(channels=self.channels, rate=self.sr,
+                                        input_flag=False, output_flag=True, frames_per_buffer=self.bs,
+                                        output_device_index=self.device, stream_callback=self._play_callback)
         _LOGGER.info("Server Booted")
         return self
 
