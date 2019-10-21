@@ -10,7 +10,7 @@ class _error(Exception):
     pass
 
 
-def record(dur=2, channels=1, rate=44100, chunk=256):
+def record(dur=2, channels=1, rate=44100, chunk=256, exception_on_overflow=True):
     """Record audio
 
     Parameters
@@ -23,6 +23,8 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
         Audio sample rate (Default value = 44100)
     chunk :
          (Default value = 256)
+    exception_on_overflow : bool
+        Whether PyAudio should raise an exception when input buffers cannot processed in time (Default value = True)
 
     Returns
     -------
@@ -34,7 +36,7 @@ def record(dur=2, channels=1, rate=44100, chunk=256):
                     output=True, frames_per_buffer=chunk)
     buflist = []
     for _ in range(0, int(rate / chunk * dur)):
-        data = stream.read(chunk)
+        data = stream.read(chunk, exception_on_overflow=exception_on_overflow)
         buflist.append(data)
     stream.stop_stream()
     stream.close()
@@ -222,3 +224,13 @@ def device_info():
         p4 = f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}"
         lines.append(p1 + p2 + p3 + p4)
     print(*lines, sep='\n')
+
+
+def find_device(min_input=0, min_output=0):
+    pa = pyaudio.PyAudio()
+    res = []
+    for idx in range(pa.get_device_count()):
+        dev = pa.get_device_info_by_index(idx)
+        if dev['maxInputChannels'] >= min_input and dev['maxOutputChannels'] >= min_output:
+            res.append(dev)
+    return res
