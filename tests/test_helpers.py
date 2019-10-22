@@ -1,9 +1,7 @@
-from unittest import TestCase, skipUnless
-from pya import midicps, cpsmidi, Asig, spectrum, record
+from unittest import TestCase
+from pya import midicps, cpsmidi, Asig, spectrum
 import numpy as np 
-from math import inf
 import pyaudio
-import os
 
 
 has_input = False
@@ -29,13 +27,6 @@ class TestHelpers(TestCase):
 
     def tearDown(self):
         pass
-
-    @skipUnless(has_input, "PyAudio found no input device.")  
-    def test_record(self):
-        """This record method doesn't require Arecorder but is a helpder function"""
-        araw = Asig(record(3), 44100, 'vocal').norm()
-        self.assertEqual(araw.sr, 44100)
-        self.assertAlmostEquals(araw.samples / (3 * 44100), 1, places=2)
 
     def test_midi_conversion(self):
         m = 69

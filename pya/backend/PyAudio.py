@@ -1,8 +1,12 @@
-import pyaudio
 from .base import BackendBase
+
+import pyaudio
+import time
 
 
 class PyAudioBackend(BackendBase):
+
+    _boot_delay = 0.5  # a short delay to prevent PyAudio racing conditions
 
     def __init__(self, format=pyaudio.paFloat32):
         self.pa = pyaudio.PyAudio()
@@ -32,13 +36,14 @@ class PyAudioBackend(BackendBase):
              input_device_index=None, output_device_index=None, start=True, 
              input_host_api_specific_stream_info=None, output_host_api_specific_stream_info=None, 
              stream_callback=None):
-
-        return self.pa.open(rate=rate, channels=channels, format=self.format, input=input_flag, output=output_flag, 
-                            input_device_index=input_device_index, output_device_index=output_device_index, 
-                            frames_per_buffer=frames_per_buffer, start=start, 
-                            input_host_api_specific_stream_info=None, 
-                            output_host_api_specific_stream_info=None, 
-                            stream_callback=stream_callback)
+        stream = self.pa.open(rate=rate, channels=channels, format=self.format, input=input_flag, output=output_flag,
+                              input_device_index=input_device_index, output_device_index=output_device_index,
+                              frames_per_buffer=frames_per_buffer, start=start,
+                              input_host_api_specific_stream_info=input_host_api_specific_stream_info,
+                              output_host_api_specific_stream_info=output_host_api_specific_stream_info,
+                              stream_callback=stream_callback)
+        time.sleep(self._boot_delay)  # give stream some time to be opened completely
+        return stream
 
     def process_buffer(self, buffer):
         return buffer, pyaudio.paContinue

@@ -1,45 +1,12 @@
 # Collection of small helper functions
 import numpy as np
 import pyaudio
-import time
 from scipy.fftpack import fft
 from .codec import audio_read
 
 
 class _error(Exception):    
     pass
-
-
-def record(dur=2, channels=1, rate=44100, chunk=256):
-    """Record audio
-
-    Parameters
-    ----------
-    dur : int
-        Duration (Default value = 2)
-    channels : int
-        Number of channels (Default value = 1)
-    rate : int
-        Audio sample rate (Default value = 44100)
-    chunk :
-         (Default value = 256)
-
-    Returns
-    -------
-    _ : numpy.ndarray
-        numpy array of the recorded audio signal.
-    """
-    p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paFloat32, channels=channels, rate=rate, input=True,
-                    output=True, frames_per_buffer=chunk)
-    buflist = []
-    for _ in range(0, int(rate / chunk * dur)):
-        data = stream.read(chunk)
-        buflist.append(data)
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
-    return np.frombuffer(b''.join(buflist), dtype=np.float32)
 
 
 def linlin(x, smi, sma, dmi, dma):
@@ -222,3 +189,13 @@ def device_info():
         p4 = f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}"
         lines.append(p1 + p2 + p3 + p4)
     print(*lines, sep='\n')
+
+
+def find_device(min_input=0, min_output=0):
+    pa = pyaudio.PyAudio()
+    res = []
+    for idx in range(pa.get_device_count()):
+        dev = pa.get_device_info_by_index(idx)
+        if dev['maxInputChannels'] >= min_input and dev['maxOutputChannels'] >= min_output:
+            res.append(dev)
+    return res
