@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/github/license/interactive-sonification/pya.svg)](LICENSE)
 [![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=develop)](https://travis-ci.org/interactive-sonification/pya)
 [![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/develop?svg=true)](https://ci.appveyor.com/project/aleneum/pya-b7gkx/branch/develop)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/interactive-sonification/pya/develop?filepath=examples%2Fpya-examples.ipynb)
 <!--
 [![Coverage Status](https://coveralls.io/repos/interactive-sonification/pya/badge.svg?branch=master&service=github)](https://coveralls.io/github/interactive-sonification/pya?branch=master)
 -->
