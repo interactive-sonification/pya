@@ -172,8 +172,8 @@ class Aserver:
 
     def quit(self):
         """Aserver quit server: stop stream and terminate pa"""
-        if not self.stream.is_active():
-            _LOGGER.info("Aserver:quit: stream not active")
+        if self.stream is None or not self.stream.is_active():
+            _LOGGER.info("Stream not active")
             return -1
         try:
             self.stream.stop_stream()
