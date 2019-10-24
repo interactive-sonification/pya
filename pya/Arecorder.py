@@ -50,7 +50,7 @@ class Arecorder(Aserver):
         # when input = True, the channels refers to the input channels.
         self.boot_time = time.time()
         self.block_time = self.boot_time
-        self.block_cnt = 0
+        # self.block_cnt = 0
         self.record_buffer = []
         self._recording = False
         self.stream = self.backend.open(rate=self.sr, channels=self.channels, frames_per_buffer=self.bs, 
@@ -61,7 +61,7 @@ class Arecorder(Aserver):
 
     def _recorder_callback(self, in_data, frame_count, time_info, flag):
         """Callback function during streaming. """
-        self.block_cnt += 1
+        # self.block_cnt += 1
         if self._recording:
             sigar = np.frombuffer(in_data, dtype=self.backend.dtype)
             # (chunk length, chns)
