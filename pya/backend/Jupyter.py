@@ -1,6 +1,7 @@
 from .base import BackendBase, StreamBase
 
 import asyncio
+import threading
 from IPython.display import Javascript, display
 from sanic import Sanic
 
@@ -49,7 +50,7 @@ class JupyterStream(StreamBase):
         self.rate = rate
         self.channels = channels
         self.stream_callback = stream_callback
-        self.cb_thread = None
+        self.thread = None
         self.server = None
         self._is_active = False
 
@@ -57,14 +58,19 @@ class JupyterStream(StreamBase):
 
         async def bridge(request, ws):
             while True:
-                req = await ws.recv()
+                _ = await ws.recv()
                 buffer = self.stream_callback(None, None, None, None)
                 await ws.send(buffer.reshape(-1, 1, order='F').tobytes())
 
+        def loop_in_thread(loop, coro):
+            loop.run_until_complete(coro)
+            loop.run_forever()
+
         app.add_websocket_route(bridge, '/')
         coro = app.create_server(host="0.0.0.0", port=8765, debug=False, access_log=False, return_asyncio_server=True)
-        self.task = asyncio.ensure_future(coro)
-        self.server = None
+        self.loop = asyncio.new_event_loop()
+        self.thread = threading.Thread(target=loop_in_thread, args=(self.loop, coro))
+        # self.thread.daemon = True  # allow program to shutdown even if the thread is alive
 
         url_suffix = f':{port}' if proxy_suffix is None else proxy_suffix
 
@@ -92,16 +98,12 @@ class JupyterStream(StreamBase):
                     return res
                 }
 
-                if (!window.audioContext) {
-                    window.audioContext = new AudioContext();
-                }
-
                 var protocol = (window.location.protocol == 'https:') ? 'wss://' : 'ws://'
                 var ws = new WebSocket(protocol+window.location.hostname+resolve_proxy(urlSuffix));
                 ws.binaryType = 'arraybuffer';
                 window.ws = ws;
                 var startTime = 0;
-                window.AudioContext =  window.AudioContext = window.AudioContext||window.webkitAudioContext;
+                window.AudioContext = window.AudioContext||window.webkitAudioContext;
                 var context = new AudioContext();
 
                 ws.onopen = function() {
@@ -153,20 +155,18 @@ class JupyterStream(StreamBase):
         display(Javascript(f"window.pya.bufferThresh = {1 - buffer_limit}"))
 
     def stop_stream(self):
-        self._is_active = False
-
-    async def start_server(self):
-        self.server = await self.task
-        display(self.client)
-        self._is_active = True
+        if self.thread.is_alive():
+            self.loop.call_soon_threadsafe(self.loop.stop)
+            self.thread.join()
 
     def close(self):
-        self.server.close()
+        self.stop_stream()
+        self.loop.close()
 
     def start_stream(self):
-        asyncio.create_task(self.start_server())
+        if not self.thread.is_alive():
+            self.thread.start()
+        display(self.client)
 
     def is_active(self):
-        return self._is_active
-
-
+        return self.thread.is_alive()
