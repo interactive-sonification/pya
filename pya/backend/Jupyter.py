@@ -76,78 +76,113 @@ class JupyterStream(StreamBase):
 
         self.client = Javascript(
             f"""
-                var sampleRate = {self.rate};
-                var channels = {self.channels};
-                var urlSuffix = "{url_suffix}";
-                window.pya = {{ bufferThresh: 0.2 }}
+var sampleRate = {self.rate};
+var channels = {self.channels};
+var urlSuffix = "{url_suffix}";
+window.pya = {{ bufferThresh: 0.2 }}
             """
             """
-                var processedPackages = 0;
-                var latePackages = 0;
-                var badPackageRatio = 1;
-                function resolve_proxy(request) {
-                    var res = request;
-                    var ps = window.location.pathname.split('/');
-                    var idx = res.indexOf('*');
-                    var i = 1;
-                    while (idx > -1) {
-                        res = res.replace('*', ps[i])
-                        idx = res.indexOf('*')
-                        i++;
-                    }
-                    return res
+var processedPackages = 0;
+var latePackages = 0;
+var badPackageRatio = 1;
+
+function resolve_proxy(request) {
+    var res = request;
+    var ps = window.location.pathname.split('/');
+    var idx = res.indexOf('*');
+    var i = 1;
+    while (idx > -1) {
+        res = res.replace('*', ps[i])
+        idx = res.indexOf('*')
+        i++;
+    }
+    return res
+}
+
+var protocol = (window.location.protocol == 'https:') ? 'wss://' : 'ws://'
+var startTime = 0;
+var context = new (window.AudioContext || window.webkitAudioContext)();
+
+context.onstatechange = function() {
+    console.log("PyaJSClient: AudioContext StateChange!")
+    if (context.state == "running") {
+        var ws = new WebSocket(protocol+window.location.hostname+resolve_proxy(urlSuffix));
+        ws.binaryType = 'arraybuffer';
+        window.ws = ws;
+
+        ws.onopen = function() {
+            console.log("PyaJSClient: Websocket connected.");
+            startTime = context.currentTime;
+            ws.send("G");
+        };
+
+        ws.onmessage = function (evt) {
+            if (evt.data) {
+                processedPackages++;
+                var buf = new Float32Array(evt.data)
+                var duration = buf.length / channels
+                var buffer = context.createBuffer(channels, duration, sampleRate)
+                for (let i = 0; i < channels; i++) {
+                    updateChannel(buffer, buf.slice(i * duration, (i + 1) * duration), i)
                 }
-
-                var protocol = (window.location.protocol == 'https:') ? 'wss://' : 'ws://'
-                var ws = new WebSocket(protocol+window.location.hostname+resolve_proxy(urlSuffix));
-                ws.binaryType = 'arraybuffer';
-                window.ws = ws;
-                var startTime = 0;
-                window.AudioContext = window.AudioContext||window.webkitAudioContext;
-                var context = new AudioContext();
-
-                ws.onopen = function() {
-                    console.log("PyaJSClient: Websocket connected.");
-                    startTime = context.currentTime;
-                    ws.send("G");
-                };
-
-                ws.onmessage = function (evt) {
-                    if (evt.data) {
-                        processedPackages++;
-                        var buf = new Float32Array(evt.data)
-                        var duration = buf.length / channels
-                        var buffer = context.createBuffer(channels, duration, sampleRate)
-                        for (let i = 0; i < channels; i++) {
-                            buffer.copyToChannel(buf.slice(i*duration, (i+1) * duration), i, 0)
+                var source = context.createBufferSource()
+                source.buffer = buffer
+                source.connect(context.destination)
+                if (startTime > context.currentTime) {
+                    source.start(startTime)
+                    startTime += buffer.duration
+                } else {
+                    latePackages++;
+                    badPackageRatio = latePackages / processedPackages
+                    if (processedPackages > 50) {
+                        console.log("PyaJSClient: Dropped sample ratio is " + badPackageRatio.toFixed(2))
+                        if (badPackageRatio > 0.05) {
+                            let tr = window.pya.bufferThresh
+                            window.pya.bufferThresh = (tr > 0.01) ? tr - 0.03 : 0.01;
+                            console.log("PyaJSClient: Decrease buffer delay to " + window.pya.bufferThresh.toFixed(2))
                         }
-                        var source = context.createBufferSource()
-                        source.buffer = buffer
-                        source.connect(context.destination)
-                        if (startTime > context.currentTime) {
-                            source.start(startTime)
-                            startTime += buffer.duration
-                        } else {
-                            latePackages++;
-                            badPackageRatio = latePackages / processedPackages
-                            if (processedPackages > 50) {
-                                console.log("PyaJSClient: Dropped sample ratio is " + badPackageRatio.toFixed(2))
-                                if (badPackageRatio > 0.05) {
-                                    let tr = window.pya.bufferThresh
-                                    window.pya.bufferThresh = (tr > 0.01) ? tr - 0.03 : 0.01;
-                                    console.log("PyaJSClient: Decrease buffer delay to " + window.pya.bufferThresh.toFixed(2))
-                                }
-                                latePackages = 0;
-                                processedPackages = 0;
-                            }
-                            source.start()
-                            startTime = context.currentTime + buffer.duration
-                        }
-                        setTimeout(function() {ws.send("G")},
-                                   (startTime - context.currentTime) * 1000 * window.pya.bufferThresh)
+                        latePackages = 0;
+                        processedPackages = 0;
                     }
-                };
-                console.log("PyaJSClient: Websocket client loaded.")
+                    source.start()
+                    startTime = context.currentTime + buffer.duration
+                }
+                setTimeout(function() {ws.send("G")},
+                    (startTime - context.currentTime) * 1000 * window.pya.bufferThresh)
+            }
+        };
+    }
+};
+
+var updateChannel = function(buffer, data, channelId) {
+    buffer.copyToChannel(data, channelId, 0)
+}
+
+// Fallback for browsers without copyToChannel Support
+if (! AudioBuffer.prototype.copyToChannel) {
+    console.log("PyaJSClient: AudioBuffer.copyToChannel not supported. Falling back...")
+    updateChannel = function(buffer, data, channelId) {
+        buffer.getChannelData(channelId).set(data);
+    }
+}
+
+function resumeContext() {
+    context.resume();
+    var codeCells = document.getElementsByClassName("input_area")
+    for (var i = 0; i < codeCells.length; i++) {
+        codeCells[i].removeEventListener("focusin", resumeContext)
+    }
+}
+
+if (context.state == "suspended") {
+    console.log("PyaJSClient: AudioContext not running. Waiting for user input...")
+    var codeCells = document.getElementsByClassName("input_area")
+    for (var i = 0; i < codeCells.length; i++) {
+        codeCells[i].addEventListener("focusin", resumeContext)
+    }
+}
+
+console.log("PyaJSClient: Websocket client loaded.")
             """)
 
     @staticmethod
