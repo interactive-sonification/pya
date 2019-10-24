@@ -1,11 +1,14 @@
 # Arecorder class
 import time
+import numbers.Number
 import logging
 from warnings import warn
 import numpy as np
 import pyaudio
 from . import Asig
 from . import Aserver
+from .helper import dbamp
+
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,6 +32,9 @@ class Arecorder(Aserver):
         self.record_buffer = []
         self.recordings = []  # store recorded Asigs, time stamp in label
         self._recording = False
+        self._record_all = True
+        self.gains = np.ones(self.channels)
+        self.tracks = slice(None)
 
     @property
     def device(self):
@@ -44,6 +50,42 @@ class Arecorder(Aserver):
         if self.max_in_chn < self.channels:
             warn(f"Aserver: warning: {self.channels}>{self.max_in_chn} channels requested - truncated.")
             self.channels = self.max_in_chn
+
+    # def select_inputs(self, inputs, gains):
+    #     if len(inputs) != len(gains):
+    #         raise AttributeError("inputs and gains should be equal length lists.")
+    #     elif len(inputs) > self.channels or len(gains) > self.channels:
+    #         raise AttributeError("argument cannot be larger than channels.")
+    #     self._record_all = False
+    #     self._input_subset = inputs
+    #     self.gains = np.array([dbamp(item) for item in gains], dtype="float32")
+    
+    def set_tracks(self, tracks, gains):
+        """Define the number of track to be recorded and their gains. 
+        
+        parameters
+        ----------
+        tracks : list or numpy.ndarray
+            A list of input channel indices. By default None (record all channels)
+        gains : list of numpy.ndarray
+            A list of gains in decibel. Needs to be same length as tracks.
+        """
+        if isinstance(tracks, list) and isinstance(gains, list):
+            if len(tracks) != len(gains):
+                raise AttributeError("tracks and gains should be equal length lists.")
+            elif len(tracks) > self.channels or len(gains) > self.channels:
+                raise AttributeError("argument cannot be larger than channels.")
+            self.tracks = tracks
+            self.gains = np.array([dbamp(g) for g in gains], dtype="float32")
+        elif isinstance(tracks, numbers.Number) and isinstance(gains, numbers.Number):
+            self.tracks = [tracks] 
+            self.gains = dbamp(gains) 
+        else:
+            raise TypeError("Arguments need to be both list or both number.")
+
+    def reset(self):
+        self.tracks = slice(None)
+        self.gains = np.ones(self.channels)
 
     def boot(self):
         """boot recorder"""
@@ -65,7 +107,11 @@ class Arecorder(Aserver):
         if self._recording:
             sigar = np.frombuffer(in_data, dtype=self.backend.dtype)
             # (chunk length, chns)
-            data_float = np.reshape(sigar, (len(sigar) // self.channels, self.channels))
+            data_float = np.reshape(sigar, (self.bs, self.channels))
+            data_float = data_float[:, self.tracks] * self.gains  # apply channel selection and gains. 
+            # if not self._record_all 
+            
+            
             self.record_buffer.append(data_float)
             # E = 10 * np.log10(np.mean(data_float ** 2)) # energy in dB
             # os.write(1, f"\r{E}    | {self.block_cnt}".encode())
