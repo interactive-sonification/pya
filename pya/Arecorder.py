@@ -1,6 +1,6 @@
 # Arecorder class
 import time
-import numbers.Number
+import numbers
 import logging
 from warnings import warn
 import numpy as np
