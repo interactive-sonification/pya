@@ -198,7 +198,7 @@ class Ugen(Asig):
         length = get_num_of_rows(dur, n_rows, sr)
         # Question is that will be that be too slow.]
         if type == "white" or type == "white_noise":
-            sig = np.random.rand(length) * amp  # oR may switch to normal
+            sig = (np.random.rand(length) - 0.5) * 2. * amp
 
         elif type == "pink" or type == "pink_noise":
             # Based on Paul Kellet's method
