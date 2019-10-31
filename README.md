@@ -10,11 +10,11 @@
 
 <!--[![Name](Image)](Link)-->
 
-# pyA
+# pya
 
-## What is pyA?
+## What is pya?
 
-pyA is a package to support creation and manipulation of audio signals with Python.
+pya is a package to support creation and manipulation of audio signals with Python.
 It uses numpy arrays to store and compute audio signals.
 
   * Website: --
@@ -31,7 +31,7 @@ It provides:
   * Aspec - an audio spectrum class, using rfft as real-valued signals are always implied
   * Astft - an audio STFT (short-term Fourier transform) class
 
-pyA can be used for
+pya can be used for
 * multi-channel audio processing
 * auditory display and sonification
 * sound synthesis experiment
@@ -48,7 +48,7 @@ pyA can be used for
 
 ## Installation
 
-<!-- **Disclaimer**: We are currently making sure that pyA can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .` -->
+<!-- **Disclaimer**: We are currently making sure that pya can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .` -->
 
 **Note**: pya can be installed using **pip**. But pya uses PyAudio for audio playback and record, and PyAudio 0.2.11 has yet to fully support Python 3.7. So using pip install with Python 3.7 may encounter issues such as portaudio. Solution
 
@@ -56,7 +56,7 @@ Use pip to install pya via
 
     pip install pya
 
-**Note**: pyA requires PyAudio, for playback and record, which in turn requires portaudio. Since PyAudio 0.2.11 has yet to fully support Python 3.7, you maybe encounter portaudio related error under Python 3.7. Lower versions of Python should be fine. A few solutions are:
+**Note**: pya requires PyAudio, for playback and record, which in turn requires portaudio. Since PyAudio 0.2.11 has yet to fully support Python 3.7, you maybe encounter portaudio related error under Python 3.7. Lower versions of Python should be fine. A few solutions are:
 
 
 1. Anaconda can install non-python packages, so that the easiest way (if applicable) would be to 

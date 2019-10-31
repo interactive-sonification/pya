@@ -1,17 +1,17 @@
-.. pya documentation master file, created by
-   sphinx-quickstart on Thu Oct 31 15:20:24 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+pya
+===
 
-Welcome to pya's documentation!
-===============================
+pya is a package to support creation and manipulation of audio signals 
+with Python. Project can be found on `Github
+<https://github.com/interactive-sonification/pya>`_.
+For bug reports and other technical issues, please use the `Github Issues
+<https://github.com/interactive-sonification/pya/issues>`_.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    includeme
-
+   modules
 
 
 Indices and tables

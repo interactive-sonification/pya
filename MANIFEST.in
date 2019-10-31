@@ -15,3 +15,8 @@ recursive-include examples *.aif
 recursive-include tests *.py
 recursive-exclude examples/.ipynb_checkpoints *.ipynb
 recursive-include pya *.py
+
+recursive-include docs *.bat
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs Makefile
