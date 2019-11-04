@@ -15,14 +15,11 @@ class Aserver:
 
     Examples:
     -----------
-    from pya import *
-
-    ser = Aserver()
-
-    ser.boot()
-
-    asine = Ugen().sin().play(server=ser)
-
+    >>> from pya import *
+    >>> ser = Aserver()
+    >>> ser.boot()
+    >>> asine = Ugen().sin()
+    >>> asine.play(server=ser)
     """
 
     default = None  # that's the default Aserver if Asigs play via it

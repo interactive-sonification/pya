@@ -19,8 +19,13 @@ class Arecorder(Aserver):
 
     Examples:
     -----------
-    from pya import Arecorder
-
+    >>> from pya import Arecorder
+    >>> import time
+    >>> ar = Arecorder().boot()
+    >>> ar.record()
+    >>> time.sleep(1)
+    >>> ar.stop()
+    >>> print(ar.recordings) # A list of the recording as Asig
     """
 
     def __init__(self, sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs):
