@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.2 (November 2019)
+* Create gh-pages branch and Documentation website
+* Update README info
+* New Arecorder method to individualize channel selection and gain adjustment to each channel
+* Webaudio backend
+* binder example based on webaudio backend
+* Update docstrings
+
+
 ## 0.3.1 (October 2019)
 
 * Remove ffmpeg from requirement, and it has to be installed via conda or manually
