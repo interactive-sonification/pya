@@ -7,6 +7,8 @@
 * Webaudio backend
 * binder example based on webaudio backend
 * Update docstrings
+* Fix bug of multi channel fade_in fade_out
+* Fix bug of extend mode setitem with time slicing incorrect behaviour 
 
 
 ## 0.3.1 (October 2019)
