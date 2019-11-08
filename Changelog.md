@@ -8,7 +8,7 @@
 * binder example based on webaudio backend
 * Update docstrings
 * Fix bug of multi channel fade_in fade_out
-* Fix bug of extend mode setitem with time slicing incorrect behaviour 
+* Allowing using timeslice in extend setitem mode as long as stop reaches the end of the array.
 
 
 ## 0.3.1 (October 2019)
