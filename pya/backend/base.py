@@ -3,51 +3,49 @@ from abc import abstractmethod, ABC
 
 class BackendBase(ABC):
 
-    bs = 1024
-
     @abstractmethod
     def get_device_count(self):
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def get_device_info_by_index(self):
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def get_default_output_device_info(self):
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def get_default_input_device_info(self):
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def open(self, *args, **kwargs):
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def terminate(self):
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def process_buffer(self, *args, **kwargs):
-        pass
+        raise NotImplementedError
 
 
 class StreamBase(ABC):
 
     @abstractmethod
     def is_active(self):
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def start_stream(self):
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def stop_stream(self):
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def close(self):
-        pass
+        raise NotImplementedError
