@@ -28,6 +28,7 @@ class Arecorder(Aserver):
     >>> time.sleep(1)
     >>> ar.stop()
     >>> print(ar.recordings) # A list of the recording as Asig
+    [Asig(''): 2 x 44288 @ 44100Hz = 1.004s cn=['0', '1']]
     """
 
     def __init__(self, sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs):

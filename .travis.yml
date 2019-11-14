@@ -18,7 +18,7 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION ffmpeg coverage python-coveralls --file=requirements.txt --file=requirements_test.txt
   - source activate test-environment
 
-script: pytest --doctest-modules --cov pya/
+script: pytest --cov pya/
 after_success:
   - coveralls --config_file .coveragerc
 
