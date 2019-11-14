@@ -8,10 +8,11 @@ class DummyBackend(BackendBase):
 
     dtype = 'float32'
     range = 1
+    bs = 256
 
     def __init__(self, dummy_devices=None):
         if dummy_devices is None:
-            self.dummy_devices = [dict(maxInputChannels=2, maxOutputChannels=2, index=0, name="DummyDevice")]
+            self.dummy_devices = [dict(maxInputChannels=10, maxOutputChannels=10, index=0, name="DummyDevice")]
 
     def get_device_count(self):
         return len(self.dummy_devices)
@@ -49,25 +50,42 @@ class DummyStream(StreamBase):
         self.frames_per_buffer = frames_per_buffer
         self.channels = channels
         self._is_active = False
-        self.cb_thread = None
+        self.in_thread = None
+        self.out_thread = None
+        self.samples_out = []
 
     def stop_stream(self):
         self._is_active = False
+        while (self.in_thread and self.in_thread.is_alive()) or \
+              (self.out_thread and self.out_thread.is_alive()):
+            time.sleep(0.1)
 
     def close(self):
-        pass
+        self.stop_stream()
 
     def _generate_data(self):
         while self._is_active:
             sig = np.zeros(self.frames_per_buffer * self.channels, dtype=DummyBackend.dtype)
             self.stream_callback(sig, frame_count=None, time_info=None, flag=None)
-            time.sleep(0.01)
+            time.sleep(0.05)
+
+    def _process_data(self):
+        while self._is_active:
+            data = self.stream_callback(None, None, None, None)
+            if np.any(data):
+                self.samples_out.append(data)
+            time.sleep(0.05)
 
     def start_stream(self):
         self._is_active = True
         if self.input_flag:
-            self.cb_thread = Thread(target=self._generate_data)
-            self.cb_thread.start()
+            self.in_thread = Thread(target=self._generate_data)
+            self.in_thread.daemon = True
+            self.in_thread.start()
+        if self.output_flag:
+            self.out_thread = Thread(target=self._process_data)
+            self.out_thread.daemon = True
+            self.out_thread.start()
 
     def is_active(self):
         return self._is_active
