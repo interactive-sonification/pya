@@ -1,17 +1,14 @@
-[![Version](https://img.shields.io/badge/version-v0.3.2-orange.svg)](https://github.com/interactive-sonification/pya)
 [![PyPI](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
-[![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.3.1.svg)](https://github.com/interactive-sonification/pya/compare/v0.3.1...master)
 [![License](https://img.shields.io/github/license/interactive-sonification/pya.svg)](LICENSE)
-[![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=develop)](https://travis-ci.org/interactive-sonification/pya)
-[![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/develop?svg=true)](https://ci.appveyor.com/project/aleneum/pya-b7gkx/branch/develop)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/interactive-sonification/pya/develop?filepath=examples%2Fpya-examples.ipynb)
-<!--
-[![Coverage Status](https://coveralls.io/repos/interactive-sonification/pya/badge.svg?branch=master&service=github)](https://coveralls.io/github/interactive-sonification/pya?branch=master)
--->
-
-<!--[![Name](Image)](Link)-->
 
 # pya
+
+|Branch|`master`|`develop`|
+|------:|--------:|---------:|
+|[CI-Linux/MacOS](https://travis-ci.org/interactive-sonification/pya) | ![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=master) | ![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=develop) |
+|[CI-Windows](https://ci.appveyor.com/project/aleneum/pya-b7gkx/)| ![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/master?svg=true) | ![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/develop?svg=true) | 
+|Changes|[![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.3.1/master.svg)](https://github.com/interactive-sonification/pya/compare/v0.3.1...master) | [![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.3.1/develop.svg)](https://github.com/interactive-sonification/pya/compare/v0.3.1...develop) |
+|Binder|[![Master Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/interactive-sonification/pya/master?filepath=examples%2Fpya-examples.ipynb) | [![Develop Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/interactive-sonification/pya/develop?filepath=examples%2Fpya-examples.ipynb) |
 
 ## What is pya?
 
