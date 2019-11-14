@@ -6,6 +6,8 @@ include .pylintrc
 include LICENSE
 include MANIFEST
 include tox.ini
+include binder/environment.yml
+include binder/postBuild
 
 recursive-include examples *.ipynb
 recursive-include examples *.py
