@@ -25,8 +25,10 @@ class DummyBackend(BackendBase):
     def get_default_output_device_info(self):
         return self.dummy_devices[0]
 
-    def open(self, *args, input_flag, output_flag, rate, stream_callback=None, **kwargs):
-        stream = DummyStream(input_flag=input_flag, output_flag=output_flag, rate=rate, stream_callback=stream_callback)
+    def open(self, *args, input_flag, output_flag, rate, frames_per_buffer, stream_callback=None, **kwargs):
+        stream = DummyStream(input_flag=input_flag, output_flag=output_flag, 
+                             rate=rate, frames_per_buffer=frames_per_buffer,
+                             stream_callback=stream_callback)
         stream.start_stream()
         return stream
 
@@ -39,11 +41,12 @@ class DummyBackend(BackendBase):
 
 class DummyStream(StreamBase):
 
-    def __init__(self, input_flag, output_flag, rate, stream_callback):
+    def __init__(self, input_flag, output_flag, frames_per_buffer, rate, stream_callback):
         self.input_flag = input_flag
         self.output_flag = output_flag
         self.rate = rate
         self.stream_callback = stream_callback
+        self.frames_per_buffer = frames_per_buffer
         self._is_active = False
         self.cb_thread = None
 
@@ -55,7 +58,7 @@ class DummyStream(StreamBase):
 
     def _generate_data(self):
         while self._is_active:
-            sig = np.zeros((self.rate, 1), dtype=DummyBackend.dtype)
+            sig = np.zeros((self.frames_per_buffer, 1), dtype=DummyBackend.dtype)
             self.stream_callback(sig, frame_count=None, time_info=None, flag=None)
             time.sleep(0.01)
 

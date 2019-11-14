@@ -10,7 +10,6 @@ from . import Aserver
 from .helper import dbamp
 
 
-
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
@@ -56,18 +55,9 @@ class Arecorder(Aserver):
             warn(f"Aserver: warning: {self.channels}>{self.max_in_chn} channels requested - truncated.")
             self.channels = self.max_in_chn
 
-    # def select_inputs(self, inputs, gains):
-    #     if len(inputs) != len(gains):
-    #         raise AttributeError("inputs and gains should be equal length lists.")
-    #     elif len(inputs) > self.channels or len(gains) > self.channels:
-    #         raise AttributeError("argument cannot be larger than channels.")
-    #     self._record_all = False
-    #     self._input_subset = inputs
-    #     self.gains = np.array([dbamp(item) for item in gains], dtype="float32")
-    
     def set_tracks(self, tracks, gains):
         """Define the number of track to be recorded and their gains. 
-        
+
         parameters
         ----------
         tracks : list or numpy.ndarray
@@ -112,11 +102,9 @@ class Arecorder(Aserver):
         if self._recording:
             sigar = np.frombuffer(in_data, dtype=self.backend.dtype)
             # (chunk length, chns)
-            data_float = np.reshape(sigar, (self.bs, self.channels))
+            data_float = np.reshape(sigar, (len(sigar) // self.channels, self.channels))
             data_float = data_float[:, self.tracks] * self.gains  # apply channel selection and gains. 
-            # if not self._record_all 
-            
-            
+            # if not self._record_all  
             self.record_buffer.append(data_float)
             # E = 10 * np.log10(np.mean(data_float ** 2)) # energy in dB
             # os.write(1, f"\r{E}    | {self.block_cnt}".encode())
