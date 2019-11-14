@@ -31,8 +31,10 @@ class JupyterBackend(BackendBase):
         return self.dummy_devices[0]
 
     def open(self, *args, channels, rate, stream_callback=None, **kwargs):
-        return JupyterStream(channels=channels, rate=rate, stream_callback=stream_callback, port=self.port,
-                             proxy_suffix=self.proxy_suffix)
+        stream = JupyterStream(channels=channels, rate=rate, stream_callback=stream_callback, port=self.port,
+                               proxy_suffix=self.proxy_suffix)
+        stream.start_stream()
+        return stream
 
     def process_buffer(self, buffer):
         return buffer
