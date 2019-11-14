@@ -171,6 +171,7 @@ class Asig:
             * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig. asig[['front', 'rear']], etc...
             * bool, subset channels: asig[:, [True, False]]
 
+
         Parameters
         ----------
             index : Number or slice or list or tuple or dict
@@ -217,7 +218,6 @@ class Asig:
                     start = None
                 try:
                     stop = int(val * self.sr)
-                    stop = None if stop == 0 else stop  # This is to let {-0.4:-0} works as getting the last 0.4 second.
                 except TypeError:
                     stop = None
             ridx = slice(start, stop, 1)
@@ -373,7 +373,6 @@ class Asig:
                     start = None
                 try:
                     stop = int(val * self.sr)
-                    stop = None if stop == 0 else stop                    
                 except TypeError:
                     stop = None
             ridx = slice(start, stop, 1)
