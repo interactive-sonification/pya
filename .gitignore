@@ -1,0 +1,10 @@
+.coverage
+.idea
+.tox
+build
+dist
+.vscode
+.ipynb_checkpoints
+*.egg-info
+*.pyc
+.DS_Store
