@@ -18,8 +18,8 @@ class Aserver:
     >>> from pya import *
     >>> ser = Aserver()
     >>> ser.boot()
-    AServer: sr: 44100, blocksize: 256,
-             Stream Active: True, Device: Built-in Output, Index: 1
+    AServer: sr: 44100, blocksize: ...,
+             Stream Active: True, Device: ...
     >>> asine = Ugen().sine()
     >>> asine.play(server=ser)
     Asig('sine'): 1 x 44100 @ 44100Hz = 1.000s cn=['0']
