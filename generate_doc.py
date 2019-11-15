@@ -8,6 +8,7 @@ BUILD_FOLDER = 'build/html'
 TEMP_FOLDER = 'build/git'
 VERSION_FILE = "versions.html"
 
+
 def generate(args):
     out = subprocess.check_output("git show-ref --tags -d".split(' '))
     tags = ['tags/' + str(line.split(b' ')[1].split(b'/')[2], 'utf-8') for line in out.split(b'\n')[:-1]]
@@ -37,7 +38,7 @@ Choose a version:
 </body>
 </html>
         """)
-    
+
     default_version = generated[-1]
     with open(f'{BUILD_FOLDER}/index.html', 'w') as fp:
         fp.write(f"""<!DOCTYPE html>
@@ -45,6 +46,7 @@ Choose a version:
         <meta http-equiv="refresh" content="0; url={default_version}/index.html">
         </head></html>
         """)
+
 
 if __name__ == "__main__":
     generate(sys.argv[1:])
