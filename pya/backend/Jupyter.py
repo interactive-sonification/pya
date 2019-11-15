@@ -10,7 +10,7 @@ class JupyterBackend(BackendBase):
 
     dtype = 'float32'
     range = 1
-    bs = 1024  # streaming introduces lack which has to be covered by the buffer
+    bs = 4096  # streaming introduces lack which has to be covered by the buffer
 
     def __init__(self, port=8765, proxy_suffix=None):
         self.dummy_devices = [dict(maxInputChannels=0, maxOutputChannels=2, index=0, name="JupyterBackend")]
