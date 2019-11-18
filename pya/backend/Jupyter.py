@@ -2,7 +2,7 @@ from .base import BackendBase, StreamBase
 
 import asyncio
 import threading
-from IPython.display import Javascript, display
+from IPython.display import Javascript, HTML, display
 from sanic import Sanic
 
 
@@ -32,6 +32,9 @@ class JupyterBackend(BackendBase):
         return self.dummy_devices[0]
 
     def open(self, *args, channels, rate, stream_callback=None, **kwargs):
+        display(HTML("<div class=\"alert-info\">You are using the experimental Jupyter backend. "
+                     "Note that this backend is not feature complete and does not support recording so far. "
+                     "User experience may vary depending on the network latency.</div>"))
         stream = JupyterStream(channels=channels, rate=rate, stream_callback=stream_callback, port=self.port,
                                proxy_suffix=self.proxy_suffix)
         stream.start_stream()
