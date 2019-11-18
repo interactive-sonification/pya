@@ -20,8 +20,9 @@ recursive-include examples *.ipynb
 recursive-include examples *.mp3
 recursive-include examples *.py
 recursive-include examples *.wav
-recursive-exclude examples .ipynb_checkpoints *.ipynb
+recursive-exclude examples .ipynb_checkpoints/*.ipynb
 
 recursive-include tests *.py
 recursive-include pya *.py
-recursive-include dev *.py
+recursive-include dev *.md
+recursive-include dev *.py 
