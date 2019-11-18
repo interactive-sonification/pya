@@ -61,10 +61,15 @@
 
 
 <div class="version">
-    version:
-    <a href="/pya/versions.html" style="color:rgb(252, 252, 252); text-decoration: underline;">
-        develop
-    </a>
+version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
+
+  <option value="/v0.3.2/" >v0.3.2</option>
+
+  <option value="/master/" >master</option>
+
+  <option value="/develop/" selected="selected">develop</option>
+
+<select>
 </div>
 
 
@@ -221,9 +226,7 @@ for pyaudio signals into ASigs</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">recordings</span><span class="p">)</span>  
-<span class="go">[Asig(&#39;&#39;): 2 x ... @ 44100Hz = ...s cn=[&#39;0&#39;, &#39;1&#39;]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Output could look like this:</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># [Asig(&#39;&#39;): 2 x 44288 @ 44100Hz = 1.004s cn=[&#39;0&#39;, &#39;1&#39;]]</span>
+<span class="go">[Asig(&#39;&#39;): ... x ... @ 44100Hz = ...</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -289,8 +292,8 @@ allowing Asig.play() to send audio segement into the stream.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pya</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span> <span class="o">=</span> <span class="n">Aserver</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span><span class="o">.</span><span class="n">boot</span><span class="p">()</span>
-<span class="go">AServer: sr: 44100, blocksize: 256,</span>
-<span class="go">         Stream Active: True, Device: Built-in Output, Index: 1</span>
+<span class="go">AServer: sr: 44100, blocksize: ...,</span>
+<span class="go">         Stream Active: True, Device: ...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">asine</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">sine</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">asine</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">ser</span><span class="p">)</span>
 <span class="go">Asig(&#39;sine&#39;): 1 x 44100 @ 44100Hz = 1.000s cn=[&#39;0&#39;]</span>
