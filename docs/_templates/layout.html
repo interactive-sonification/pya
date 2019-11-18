@@ -25,7 +25,7 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 {% for ver in versions.split(',') %}
-  <option value="/{{ver}}/" {% if ver == version %}selected="selected"{% endif %}>{{ver}}</option>
+  <option value="/pya/{{ver}}/" {% if ver == version %}selected="selected"{% endif %}>{{ver}}</option>
 {% endfor %}
 <select>
 </div>
