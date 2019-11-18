@@ -26,10 +26,10 @@ def generate(args):
             generated.append(t)
         else:
             print(f'{t} has no docs!')
-    
+
     # put most recent tag to front of list (if exists)
     if len(generated) > len(branches):
-        generated = [generated[len(branches)]] + branches + generated[len(branches)+1:]
+        generated = [generated[len(branches)]] + branches + generated[len(branches) + 1:]
 
     # generate documentation; all versions have to be known for the dropdown menu
     for t in generated:
@@ -37,7 +37,7 @@ def generate(args):
         os.system(f'git -C {TEMP_FOLDER} checkout {target} -f')
         os.system(f'cp docs/_templates/* {TEMP_FOLDER}/docs/_templates')
         os.system(f'sphinx-build -b html -D version={t} -A versions={",".join(generated)} {TEMP_FOLDER}/docs {BUILD_FOLDER}/{t}')
-    
+
     # create index html to forward to last tagged version
     with open(f'{BUILD_FOLDER}/index.html', 'w') as fp:
         fp.write(f"""<!DOCTYPE html>
