@@ -5,7 +5,7 @@ import subprocess
 from os.path import exists
 
 TEMP_FOLDER = 'build/git'
-BUILD_FOLDER = f'{TEMP_FOLDER}/build/html'
+BUILD_FOLDER = f'{TEMP_FOLDER}/build/html/pya'
 VERSION_FILE = "versions.html"
 
 
@@ -34,7 +34,8 @@ def generate(args):
     # generate documentation; all versions have to be known for the dropdown menu
     for t in generated:
         target = 'tags/' + t if t not in branches else t
-        os.system(f'git -C {TEMP_FOLDER} checkout {target}')
+        os.system(f'git -C {TEMP_FOLDER} checkout {target} -f')
+        os.system(f'cp docs/_templates/* {TEMP_FOLDER}/docs/_templates')
         os.system(f'sphinx-build -b html -D version={t} -A versions={",".join(generated)} {TEMP_FOLDER}/docs {BUILD_FOLDER}/{t}')
     
     # create index html to forward to last tagged version
