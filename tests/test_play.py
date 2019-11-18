@@ -32,8 +32,6 @@ class TestPlayBase(TestCase):
         self.sig = np.sin(2 * np.pi * 440 * np.linspace(0, 1, 44100))
         self.asine = Asig(self.sig, sr=44100, label="test_sine")
         self.asineWithName = Asig(self.sig, sr=44100, label="test_sine", cn=['sine'])
-        # self.astereo = Asig("../examples/samples/stereoTest.wav", label='stereo', cn = ['l','r'])
-        # self.asentence = Asig("../examples/samples/sentence.wav", label='sentence', cn = 'sen')
         self.sig2ch = np.repeat(self.sig, 2).reshape((44100, 2))
         self.astereo = Asig(self.sig2ch, sr=44100, label="stereo", cn=['l', 'r'])
 
@@ -74,7 +72,7 @@ class TestPlay(TestPlayBase):
 class MockAudioTest(TestCase):
 
     # @skipUnless(has_output, "PyAudio found no output device.")
-    def test_mock_play(self):
+    def test_play(self):
         # Shift a mono signal to chan 4 should result in a 4 channels signals
         mock_audio = MockAudio()
         with mock.patch('pyaudio.PyAudio', return_value=mock_audio):
@@ -96,9 +94,4 @@ class MockAudioTest(TestCase):
                 s.boot()
                 assert mock_audio.open.call_count == 2
                 self.assertEqual(mock_audio.open.call_args_list[1][1]["channels"], 4)
-        # with mock.patch('pyaudio.PyAudio', return_value=mock_audio):
-        #     with warnings.catch_warnings(record=True):
-        #         s = Aserver(channels=6)
-        #     # Set device is not tested.
-        #     # s.set_device(idx=1)
-        #     # s.set_device(idx=1, reboot=True)
+

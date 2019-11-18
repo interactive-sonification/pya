@@ -1,0 +1,11 @@
+name: pya
+dependencies:
+- numpy
+- scipy
+- matplotlib
+- pyaudio>=0.2.11
+- ffmpeg
+- ipywidgets
+- requests
+- notebook
+- sanic

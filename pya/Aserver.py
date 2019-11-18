@@ -15,14 +15,14 @@ class Aserver:
 
     Examples:
     -----------
-    from pya import *
-
-    ser = Aserver()
-
-    ser.boot()
-
-    asine = Ugen().sin().play(server=ser)
-
+    >>> from pya import *
+    >>> ser = Aserver()
+    >>> ser.boot()
+    AServer: sr: 44100, blocksize: ...,
+             Stream Active: True, Device: ...
+    >>> asine = Ugen().sine()
+    >>> asine.play(server=ser)
+    Asig('sine'): 1 x 44100 @ 44100Hz = 1.000s cn=['0']
     """
 
     default = None  # that's the default Aserver if Asigs play via it
@@ -47,7 +47,7 @@ class Aserver:
         else:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    def __init__(self, sr=44100, bs=256, device=None, channels=2, backend=None, **kwargs):
+    def __init__(self, sr=44100, bs=None, device=None, channels=2, backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
 
@@ -74,6 +74,7 @@ class Aserver:
             self.backend = PyAudioBackend(**kwargs)
         else:
             self.backend = backend
+        self.bs = bs if bs is not None else self.backend.bs
         self.channels = channels
         # Get audio devices to input_device and output_device
         self.input_devices = []
@@ -174,8 +175,8 @@ class Aserver:
 
     def quit(self):
         """Aserver quit server: stop stream and terminate pa"""
-        if not self.stream.is_active():
-            _LOGGER.info("Aserver:quit: stream not active")
+        if self.stream is None or not self.stream.is_active():
+            _LOGGER.info("Stream not active")
             return -1
         try:
             self.stream.stop_stream()

@@ -6,12 +6,23 @@ include .pylintrc
 include LICENSE
 include MANIFEST
 include tox.ini
+include binder/environment.yml
+include binder/postBuild
 
+recursive-include docs Makefile
+recursive-include docs *.bat
+recursive-include docs *.html
+recursive-include docs *.py
+recursive-include docs *.rst
+
+recursive-include examples *.aif
 recursive-include examples *.ipynb
+recursive-include examples *.mp3
 recursive-include examples *.py
 recursive-include examples *.wav
-recursive-include examples *.mp3
-recursive-include examples *.aif
+recursive-exclude examples .ipynb_checkpoints/*.ipynb
+
 recursive-include tests *.py
-recursive-exclude examples/.ipynb_checkpoints *.ipynb
 recursive-include pya *.py
+recursive-include dev *.md
+recursive-include dev *.py 

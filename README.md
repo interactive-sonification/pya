@@ -1,24 +1,21 @@
-[![Version](https://img.shields.io/badge/version-v0.3.1-orange.svg)](https://github.com/interactive-sonification/pya)
 [![PyPI](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
-[![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.3.0.svg)](https://github.com/interactive-sonification/pya/compare/v0.3.0...master)
 [![License](https://img.shields.io/github/license/interactive-sonification/pya.svg)](LICENSE)
-[![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=develop)](https://travis-ci.org/interactive-sonification/pya)
-[![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/develop?svg=true)](https://ci.appveyor.com/project/aleneum/pya-b7gkx/branch/develop)
-<!--
-[![Coverage Status](https://coveralls.io/repos/interactive-sonification/pya/badge.svg?branch=master&service=github)](https://coveralls.io/github/interactive-sonification/pya?branch=master)
--->
 
-<!--[![Name](Image)](Link)-->
+# pya
 
-# pyA
+|Branch|`master`|`develop`|
+|------:|--------:|---------:|
+|[CI-Linux/MacOS](https://travis-ci.org/interactive-sonification/pya) | ![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=master) | ![Build Status Travis](https://travis-ci.org/interactive-sonification/pya.svg?branch=develop) |
+|[CI-Windows](https://ci.appveyor.com/project/aleneum/pya-b7gkx/)| ![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/master?svg=true) | ![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/develop?svg=true) | 
+|Changes|[![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.3.1/master.svg)](https://github.com/interactive-sonification/pya/compare/v0.3.1...master) | [![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.3.1/develop.svg)](https://github.com/interactive-sonification/pya/compare/v0.3.1...develop) |
+|Binder|[![Master Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/interactive-sonification/pya/master?filepath=examples%2Fpya-examples.ipynb) | [![Develop Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/interactive-sonification/pya/develop?filepath=examples%2Fpya-examples.ipynb) |
 
-## What is pyA?
+## What is pya?
 
-pyA is a package to support creation and manipulation of audio signals with Python.
+pya is a package to support creation and manipulation of audio signals with Python.
 It uses numpy arrays to store and compute audio signals.
 
-  * Website: --
-  * Documentation: see examples/pya-examples.ipynb and help(pya)
+  * Documentation: see examples/pya-examples.ipynb for a quick tutorial and [Documentation](https://interactive-sonification.github.io/pya/index.html)
   * Source code: https://github.com/interactive-sonification/pya
 
 It provides:
@@ -30,14 +27,16 @@ It provides:
   * Arecorder - an audio recorder class
   * Aspec - an audio spectrum class, using rfft as real-valued signals are always implied
   * Astft - an audio STFT (short-term Fourier transform) class
+  * A number of helper functions, e.g. device_info()
 
-pyA can be used for
+pya can be used for
 * multi-channel audio processing
 * auditory display and sonification
 * sound synthesis experiment
 * audio applications in general such as games or GUI-enhancements
 * signal analysis and plotting
-* at this time more suitable for offline rendering than realtime.
+  
+At this time pya is more suitable for offline rendering than realtime.
 
 ## Authors and Contributors
 
@@ -48,16 +47,9 @@ pyA can be used for
 
 ## Installation
 
-<!-- **Disclaimer**: We are currently making sure that pyA can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .` -->
+<!-- **Disclaimer**: We are currently making sure that pya can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .` -->
 
-**Note**: pya can be installed using **pip**. But pya uses PyAudio for audio playback and record, and PyAudio 0.2.11 has yet to fully support Python 3.7. So using pip install with Python 3.7 may encounter issues such as portaudio. Solution
-
-Use pip to install pya via
-
-    pip install pya
-
-**Note**: pyA requires PyAudio, for playback and record, which in turn requires portaudio. Since PyAudio 0.2.11 has yet to fully support Python 3.7, you maybe encounter portaudio related error under Python 3.7. Lower versions of Python should be fine. A few solutions are:
-
+**Note**: pya can be installed using **pip**. But pya uses PyAudio for audio playback and record, and PyAudio 0.2.11 has yet to fully support Python 3.7. So using pip install with Python 3.7 may encounter issues such as portaudio. Solutions are:
 
 1. Anaconda can install non-python packages, so that the easiest way (if applicable) would be to 
 
@@ -70,7 +62,9 @@ Use pip to install pya via
 4. For Windows users, you can install PyAudio wheel at:
 https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
 
+Then pya can be installed using pip:
 
+    pip install pya
 
 
 See pyaudio installation http://people.csail.mit.edu/hubert/pyaudio/#downloads

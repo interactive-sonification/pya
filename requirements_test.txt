@@ -1,2 +1,5 @@
-nose
+pytest
+pytest-cov
 pycodestyle
+sanic
+notebook

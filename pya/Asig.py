@@ -131,7 +131,7 @@ class Asig:
         self.sig, self.sr = audio_from_file(fname)
 
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
-        """Save signal as .wav file
+        """Save signal as .wav file, return self.
 
         Parameters
         ----------
@@ -139,10 +139,6 @@ class Asig:
             name of the file with .wav (Default value = "asig.wav")
         dtype : str
             datatype (Default value = 'float32')
-
-        Returns
-        -------
-        : Asig
         """
         if dtype == 'int16':
             data = (self.sig * 32767).astype('int16')
@@ -461,14 +457,10 @@ class Asig:
                 return self
             if isinstance(ridx, slice):
                 if ridx.step not in [1, None]:
-                    _LOGGER.error(
-                        "Asig.setitem Error: extend mode only available for step-1 slices")
-                    return self
-                if ridx.stop is not None:
-                    _LOGGER.error(
-                        "Asig.setitem Error: extend mode only available if stop is None")
-                    return self
-            dshape = self.sig[final_index].shape
+                    raise AttributeError("Asig.setitem Error: extend mode only available for step-1 slices")
+                if ridx.stop is not None and ridx.stop < self.samples:
+                    raise AttributeError("Extend mode is meant for extending array beyond the end. The current slice does not stop at the end of array.")
+            dshape = self.sig[final_index].shape  # d for destination
             # ToDo: howto compute dn faster from ridx shape(self.sig) alone?
             dn = dshape[0]
             sn = src.shape[0]
@@ -1178,7 +1170,7 @@ class Asig:
         dur : float
             Duration in seconds to fade in (Default value = 0.1)
         curve : float
-            Curvature of the fader. (Default value = 1)
+            Curvature of the fader, power of the linspace function. (Default value = 1)
 
         Returns
         -------
@@ -1189,8 +1181,15 @@ class Asig:
         if nsamp > self.samples:
             nsamp = self.samples
             warn("warning: Asig too short for fade_in - adapting fade_in time")
-        return Asig(np.hstack((self.sig[:nsamp] * np.linspace(0, 1, nsamp, dtype="float32") ** curve, self.sig[nsamp:])),
-                    self.sr, label=self.label + "_fadein", cn=self.cn)
+        # TODO simplify this if we decide to make mono signal with dimension 1 instead of None. 
+        if self.channels == 1:
+            ramp = np.linspace(0, 1, nsamp, dtype="float32") ** curve
+            return Asig(np.hstack((self.sig[:nsamp] * ramp, self.sig[nsamp:])),
+                        self.sr, label=self.label + "_fadein", cn=self.cn)
+        else:
+            ramp = np.meshgrid(np.linspace(0, 1, nsamp, dtype="float32"), np.zeros(self.channels))[0].T
+            return Asig(np.vstack((self.sig[:nsamp] * ramp, self.sig[nsamp:])),
+                        self.sr, label=self.label + "_fadein", cn=self.cn)
 
     def fade_out(self, dur=0.1, curve=1):
         """Fade out the signal at the end
@@ -1200,7 +1199,7 @@ class Asig:
         dur : float
             duration in seconds to fade out (Default value = 0.1)
         curve : float
-            Curvature of the fader. (Default value = 1)
+            Curvature of the fader, power of the linspace function. (Default value = 1)
 
         Returns
         -------
@@ -1211,9 +1210,15 @@ class Asig:
         if nsamp > self.samples:
             nsamp = self.samples
             warn("Asig too short for fade_out - adapting fade_out time")
-        return Asig(np.hstack((self.sig[:-nsamp],
-                               self.sig[-nsamp:] * np.linspace(1, 0, nsamp, dtype="float32")**curve)),
-                    self.sr, label=self.label + "_fadeout", cn=self.cn)
+        # TODO simplify this if we decide to make mono signal with dimension 1 instead of None. 
+        if self.channels == 1:
+            ramp = np.linspace(1, 0, nsamp, dtype="float32") ** curve
+            return Asig(np.hstack((self.sig[:-nsamp], self.sig[-nsamp:] * ramp)), 
+                        self.sr, label=self.label + "_fadeout", cn=self.cn)
+        else:
+            ramp = np.meshgrid(np.linspace(1, 0, nsamp, dtype="float32"), np.zeros(self.channels))[0].T
+            return Asig(np.vstack((self.sig[:-nsamp], self.sig[-nsamp:] * ramp)),
+                        self.sr, label=self.label + "_fadeout", cn=self.cn)
 
     def iirfilter(self, cutoff_freqs, btype='bandpass', ftype='butter', order=4,
                   filter='lfilter', rp=None, rs=None):
