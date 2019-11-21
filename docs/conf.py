@@ -22,7 +22,7 @@ copyright = '2019, Thomas Hermann, Jiajun Yang, Alexander Neumann'
 author = 'Thomas Hermann, Jiajun Yang, Alexander Neumann'
 
 # The full version, including alpha/beta/rc tags
-version = '0.3.2'
+version = 'unset'
 html_context = dict(versions=str(version))
 
 # -- General configuration ---------------------------------------------------
