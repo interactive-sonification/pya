@@ -8,6 +8,7 @@ include MANIFEST
 include tox.ini
 include binder/environment.yml
 include binder/postBuild
+include dev/generate_doc
 
 recursive-include docs Makefile
 recursive-include docs *.bat
