@@ -1,0 +1,148 @@
+#!/usr/bin/env python
+
+import argparse
+import sys
+import os 
+import subprocess
+import shutil
+from sys import platform
+from os.path import exists, dirname, basename
+
+SILENCE = "> /dev/null 2>&1"
+
+
+def generate():
+    git_root = subprocess.check_output(f'git -C {dirname(__file__)} rev-parse --show-toplevel'.split(' '))
+    git_root = str(git_root, 'utf-8').strip()
+    parser = argparse.ArgumentParser(description="Generates Sphinx documentation")
+    parser.add_argument('--doctree', action='store_true', help='build complete doctree')
+    parser.add_argument('--publish', action='store_true', help='build and publish doctree')
+    parser.add_argument('--no-show', action='store_true', help='do not open browser after build')
+    parser.add_argument('--branches', nargs='*', default=['master', 'develop'], help='limit doctree to these branches')
+    parser.add_argument('--tags', nargs='*', default=False, help='limit doctree to these tags')
+    parser.add_argument('--input', default=f"{git_root}/docs", help='input folder (ignored for doctree)')
+    parser.add_argument('--out', default=f"{git_root}/build", help='output folder')
+    parser.add_argument('--template-folder', default=f"{git_root}/docs/_templates", help="templates used for doctree")
+    parser.add_argument('--clean', action='store_true', help="removes out folder before building doc")
+    args = parser.parse_args()
+    args.doctree = args.doctree if not args.publish else True
+    if args.clean and exists(args.out):
+        shutil.rmtree(args.out)
+    os.makedirs(args.out, exist_ok=True)
+    if not args.doctree:
+        generate_local(doc=args.input, out=args.out, show=not args.no_show)
+    else:
+        generate_tree(out_folder=args.out, publish=args.publish, branches=args.branches,
+                      tags=args.tags, template_folder=args.template_folder, show=not args.no_show)
+
+
+def generate_local(doc, out, show, target='html'):
+    os.system(f'sphinx-build -b {target} {doc} {out}/{target}')
+    if show:
+        if platform == 'darwin':
+            os.system(f'open {out}/{target}/index.{target}')
+        else:
+            raise NotImplementedError("show is currently only available for MacOS")
+
+
+def generate_tree(out_folder, publish=False, branches=['master', 'develop'], tags=None, template_folder=None, show=False):
+    doctree_root = f"{out_folder}/doctree/pya"
+    build_folder = f"{out_folder}/tmp"
+    os.makedirs(build_folder, exist_ok=True)
+    if not exists(doctree_root):
+        os.system(f'git clone https://github.com/interactive-sonification/pya.git {doctree_root}')
+    else:
+        # os.system(f'git -C {doctree_root} fetch --all')
+        os.system(f'git -C {doctree_root} pull --all')
+
+    if tags is False:
+        out = subprocess.check_output(f"git -C {doctree_root} show-ref --tags -d".split(' '))
+        tags = [str(line.split(b' ')[1].split(b'/')[2], 'utf-8') for line in out.split(b'\n')[::-1] if len(line)]
+
+    # first, check which documentation to generate
+    branches = [b for b in branches if _has_docs(b, doctree_root)]
+    tags = [t for t in tags if _has_docs('tags/' + t, doctree_root)]
+    print(f"Will generate documentation for:\nBranches: {branches}\nTags: {tags}")
+
+    # fix order of dropdown elements (most recent tag first, then branches and older tags)
+    doclist = tags[:1] + branches + tags[1:]
+
+    # generate documentation; all versions have to be known for the dropdown menu
+    for d in doclist:
+        print(f"Generating documentation for {d} ...")
+        target = d if d in branches else 'tags/' + d
+        res = os.system(f'git -C {doctree_root} checkout {target} -f' + SILENCE)
+        if res != 0:
+            raise RuntimeError(f'Could not checkout {d}. Git returned status code {res}!')
+        if template_folder:
+            os.system(f'cp {template_folder}/* {doctree_root}/docs/_templates')
+        # PYTHONDONTWRITEBYTECODE=1 prevents __pycache__ files which we don't need when code runs only once.
+        res = os.system(f'PYTHONDONTWRITEBYTECODE=1 sphinx-build -b html -D version={d} -A versions={",".join(doclist)} {doctree_root}/docs {build_folder}/{d}' + SILENCE)
+        if res != 0:
+            raise RuntimeError(f'Could not generate documentation for {d}. Sphinx returned status code {res}!')
+
+    # create index html to forward to last tagged version
+    if doclist:
+        with open(f'{build_folder}/index.html', 'w') as fp:
+            fp.write(f"""<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="refresh" content="0; url={doclist[0]}/index.html">
+  </head>
+</html>
+""")
+
+    # prepare gh-pages
+    print("Merging documentation...")
+    os.system(f'git -C {doctree_root} checkout gh-pages -f' + SILENCE)
+    os.system(f'cp -r {build_folder}/* {doctree_root}')
+    print("Current differences in 'gh-branch':")
+    os.system(f'git -C {doctree_root} status')
+    print(f"Documentation tree has been written to {doctree_root}")
+
+    # commit and push changes when publish has been passed
+    if publish:
+        os.system(f'git -C {doctree_root} commit -a -m "update doctree"')
+        os.system(f'git -C {doctree_root} push')
+
+    if show:
+        if platform == 'darwin':
+            _run_webserver(doctree_root)
+        else:
+            raise NotImplementedError("show is currently only available for MacOS")
+
+
+def _has_docs(name, doctree_root):
+    os.system(f'git -C {doctree_root} checkout {name}' + SILENCE)
+    return exists(f'{doctree_root}/docs')
+
+def _run_webserver(root):
+    import threading
+    import time
+    import http.server
+    import socketserver
+
+    def _delayed_open():
+        time.sleep(0.2)
+        os.system(f'open http://localhost:8181/{basename(root)}/index.html')
+
+    t = threading.Thread(target=_delayed_open)
+    t.start()
+    class Handler(http.server.SimpleHTTPRequestHandler):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, directory=root + '/../', **kwargs)
+        def log_message(self, format, *args):
+            pass
+    socketserver.TCPServer.allow_reuse_address = True
+    with socketserver.TCPServer(("", 8181), Handler) as httpd:
+        try:
+            print("Starting preview webserver (disable with --no-show)...")
+            print("Ctrl+C to kill server")
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("Exiting...")
+            httpd.shutdown()
+
+
+if __name__ == "__main__":
+    generate()
