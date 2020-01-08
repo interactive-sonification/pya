@@ -3,6 +3,7 @@ import time
 import logging
 import numpy as np
 from warnings import warn
+import threading
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -167,6 +168,7 @@ class Aserver:
         self.boot_time = time.time()
         self.block_time = self.boot_time
         self.block_cnt = 0
+        self.lock = threading.Lock()
         self.stream = self.backend.open(channels=self.channels, rate=self.sr,
                                         input_flag=False, output_flag=True, frames_per_buffer=self.bs,
                                         output_device_index=self.device, stream_callback=self._play_callback)
@@ -218,7 +220,7 @@ class Aserver:
         self.srv_curpos.insert(idx, 0)
         self.srv_outs.insert(idx, out)
         if 'block' in kwargs and kwargs['block']:
-            if onset > 0:  # here really omset and not rt_onset!
+            if onset > 0:  # here really onset and not rt_onset!
                 _LOGGER.warning("blocking inactive with play(onset>0)")
             else:
                 time.sleep(asig.get_duration())
@@ -226,51 +228,59 @@ class Aserver:
 
     def _play_callback(self, in_data, frame_count, time_info, flag):
         """callback function, called from pastream thread when data needed."""
-        tnow = self.block_time
-        self.block_time += self.block_duration
-        self.block_cnt += 1
-        # just curious - not needed but for time stability check
-        self.timejitter = time.time() - self.block_time
-        if self.timejitter > 3 * self.block_duration:
-            _LOGGER.debug(f"Aserver late by {self.timejitter} seconds: block_time reset!")
-            self.block_time = time.time()
+        with self.lock:
+            tnow = self.block_time
+            self.block_time += self.block_duration
+            self.block_cnt += 1
+            # just curious - not needed but for time stability check
+            self.timejitter = time.time() - self.block_time
+            if self.timejitter > 3 * self.block_duration:
+                _LOGGER.debug(f"Aserver late by {self.timejitter} seconds: block_time reset!")
+                self.block_time = time.time()
 
-        if not self.srv_asigs or self.srv_onsets[0] > tnow:  # to shortcut computing
-            return self.backend.process_buffer(self.empty_buffer)
-        elif self._stop:
-            self.srv_asigs.clear()
-            self.srv_onsets.clear()
-            self.srv_curpos.clear()
-            self.srv_outs.clear()
-            return self.backend.process_buffer(self.empty_buffer)
+            if not self.srv_asigs or self.srv_onsets[0] > tnow:  # to shortcut computing
+                return self.backend.process_buffer(self.empty_buffer)
+            elif self._stop:
+                self.srv_asigs.clear()
+                self.srv_onsets.clear()
+                self.srv_curpos.clear()
+                self.srv_outs.clear()
+                return self.backend.process_buffer(self.empty_buffer)
 
-        data = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
-        # iterate through all registered asigs, adding samples to play
-        dellist = []  # memorize completed items for deletion
-        t_next_block = tnow + self.bs / self.sr
-        for i, t in enumerate(self.srv_onsets):
-            if t > t_next_block:  # doesn't begin before next block
-                break  # since list is always onset-sorted
-            a = self.srv_asigs[i]
-            c = self.srv_curpos[i]
-            if t > tnow:  # first block: apply precise zero padding
-                io0 = int((t - tnow) * self.sr)
-            else:
-                io0 = 0
-            tmpsig = a.sig[c:c + self.bs - io0]
-            n, nch = tmpsig.shape
-            out = self.srv_outs[i]
-            data[io0:io0 + n, out:out + nch] += tmpsig  # .reshape(n, nch) not needed as moved to play
-            self.srv_curpos[i] += n
-            if self.srv_curpos[i] >= a.samples:
-                dellist.append(i)  # store for deletion
-        # clean up lists
-        for i in dellist[::-1]:  # traverse backwards!
-            del(self.srv_asigs[i])
-            del(self.srv_onsets[i])
-            del(self.srv_curpos[i])
-            del(self.srv_outs[i])
-        return self.backend.process_buffer(data * (self.backend.range * self.gain))
+            data = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
+            # iterate through all registered asigs, adding samples to play
+            dellist = []  # memorize completed items for deletion
+            t_next_block = tnow + self.bs / self.sr
+            for i, t in enumerate(self.srv_onsets):
+                if t > t_next_block:  # doesn't begin before next block
+                    break  # since list is always onset-sorted
+                a = self.srv_asigs[i]
+                c = self.srv_curpos[i]
+                if t > tnow:  # first block: apply precise zero padding
+                    io0 = int((t - tnow) * self.sr)
+                else:
+                    io0 = 0
+                tmpsig = a.sig[c:c + self.bs - io0]
+                n, nch = tmpsig.shape
+                out = self.srv_outs[i]
+                data[io0:io0 + n, out:out + nch] += tmpsig  # .reshape(n, nch) not needed as moved to play
+                self.srv_curpos[i] += n
+                if self.srv_curpos[i] >= a.samples:
+                    dellist.append(i)  # store for deletion
+            # clean up lists
+            for i in dellist[::-1]:  # traverse backwards!
+                del(self.srv_asigs[i])
+                del(self.srv_onsets[i])
+                del(self.srv_curpos[i])
+                del(self.srv_outs[i])
+            return self.backend.process_buffer(data * (self.backend.range * self.gain))
+
+    def free_all(self):
+        with self.lock:
+            self.srv_asigs = []
+            self.srv_onsets = []
+            self.srv_curpos = [] 
+            self.srv_outs = []
 
     def stop(self):
         self._stop = True
