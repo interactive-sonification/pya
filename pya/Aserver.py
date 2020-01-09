@@ -191,34 +191,34 @@ class Aserver:
     def play(self, asig, onset=0, out=0, **kwargs):
         """Dispatch asigs or arrays for given onset."""
         self._stop = False
-
-        sigid = id(asig)  # for copy check
-        if asig.sr != self.sr:
-            asig = asig.resample(self.sr)
-        if onset < 1e6:
-            rt_onset = time.time() + onset
-        else:
-            rt_onset = onset
-        idx = np.searchsorted(self.srv_onsets, rt_onset)
-        self.srv_onsets.insert(idx, rt_onset)
-        if asig.sig.dtype != self.backend.dtype:
-            warn("Not the same type. ")
+        with self.lock:
+            sigid = id(asig)  # for copy check
+            if asig.sr != self.sr:
+                asig = asig.resample(self.sr)
+            if onset < 1e6:
+                rt_onset = time.time() + onset
+            else:
+                rt_onset = onset
+            idx = np.searchsorted(self.srv_onsets, rt_onset)
+            self.srv_onsets.insert(idx, rt_onset)
+            if asig.sig.dtype != self.backend.dtype:
+                warn("Not the same type. ")
+                if id(asig) == sigid:
+                    asig = copy.copy(asig)
+                asig.sig = asig.sig.astype(self.backend.dtype)
+            # copy only relevant channels...
+            nchn = min(asig.channels, self.channels - out)  # max number of copyable channels
+            # in: [:nchn] out: [out:out+nchn]
             if id(asig) == sigid:
                 asig = copy.copy(asig)
-            asig.sig = asig.sig.astype(self.backend.dtype)
-        # copy only relevant channels...
-        nchn = min(asig.channels, self.channels - out)  # max number of copyable channels
-        # in: [:nchn] out: [out:out+nchn]
-        if id(asig) == sigid:
-            asig = copy.copy(asig)
-        if len(asig.sig.shape) == 1:
-            asig.sig = asig.sig.reshape(asig.samples, 1)
-        asig.sig = asig.sig[:, :nchn].reshape(asig.samples, nchn)
-        # asig.channels = nchn
-        # so now in callback safely copy to out:out+asig.sig.shape[1]
-        self.srv_asigs.insert(idx, asig)
-        self.srv_curpos.insert(idx, 0)
-        self.srv_outs.insert(idx, out)
+            if len(asig.sig.shape) == 1:
+                asig.sig = asig.sig.reshape(asig.samples, 1)
+            asig.sig = asig.sig[:, :nchn].reshape(asig.samples, nchn)
+            # asig.channels = nchn
+            # so now in callback safely copy to out:out+asig.sig.shape[1]
+            self.srv_asigs.insert(idx, asig)
+            self.srv_curpos.insert(idx, 0)
+            self.srv_outs.insert(idx, out)
         if 'block' in kwargs and kwargs['block']:
             if onset > 0:  # here really onset and not rt_onset!
                 _LOGGER.warning("blocking inactive with play(onset>0)")
@@ -277,10 +277,10 @@ class Aserver:
 
     def free_all(self):
         with self.lock:
-            self.srv_asigs = []
-            self.srv_onsets = []
-            self.srv_curpos = [] 
-            self.srv_outs = []
+            self.srv_asigs.clear()
+            self.srv_onsets.clear()
+            self.srv_curpos.clear()
+            self.srv_outs.clear()
 
     def stop(self):
         self._stop = True
