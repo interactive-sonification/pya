@@ -27,6 +27,6 @@ def determine_backend(force_webaudio=False, port=8765):
         return None  # use default local backend
     from ..backend.Jupyter import JupyterBackend
     if os.environ.get('BINDER_SERVICE_HOST'):
-        return JupyterBackend(port=port, proxy_suffix=f"/*/*/proxy/{port}")
+        return JupyterBackend(port=port, proxy_suffix=f"/proxy/{port}")
     else:
         return JupyterBackend(port=port)
