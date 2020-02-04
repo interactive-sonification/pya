@@ -89,17 +89,10 @@ var processedPackages = 0;
 var latePackages = 0;
 var badPackageRatio = 1;
 
-function resolve_proxy(request) {
-    var res = request;
-    var ps = window.location.pathname.split('/');
-    var idx = res.indexOf('*');
-    var i = 1;
-    while (idx > -1) {
-        res = res.replace('*', ps[i])
-        idx = res.indexOf('*')
-        i++;
-    }
-    return res
+function resolveProxy() {
+  let reg = /\/notebooks.*ipynb/g
+  let res = window.location.pathname.replace(reg, "");
+  return res 
 }
 
 var protocol = (window.location.protocol == 'https:') ? 'wss://' : 'ws://'
@@ -109,7 +102,7 @@ var context = new (window.AudioContext || window.webkitAudioContext)();
 context.onstatechange = function() {
     console.log("PyaJSClient: AudioContext StateChange!")
     if (context.state == "running") {
-        var ws = new WebSocket(protocol+window.location.hostname+resolve_proxy(urlSuffix));
+        var ws = new WebSocket(protocol+window.location.hostname+resolveProxy()+urlSuffix);
         ws.binaryType = 'arraybuffer';
         window.ws = ws;
 
