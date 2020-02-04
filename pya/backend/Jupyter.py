@@ -84,7 +84,7 @@ var channels = {self.channels};
 var urlSuffix = "{url_suffix}";
 window.pya = {{ bufferThresh: 0.2 }}
             """
-            """
+            r"""
 var processedPackages = 0;
 var latePackages = 0;
 var badPackageRatio = 1;
