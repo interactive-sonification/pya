@@ -361,13 +361,9 @@ class Asig:
         # parse row index rindex into ridx
         # sr = self.sr  # unused default case for conversion if not changed by special case
         # e.g. a[[4,5,7,8,9]], or a[[True, False, True...]]
-        if isinstance(rindex, list):
-            ridx = rindex
-        elif isinstance(rindex, int):  # picking a single row
-            ridx = rindex
-        elif isinstance(rindex, slice):
-            # _, _, step = rindex.indices(len(self.sig))
-            # sr = int(self.sr / abs(step))  # This is unused.
+        # if isinstance(rindex, (list, int, slice)):
+        #     ridx = rindex
+        if isinstance(rindex, (slice, int)):
             ridx = rindex
         elif isinstance(rindex, dict):  # time slicing
             for key, val in rindex.items():
@@ -380,27 +376,29 @@ class Asig:
                 except TypeError:
                     stop = None
             ridx = slice(start, stop, 1)
-        else:  # Dont think there is a usecase.
-            ridx = rindex
+        elif hasattr(rindex, '__iter__'):
+            ridx = list(rindex)
+        else:
+            return  # we cannot determine a row index; return without changes
 
         # now parse cindex
-        if isinstance(cindex, list):
+        if hasattr(cindex, '__iter__'):
             if isinstance(cindex[0], str):
                 cidx = [self.col_name.get(s) for s in cindex]
                 cidx = cidx[0] if len(cidx) == 1 else cidx  # hotfix for now.
-            elif isinstance(cindex[0], bool):
-                cidx = cindex
-            elif isinstance(cindex[0], int):
-                cidx = cindex
+            else:
+                try:
+                    cidx = list(cindex)
+                except TypeError:
+                    cidx = slice(None)
         # int, slice are the same.
-        elif isinstance(cindex, int) or isinstance(cindex, slice):
+        elif isinstance(cindex, (int, slice)):
             cidx = cindex
         # if only a single channel name is given.
         elif isinstance(cindex, str):
             cidx = self.col_name.get(cindex)
         else:
             cidx = slice(None)
-            # cidx = None
 
         _LOGGER.debug("self.sig.ndim == %d", self.sig.ndim)
         if self.sig.ndim == 1:
