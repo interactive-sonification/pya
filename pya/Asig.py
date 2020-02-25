@@ -361,8 +361,6 @@ class Asig:
         # parse row index rindex into ridx
         # sr = self.sr  # unused default case for conversion if not changed by special case
         # e.g. a[[4,5,7,8,9]], or a[[True, False, True...]]
-        # if isinstance(rindex, (list, int, slice)):
-        #     ridx = rindex
         if isinstance(rindex, (slice, int)):
             ridx = rindex
         elif isinstance(rindex, dict):  # time slicing
