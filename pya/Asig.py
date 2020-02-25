@@ -241,9 +241,13 @@ class Asig:
                 cidx = cindex
                 cn_new = list(compress(self.cn, cindex))
             else:
-                cidx = list(cindex)
-                cn_new = [self.cn[i]
-                          for i in cindex] if self.cn is not None else None
+                try:
+                    cidx = list(cindex)
+                    cn_new = [self.cn[i]
+                              for i in cindex] if self.cn is not None else None
+                except (TypeError, ValueError):
+                    cidx = slice(0, 0, 0)
+                    cn_new = self.cn
         elif isinstance(cindex, int):
             _LOGGER.debug(" getitem: column index is int.")
             cidx = cindex
