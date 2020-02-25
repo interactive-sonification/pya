@@ -229,8 +229,8 @@ class Asig:
             sr = self.sr
 
         # now parse cindex
-        if isinstance(cindex, list):
-            _LOGGER.debug(" getitem: column index is list.")
+        if hasattr(cindex, '__iter__'):
+            _LOGGER.debug(" getitem: column index is iterable.")
             if isinstance(cindex[0], str):
                 cidx = [self.col_name.get(s) for s in cindex]
                 if cidx is None:
@@ -240,8 +240,8 @@ class Asig:
             elif isinstance(cindex[0], bool):
                 cidx = cindex
                 cn_new = list(compress(self.cn, cindex))
-            elif isinstance(cindex[0], int):
-                cidx = cindex
+            else:
+                cidx = list(cindex)
                 cn_new = [self.cn[i]
                           for i in cindex] if self.cn is not None else None
         elif isinstance(cindex, int):
