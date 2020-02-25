@@ -32,6 +32,21 @@ class TestSlicing(TestCase):
         expect = self.astereo[:, [0, 1]]
         self.assertEqual(result, expect)
 
+    def test_bytes(self):
+        result = self.astereo[:, bytes([0, 1])]
+        expect = self.astereo[:, [0, 1]]
+        self.assertEqual(result, expect)
+
+    def test_numpy_array(self):
+        result = self.astereo[:, np.array([1, 0])]
+        expect = self.astereo[:, [1, 0]]
+        self.assertEqual(result, expect)
+
+    def test_invalid_index(self):
+        # pass false class or module instance should return initial signal
+        self.assertEqual(self.astereo[:, self.astereo], self.astereo)
+        self.assertEqual(self.astereo[:, np], self.astereo)
+
     def test_timeSlicing(self):
         # Check whether time slicing equals sample slicing."""
         result = self.asine[{0: 1.0}]
