@@ -97,3 +97,15 @@ class TestSetitem(TestCase):
         with self.assertRaises(ValueError):
             # Passing 2 chan to 4 chan asig should raise ValueError
             self.ak.overwrite[{1.: 1.5}] = np.zeros((int(44100 * 0.6), 2))
+
+    def test_numpy_index(self):
+        self.azeros[np.arange(0, 10)] = np.ones(10)
+        self.assertTrue(np.array_equal(self.azeros[np.arange(0, 10)].sig, self.aones[np.arange(0, 10)].sig))
+
+    def test_byte_index(self):
+        self.azeros[bytes([0, 1, 2])] = np.ones(3)
+        self.assertTrue(np.array_equal(self.azeros[0, 1, 2].sig, self.aones[0, 1, 2].sig))
+
+    def test_invalid_slicing_type(self):
+        self.azeros[self.aones] = self.aones
+        self.assertEqual(np.zeros(self.sr), self.azeros)
