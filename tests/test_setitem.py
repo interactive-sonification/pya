@@ -104,8 +104,12 @@ class TestSetitem(TestCase):
 
     def test_byte_index(self):
         self.azeros[bytes([0, 1, 2])] = np.ones(3)
-        self.assertTrue(np.array_equal(self.azeros[0, 1, 2].sig, self.aones[0, 1, 2].sig))
+        self.assertTrue(np.array_equal(self.azeros[[0, 1, 2]].sig, self.aones[[0, 1, 2]].sig))
+
+    def test_asig_index(self):
+        self.azeros[self.aones.sig.astype(np.bool)] = self.aones.sig
+        self.assertTrue(np.array_equal(np.ones(self.sr), self.azeros.sig))
 
     def test_invalid_slicing_type(self):
-        self.azeros[self.aones] = self.aones
-        self.assertEqual(np.zeros(self.sr), self.azeros)
+        self.azeros[self.aones] = self.aones.sig
+        self.assertTrue(np.array_equal(np.zeros(self.sr), self.azeros.sig))
