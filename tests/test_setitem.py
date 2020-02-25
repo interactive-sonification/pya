@@ -43,6 +43,18 @@ class TestSetitem(TestCase):
         self.ak[{1: 2}, ['d']] = self.ak[{0: 1}, ['a']]
         self.assertTrue(np.array_equal(self.ak[{1: 2}, ['d']], self.ak[{0: 1}, ['a']]))
 
+    def test_numpy_index(self):
+        self.azeros[np.arange(0, 10)] = np.ones(10)
+        self.assertTrue(np.array_equal(self.azeros[np.arange(0, 10)].sig, self.ones[np.arange(0, 10)].sig))
+
+    def test_byte_index(self):
+        self.azeros[bytes([0, 1, 2])] = np.ones(3)
+        self.assertTrue(np.array_equal(self.azeros[0, 1, 2].sig, self.ones[0, 1, 2].sig))
+
+    def test_invalid_slicing_type(self):
+        self.azeros[self.aones] = self.aones
+        self.assertEqual(np.zeros(self.sr), self.azeros)
+
     def test_bound(self):
         # Testing of bound mode. Redundant array will not be assigned"""
         subject = self.aramp
