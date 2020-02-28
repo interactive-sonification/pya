@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -63,11 +63,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.3.2/" selected="selected">v0.3.2</option>
+  <option value="/pya/v0.3.3/" >v0.3.3</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.3.2/" selected="selected">v0.3.2</option>
 
 <select>
 </div>
@@ -238,7 +240,7 @@ such as sine, square, swatooth, noise</p></li>
 <a class="reference external" href="https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio">https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio</a></p></li>
 </ol>
 <p>Then pya can be installed using pip:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pya</span>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>pip install pya
 </pre></div>
 </div>
 <p>See pyaudio installation <a class="reference external" href="http://people.csail.mit.edu/hubert/pyaudio/#downloads">http://people.csail.mit.edu/hubert/pyaudio/#downloads</a></p>
@@ -247,26 +249,26 @@ such as sine, square, swatooth, noise</p></li>
 <h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="startup">
 <h3>Startup:<a class="headerlink" href="#startup" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span><span class="k">from</span> <span class="n">pya</span> <span class="n">import</span> <span class="o">*</span>
-<span class="n">s</span> <span class="o">=</span> <span class="n">Aserver</span><span class="p">(</span><span class="n">bs</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
-<span class="n">Aserver</span><span class="p">.</span><span class="k">default</span> <span class="o">=</span> <span class="n">s</span>  <span class="o">#</span> <span class="k">to</span> <span class="k">set</span> <span class="k">as</span> <span class="k">default</span> <span class="n">server</span>
-<span class="n">s</span><span class="p">.</span><span class="n">boot</span><span class="p">()</span>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>from pya import *
+s = Aserver(bs=1024)
+Aserver.default = s  # to set as default server
+s.boot()
 </pre></div>
 </div>
 </div>
 <div class="section" id="create-an-asig-signal">
 <h3>Create an Asig signal:<a class="headerlink" href="#create-an-asig-signal" title="Permalink to this headline">¶</a></h3>
 <p>A 1s / 440 Hz sine tone at sampling rate 44100 as channel name ‘left’:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span><span class="n">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
-<span class="n">signal_array</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">440</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">44100</span><span class="p">))</span>
-<span class="n">atone</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="n">signal_array</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1s sine tone&#39;</span><span class="p">,</span> <span class="n">cn</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">])</span>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>import numpy as np
+signal_array = np.sin(2 * np.pi * 440 * np.linspace(0, 1, 44100))
+atone = Asig(signal_array, sr=44100, label=&#39;1s sine tone&#39;, cn=[&#39;left&#39;])
 </pre></div>
 </div>
 <p>Other ways of creating an Asig object:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span><span class="n">asig_int</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="mi">44100</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">)</span>  <span class="o">#</span> <span class="n">zero</span> <span class="nb">array</span> <span class="k">with</span> <span class="mi">44100</span> <span class="n">samples</span>
-<span class="n">asig_float</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="mi">2</span><span class="p">.,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">)</span>  <span class="o">#</span> <span class="nb">float</span> <span class="n">argument</span><span class="p">,</span> <span class="mi">2</span> <span class="n">seconds</span> <span class="k">of</span> <span class="n">zero</span> <span class="nb">array</span>
-<span class="n">asig_str</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="s1">&#39;./song.wav&#39;</span><span class="p">)</span>  <span class="o">#</span> <span class="k">load</span> <span class="n">audio</span> <span class="n">file</span>
-<span class="n">asig_ugen</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">().</span><span class="n">square</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mi">440</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">dur</span><span class="o">=</span><span class="mi">2</span><span class="p">.,</span> <span class="n">amp</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span>  <span class="o">#</span> <span class="k">using</span> <span class="n">Ugen</span> <span class="k">class</span> <span class="k">to</span> <span class="k">create</span> <span class="n">common</span> <span class="n">waveforms</span>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>asig_int = Asig(44100, sr=44100)  # zero array with 44100 samples
+asig_float = Asig(2., sr=44100)  # float argument, 2 seconds of zero array
+asig_str = Asig(&#39;./song.wav&#39;)  # load audio file
+asig_ugen = Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen class to create common waveforms
 </pre></div>
 </div>
 <p>Audio files are also possible using the file path. <code class="docutils literal notranslate"><span class="pre">WAV</span></code> should work without issues. <code class="docutils literal notranslate"><span class="pre">MP3</span></code> is supported but may raise error if <a class="reference external" href="https://ffmpeg.org/">FFmpeg</a>.</p>
@@ -297,7 +299,7 @@ such as sine, square, swatooth, noise</p></li>
 </div>
 <div class="section" id="play-signals">
 <h3>Play signals<a class="headerlink" href="#play-signals" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="p">.</span><span class="n">play</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">s</span><span class="p">)</span>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>atone.play(server=s)
 </pre></div>
 </div>
 <p>play() uses Aserver.default if server is not specified</p>
@@ -305,11 +307,11 @@ such as sine, square, swatooth, noise</p></li>
 <div class="section" id="plotting-signals">
 <h3>Plotting signals<a class="headerlink" href="#plotting-signals" title="Permalink to this headline">¶</a></h3>
 <p>to plot the first 1000 samples:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="p">[:</span><span class="mi">1000</span><span class="p">].</span><span class="n">plot</span><span class="p">()</span>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>atone[:1000].plot()
 </pre></div>
 </div>
 <p>to plot the magnitude and phase spectrum:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="p">.</span><span class="n">plot_spectrum</span><span class="p">()</span>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>atone.plot_spectrum()
 </pre></div>
 </div>
 <p>to plot the spectrum via the Aspec class</p>
@@ -317,7 +319,7 @@ such as sine, square, swatooth, noise</p></li>
 <div><p>atone.to_spec().plot()</p>
 </div></blockquote>
 <p>to plot the spectrogram via the Astft class</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="p">.</span><span class="n">to_stft</span><span class="p">().</span><span class="n">plot</span><span class="p">(</span><span class="n">ampdb</span><span class="p">)</span>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>atone.to_stft().plot(ampdb)
 </pre></div>
 </div>
 </div>
