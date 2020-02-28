@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.3 (February 2020)
+
+* Bugfix #34: Improve indexing of Asig
+* Added developer tools for documentation generation
+* Improved string handling to prevent Python 3.8 warnings
+* Fixed reverse proxy resolution in JupyterBackend for Binder hosts other than Binderhub
+* Fixed travis job configuration
+
 ## 0.3.2 (November 2019)
 
 * Fixed bug of multi channel fade_in fade_out
