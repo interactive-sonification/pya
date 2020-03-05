@@ -189,7 +189,7 @@ def device_info():
         p4 = f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}"
         lines.append(p1 + p2 + p3 + p4)
     print(*lines, sep='\n')
-
+    return devs
 
 def find_device(min_input=0, min_output=0):
     pa = pyaudio.PyAudio()
