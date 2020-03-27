@@ -191,6 +191,7 @@ def device_info():
     print(*lines, sep='\n')
     return devs
 
+
 def find_device(min_input=0, min_output=0):
     pa = pyaudio.PyAudio()
     res = []

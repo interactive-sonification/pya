@@ -1681,6 +1681,11 @@ class Asig:
         self.sig[pos:last] += amp * sigar
         return self
 
+    def flatten(self):
+        """Flatten a multidimentional array into a vector using np.ravel()"""
+        self.sig = self.sig.ravel()
+        return Asig(self.sig, sr=self.sr, label=self.label + '_flattened', channels=1, cn=None)
+
     def custom(self, func, **kwargs):
         """custom function method. TODO add example"""
         func(self, **kwargs)
