@@ -1,5 +1,5 @@
 from unittest import TestCase
-from pya import midicps, cpsmidi, Asig, spectrum
+from pya import midicps, cpsmidi, Asig, spectrum, padding
 import numpy as np 
 import pyaudio
 
@@ -38,3 +38,40 @@ class TestHelpers(TestCase):
         # Not tested expected outcome yet. 
         frq, Y = spectrum(self.asine.sig, self.asine.samples, self.asine.channels, self.asine.sr)
         frqs, Ys = spectrum(self.astereo.sig, self.astereo.samples, self.astereo.channels, self.astereo.sr)
+
+    def test_padding(self):
+        """Pad silence to signal. Support 1-3D tensors."""
+        tensor1 = np.arange(5)
+        padded = padding(tensor1, 2, tail=True)
+        self.assertTrue(np.array_equal(padded, np.array([0, 1, 2, 3, 4, 0, 0])))
+        padded = padding(tensor1, 2, tail=False)
+        self.assertTrue(np.array_equal(padded, np.array([0, 0, 0, 1, 2, 3, 4])))
+
+        tensor2 = np.ones((3, 3))
+        padded = padding(tensor2, 2, tail=True)
+        self.assertTrue(np.array_equal(padded, np.array([[1., 1., 1.], [1., 1., 1.], [1., 1., 1.], 
+                                                         [0., 0., 0.], [0., 0., 0.]])))
+        padded = padding(tensor2, 2, tail=False, constant_values=5)
+        self.assertTrue(np.array_equal(padded, np.array([[5., 5., 5.], [5., 5., 5.], 
+                                                         [1., 1., 1.], [1., 1., 1.], [1., 1., 1.]])))
+
+        tensor3 = np.ones((2, 2, 2))
+        padded = padding(tensor3, 2)
+        self.assertTrue(np.array_equal(padded, np.array([[[1., 1.], 
+                                                          [1., 1.], 
+                                                          [0., 0.], 
+                                                          [0., 0.]], 
+                                                        [[1., 1.], 
+                                                         [1., 1.], 
+                                                         [0., 0.], 
+                                                         [0., 0.]]])))
+        padded = padding(tensor3, 2, tail=False)
+        self.assertTrue(np.array_equal(padded, np.array([[[0., 0.], 
+                                                          [0., 0.],
+                                                          [1., 1.], 
+                                                          [1., 1.]
+                                                          ], 
+                                                        [[0., 0.], 
+                                                         [0., 0.],
+                                                         [1., 1.], 
+                                                         [1., 1.]]])))

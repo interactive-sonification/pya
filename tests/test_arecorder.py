@@ -113,7 +113,7 @@ class TestArecorderBase(TestCase):
             player.boot()
             recorder.boot()  # initialized record and boot sequentially to provoke racing condition
             recorder.record()
-            time.sleep(0.5)  # wait and record some samples
+            time.sleep(1.)  # wait and record some samples
             recorder.stop()
             player.quit()
             self.assertEqual(len(recorder.recordings), 1)  # we should have one Asig recorded

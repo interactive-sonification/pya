@@ -13,7 +13,7 @@ from .Aserver import Aserver
 from . import Aspec
 from . import Astft
 from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, buf_to_float
-from .helper import spectrum, audio_from_file
+from .helper import spectrum, audio_from_file, padding
 from copy import copy, deepcopy
 
 _LOGGER = logging.getLogger(__name__)
@@ -1683,8 +1683,26 @@ class Asig:
 
     def flatten(self):
         """Flatten a multidimentional array into a vector using np.ravel()"""
-        self.sig = self.sig.ravel()
-        return Asig(self.sig, sr=self.sr, label=self.label + '_flattened', channels=1, cn=None)
+        return Asig(self.sig.ravel(), sr=self.sr, label=self.label + '_flattened', channels=1, cn=None)
+
+    def pad(self, width, tail=True, constant_values=0):
+        """Pads the signal
+
+        Parameters
+        ----------
+        width : int
+            The number of sampels to add to the tail or head of the array.
+        tail : bool
+            By default it is True, if trail pad to the end, else pad to the start.
+
+        Returns
+        -------
+        _ : Asig
+            Asig of the pad signal.
+        """
+        return Asig(padding(self.sig, width, tail=tail), 
+                    sr=self.sr, label=self.label + '_padded', 
+                    channels=self.channels, cn=self.cn)
 
     def custom(self, func, **kwargs):
         """custom function method. TODO add example"""
