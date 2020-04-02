@@ -4,6 +4,7 @@
 from .Asig import Asig
 from .Astft import Astft
 from .Aspec import Aspec
+from .Amfcc import Amfcc
 from .Aserver import Aserver
 from .Arecorder import Arecorder
 from .Ugen import Ugen

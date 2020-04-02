@@ -231,3 +231,56 @@ def padding(x, width, tail=True, constant_values=0):
     else:
         raise AttributeError("only support ndim 1 or 2, 3. For higher please just use np.pad ")
 
+def _spectrogram(x=None, S=None, n_fft=2048, hop_length=512, power=1,
+                 win_length=None, window='hann', center=True, pad_mode='reflect'):
+    '''Helper function to retrieve a magnitude spectrogram.
+    This is primarily used in feature extraction functions that can operate on
+    either audio time-series or spectrogram input.
+    Parameters
+    ----------
+    y : None or np.ndarray [ndim=1]
+        If provided, an audio time series
+
+    n_fft : int > 0
+        STFT window size
+    hop_length : int > 0
+        STFT hop length
+    power : float > 0
+        Exponent for the magnitude spectrogram,
+        e.g., 1 for energy, 2 for power, etc.
+    win_length : int <= n_fft [scalar]
+        Each frame of audio is windowed by `window()`.
+        The window will be of length `win_length` and then padded
+        with zeros to match `n_fft`.
+        If unspecified, defaults to ``win_length = n_fft``.
+    window : string, tuple, number, function, or np.ndarray [shape=(n_fft,)]
+        - a window specification (string, tuple, or number);
+          see `scipy.signal.get_window`
+        - a window function, such as `scipy.signal.hanning`
+        - a vector or array of length `n_fft`
+        .. see also:: `filters.get_window`
+    center : boolean
+        - If `True`, the signal `y` is padded so that frame
+          `t` is centered at `y[t * hop_length]`.
+        - If `False`, then frame `t` begins at `y[t * hop_length]`
+    pad_mode : string
+        If `center=True`, the padding mode to use at the edges of the signal.
+        By default, STFT uses reflection padding.
+
+    Returns
+    -------
+    spectro : numpy.ndarray 
+        - If `S` is provided as input, then `S_out == S`
+        - Else, `S_out = |stft(y, ...)|**power`
+    n_fft : int > 0
+        - If `S` is provided, then `n_fft` is inferred from `S`
+        - Else, copied from input
+    '''
+
+
+    # Otherwise, compute a magnitude spectrogram from input
+    S = np.abs(stft(y, n_fft=n_fft, hop_length=hop_length,
+                    win_length=win_length, center=center,
+                    window=window, pad_mode=pad_mode))**power
+
+    return spectro, n_fft
