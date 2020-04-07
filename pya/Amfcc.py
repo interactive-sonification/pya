@@ -1,9 +1,16 @@
 from . import Astft
 from . import Asig
 import numpy as np
-from .helper import shift_bit_length, preemphasis, framesig
+from .helper import shift_bit_length, preemphasis, signal_to_frame, round_half_up, magspec
+from .helper import mel2hz, hz2mel
+import logging
+from scipy.signal import get_window
 
-class Amfcc(Astft):
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.addHandler(logging.NullHandler())
+
+
+class Amfcc:
     """Mel filtered Fourier spectrum (MFCC) class
     
     Steps of mfcc:
@@ -56,29 +63,79 @@ class Amfcc(Astft):
     """
 
     def __init__(self, x, sr=None, label=None, nmfcc=20, window='hann', nperseg=256,
-                 noverlap=None, nfft=None, detrend=False, return_onesided=True,
+                 noverlap=None, nfft=512, detrend=False, return_onesided=True,
                  boundary='zeros', padded=True, axis=-1, cn=None):
+        """Parameter needed:
+
+        x : signal
+        sr : sampling rate
+        nperseg : window length per frame.
+        noverlap : number of overlap perframe
+        nfft : number of fft.
+
+
+        """
+        # First prepare for parameters
         if isinstance(x, Asig.Asig):
-            sr = x.sr
+            self.sr = x.sr
             self.x = x.sig
-        else:
+        elif isinstance(x, np.ndarray):
             self.x = x
-            if not sr:
-                raise(AttributeError("If x is an array, sr is required."))
-        
-        if not nfft:
-            pass
-            # By default used 25ms
-        super().__init__(x=self.x)
-        # Find the nearest nfft based on sr
-        self.nyquist = self.sr // 2
+            if sr:
+                self.sr = sr
+            else:
+                raise AttributeError("If x is an array, sr (sampling rate) needs to be defined.")
+        else:
+            raise TypeError("x can only be either a numpy.ndarray or pya.Asig object.")
 
-    def mel_filter_bank(self, preemphasis_coeff=0.95):
-        """Compute the Mel-filterbank energy features"""
-        # Compute signal preemphasis.
-        if preemphasis_coeff:
-            self.x = preemphasis(self.x, preemphasis_coeff)
-        # Make signal into frames .
-        frames = fram
+        if not nperseg:  # More likely to set it as default.
+            self.nperseg = round_half_up(sr * 0.025)  # 25ms length window,
+        else:
+            self.nperseg = nperseg
 
+        if not noverlap:  # More likely to set it as default
+            self.noverlap = round_half_up(sr * 0.01)  # 10ms overlap
+        else:
+            self.noverlap
 
+        if self.noverlap > self.nperseg:
+            raise _LOGGER.warning("noverlap great than nperseg, this leaves gaps between frames.")
+
+        self.nfft = nfft  # default to be 512
+
+        self.window = get_window(window, self.nperseg)
+        self.frames = signal_to_frame(self.x, self.nperseg, self.nperseg - self.noverlap, self.window)
+        self.mspec = magspec(self.frames, self.nfft)  # Magnitude of spectrum
+        self.pspec = 1.0 / self.nfft * np.square(self.mspec(self.frames, self.nfft))  # Power spectrum
+
+        self.update_filterbanks()  # Use the default filter banks.
+
+    def update_filterbanks(self, nfilt=20, lowfreq=0, highfreq=None):
+        """Compute a Mel-filterbank. The filters are stored in the rows, the columns correspond
+        to fft bins. The filters are returned as an array of size nfilt * (nfft/2 + 1)
+        :param nfilt: the number of filters in the filterbank, default 20.
+        :param nfft: the FFT size. Default is 512.
+        :param samplerate: the sample rate of the signal we are working with, in Hz. Affects mel spacing.
+        :param lowfreq: lowest band edge of mel filters, default 0 Hz
+        :param highfreq: highest band edge of mel filters, default samplerate/2
+        :returns: A numpy array of size nfilt * (nfft/2 + 1) containing filterbank. Each row holds 1 filter.
+        """
+        highfreq = highfreq or self.sr // 2
+        if highfreq > self.sr:
+            raise AttributeError("Upper frequency band edge should not exceed the nyquist frequency")            assert highfreq <= samplerate / 2, "highfreq is greater than samplerate/2"
+
+        # compute points evenly spaced in mels
+        lowmel = hz2mel(lowfreq)
+        highmel = hz2mel(highfreq)
+        melpoints = np.linspace(lowmel, highmel, nfilt + 2)
+        # our points are in Hz, but we use fft bins, so we have to convert
+        #  from Hz to fft bin number
+        bin = np.floor((nfft + 1) * mel2hz(melpoints) / samplerate)
+
+        self.filter_banks = np.zeros([nfilt, nfft // 2 + 1])
+        for j in range(0, nfilt):
+            for i in range(int(bin[j]), int(bin[j + 1])):
+                self.filter_banks[j, i] = (i - bin[j]) / (bin[j + 1] - bin[j])
+            for i in range(int(bin[j + 1]), int(bin[j + 2])):
+                self.filter_banks[j, i] = (bin[j + 2] - i) / (bin[j + 2] - bin[j + 1])
+        return self

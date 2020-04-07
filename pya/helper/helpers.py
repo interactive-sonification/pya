@@ -332,13 +332,12 @@ def round_half_up(number):
 
 
 def rolling_window(a, window, step=1):
-    # http://ellisvalentiner.com/post/2017-03-21-np-strides-trick
     shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
     strides = a.strides + (a.strides[-1],)
     return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)[::step]
 
 
-def framesig(sig, frame_len, frame_step, winfunc=lambda x: np.ones((x,)), stride_trick=True):
+def signal_to_frame(sig, nframe, frame_step, window=None, stride_trick=True):
     """Frame a signal into overlapping frames.
 
     Parameters
@@ -349,34 +348,87 @@ def framesig(sig, frame_len, frame_step, winfunc=lambda x: np.ones((x,)), stride
         number of samples each frame
     frame_step : int
         number of samples after the start of the previous frame that the next frame should begin.
+    window : numpy.ndarray or None
+        a window array, e.g,
 
-    :param sig: the audio signal to frame.
-    :param frame_len: length of each frame measured in samples.
     :param frame_step: number of samples after the start of the previous frame that the next frame should begin.
     :param winfunc: the analysis window to apply to each frame. By default no window is applied.
     :param stride_trick: use stride trick to compute the rolling window and window multiplication faster
     :returns: an array of frames. Size is NUMFRAMES by frame_len.
     """
     slen = len(sig)
-    frame_len = int(round_half_up(frame_len))
+    nframe = int(round_half_up(nframe))
     frame_step = int(round_half_up(frame_step))
-    if slen <= frame_len:
+    if slen <= nframe:
         numframes = 1
     else:
-        numframes = 1 + int(math.ceil((1.0 * slen - frame_len) / frame_step))
+        numframes = 1 + int(math.ceil((1.0 * slen - nframe) / frame_step))
 
-    padlen = int((numframes - 1) * frame_step + frame_len)
+    padlen = int((numframes - 1) * frame_step + nframe)
+    padsignal = np.concatenate((sig, np.zeros((padlen - slen,))))  # Pad zeros to signal
 
-    zeros = np.zeros((padlen - slen,))
-    padsignal = np.concatenate((sig, zeros))
     if stride_trick:
-        win = winfunc(frame_len)
-        frames = rolling_window(padsignal, window=frame_len, step=frame_step)
+        win = window if window else np.ones(nframe)
+        frames = rolling_window(padsignal, window=nframe, step=frame_step)
     else:
-        indices = np.tile(np.arange(0, frame_len), (numframes, 1)) + np.tile(
-            np.arange(0, numframes * frame_step, frame_step), (frame_len, 1)).T
+        indices = np.tile(np.arange(0, nframe), (numframes, 1)) + np.tile(
+            np.arange(0, numframes * frame_step, frame_step), (nframe, 1)).T
         indices = np.array(indices, dtype=np.int32)
         frames = padsignal[indices]
-        win = np.tile(winfunc(frame_len), (numframes, 1))
+        win = window if window else np.ones(nframe)
+        win = np.tile(win, (numframes, 1))
 
     return frames * win
+
+
+def magspec(frames, nfft):
+    """Compute the magnitude spectrum of each frame in frames. If frames is an NxD matrix, output will be Nx(NFFT/2+1).
+
+    Parameters
+    ----------
+    frames : numpy.ndarray
+        Framed signal array, each row is a frame.
+    nfft : int
+        fft size.
+
+    :param frames: the array of frames. Each row is a frame.
+    :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded.
+    :returns: If frames is an NxD matrix, output will be Nx(NFFT/2+1). Each row will be the magnitude spectrum of the corresponding frame.
+    """
+    if np.shape(frames)[1] > nfft:
+        logging.warning(
+            'frame length (%d) is greater than FFT size (%d), frame will be truncated. Increase NFFT to avoid.',
+            np.shape(frames)[1], nfft)
+    complex_spec = np.fft.rfft(frames, nfft)
+    return np.absolute(complex_spec)
+
+
+ def hz2mel(hz):
+        """Convert a value in Hertz to Mels
+
+        Parameters
+        ----------
+        hz : number of array
+            value in Hz, can be an array
+
+        Returns:
+        --------
+        _ : number of array
+            value in Mels, same type as the input.
+        """
+        return 2595 * np.log10(1 + hz / 700.)
+
+def mel2hz(mel):
+    """Convert a value in Hertz to Mels
+
+    Parameters
+    ----------
+    hz : number of array
+        value in Hz, can be an array
+
+    Returns:
+    --------
+    _ : number of array
+        value in Mels, same type as the input.
+    """
+    return 700 * (10 ** (mel / 2595.0) - 1)

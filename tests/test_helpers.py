@@ -88,3 +88,4 @@ class TestHelpers(TestCase):
 
         with self.assertRaises(AttributeError):
             next = shift_bit_length(-2)
+
