@@ -370,7 +370,11 @@ def signal_to_frame(sig, nframe, frame_step, window=None, stride_trick=True):
     padsignal = np.concatenate((sig, np.zeros((padlen - slen,))))  # Pad zeros to signal
 
     if stride_trick:
-        win = window if window else np.ones(nframe)
+        if window is not None:
+            win = window
+        else:
+            win = np.ones(nframe)
+        # win = window if window else np.ones(nframe)
         frames = rolling_window(padsignal, window=nframe, step=frame_step)
     else:
         indices = np.tile(np.arange(0, nframe), (numframes, 1)) + np.tile(
@@ -433,7 +437,7 @@ def mel2hz(mel):
     """
     return 700 * (10 ** (mel / 2595.0) - 1)
 
-def get_filterbanks(self, sr, nfilt=20, nfft=512,  lowfreq=0, highfreq=None):
+def get_filterbanks(sr, nfilt=20, nfft=512,  lowfreq=0, highfreq=None):
     """Compute a Mel-filterbank. The filters are stored in the rows, the columns correspond
     to fft bins. The filters are returned as an array of size nfilt * (nfft/2 + 1)
 

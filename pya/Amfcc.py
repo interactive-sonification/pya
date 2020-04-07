@@ -30,7 +30,6 @@ class Amfcc:
         sampling rate, this is only necessary if x is not Asig. (Default value = None)
     label : str
         name of the Asig. (Default value = None)
-    window : str
     n_per_frame : int
         number of samples per frame (Default value = '256')
     noverlap : int
@@ -98,7 +97,7 @@ class Amfcc:
 
         # Computer power spectrum
         self.mspec = magspec(self.frames, self.nfft)  # Magnitude of spectrum, rfft then np.abs()
-        self.pspec = 1.0 / self.nfft * np.square(self.mspec(self.frames, self.nfft))  # Power spectrum
+        self.pspec = 1.0 / self.nfft * np.square(self.mspec)  # Power spectrum
 
         # Total energy of each frame based on the power spectrum
         self.frame_energy = np.sum(self.pspec, 1)
