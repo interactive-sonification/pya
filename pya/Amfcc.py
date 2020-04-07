@@ -2,9 +2,10 @@ from . import Astft
 from . import Asig
 import numpy as np
 from .helper import shift_bit_length, preemphasis, signal_to_frame, round_half_up, magspec
-from .helper import mel2hz, hz2mel
+from .helper import mel2hz, hz2mel, get_filterbanks, lifter
 import logging
 from scipy.signal import get_window
+from scipy.fftpack import dct
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -63,7 +64,7 @@ class Amfcc:
     """
 
     def __init__(self, x, sr=None, label=None, nmfcc=20, window='hann', nperseg=256,
-                 noverlap=None, nfft=512, detrend=False, return_onesided=True,
+                 noverlap=None, nfft=512, ncep=13, ceplifter=22, append_energy=True, detrend=False, return_onesided=True,
                  boundary='zeros', padded=True, axis=-1, cn=None):
         """Parameter needed:
 
@@ -73,6 +74,8 @@ class Amfcc:
         noverlap : number of overlap perframe
         nfft : number of fft.
 
+        features : numpy.ndarray
+            MFCC feature array
 
         """
         # First prepare for parameters
@@ -101,41 +104,42 @@ class Amfcc:
         if self.noverlap > self.nperseg:
             raise _LOGGER.warning("noverlap great than nperseg, this leaves gaps between frames.")
 
-        self.nfft = nfft  # default to be 512
+        self.nfft = nfft  # default to be 512 Todo change the default to the next pow 2 of nperseg.
 
         self.window = get_window(window, self.nperseg)
+        self.ncep = ncep  # Number of cepstrum
+        self.ceplifter  # Lifter's cepstral coefficient
+
+        # Framing signal.
         self.frames = signal_to_frame(self.x, self.nperseg, self.nperseg - self.noverlap, self.window)
-        self.mspec = magspec(self.frames, self.nfft)  # Magnitude of spectrum
+
+        # Computer power spectrum
+        self.mspec = magspec(self.frames, self.nfft)  # Magnitude of spectrum, rfft then np.abs()
         self.pspec = 1.0 / self.nfft * np.square(self.mspec(self.frames, self.nfft))  # Power spectrum
 
-        self.update_filterbanks()  # Use the default filter banks.
+        # Total energy of each frame based on the power spectrum
+        self.frame_energy = np.sum(self.pspec, 1)
+        # Replace 0 with the smallest float positive number
+        self.frame_energy = np.where(self.frame_energy==0, np.finfo(float).eps, self.frame_energy)
+        self.filter_banks = get_filterbanks(self.sr, nfilt=20, nfft=self.nfft)  # Use the default filter banks.
 
-    def update_filterbanks(self, nfilt=20, lowfreq=0, highfreq=None):
-        """Compute a Mel-filterbank. The filters are stored in the rows, the columns correspond
-        to fft bins. The filters are returned as an array of size nfilt * (nfft/2 + 1)
-        :param nfilt: the number of filters in the filterbank, default 20.
-        :param nfft: the FFT size. Default is 512.
-        :param samplerate: the sample rate of the signal we are working with, in Hz. Affects mel spacing.
-        :param lowfreq: lowest band edge of mel filters, default 0 Hz
-        :param highfreq: highest band edge of mel filters, default samplerate/2
-        :returns: A numpy array of size nfilt * (nfft/2 + 1) containing filterbank. Each row holds 1 filter.
-        """
-        highfreq = highfreq or self.sr // 2
-        if highfreq > self.sr:
-            raise AttributeError("Upper frequency band edge should not exceed the nyquist frequency")            assert highfreq <= samplerate / 2, "highfreq is greater than samplerate/2"
+        # filter bank energies are the features.
+        self.fb_energy = np.dot(self.pspec, self.filter_banks.T)
+        self.fb_energy = np.where(self.fb_energy==0, np.finfo(float).eps, self.fb_energy)
+        self.features = dct(self.fb_energy, type=2, axis=1, norm='ortho')[:, :self.ncep]  # Discrete cosine transform
 
-        # compute points evenly spaced in mels
-        lowmel = hz2mel(lowfreq)
-        highmel = hz2mel(highfreq)
-        melpoints = np.linspace(lowmel, highmel, nfilt + 2)
-        # our points are in Hz, but we use fft bins, so we have to convert
-        #  from Hz to fft bin number
-        bin = np.floor((nfft + 1) * mel2hz(melpoints) / samplerate)
+        # Liftering operation is similar to filtering operation in the frequency domain
+        # where a desired quefrency region for analysis is selected by multiplying the whole cepstrum
+        # by a rectangular window at the desired position.
+        # There are two types of liftering performed, low-time liftering and high-time liftering.
+        # Low-time liftering operation is performed to extract the vocal tract characteristics in the quefrency domain
+        # and high-time liftering is performed to get the excitation characteristics of the analysis speech frame.
 
-        self.filter_banks = np.zeros([nfilt, nfft // 2 + 1])
-        for j in range(0, nfilt):
-            for i in range(int(bin[j]), int(bin[j + 1])):
-                self.filter_banks[j, i] = (i - bin[j]) / (bin[j + 1] - bin[j])
-            for i in range(int(bin[j + 1]), int(bin[j + 2])):
-                self.filter_banks[j, i] = (bin[j + 2] - i) / (bin[j + 2] - bin[j + 1])
-        return self
+        self.features = lifter(self.features, self.ceplifter)
+
+        # Replace first cepstral coefficient with log of frame energy
+        if append_energy:
+            self.features[:, 0] = np.log(self.frame_energy)
+
+
+
