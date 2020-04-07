@@ -350,11 +350,13 @@ def signal_to_frame(sig, nframe, frame_step, window=None, stride_trick=True):
         number of samples after the start of the previous frame that the next frame should begin.
     window : numpy.ndarray or None
         a window array, e.g,
+    stride_trick : bool
+        use stride trick to compute the rolling window and window multiplication faster
 
-    :param frame_step: number of samples after the start of the previous frame that the next frame should begin.
-    :param winfunc: the analysis window to apply to each frame. By default no window is applied.
-    :param stride_trick: use stride trick to compute the rolling window and window multiplication faster
-    :returns: an array of frames. Size is NUMFRAMES by frame_len.
+    Returns
+    -------
+    _ : numpy.ndarray
+        an array of frames.
     """
     slen = len(sig)
     nframe = int(round_half_up(nframe))
@@ -377,7 +379,6 @@ def signal_to_frame(sig, nframe, frame_step, window=None, stride_trick=True):
         frames = padsignal[indices]
         win = window if window else np.ones(nframe)
         win = np.tile(win, (numframes, 1))
-
     return frames * win
 
 
