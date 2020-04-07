@@ -1,5 +1,5 @@
 from unittest import TestCase
-from pya import midicps, cpsmidi, Asig, spectrum, padding
+from pya import midicps, cpsmidi, Asig, spectrum, padding, shift_bit_length
 import numpy as np 
 import pyaudio
 
@@ -75,3 +75,16 @@ class TestHelpers(TestCase):
                                                          [0., 0.],
                                                          [1., 1.], 
                                                          [1., 1.]]])))
+
+    def test_shift_bit_length(self):
+        next = shift_bit_length(255)
+        self.assertEqual(next, 256)
+
+        next = shift_bit_length(0)
+        self.assertEqual(next, 2)
+
+        next = shift_bit_length(256)
+        self.assertEqual(next, 256)
+
+        with self.assertRaises(AttributeError):
+            next = shift_bit_length(-2)

@@ -1,4 +1,7 @@
 from . import Astft
+from . import Asig
+import numpy as np
+from .helper import shift_bit_length, preemphasis, framesig
 
 class Amfcc(Astft):
     """Mel filtered Fourier spectrum (MFCC) class
@@ -55,7 +58,27 @@ class Amfcc(Astft):
     def __init__(self, x, sr=None, label=None, nmfcc=20, window='hann', nperseg=256,
                  noverlap=None, nfft=None, detrend=False, return_onesided=True,
                  boundary='zeros', padded=True, axis=-1, cn=None):
-        super().__init__()
-        # Find the nearest nfft based on sr
-
+        if isinstance(x, Asig.Asig):
+            sr = x.sr
+            self.x = x.sig
+        else:
+            self.x = x
+            if not sr:
+                raise(AttributeError("If x is an array, sr is required."))
         
+        if not nfft:
+            pass
+            # By default used 25ms
+        super().__init__(x=self.x)
+        # Find the nearest nfft based on sr
+        self.nyquist = self.sr // 2
+
+    def mel_filter_bank(self, preemphasis_coeff=0.95):
+        """Compute the Mel-filterbank energy features"""
+        # Compute signal preemphasis.
+        if preemphasis_coeff:
+            self.x = preemphasis(self.x, preemphasis_coeff)
+        # Make signal into frames .
+        frames = fram
+
+
