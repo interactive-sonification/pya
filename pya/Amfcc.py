@@ -31,25 +31,31 @@ class Amfcc:
     label : str
         name of the Asig. (Default value = None)
     n_per_frame : int
-        number of samples per frame (Default value = '256')
-    noverlap : int
-        number of samples to overlap between frames (Default value = None)
+        number of samples per frame, default is the sample equivalent for 25ms
+    hopsize : int
+        number of samples of each successive frame, the overlap amount is n_per_frame - hopsize. Default is
+        the sample equivalent of 10ms.
+    nfft : int
+        FFT size, default to be next power of 2 integer of n_per_frame
     window : str
         type of the window function (Default value='hann'), use scipy.signal.get_window to return a numpy array.
         If None, np.ones() with the according nperseg size will return  will return.
-
-    cn : list or None
-        Channel names of the Asig, this will be used for the Astft for consistency. (Default value = None)
+    ncep : int
+        Number of cepstrum, default 13
+    cepliter : int
+        Lifter's cepstral coefficient, default 22
+    frames : numpy.ndarray
+        The original signal being reshape into frame based on n_per_frame and hopsize.
     """
 
-    def __init__(self, x, sr=None, label='mfcc', window='hann', n_per_frame=None,
-                 noverlap=None, nfft=None, ncep=13, ceplifter=22, append_energy=True, cn=None):
+    def __init__(self, x, sr=None, label='mfcc', n_per_frame=None,
+                 hopsize=None, nfft=None, window='hann', ncep=13, ceplifter=22, append_energy=True, cn=None):
         """Parameter needed:
 
         x : signal
         sr : sampling rate
         nperseg : window length per frame.
-        noverlap : number of overlap perframe
+        hopsize : number of overlap perframe
         nfft : number of fft.
 
         features : numpy.ndarray
@@ -76,10 +82,10 @@ class Amfcc:
         self.n_per_frame = n_per_frame or int(round_half_up(self.sr * 0.025))  # 25ms length window,
 
 
-        self.noverlap = noverlap or int(round_half_up(self.sr * 0.01))  # default 10ms overlap
-        if self.noverlap > self.n_per_frame:
+        self.hopsize = hopsize or int(round_half_up(self.sr * 0.01))  # default 10ms overlap
+        if self.hopsize > self.n_per_frame:
             raise _LOGGER.warning("noverlap great than nperseg, this leaves gaps between frames.")
-        self.nfft = nfft or next_pow2(self.n_per_frame) # default to be 512 Todo change the default to the next pow 2 of nperseg.
+        self.nfft = nfft or next_pow2(self.n_per_frame)
 
         self.window = get_window(window, self.n_per_frame) if window else np.ones((self.n_per_frame,))
         self.ncep = ncep  # Number of cepstrum
@@ -87,7 +93,7 @@ class Amfcc:
         # -------------------------------------------------
 
         # Framing signal.
-        self.frames = signal_to_frame(self.x, self.n_per_frame, self.n_per_frame - self.noverlap, self.window)
+        self.frames = signal_to_frame(self.x, self.n_per_frame, self.hopsize, self.window)
 
         # Computer power spectrum
         self.mspec = magspec(self.frames, self.nfft)  # Magnitude of spectrum, rfft then np.abs()
