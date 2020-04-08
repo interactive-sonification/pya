@@ -49,7 +49,8 @@ class Amfcc:
     """
 
     def __init__(self, x, sr=None, label='mfcc', n_per_frame=None,
-                 hopsize=None, nfft=None, window='hann', ncep=13, ceplifter=22, append_energy=True, cn=None):
+                 hopsize=None, nfft=None, window='hann', nfilters=26, ncep=13, ceplifter=22,
+                 preemph=0.95, append_energy=True, cn=None):
         """Parameter needed:
 
         x : signal
@@ -68,6 +69,7 @@ class Amfcc:
             self.sr = x.sr
             self.x = x.sig
             self.label = x.label + '_' + label
+            self.duration = x.get_duration()
 
         elif isinstance(x, np.ndarray):
             self.x = x
@@ -75,6 +77,7 @@ class Amfcc:
                 self.sr = sr
             else:
                 raise AttributeError("If x is an array, sr (sampling rate) needs to be defined.")
+            self.duration = np.shape(x)[0] / self.sr
             self.label = label
         else:
             raise TypeError("x can only be either a numpy.ndarray or pya.Asig object.")
@@ -88,32 +91,34 @@ class Amfcc:
         self.nfft = nfft or next_pow2(self.n_per_frame)
 
         self.window = get_window(window, self.n_per_frame) if window else np.ones((self.n_per_frame,))
+        self.nfilters = nfilters
         self.ncep = ncep  # Number of cepstrum
         self.ceplifter = ceplifter  # Lifter's cepstral coefficient
         # -------------------------------------------------
 
         # Framing signal.
-        self.frames = signal_to_frame(self.x, self.n_per_frame, self.hopsize, self.window)
+        pre_emp_sig = preemphasis(self.x, coeff=preemph)
+        self.frames = signal_to_frame(pre_emp_sig, self.n_per_frame, self.hopsize, self.window)
 
         # Computer power spectrum
-        self.mspec = magspec(self.frames, self.nfft)  # Magnitude of spectrum, rfft then np.abs()
-        self.pspec = 1.0 / self.nfft * np.square(self.mspec)  # Power spectrum
+        mspec = magspec(self.frames, self.nfft)  # Magnitude of spectrum, rfft then np.abs()
+        pspec = 1.0 / self.nfft * np.square(mspec)  # Power spectrum
 
         # Total energy of each frame based on the power spectrum
-        self.frame_energy = np.sum(self.pspec, 1)
+        self.frame_energy = np.sum(pspec, 1)
         # Replace 0 with the smallest float positive number
         self.frame_energy = np.where(self.frame_energy == 0, np.finfo(float).eps, self.frame_energy)
 
         # Prepare Mel filter
-        self.filter_banks = mel_filterbanks(self.sr, nfilt=20, nfft=self.nfft)  # Use the default filter banks.
+        self.filter_banks = mel_filterbanks(self.sr, nfilters=self.nfilters, nfft=self.nfft)  # Use the default filter banks.
 
         # filter bank energies are the features.
-        self.fb_energy = np.dot(self.pspec, self.filter_banks.T)
-        self.fb_energy = np.where(self.fb_energy == 0, np.finfo(float).eps, self.fb_energy)
-        self.fb_energy = np.log(self.fb_energy)
+        self.features = np.dot(pspec, self.filter_banks.T)
+        self.features = np.where(self.features == 0, np.finfo(float).eps, self.features)
+        self.features = np.log(self.features)
 
         #  Keep DCT coefficients 2-13, discard the rest.
-        self.features = dct(self.fb_energy, type=2, axis=1, norm='ortho')[:, :self.ncep]  # Discrete cosine transform
+        self.features = dct(self.features, type=2, axis=1, norm='ortho')[:, :self.ncep]  # Discrete cosine transform
 
         # Liftering operation is similar to filtering operation in the frequency domain
         # where a desired quefrency region for analysis is selected by multiplying the whole cepstrum
@@ -127,6 +132,10 @@ class Amfcc:
         # Replace first cepstral coefficient with log of frame energy
         if append_energy:
             self.features[:, 0] = np.log(self.frame_energy)
+
+    @property
+    def timestamp(self):
+        return np.linspace(0, self.duration, self.features.shape[0])
 
     # def __repr__(self):
     #     # ToDO add more info to msg

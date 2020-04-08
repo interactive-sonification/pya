@@ -253,7 +253,7 @@ def next_pow2(x):
     return 1 << (x - 1).bit_length()
 
 
-def preemphasis(x, coeff=0.95):
+def preemphasis(x, coeff=0.97):
     """Pre-emphasis filter to whiten the spectrum.
     Pre-emphasis is a way of compensating for the rapid decaying spectrum of speech.
     Can often skip this step in the cases of music for example
@@ -354,7 +354,6 @@ def signal_to_frame(sig, nframe, frame_step, window=None, stride_trick=True):
         numframes = 1
     else:
         numframes = 1 + int(math.ceil((1.0 * slen - nframe) / frame_step))
-
     padlen = int((numframes - 1) * frame_step + nframe)
     padsignal = np.concatenate((sig, np.zeros((padlen - slen,))))  # Pad zeros to signal
 
@@ -409,7 +408,7 @@ def mel2hz(mel):
     return 700 * (10 ** (mel / 2595.0) - 1)
 
 
-def mel_filterbanks(sr, nfilt=20, nfft=512, lowfreq=0, highfreq=None):
+def mel_filterbanks(sr, nfilters=26, nfft=512, lowfreq=0, highfreq=None):
     """Compute a Mel-filterbank. The filters are stored in the rows, the columns correspond
     to fft bins. The filters are returned as an array of size nfilt * (nfft/2 + 1)
 
@@ -417,7 +416,7 @@ def mel_filterbanks(sr, nfilt=20, nfft=512, lowfreq=0, highfreq=None):
     ----------
     sr : int
         Sampling rate
-    nfilt : int
+    nfilters : int
         The number of filters, default 20
     nfft : int
         The size of FFT, default 512
@@ -436,13 +435,13 @@ def mel_filterbanks(sr, nfilt=20, nfft=512, lowfreq=0, highfreq=None):
     # compute points evenly spaced in mels
     lowmel = hz2mel(lowfreq)
     highmel = hz2mel(highfreq)
-    melpoints = np.linspace(lowmel, highmel, nfilt + 2)
+    melpoints = np.linspace(lowmel, highmel, nfilters + 2)
     # our points are in Hz, but we use fft bins, so we have to convert
     #  from Hz to fft bin number
     bin = np.floor((nfft + 1) * mel2hz(melpoints) / sr)
 
-    filter_banks = np.zeros([nfilt, nfft // 2 + 1])
-    for j in range(0, nfilt):
+    filter_banks = np.zeros([nfilters, nfft // 2 + 1])
+    for j in range(0, nfilters):
         for i in range(int(bin[j]), int(bin[j + 1])):
             filter_banks[j, i] = (i - bin[j]) / (bin[j + 1] - bin[j])
         for i in range(int(bin[j + 1]), int(bin[j + 2])):
@@ -469,3 +468,4 @@ def lifter(cepstra, L=22):
     else:
         # values of L <= 0, do nothing
         return cepstra
+
