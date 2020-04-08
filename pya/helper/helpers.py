@@ -374,32 +374,6 @@ def signal_to_frame(sig, nframe, frame_step, window=None, stride_trick=True):
     return frames * win
 
 
-def magspec(frames, nfft):
-    """Compute the magnitude spectrum of each frame in frames. If frames is an NxD matrix, output will be Nx(NFFT/2+1).
-
-    Parameters
-    ----------
-    frames : numpy.ndarray
-        Framed signal array, each row is a frame.
-    nfft : int
-        fft size, if nfft > frame lengths, the frames are zero-padded.
-
-    Returns
-    -------
-    _ : numpy.ndarray
-        Return the rfft result which is the shape of frame_size * nfft / 2 + 1 .
-
-    :param frames: the array of frames. Each row is a frame.
-    :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded.
-    :returns: If frames is an NxD matrix, output will be Nx(NFFT/2+1). Each row will be the magnitude spectrum of the corresponding frame.
-    """
-    if np.shape(frames)[1] > nfft:
-        logging.warning('frame length (%d) is greater than FFT size (%d), frame will be truncated. Increase NFFT to avoid.',
-                        np.shape(frames)[1], nfft)
-    complex_spec = np.fft.rfft(frames, nfft)
-
-    return np.absolute(complex_spec)
-
 def hz2mel(hz):
     """Convert a value in Hertz to Mels
 
@@ -436,15 +410,21 @@ def get_filterbanks(sr, nfilt=20, nfft=512,  lowfreq=0, highfreq=None):
 
     Parameters
     ----------
-    nfilt : the number of filters in the filterbank, default 20.
-    nfft :
+    sr : int
+        Sampling rate
+    nfilt : int
+        The number of filters, default 20
+    nfft : int
+        The size of FFT, default 512
+    lowfreq : int or float
+        The lowest band edge of the mel filters, default 0 Hz
+    highfreq : int or float
+        The highest band edge of the mel filters, default sr // 2
 
-    :param nfilt: the number of filters in the filterbank, default 20.
-    :param nfft: the FFT size. Default is 512.
-    :param samplerate: the sample rate of the signal we are working with, in Hz. Affects mel spacing.
-    :param lowfreq: lowest band edge of mel filters, default 0 Hz
-    :param highfreq: highest band edge of mel filters, default samplerate/2
-    :returns: A numpy array of size nfilt * (nfft/2 + 1) containing filterbank. Each row holds 1 filter.
+    Returns
+    -------
+    _ : numpy.ndarray
+        A numpy array of size nfilt * (nfft/2 + 1) containing filterbank. Each row holds 1 filter.
     """
     highfreq = highfreq or sr // 2
 
@@ -468,8 +448,13 @@ def get_filterbanks(sr, nfilt=20, nfft=512,  lowfreq=0, highfreq=None):
 def lifter(cepstra, L=22):
     """Apply a cepstral lifter the the matrix of cepstra. This has the effect of increasing the
     magnitude of the high frequency DCT coeffs.
-    :param cepstra: the matrix of mel-cepstra, will be numframes * numcep in size.
-    :param L: the liftering coefficient to use. Default is 22. L <= 0 disables lifter.
+
+    Parameters
+    ----------
+    cepstra : numpy.ndarray
+        The matrix of mel-cepstra
+    L : int
+        The liftering coefficient to use. Default is 22. L <= 0 disables lifter.
     """
     if L > 0:
         nframes, ncoeff = np.shape(cepstra)
