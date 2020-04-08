@@ -12,7 +12,7 @@ _LOGGER.addHandler(logging.NullHandler())
 
 class Amfcc:
     """Mel filtered Fourier spectrum (MFCC) class
-    
+
     Steps of mfcc:
         Frame the signal into short frames.
         For each frame calculate the periodogram estimate of the power spectrum.
@@ -20,7 +20,7 @@ class Amfcc:
         Take the DCT of the log filterbank energies.
         Keep DCT coefficients 2-13, discard the rest.
         Take the logarithm of all filterbank energies.
-        
+
     Attributes
     ----------
     x : Asig or numpy.ndarray
@@ -102,12 +102,12 @@ class Amfcc:
         # Total energy of each frame based on the power spectrum
         self.frame_energy = np.sum(self.pspec, 1)
         # Replace 0 with the smallest float positive number
-        self.frame_energy = np.where(self.frame_energy==0, np.finfo(float).eps, self.frame_energy)
+        self.frame_energy = np.where(self.frame_energy == 0, np.finfo(float).eps, self.frame_energy)
         self.filter_banks = get_filterbanks(self.sr, nfilt=20, nfft=self.nfft)  # Use the default filter banks.
 
         # filter bank energies are the features.
         self.fb_energy = np.dot(self.pspec, self.filter_banks.T)
-        self.fb_energy = np.where(self.fb_energy==0, np.finfo(float).eps, self.fb_energy)
+        self.fb_energy = np.where(self.fb_energy == 0, np.finfo(float).eps, self.fb_energy)
 
         #  Keep DCT coefficients 2-13, discard the rest.
         self.features = dct(self.fb_energy, type=2, axis=1, norm='ortho')[:, :self.ncep]  # Discrete cosine transform
@@ -128,3 +128,6 @@ class Amfcc:
     def __repr__(self):
         # ToDO add more info to msg
         return f"Amfcc label {self.label}, sr {self.sr}"
+
+    # def plot(self):
+    #     # Need to know what is to plot. How to arrange plot.

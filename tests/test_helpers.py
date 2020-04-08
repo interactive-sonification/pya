@@ -76,7 +76,7 @@ class TestHelpers(TestCase):
                                                          [1., 1.], 
                                                          [1., 1.]]])))
 
-    def test_shift_bit_length(self):
+    def test_next_pow2(self):
         next = next_pow2(255)
         self.assertEqual(next, 256)
 
@@ -87,5 +87,4 @@ class TestHelpers(TestCase):
         self.assertEqual(next, 256)
 
         with self.assertRaises(AttributeError):
-            next = next_pow2(-2)
-
+            _ = next_pow2(-2)

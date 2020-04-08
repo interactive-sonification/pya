@@ -250,7 +250,7 @@ def next_pow2(x):
     """
     if x < 0:
         raise AttributeError("x needs to be positive integer.")
-    return 1<<(x-1).bit_length()
+    return 1 << (x - 1).bit_length()
 
 
 def preemphasis(x, coeff=0.95):
@@ -389,6 +389,7 @@ def hz2mel(hz):
     """
     return 2595 * np.log10(1 + hz / 700.)
 
+
 def mel2hz(mel):
     """Convert a value in Hertz to Mels
 
@@ -404,7 +405,8 @@ def mel2hz(mel):
     """
     return 700 * (10 ** (mel / 2595.0) - 1)
 
-def get_filterbanks(sr, nfilt=20, nfft=512,  lowfreq=0, highfreq=None):
+
+def get_filterbanks(sr, nfilt=20, nfft=512, lowfreq=0, highfreq=None):
     """Compute a Mel-filterbank. The filters are stored in the rows, the columns correspond
     to fft bins. The filters are returned as an array of size nfilt * (nfft/2 + 1)
 
