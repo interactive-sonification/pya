@@ -73,20 +73,13 @@ class Amfcc:
         else:
             raise TypeError("x can only be either a numpy.ndarray or pya.Asig object.")
 
-        if not n_per_frame:  # More likely to set it as default.
-            self.n_per_frame = int(round_half_up(self.sr * 0.025))  # 25ms length window,
-        else:
-            self.n_per_frame = n_per_frame
+        self.n_per_frame = n_per_frame or int(round_half_up(self.sr * 0.025))  # 25ms length window,
 
-        if not noverlap:  # More likely to set it as default
-            self.noverlap = int(round_half_up(self.sr * 0.01))  # 10ms overlap
-        else:
-            self.noverlap = noverlap
 
+        self.noverlap = noverlap or int(round_half_up(self.sr * 0.01))  # default 10ms overlap
         if self.noverlap > self.n_per_frame:
             raise _LOGGER.warning("noverlap great than nperseg, this leaves gaps between frames.")
-
-        self.nfft = nfft or next_pow2(n_per_frame) # default to be 512 Todo change the default to the next pow 2 of nperseg.
+        self.nfft = nfft or next_pow2(self.n_per_frame) # default to be 512 Todo change the default to the next pow 2 of nperseg.
 
         self.window = get_window(window, self.n_per_frame) if window else np.ones((self.n_per_frame,))
         self.ncep = ncep  # Number of cepstrum
@@ -129,9 +122,9 @@ class Amfcc:
         if append_energy:
             self.features[:, 0] = np.log(self.frame_energy)
 
-    def __repr__(self):
-        # ToDO add more info to msg
-        return f"Amfcc label {self.label}, sr {self.sr}"
+    # def __repr__(self):
+    #     # ToDO add more info to msg
+    #     return f"Amfcc label {self.label}, sr {self.sr}"
 
     # def plot(self):
     #     # Need to know what is to plot. How to arrange plot.
