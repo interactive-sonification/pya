@@ -5,6 +5,7 @@ import math
 def gridplot(pya_objects, titles=None, col_wrap=None, figsize=None):
     """Create a grid plot of pya objects which have plot() methods, i.e. Asig, Aspec, Astft, Amfcc
     TODO add sharex, sharey.
+    TODO add kwargs...
 
     Parameters
     ----------
@@ -23,8 +24,7 @@ def gridplot(pya_objects, titles=None, col_wrap=None, figsize=None):
     fig = plt.figure(figsize=figsize)
 
     # Figure what the grid dimension is .
-    if not col_wrap:
-        col_wrap = sig_len
+    col_wrap = col_wrap or sig_len
 
     ncol = col_wrap
     nrow = math.ceil(sig_len / ncol)

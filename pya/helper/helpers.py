@@ -294,7 +294,7 @@ def magspec(frames, NFFT):
             'frame length (%d) is greater than FFT size (%d), frame will be truncated. Increase NFFT to avoid.',
             np.shape(frames)[1], NFFT)
     complex_spec = np.fft.rfft(frames, NFFT)
-    return np.absolute(complex_spec)
+    return np.abs(complex_spec)
 
 
 def powspec(frames, NFFT):
@@ -369,7 +369,10 @@ def signal_to_frame(sig, nframe, frame_step, window=None, stride_trick=True):
             np.arange(0, numframes * frame_step, frame_step), (nframe, 1)).T
         indices = np.array(indices, dtype=np.int32)
         frames = padsignal[indices]
-        win = window if window else np.ones(nframe)
+        if window is not None:
+            win = window
+        else:
+            win = np.ones(nframe)
         win = np.tile(win, (numframes, 1))
     return frames * win
 
@@ -406,7 +409,7 @@ def mel2hz(mel):
     return 700 * (10 ** (mel / 2595.0) - 1)
 
 
-def get_filterbanks(sr, nfilt=20, nfft=512, lowfreq=0, highfreq=None):
+def mel_filterbanks(sr, nfilt=20, nfft=512, lowfreq=0, highfreq=None):
     """Compute a Mel-filterbank. The filters are stored in the rows, the columns correspond
     to fft bins. The filters are returned as an array of size nfilt * (nfft/2 + 1)
 

@@ -1,6 +1,6 @@
 import numpy as np
 from .helper import next_pow2, preemphasis, signal_to_frame, round_half_up, magspec
-from .helper import mel2hz, hz2mel, get_filterbanks, lifter
+from .helper import mel2hz, hz2mel, mel_filterbanks, lifter
 import logging
 from scipy.signal import get_window
 from scipy.fftpack import dct
@@ -42,8 +42,8 @@ class Amfcc:
         Channel names of the Asig, this will be used for the Astft for consistency. (Default value = None)
     """
 
-    def __init__(self, x, sr=None, label='mfcc', nmfcc=20, window='hann', n_per_frame=256,
-                 noverlap=None, nfft=512, ncep=13, ceplifter=22, append_energy=True, cn=None):
+    def __init__(self, x, sr=None, label='mfcc', window='hann', n_per_frame=None,
+                 noverlap=None, nfft=None, ncep=13, ceplifter=22, append_energy=True, cn=None):
         """Parameter needed:
 
         x : signal
@@ -56,12 +56,13 @@ class Amfcc:
             MFCC feature array
 
         """
-        # ----------Prepare attributes -------------------------
+        # ----------Prepare attributes ------------`-------------
         # First prepare for parameters
         if type(x) == Asig:
             self.sr = x.sr
             self.x = x.sig
             self.label = x.label + '_' + label
+
         elif isinstance(x, np.ndarray):
             self.x = x
             if sr:
@@ -73,21 +74,21 @@ class Amfcc:
             raise TypeError("x can only be either a numpy.ndarray or pya.Asig object.")
 
         if not n_per_frame:  # More likely to set it as default.
-            self.n_per_frame = round_half_up(self.sr * 0.025)  # 25ms length window,
+            self.n_per_frame = int(round_half_up(self.sr * 0.025))  # 25ms length window,
         else:
             self.n_per_frame = n_per_frame
 
         if not noverlap:  # More likely to set it as default
-            self.noverlap = round_half_up(self.sr * 0.01)  # 10ms overlap
+            self.noverlap = int(round_half_up(self.sr * 0.01))  # 10ms overlap
         else:
-            self.noverlap
+            self.noverlap = noverlap
 
         if self.noverlap > self.n_per_frame:
             raise _LOGGER.warning("noverlap great than nperseg, this leaves gaps between frames.")
 
-        self.nfft = nfft  # default to be 512 Todo change the default to the next pow 2 of nperseg.
+        self.nfft = nfft or next_pow2(n_per_frame) # default to be 512 Todo change the default to the next pow 2 of nperseg.
 
-        self.window = get_window(window, self.n_per_frame)
+        self.window = get_window(window, self.n_per_frame) if window else np.ones((self.n_per_frame,))
         self.ncep = ncep  # Number of cepstrum
         self.ceplifter = ceplifter  # Lifter's cepstral coefficient
         # -------------------------------------------------
@@ -103,11 +104,14 @@ class Amfcc:
         self.frame_energy = np.sum(self.pspec, 1)
         # Replace 0 with the smallest float positive number
         self.frame_energy = np.where(self.frame_energy == 0, np.finfo(float).eps, self.frame_energy)
-        self.filter_banks = get_filterbanks(self.sr, nfilt=20, nfft=self.nfft)  # Use the default filter banks.
+
+        # Prepare Mel filter
+        self.filter_banks = mel_filterbanks(self.sr, nfilt=20, nfft=self.nfft)  # Use the default filter banks.
 
         # filter bank energies are the features.
         self.fb_energy = np.dot(self.pspec, self.filter_banks.T)
         self.fb_energy = np.where(self.fb_energy == 0, np.finfo(float).eps, self.fb_energy)
+        self.fb_energy = np.log(self.fb_energy)
 
         #  Keep DCT coefficients 2-13, discard the rest.
         self.features = dct(self.fb_energy, type=2, axis=1, norm='ortho')[:, :self.ncep]  # Discrete cosine transform
