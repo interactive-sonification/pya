@@ -1,5 +1,5 @@
 import numpy as np
-from .helper import shift_bit_length, preemphasis, signal_to_frame, round_half_up, magspec
+from .helper import next_pow2, preemphasis, signal_to_frame, round_half_up, magspec
 from .helper import mel2hz, hz2mel, get_filterbanks, lifter
 import logging
 from scipy.signal import get_window

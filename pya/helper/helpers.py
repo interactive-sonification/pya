@@ -235,83 +235,62 @@ def padding(x, width, tail=True, constant_values=0):
         raise AttributeError("only support ndim 1 or 2, 3. For higher please just use np.pad ")
 
 
-def shift_bit_length(x):
+def next_pow2(x):
+    """Find the closest pow of 2 that is great or equal or x, based on shift_bit_length
+
+    Parameters
+    ----------
+    x : int
+        A positive number
+
+    Returns
+    -------
+    _ : int
+        The cloest  integer that is greater or equal to input x.
+    """
     if x < 0:
         raise AttributeError("x needs to be positive integer.")
     return 1<<(x-1).bit_length()
-
-
-# def _spectrogram(x=None, S=None, n_fft=2048, hop_length=512, power=1,
-#                  win_length=None, window='hann', center=True, pad_mode='reflect'):
-#     '''Helper function to retrieve a magnitude spectrogram.
-#     This is primarily used in feature extraction functions that can operate on
-#     either audio time-series or spectrogram input.
-#     Parameters
-#     ----------
-#     y : None or np.ndarray [ndim=1]
-#         If provided, an audio time series
-#
-#     n_fft : int > 0
-#         STFT window size
-#     hop_length : int > 0
-#         STFT hop length
-#     power : float > 0
-#         Exponent for the magnitude spectrogram,
-#         e.g., 1 for energy, 2 for power, etc.
-#     win_length : int <= n_fft [scalar]
-#         Each frame of audio is windowed by `window()`.
-#         The window will be of length `win_length` and then padded
-#         with zeros to match `n_fft`.
-#         If unspecified, defaults to ``win_length = n_fft``.
-#     window : string, tuple, number, function, or np.ndarray [shape=(n_fft,)]
-#         - a window specification (string, tuple, or number);
-#           see `scipy.signal.get_window`
-#         - a window function, such as `scipy.signal.hanning`
-#         - a vector or array of length `n_fft`
-#         .. see also:: `filters.get_window`
-#     center : boolean
-#         - If `True`, the signal `y` is padded so that frame
-#           `t` is centered at `y[t * hop_length]`.
-#         - If `False`, then frame `t` begins at `y[t * hop_length]`
-#     pad_mode : string
-#         If `center=True`, the padding mode to use at the edges of the signal.
-#         By default, STFT uses reflection padding.
-#
-#     Returns
-#     -------
-#     spectro : numpy.ndarray
-#         - If `S` is provided as input, then `S_out == S`
-#         - Else, `S_out = |stft(y, ...)|**power`
-#     n_fft : int > 0
-#         - If `S` is provided, then `n_fft` is inferred from `S`
-#         - Else, copied from input
-#     '''
-#
-#
-#     # Otherwise, compute a magnitude spectrogram from input
-#     S = np.abs(stft(y, n_fft=n_fft, hop_length=hop_length,
-#                     win_length=win_length, center=center,
-#                     window=window, pad_mode=pad_mode))**power
-#
-#     return spectro, n_fft
 
 
 def preemphasis(x, coeff=0.95):
     """Pre-emphasis filter to whiten the spectrum.
     Pre-emphasis is a way of compensating for the rapid decaying spectrum of speech.
     Can often skip this step in the cases of music for example
+
+    Parameters
+    ----------
+    x : numpy.ndarray
+        Signal array
+    coeff : float
+        Preemphasis coefficient. The larger the stronger smoothing and the slower response to change.
+
+    Returns
+    -------
+    _ : numpy.ndarray
+        The whitened signal.
     """
     return np.append(x[0], x[1:] - coeff * x[:-1])
 
 
 def magspec(frames, NFFT):
     """Compute the magnitude spectrum of each frame in frames. If frames is an NxD matrix, output will be Nx(NFFT/2+1).
-    :param frames: the array of frames. Each row is a frame.
-    :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded.
-    :returns: If frames is an NxD matrix, output will be Nx(NFFT/2+1). Each row will be the magnitude spectrum of the corresponding frame.
+
+    Parameters
+    ----------
+    frames : numpy.ndarray
+        The framed array, each row is a frame, can be just a single frame.
+    NFFT : int
+        FFT length. If NFFT > frame_len, the frames are zero_padded.
+
+    Returns
+    -------
+    _ : numpy.ndarray
+        If frames is an NxD matrix, output will be Nx(NFFT/2+1).
+        Each row will be the magnitude spectrum of the corresponding frame.
     """
     if np.shape(frames)[1] > NFFT:
-        logging.warn(
+        logging.warning(
             'frame length (%d) is greater than FFT size (%d), frame will be truncated. Increase NFFT to avoid.',
             np.shape(frames)[1], NFFT)
     complex_spec = np.fft.rfft(frames, NFFT)
@@ -319,15 +298,25 @@ def magspec(frames, NFFT):
 
 
 def powspec(frames, NFFT):
-    """Compute the power spectrum of each frame in frames. If frames is an NxD matrix, output will be Nx(NFFT/2+1).
-    :param frames: the array of frames. Each row is a frame.
-    :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded.
-    :returns: If frames is an NxD matrix, output will be Nx(NFFT/2+1). Each row will be the power spectrum of the corresponding frame.
+    """Compute the power spectrum of each frame in frames, first comeputer the magnitude spectrum
+
+    Parameters
+    ----------
+    frames : numpy.ndarray
+        Framed signal, can be just a single frame.
+    NFFT : int
+        The FFT length to use. If NFFT > frame_len, the frames are zero-padded.
+
+    Returns
+    -------
+    _ : numpy array
+        Power spectrum of the framed signal. Each row has the size of NFFT / 2 + 1 due to rfft.
     """
     return 1.0 / NFFT * np.square(magspec(frames, NFFT))
 
 
 def round_half_up(number):
+    """Round up if >= .5"""
     return int(decimal.Decimal(number).quantize(decimal.Decimal('1'), rounding=decimal.ROUND_HALF_UP))
 
 
@@ -374,7 +363,6 @@ def signal_to_frame(sig, nframe, frame_step, window=None, stride_trick=True):
             win = window
         else:
             win = np.ones(nframe)
-        # win = window if window else np.ones(nframe)
         frames = rolling_window(padsignal, window=nframe, step=frame_step)
     else:
         indices = np.tile(np.arange(0, nframe), (numframes, 1)) + np.tile(
@@ -394,7 +382,12 @@ def magspec(frames, nfft):
     frames : numpy.ndarray
         Framed signal array, each row is a frame.
     nfft : int
-        fft size.
+        fft size, if nfft > frame lengths, the frames are zero-padded.
+
+    Returns
+    -------
+    _ : numpy.ndarray
+        Return the rfft result which is the shape of frame_size * nfft / 2 + 1 .
 
     :param frames: the array of frames. Each row is a frame.
     :param NFFT: the FFT length to use. If NFFT > frame_len, the frames are zero-padded.
