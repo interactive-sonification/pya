@@ -456,7 +456,9 @@ def lifter(cepstra, L=22):
     cepstra : numpy.ndarray
         The matrix of mel-cepstra
     L : int
-        The liftering coefficient to use. Default is 22. L <= 0 disables lifter.
+        The liftering coefficient to use. Default is 22, since cepstra usually has 13 elements, 22
+        L will result almost half pi of sine lift. It essential try to emphasis to lower ceptral coefficient
+        while deemphasize higher ceptral coefficient as they are less discriminative for speech contents.
     """
     if L > 0:
         nframes, ncoeff = np.shape(cepstra)

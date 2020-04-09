@@ -2,7 +2,7 @@ from unittest import TestCase
 from pya import Asig, Ugen
 from pya.helper import spectrum, padding, next_pow2, is_pow2, midicps, cpsmidi
 from pya.helper import preemphasis, signal_to_frame, magspec, powspec
-from pya.helper import hz2mel, mel2hz, mel_filterbanks
+from pya.helper import hz2mel, mel2hz, mel_filterbanks, lifter
 import numpy as np 
 import pyaudio
 
@@ -130,3 +130,11 @@ class TestHelpers(TestCase):
     def test_melfb(self):
         fb = mel_filterbanks(8000)  # Using default
         self.assertEqual(fb.shape, (26, 257))  # nfilters, NFFT // 2 + 1
+
+    def test_lifter(self):
+        fake_cepstra = np.ones((20, 13))
+        lifted_ceps = lifter(fake_cepstra, L=22)
+        self.assertEqual(fake_cepstra.shape, lifted_ceps.shape)
+
+        lifted_ceps = lifter(fake_cepstra, L=-3) # if L negative, no lifting applied
+        self.assertTrue(np.array_equal(lifted_ceps, fake_cepstra))
