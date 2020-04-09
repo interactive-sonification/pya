@@ -5,6 +5,8 @@ import logging
 from scipy.signal import get_window
 from scipy.fftpack import dct
 from . import Asig
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -134,12 +136,37 @@ class Amfcc:
             self.features[:, 0] = np.log(self.frame_energy)
 
     @property
+    def nframes(self):
+        return self.frames.shape[0]
+
+    @property
     def timestamp(self):
-        return np.linspace(0, self.duration, self.features.shape[0])
+        return np.linspace(0, self.duration, self.nframes)
 
-    # def __repr__(self):
-    #     # ToDO add more info to msg
-    #     return f"Amfcc label {self.label}, sr {self.sr}"
+    def __repr__(self):
+        # ToDO add more info to msg
+        return f"Amfcc object, label {self.label}, sr {self.sr}"
 
-    # def plot(self):
-    #     # Need to know what is to plot. How to arrange plot.
+    def plot(self, cmap='inferno', corlorbar=True, colorbar_alignment='right',
+             x_as_time='True', nxlabel=8, **kwargs):
+        """Plot Amfcc.features via matshow, x is frames/time, y is the MFCCs
+
+        Parameters
+        ----------
+
+        """
+        plt.figure()
+        ax = plt.gca()
+        im = ax.matshow(self.features.T, cmap=plt.get_cmap(cmap), origin='lower', **kwargs)
+        xticks = np.linspace(0, self.nframes, nxlabel, dtype=int)
+        ax.set_xticks(xticks)
+        if x_as_time:
+            xlabels = np.round(np.linspace(0, self.duration, nxlabel), decimals=1)
+            # Replace x ticks with timestamps
+            ax.set_xticklabels(xlabels)
+            ax.xaxis.tick_bottom()
+        if corlorbar:
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes(colorbar_alignment, size="2%", pad=0.03)
+            _ = plt.colorbar(im, cax=cax)   # Add
+        return self  # ToDo maybe return the axis instead.
