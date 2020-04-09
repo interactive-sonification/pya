@@ -1,5 +1,7 @@
 from unittest import TestCase
-from pya import midicps, cpsmidi, Asig, spectrum, padding, next_pow2
+from pya import Asig, Ugen
+from pya.helper import spectrum, padding, next_pow2, is_pow2, midicps, cpsmidi
+from pya.helper import preemphasis, signal_to_frame, magspec, powspec
 import numpy as np 
 import pyaudio
 
@@ -88,3 +90,33 @@ class TestHelpers(TestCase):
 
         with self.assertRaises(AttributeError):
             _ = next_pow2(-2)
+
+    def test_is_pow2(self):
+        self.assertTrue(is_pow2(2))
+        self.assertTrue(is_pow2(256))
+        self.assertTrue(is_pow2(1))
+        self.assertFalse(is_pow2(145))
+        self.assertFalse(is_pow2(-128))
+        self.assertFalse(is_pow2(0))
+
+    def test_preemphasis(self):
+        self.assertTrue(np.array_equal(np.array([0. , 1. , 1.5, 2. , 2.5]),
+                                       preemphasis(np.arange(5), coeff=0.5)))
+
+    def test_signal_to_frame(self):
+        sq = Ugen().square(freq=20, sr=8000, channels=1)
+        frames = signal_to_frame(sq.sig, 400, 400)
+        self.assertEqual(frames.shape, (20, 400))
+        frames = signal_to_frame(sq.sig, 400, 200)
+        self.assertEqual(frames.shape, (39, 400))
+
+    def test_magspec_pspec(self):
+        # Magnitude spectrum
+        sq = Ugen().square(freq=20, sr=8000, channels=1)
+        frames = signal_to_frame(sq.sig, 400, 400)
+        mag = magspec(frames, 512)
+        self.assertEqual(mag.shape, (20, 257))
+        self.assertTrue((mag >= 0.).all())  # All elements should be non-negative
+        ps = powspec(frames, 512)
+        self.assertEqual(ps.shape, (20, 257))
+        self.assertTrue((ps >= 0.).all())  # All elements should be non-negative
