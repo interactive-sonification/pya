@@ -2,6 +2,7 @@ from unittest import TestCase
 from pya import Asig, Ugen
 from pya.helper import spectrum, padding, next_pow2, is_pow2, midicps, cpsmidi
 from pya.helper import preemphasis, signal_to_frame, magspec, powspec
+from pya.helper import hz2mel, mel2hz, mel_filterbanks
 import numpy as np 
 import pyaudio
 
@@ -99,6 +100,7 @@ class TestHelpers(TestCase):
         self.assertFalse(is_pow2(-128))
         self.assertFalse(is_pow2(0))
 
+    549.63
     def test_preemphasis(self):
         self.assertTrue(np.array_equal(np.array([0. , 1. , 1.5, 2. , 2.5]),
                                        preemphasis(np.arange(5), coeff=0.5)))
@@ -120,3 +122,11 @@ class TestHelpers(TestCase):
         ps = powspec(frames, 512)
         self.assertEqual(ps.shape, (20, 257))
         self.assertTrue((ps >= 0.).all())  # All elements should be non-negative
+
+    def test_melhzconversion(self):
+        self.assertAlmostEqual(hz2mel(440), 549.64, 2)
+        self.assertAlmostEqual(mel2hz(549.64), 440, 2)
+
+    def test_melfb(self):
+        fb = mel_filterbanks(8000)  # Using default
+        self.assertEqual(fb.shape, (26, 257))  # nfilters, NFFT // 2 + 1

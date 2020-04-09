@@ -443,6 +443,14 @@ def lifter(cepstra, L=22):
     """Apply a cepstral lifter the the matrix of cepstra. This has the effect of increasing the
     magnitude of the high frequency DCT coeffs.
 
+    Liftering operation is similar to filtering operation in the frequency domain
+    where a desired quefrency region for analysis is selected by multiplying the whole cepstrum
+    by a rectangular window at the desired position.
+    There are two types of liftering performed, low-time liftering and high-time liftering.
+    Low-time liftering operation is performed to extract the vocal tract characteristics in the quefrency domain
+    and high-time liftering is performed to get the excitation characteristics of the analysis speech frame.
+
+
     Parameters
     ----------
     cepstra : numpy.ndarray
