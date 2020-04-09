@@ -16,12 +16,12 @@ class Amfcc:
     """Mel filtered Fourier spectrum (MFCC) class
 
     Steps of mfcc:
-        Frame the signal into short frames.
-        For each frame calculate the periodogram estimate of the power spectrum.
-        Apply the mel filterbank to the power spectra, sum the energy in each filter.
-        Take the DCT of the log filterbank energies.
-        Keep DCT coefficients 2-13, discard the rest.
-        Take the logarithm of all filterbank energies.
+        - Frame the signal into short frames.
+        - For each frame calculate the periodogram estimate of the power spectrum.
+        - Apply the mel filterbank to the power spectra, sum the energy in each filter.
+        - Take the DCT of the log filterbank energies.
+        - Keep DCT coefficients 2-13, discard the rest.
+        - Take the logarithm of all filterbank energies.
 
     Attributes
     ----------
@@ -29,41 +29,71 @@ class Amfcc:
         x can be two forms, the most commonly used is an Asig object. 
         Such as directly acquired from an Asig object via Asig.to_stft().
     sr : int
-        sampling rate, this is only necessary if x is not Asig. (Default value = None)
+        sampling rate, this is only necessary if x is not Asig.
+    duration : float
+        Duration of the signal in second,
     label : str
-        name of the Asig. (Default value = None)
+        A string label as an identifier.
     n_per_frame : int
-        number of samples per frame, default is the sample equivalent for 25ms
+        Number of samples per frame
     hopsize : int
-        number of samples of each successive frame, the overlap amount is n_per_frame - hopsize. Default is
-        the sample equivalent of 10ms.
+        Number of samples of each successive frame.
     nfft : int
         FFT size, default to be next power of 2 integer of n_per_frame
     window : str
-        type of the window function (Default value='hann'), use scipy.signal.get_window to return a numpy array.
-        If None, np.ones() with the according nperseg size will return  will return.
+        Type of the window function (Default value='hann'), use scipy.signal.get_window to
+        return a numpy array. If None, no windowing will be applied.
+    nfilters : int
+        The number of mel filters. Default is 26
     ncep : int
-        Number of cepstrum, default 13
+        Number of cepstrum. Default is 13
     cepliter : int
-        Lifter's cepstral coefficient, default 22
+        Lifter's cepstral coefficient. Default is 22
     frames : numpy.ndarray
         The original signal being reshape into frame based on n_per_frame and hopsize.
+    frame_energy : numpy.ndarray
+        Total power spectrum energy of each frame.
+    filter_banks : numpy.ndarray
+        An array of mel filters
+    features : numpy.ndarray
+        An array of the MFCC coeffcient, size: nframes x ncep
     """
 
     def __init__(self, x, sr=None, label='mfcc', n_per_frame=None,
                  hopsize=None, nfft=None, window='hann', nfilters=26, ncep=13, ceplifter=22,
                  preemph=0.95, append_energy=True, cn=None):
-        """Parameter needed:
+        """Initialize Amfcc object
 
-        x : signal
-        sr : sampling rate
-        nperseg : window length per frame.
-        hopsize : number of overlap perframe
-        nfft : number of fft.
-
-        features : numpy.ndarray
-            MFCC feature array
-
+        Parameters
+        ----------
+        x : Asig or numpy.ndarray
+            x can be two forms, the most commonly used is an Asig object.
+            Such as directly acquired from an Asig object via Asig.to_stft().
+        sr : int, optional
+            Sampling rate, this is not necessary if x is an Asig object as it has sr already.
+        label : str, optional
+            Identifier for the object
+        n_per_frame : int, optional
+            Number of samples per frame. Default is the equivalent of 25ms based on the sr.
+        hopsize : int, optional
+            Number of samples of each successive frame, Default is the sample equivalent of 10ms.
+        nfft : int, optional
+            FFT size, default to be next power of 2 integer of n_per_frame
+        window : str, optional
+            Type of the window function (Default value='hann'), use scipy.signal.get_window to
+            return a numpy array. If None, no windowing will be applied.
+        nfilters : int
+            The number of mel filters. Default is 26
+        ncep : int
+            Number of cepstrum. Default is 13
+        ceplifter : int
+            Lifter's cepstral coefficient. Default is 22
+        preemph : float
+            Preemphasis coefficient. Default is 0.95
+        append_energy : bool
+            If true, the zeroth cepstral coefficient is replaced with the log of the total frame energy.
+        cn : list
+            A list of channel name based on the Asig.
         """
         # ----------Prepare attributes ------------`-------------
         # First prepare for parameters
@@ -153,6 +183,12 @@ class Amfcc:
 
         Parameters
         ----------
+        corlorbar
+        colorbar_alignment
+        x_as_time
+        nxlabel
+        kwargs
+        cmap : string
 
         """
         plt.figure()
@@ -160,11 +196,13 @@ class Amfcc:
         im = ax.matshow(self.features.T, cmap=plt.get_cmap(cmap), origin='lower', **kwargs)
         xticks = np.linspace(0, self.nframes, nxlabel, dtype=int)
         ax.set_xticks(xticks)
+        # ax.set_ytitle("MFCC Coefficient")
         if x_as_time:
             xlabels = np.round(np.linspace(0, self.duration, nxlabel), decimals=1)
             # Replace x ticks with timestamps
             ax.set_xticklabels(xlabels)
             ax.xaxis.tick_bottom()
+            # ax.set_xtitle("Time (s)")
         if corlorbar:
             divider = make_axes_locatable(ax)
             cax = divider.append_axes(colorbar_alignment, size="2%", pad=0.03)

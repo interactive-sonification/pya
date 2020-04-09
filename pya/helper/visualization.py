@@ -11,10 +11,10 @@ def gridplot(pya_objects, titles=None, col_wrap=None, figsize=None):
     ----------
     pya_objects : iterable object
         A list of pya objects with the plot() method.
-    col_wrap : int
-        Wrap column at position. Can be considered as the column size.
-    figsize : tuple
-        width, height in inches. default size is (6.4, 4.8)
+    col_wrap : int, optional
+        Wrap column at position. Can be considered as the column size. Default will try plot all in 1 row.
+    figsize : tuple, optional
+        width, height in inches. Default size is (6.4, 4.8)
 
     Returns
     -------

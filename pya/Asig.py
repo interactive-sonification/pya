@@ -87,7 +87,7 @@ class Asig:
 
     @property
     def channels(self):
-        """Channel property"""
+        """Return the number of channels"""
         try:
             return self.sig.shape[1]
         except IndexError:
