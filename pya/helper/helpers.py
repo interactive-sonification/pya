@@ -64,22 +64,6 @@ def ampdb(amp):
     return 20 * np.log10(amp)
 
 
-# def timeit(method):
-#     """Decorator to time methods, print out the time for executing the method"""
-#     def timed(*args, **kw):
-#         ts = time.time()
-#         result = method(*args, **kw)
-#         te = time.time()
-#         if 'log_time' in kw:
-#             name = kw.get('log_name', method.__name__.upper())
-#             kw['log_time'][name] = int((te - ts) * 1000)
-#         else:
-#             print('%r  %2.2f ms' %
-#                   (method.__name__, (te - ts) * 1000))
-#         return result
-#     return timed
-
-
 def spectrum(sig, samples, channels, sr):
     """Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.
 
@@ -235,6 +219,11 @@ def padding(x, width, tail=True, constant_values=0):
         raise AttributeError("only support ndim 1 or 2, 3. For higher please just use np.pad ")
 
 
+def is_pow2(val):
+    """Check if input is a power of 2 return a bool result."""
+    return False if val <= 0 else math.log(val, 2).is_integer()
+
+
 def next_pow2(x):
     """Find the closest pow of 2 that is great or equal or x, based on shift_bit_length
 
@@ -273,8 +262,71 @@ def preemphasis(x, coeff=0.97):
     return np.append(x[0], x[1:] - coeff * x[:-1])
 
 
+def round_half_up(number):
+    """Round up if >= .5"""
+    return int(decimal.Decimal(number).quantize(decimal.Decimal('1'), rounding=decimal.ROUND_HALF_UP))
+
+
+def rolling_window(a, window, step=1):
+    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
+    strides = a.strides + (a.strides[-1],)
+    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)[::step]
+
+
+def signal_to_frame(sig, n_per_frame, frame_step, window=None, stride_trick=True):
+    """Frame a signal into overlapping frames.
+
+    Parameters
+    ----------
+    sig : numpy.ndarray
+        The audio signal
+    n_per_frame : int
+        Number of samples each frame
+    frame_step : int
+        Number of samples after the start of the previous frame that the next frame should begin.
+    window : numpy.ndarray or None
+        A window array, e.g,
+    stride_trick : bool
+        Use stride trick to compute the rolling window and window multiplication faster
+
+    Returns
+    -------
+    _ : numpy.ndarray
+        an array of frames.
+    """
+    slen = len(sig)
+    n_per_frame = int(round_half_up(n_per_frame))
+    frame_step = int(round_half_up(frame_step))
+    if slen <= n_per_frame:
+        numframes = 1
+    else:
+        numframes = 1 + int(math.ceil((1.0 * slen - n_per_frame) / frame_step))
+    padlen = int((numframes - 1) * frame_step + n_per_frame)
+    padsignal = np.concatenate((sig, np.zeros((padlen - slen,))))  # Pad zeros to signal
+
+    if stride_trick:
+        if window is not None:
+            win = window
+        else:
+            win = np.ones(n_per_frame)
+        frames = rolling_window(padsignal, window=n_per_frame, step=frame_step)
+    else:
+        indices = np.tile(np.arange(0, n_per_frame), (numframes, 1)) + np.tile(
+            np.arange(0, numframes * frame_step, frame_step), (n_per_frame, 1)).T
+        indices = np.array(indices, dtype=np.int32)
+        frames = padsignal[indices]
+        if window is not None:
+            win = window
+        else:
+            win = np.ones(n_per_frame)
+        win = np.tile(win, (numframes, 1))
+    return frames * win
+
+
+
 def magspec(frames, NFFT):
-    """Compute the magnitude spectrum of each frame in frames. If frames is an NxD matrix, output will be Nx(NFFT/2+1).
+    """Compute the magnitude spectrum of each frame in frames.
+    If frames is an NxD matrix, output will be Nx(NFFT/2+1).
 
     Parameters
     ----------
@@ -290,9 +342,8 @@ def magspec(frames, NFFT):
         Each row will be the magnitude spectrum of the corresponding frame.
     """
     if np.shape(frames)[1] > NFFT:
-        logging.warning(
-            'frame length (%d) is greater than FFT size (%d), frame will be truncated. Increase NFFT to avoid.',
-            np.shape(frames)[1], NFFT)
+        logging.warning(f'frame length {np.shape(frames)[1]} is greater than FFT size {NFFT}, '
+                        f'frame will be truncated. Increase NFFT to avoid.')
     complex_spec = np.fft.rfft(frames, NFFT)
     return np.abs(complex_spec)
 
@@ -313,67 +364,6 @@ def powspec(frames, NFFT):
         Power spectrum of the framed signal. Each row has the size of NFFT / 2 + 1 due to rfft.
     """
     return 1.0 / NFFT * np.square(magspec(frames, NFFT))
-
-
-def round_half_up(number):
-    """Round up if >= .5"""
-    return int(decimal.Decimal(number).quantize(decimal.Decimal('1'), rounding=decimal.ROUND_HALF_UP))
-
-
-def rolling_window(a, window, step=1):
-    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
-    strides = a.strides + (a.strides[-1],)
-    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)[::step]
-
-
-def signal_to_frame(sig, nframe, frame_step, window=None, stride_trick=True):
-    """Frame a signal into overlapping frames.
-
-    Parameters
-    ----------
-    sig : numpy.ndarray
-        the audio signal
-    frame_len : int
-        number of samples each frame
-    frame_step : int
-        number of samples after the start of the previous frame that the next frame should begin.
-    window : numpy.ndarray or None
-        a window array, e.g,
-    stride_trick : bool
-        use stride trick to compute the rolling window and window multiplication faster
-
-    Returns
-    -------
-    _ : numpy.ndarray
-        an array of frames.
-    """
-    slen = len(sig)
-    nframe = int(round_half_up(nframe))
-    frame_step = int(round_half_up(frame_step))
-    if slen <= nframe:
-        numframes = 1
-    else:
-        numframes = 1 + int(math.ceil((1.0 * slen - nframe) / frame_step))
-    padlen = int((numframes - 1) * frame_step + nframe)
-    padsignal = np.concatenate((sig, np.zeros((padlen - slen,))))  # Pad zeros to signal
-
-    if stride_trick:
-        if window is not None:
-            win = window
-        else:
-            win = np.ones(nframe)
-        frames = rolling_window(padsignal, window=nframe, step=frame_step)
-    else:
-        indices = np.tile(np.arange(0, nframe), (numframes, 1)) + np.tile(
-            np.arange(0, numframes * frame_step, frame_step), (nframe, 1)).T
-        indices = np.array(indices, dtype=np.int32)
-        frames = padsignal[indices]
-        if window is not None:
-            win = window
-        else:
-            win = np.ones(nframe)
-        win = np.tile(win, (numframes, 1))
-    return frames * win
 
 
 def hz2mel(hz):

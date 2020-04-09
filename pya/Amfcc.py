@@ -1,6 +1,6 @@
 import numpy as np
 from .helper import next_pow2, preemphasis, signal_to_frame, round_half_up, magspec
-from .helper import mel2hz, hz2mel, mel_filterbanks, lifter
+from .helper import mel2hz, hz2mel, mel_filterbanks, lifter, is_pow2
 import logging
 from scipy.signal import get_window
 from scipy.fftpack import dct
@@ -59,7 +59,7 @@ class Amfcc:
         An array of the MFCC coeffcient, size: nframes x ncep
     """
 
-    def __init__(self, x, sr=None, label='mfcc', n_per_frame=None,
+    def __init__(self, x, sr=None, label='Amfcc', n_per_frame=None,
                  hopsize=None, nfft=None, window='hann', nfilters=26, ncep=13, ceplifter=22,
                  preemph=0.95, append_energy=True, cn=None):
         """Initialize Amfcc object
@@ -115,12 +115,12 @@ class Amfcc:
             raise TypeError("x can only be either a numpy.ndarray or pya.Asig object.")
 
         self.n_per_frame = n_per_frame or int(round_half_up(self.sr * 0.025))  # 25ms length window,
-
-
         self.hopsize = hopsize or int(round_half_up(self.sr * 0.01))  # default 10ms overlap
         if self.hopsize > self.n_per_frame:
             raise _LOGGER.warning("noverlap great than nperseg, this leaves gaps between frames.")
         self.nfft = nfft or next_pow2(self.n_per_frame)
+        if not is_pow2(self.nfft):
+            raise _LOGGER.warning("nfft is not a power of 2, this may effects computation time.")
 
         self.window = get_window(window, self.n_per_frame) if window else np.ones((self.n_per_frame,))
         self.nfilters = nfilters
