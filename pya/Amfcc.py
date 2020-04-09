@@ -55,7 +55,7 @@ class Amfcc:
         Total power spectrum energy of each frame.
     filter_banks : numpy.ndarray
         An array of mel filters
-    features : numpy.ndarray
+    cepstra : numpy.ndarray
         An array of the MFCC coeffcient, size: nframes x ncep
     """
 
@@ -145,25 +145,17 @@ class Amfcc:
         self.filter_banks = mel_filterbanks(self.sr, nfilters=self.nfilters, nfft=self.nfft)  # Use the default filter banks.
 
         # filter bank energies are the features.
-        self.features = np.dot(pspec, self.filter_banks.T)
-        self.features = np.where(self.features == 0, np.finfo(float).eps, self.features)
-        self.features = np.log(self.features)
+        self.cepstra = np.dot(pspec, self.filter_banks.T)
+        self.cepstra = np.where(self.cepstra == 0, np.finfo(float).eps, self.cepstra)
+        self.cepstra = np.log(self.cepstra)
 
-        #  Keep DCT coefficients 2-13, discard the rest.
-        self.features = dct(self.features, type=2, axis=1, norm='ortho')[:, :self.ncep]  # Discrete cosine transform
+        self.cepstra = dct(self.cepstra, type=2, axis=1, norm='ortho')[:, :self.ncep]  # Discrete cosine transform
 
-        # Liftering operation is similar to filtering operation in the frequency domain
-        # where a desired quefrency region for analysis is selected by multiplying the whole cepstrum
-        # by a rectangular window at the desired position.
-        # There are two types of liftering performed, low-time liftering and high-time liftering.
-        # Low-time liftering operation is performed to extract the vocal tract characteristics in the quefrency domain
-        # and high-time liftering is performed to get the excitation characteristics of the analysis speech frame.
-
-        self.features = lifter(self.features, self.ceplifter)
+        self.cepstra = lifter(self.cepstra, self.ceplifter)
 
         # Replace first cepstral coefficient with log of frame energy
         if append_energy:
-            self.features[:, 0] = np.log(self.frame_energy)
+            self.cepstra[:, 0] = np.log(self.frame_energy)
 
     @property
     def nframes(self):
@@ -172,6 +164,11 @@ class Amfcc:
     @property
     def timestamp(self):
         return np.linspace(0, self.duration, self.nframes)
+
+    @property
+    def features(self):
+        """The features refer to the cepstra"""
+        return self.cepstra
 
     def __repr__(self):
         # ToDO add more info to msg
@@ -193,7 +190,7 @@ class Amfcc:
         """
         plt.figure()
         ax = plt.gca()
-        im = ax.matshow(self.features.T, cmap=plt.get_cmap(cmap), origin='lower', **kwargs)
+        im = ax.matshow(self.cepstra.T, cmap=plt.get_cmap(cmap), origin='lower', **kwargs)
         xticks = np.linspace(0, self.nframes, nxlabel, dtype=int)
         ax.set_xticks(xticks)
         # ax.set_ytitle("MFCC Coefficient")
