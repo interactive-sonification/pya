@@ -12,6 +12,7 @@ from scipy.io import wavfile
 from .Aserver import Aserver
 from . import Aspec
 from . import Astft
+from . import Amfcc
 from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, buf_to_float
 from .helper import spectrum, audio_from_file, padding
 from copy import copy, deepcopy
@@ -1534,6 +1535,13 @@ class Asig:
         """Return Astft object which is the stft of the signal. Keyword arguments are the arguments for
         scipy.signal.stft(). """
         return Astft.Astft(self, **kwargs)
+
+    def to_mfcc(self, n_per_frame=None, hopsize=None, nfft=None, window='hann',
+                nfilters=26, ncep=13, ceplifter=22, preemph=0.95, append_energy=True):
+        """Return Amfcc object. """
+        return Amfcc.Amfcc(self, label=self.label, n_per_frame=n_per_frame, hopsize=hopsize,
+                           nfft=nfft, window=window, nfilters=nfilters, ncep=ncep, ceplifter=ceplifter,
+                           preemph=preemph, append_energy=append_energy, cn=self.cn)
 
     def plot_spectrum(self, offset=0, scale=1., xlim=None, **kwargs):
         """Plot spectrum of the signal

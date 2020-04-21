@@ -97,7 +97,7 @@ class Amfcc:
         """
         # ----------Prepare attributes ------------`-------------
         # First prepare for parameters
-        if type(x) == Asig:
+        if type(x) == Asig.Asig:
             self.sr = x.sr
             self.x = x.sig
             self.label = x.label + '_' + label
@@ -180,6 +180,8 @@ class Amfcc:
 
         Parameters
         ----------
+        figsize : (float, float), optional, default: None
+             Figure size, width, height in inches, Default = [6.4, 4.8]
         corlorbar
         colorbar_alignment
         x_as_time
@@ -188,7 +190,6 @@ class Amfcc:
         cmap : string
 
         """
-        plt.figure()
         ax = plt.gca()
         im = ax.matshow(self.cepstra.T, cmap=plt.get_cmap(cmap), origin='lower', **kwargs)
         xticks = np.linspace(0, self.nframes, nxlabel, dtype=int)
