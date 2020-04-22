@@ -67,6 +67,7 @@ class Asig:
         self.sr = sr
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
+        self.label = label
         if isinstance(sig, str):
             self._load_audio_file(sig)
         elif isinstance(sig, int):  # sample length
@@ -82,7 +83,6 @@ class Asig:
                     (int(sig * sr), channels)).astype("float32")
         else:
             self.sig = np.array(sig).astype("float32")
-        self.label = label
         self.cn = cn
         self._set_col_names()
 
@@ -130,6 +130,8 @@ class Asig:
         fname : str
             Path to file."""
         self.sig, self.sr = audio_from_file(fname)
+        if self.label == "":
+            self.label = fname
 
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         """Save signal as .wav file, return self.
