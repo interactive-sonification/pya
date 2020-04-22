@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import  # This allows the next line to work.
 from .. import Asig, Amfcc, Astft, Aspec
 import matplotlib.pyplot as plt
 import math
