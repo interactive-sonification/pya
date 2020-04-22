@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import stft, istft
 from . import Asig
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -168,7 +169,8 @@ class Astft:
             _, sig = istft(self.stft, **kwargs)
             return Asig.Asig(np.transpose(sig), sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
-    def plot(self, fn=lambda x: x, ch=None, ax=None, xlim=None, ylim=None, show_bar=True, **kwargs):
+    def plot(self, fn=lambda x: x, ch=None, axis=None, xlim=None, ylim=None, show_bar=True,
+             cmap='inferno', **kwargs):
         """Plot spectrogram
 
         Parameters
@@ -210,18 +212,16 @@ class Astft:
                 else:
                     raise AttributeError("ch is not a valid channel name.")
 
-        if ax is None:
-            plt.pcolormesh(self.times, self.freqs, fn(np.abs(stft)), **kwargs)
-            if show_bar:
-                plt.colorbar()
-            if ylim is not None:
-                plt.ylim([ylim[0], ylim[1]])
-        else:
-            ax.pcolormesh(self.times, self.freqs, fn(np.abs(stft)), **kwargs)
-            if show_bar:
-                plt.colorbar()
-            if ylim is not None:
-                ax.set_ylim(ylim[0], ylim[1])
+        ax = plt.gca() or axis
+        self.im = ax.pcolormesh(self.times, self.freqs, fn(np.abs(stft)), cmap=plt.get_cmap(cmap), **kwargs)
+
+        if show_bar:
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes('right', size="2%", pad=0.03)
+            _ = plt.colorbar(self.im, cax=cax)  # Add
+        if ylim is not None:
+            ax.set_ylim(ylim[0], ylim[1])
+        ax.set_ylabel("Freq (Hz)")
         return self
 
     def __repr__(self):
