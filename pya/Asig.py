@@ -890,6 +890,8 @@ class Asig:
                     plt.text(0, (i + 0.1) * offset, self.cn[i])
         if xlim is not None:
             plt.xlim([xlim[0], xlim[1]])
+        else:
+            plt.xlim([0, self.get_duration()])
         if ylim is not None:
             plt.ylim([ylim[0], ylim[1]])
         return self
