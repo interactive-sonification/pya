@@ -59,7 +59,7 @@ class Amfcc:
         An array of the MFCC coeffcient, size: nframes x ncep
     """
 
-    def __init__(self, x, sr=None, label='Amfcc', n_per_frame=None,
+    def __init__(self, x, sr=None, label='', n_per_frame=None,
                  hopsize=None, nfft=None, window='hann', nfilters=26, ncep=13, ceplifter=22,
                  preemph=0.95, append_energy=True, cn=None):
         """Initialize Amfcc object
@@ -100,7 +100,7 @@ class Amfcc:
         if type(x) == Asig.Asig:
             self.sr = x.sr
             self.x = x.sig
-            self.label = x.label + '_' + label
+            self.label = x.label + "_mfccs"
             self.duration = x.get_duration()
 
         elif isinstance(x, np.ndarray):
@@ -172,9 +172,9 @@ class Amfcc:
 
     def __repr__(self):
         # ToDO add more info to msg
-        return f"Amfcc object, label {self.label}, sr {self.sr}"
+        return f"Amfcc({self.label}): sr {self.sr}, length: {self.duration} s"
 
-    def plot(self, cmap='inferno', corlorbar=True, colorbar_alignment='right',
+    def plot(self, cmap='inferno', show_bar=True, colorbar_alignment='right',
              x_as_time='True', nxlabel=8, **kwargs):
         """Plot Amfcc.features via matshow, x is frames/time, y is the MFCCs
 
@@ -201,7 +201,7 @@ class Amfcc:
             ax.set_xticklabels(xlabels)
             ax.xaxis.tick_bottom()
             # ax.set_xtitle("Time (s)")
-        if corlorbar:
+        if show_bar:
             divider = make_axes_locatable(ax)
             cax = divider.append_axes(colorbar_alignment, size="2%", pad=0.03)
             _ = plt.colorbar(im, cax=cax)   # Add
