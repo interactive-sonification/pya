@@ -174,8 +174,8 @@ class Amfcc:
         # ToDO add more info to msg
         return f"Amfcc({self.label}): sr {self.sr}, length: {self.duration} s"
 
-    def plot(self, cmap='inferno', show_bar=True, colorbar_alignment='right',
-             x_as_time='True', nxlabel=8, **kwargs):
+    def plot(self, cmap='inferno', show_bar=True,
+             x_as_time=True, nxlabel=8, axis=None, **kwargs):
         """Plot Amfcc.features via matshow, x is frames/time, y is the MFCCs
 
         Parameters
@@ -183,26 +183,26 @@ class Amfcc:
         figsize : (float, float), optional, default: None
              Figure size, width, height in inches, Default = [6.4, 4.8]
         show_bar
-        colorbar_alignment
         x_as_time
         nxlabel
         kwargs
         cmap : string
 
         """
-        ax = plt.gca()
-        self.im = ax.matshow(self.cepstra.T, cmap=plt.get_cmap(cmap), origin='lower', **kwargs)
+        ax = plt.gca() or axis
+        # self.im = ax.matshow(self.cepstra.T, cmap=plt.get_cmap(cmap), origin='lower', aspect='auto', **kwargs)
+        self.im = ax.pcolormesh(self.cepstra.T, cmap=plt.get_cmap(cmap))
         xticks = np.linspace(0, self.nframes, nxlabel, dtype=int)
         ax.set_xticks(xticks)
         # ax.set_ytitle("MFCC Coefficient")
         if x_as_time:
-            xlabels = np.round(np.linspace(0, self.duration, nxlabel), decimals=1)
+            xlabels = np.round(np.linspace(0, self.duration, nxlabel), decimals=2)
             # Replace x ticks with timestamps
             ax.set_xticklabels(xlabels)
             ax.xaxis.tick_bottom()
             # ax.set_xtitle("Time (s)")
         if show_bar:
             divider = make_axes_locatable(ax)
-            cax = divider.append_axes(colorbar_alignment, size="2%", pad=0.03)
+            cax = divider.append_axes('right', size="2%", pad=0.03)
             _ = plt.colorbar(self.im, cax=cax)   # Add
         return self  # ToDo maybe return the axis instead.
