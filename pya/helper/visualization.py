@@ -35,6 +35,7 @@ def gridplot(pya_objects, titles=None, col_wrap=None, figsize=None):
     for idx in range(sig_len):
         plt.subplot(nrow, ncol, idx + 1)
         pya_objects[idx].plot()
-        plt.title(titles[idx])
+
+        plt.title(titles[idx]) # TODO Change title accordingly, sig, spec, spectrogram, mfccs
     plt.tight_layout()
     return fig

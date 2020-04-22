@@ -191,6 +191,8 @@ def find_device(min_input=0, min_output=0):
 
 def padding(x, width, tail=True, constant_values=0):
     """Pad signal with certain width, support 1-3D tensors. Use it to add silence to a signal
+    TODO: CHECK pad array
+
 
     Parameters
     ----------
@@ -321,7 +323,6 @@ def signal_to_frame(sig, n_per_frame, frame_step, window=None, stride_trick=True
             win = np.ones(n_per_frame)
         win = np.tile(win, (numframes, 1))
     return frames * win
-
 
 
 def magspec(frames, NFFT):

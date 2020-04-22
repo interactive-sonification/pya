@@ -182,7 +182,7 @@ class Amfcc:
         ----------
         figsize : (float, float), optional, default: None
              Figure size, width, height in inches, Default = [6.4, 4.8]
-        corlorbar
+        show_bar
         colorbar_alignment
         x_as_time
         nxlabel
@@ -191,7 +191,7 @@ class Amfcc:
 
         """
         ax = plt.gca()
-        im = ax.matshow(self.cepstra.T, cmap=plt.get_cmap(cmap), origin='lower', **kwargs)
+        self.im = ax.matshow(self.cepstra.T, cmap=plt.get_cmap(cmap), origin='lower', **kwargs)
         xticks = np.linspace(0, self.nframes, nxlabel, dtype=int)
         ax.set_xticks(xticks)
         # ax.set_ytitle("MFCC Coefficient")
@@ -204,5 +204,5 @@ class Amfcc:
         if show_bar:
             divider = make_axes_locatable(ax)
             cax = divider.append_axes(colorbar_alignment, size="2%", pad=0.03)
-            _ = plt.colorbar(im, cax=cax)   # Add
+            _ = plt.colorbar(self.im, cax=cax)   # Add
         return self  # ToDo maybe return the axis instead.

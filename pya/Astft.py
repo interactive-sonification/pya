@@ -168,7 +168,7 @@ class Astft:
             _, sig = istft(self.stft, **kwargs)
             return Asig.Asig(np.transpose(sig), sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
-    def plot(self, fn=lambda x: x, ch=None, ax=None, xlim=None, ylim=None, **kwargs):
+    def plot(self, fn=lambda x: x, ch=None, ax=None, xlim=None, ylim=None, show_bar=True, **kwargs):
         """Plot spectrogram
 
         Parameters
@@ -212,14 +212,16 @@ class Astft:
 
         if ax is None:
             plt.pcolormesh(self.times, self.freqs, fn(np.abs(stft)), **kwargs)
-            plt.colorbar()
+            if show_bar:
+                plt.colorbar()
             if ylim is not None:
                 plt.ylim([ylim[0], ylim[1]])
         else:
             ax.pcolormesh(self.times, self.freqs, fn(np.abs(stft)), **kwargs)
+            if show_bar:
+                plt.colorbar()
             if ylim is not None:
                 ax.set_ylim(ylim[0], ylim[1])
-
         return self
 
     def __repr__(self):

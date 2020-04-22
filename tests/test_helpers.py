@@ -100,7 +100,6 @@ class TestHelpers(TestCase):
         self.assertFalse(is_pow2(-128))
         self.assertFalse(is_pow2(0))
 
-    549.63
     def test_preemphasis(self):
         self.assertTrue(np.array_equal(np.array([0. , 1. , 1.5, 2. , 2.5]),
                                        preemphasis(np.arange(5), coeff=0.5)))
