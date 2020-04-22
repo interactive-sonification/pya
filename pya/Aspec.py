@@ -48,6 +48,10 @@ class Aspec:
         self.nr_freqs = self.samples // 2 + 1
         self.freqs = np.linspace(0, self.sr / 2, self.nr_freqs)
 
+    def get_duration(self):
+        """Return the duration in second."""
+        return self.samples / self.sr
+
     def to_sig(self):
         """Convert Aspec into Asig"""
         return Asig.Asig(np.fft.irfft(self.rfftspec), 
@@ -119,7 +123,8 @@ class Aspec:
         plt.plot(self.freqs, fn(self.rfftspec), **kwargs)
         if xlim is not None:
             plt.xlim([xlim[0], xlim[1]])
-
+        else:
+            plt.xlim(0, self.freqs.shape[0])
         if ylim is not None:
             plt.ylim([ylim[0], ylim[1]])
 
