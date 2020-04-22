@@ -3,4 +3,4 @@
 # from .helpers import normalize, device_info, find_device
 # from .helpers import padding, shift_bit_length
 from .helpers import *
-from .visualization import *
+from .visualization import gridplot
