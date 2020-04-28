@@ -101,7 +101,7 @@ class TestHelpers(TestCase):
         self.assertFalse(is_pow2(0))
 
     def test_preemphasis(self):
-        self.assertTrue(np.array_equal(np.array([0. , 1. , 1.5, 2. , 2.5]),
+        self.assertTrue(np.array_equal(np.array([0., 1., 1.5, 2., 2.5]),
                                        preemphasis(np.arange(5), coeff=0.5)))
 
     def test_signal_to_frame(self):
@@ -134,6 +134,5 @@ class TestHelpers(TestCase):
         fake_cepstra = np.ones((20, 13))
         lifted_ceps = lifter(fake_cepstra, L=22)
         self.assertEqual(fake_cepstra.shape, lifted_ceps.shape)
-
-        lifted_ceps = lifter(fake_cepstra, L=-3) # if L negative, no lifting applied
+        lifted_ceps = lifter(fake_cepstra, L=-3)  # if L negative, no lifting applied
         self.assertTrue(np.array_equal(lifted_ceps, fake_cepstra))

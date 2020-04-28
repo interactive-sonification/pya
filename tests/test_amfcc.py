@@ -2,6 +2,7 @@ from pya import Asig, Ugen, Amfcc
 from unittest import TestCase
 import numpy as np
 
+
 class TestAmfcc(TestCase):
     def setUp(self):
         self.test_asig = Ugen().square(freq=20, sr=8000)
