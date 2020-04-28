@@ -5,7 +5,7 @@ import math
 import matplotlib.gridspec as grd
 
 
-def gridplot(pya_objects, col_wrap=1, cbar_ratio=0.04, figsize=None):
+def gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None):
     """Create a grid plot of pya objects which have plot() methods, i.e. Asig, Aspec, Astft, Amfcc.
     It takes a list of pya_objects and plot each object into a grid. You can mix different types of plots
     together.
@@ -14,13 +14,13 @@ def gridplot(pya_objects, col_wrap=1, cbar_ratio=0.04, figsize=None):
     --------
     # plot all 4 different pya objects in 1 column, amfcc and astft use pcolormesh so colorbar will
     # be displayed as well
-    gridplot([asig, amfcc, aspec, astft], col_wrap=1, cbar_ratio=0.08, figsize=[10, 10]);
+    gridplot([asig, amfcc, aspec, astft], colwrap=2, cbar_ratio=0.08, figsize=[10, 10]);
 
     Parameters
     ----------
     pya_objects : iterable object
         A list of pya objects with the plot() method.
-    col_wrap : int, optional
+    colwrap : int, optional
         Wrap column at position. Can be considered as the column size. Default is 1, meaning 1 column.
     cbar_ratio : float, optional
         For each column create another column reserved for the colorbar. This is the ratio
@@ -35,12 +35,12 @@ def gridplot(pya_objects, col_wrap=1, cbar_ratio=0.04, figsize=None):
     """
     nplots = len(pya_objects)
 
-    if col_wrap > nplots:
-        ncol = col_wrap
-    elif col_wrap < 1:
+    if colwrap > nplots:
+        ncol = colwrap
+    elif colwrap < 1:
         raise ValueError("col_wrap needs to an integer > 0")
     else:
-        ncol = col_wrap
+        ncol = colwrap
 
     nrow = math.ceil(nplots / ncol)
     ncol = ncol * 2  # Double the col for colorbars.
