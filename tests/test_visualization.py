@@ -31,6 +31,12 @@ class TestVisualization(TestCase):
         sig2d = Ugen().sine(channels=4, cn=['a', 'b', 'c', 'd']) 
         sig2d.plot()
 
+    def test_aspec_plot(self):
+        self.aspec.plot()
+
+    def tesst_aspec_plot_lim(self):
+        self.aspect.plot(xlim=(0, 1.), ylim=(0, 100))
+
     def test_gridplot(self):
         _ = gridplot(self.alst)
 
