@@ -97,7 +97,7 @@ class Asig:
     @property
     def samples(self):
         """Return the length of signal in samples"""
-        return np.shape(self.sig)[0]  # Update it.
+        return np.shape(self.sig)[0]  
 
     @property
     def cn(self):
@@ -421,7 +421,7 @@ class Asig:
             src = value
             # for list (assume values for channels), mode makes no sense...
             mode = None
-            # TODO: check if useful behavior also for numpy arrays
+
         else:
             _LOGGER.debug("value not asig, ndarray, list")
             src = value
