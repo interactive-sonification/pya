@@ -1,8 +1,8 @@
 from unittest import TestCase
 from pya import Asig, Ugen
 from pya.helper import spectrum, padding, next_pow2, is_pow2, midicps, cpsmidi
-from pya.helper import preemphasis, signal_to_frame, magspec, powspec
-from pya.helper import hz2mel, mel2hz, mel_filterbanks, lifter
+from pya.helper import signal_to_frame, magspec, powspec
+from pya.helper import hz2mel, mel2hz
 import numpy as np 
 import pyaudio
 
@@ -100,10 +100,6 @@ class TestHelpers(TestCase):
         self.assertFalse(is_pow2(-128))
         self.assertFalse(is_pow2(0))
 
-    def test_preemphasis(self):
-        self.assertTrue(np.array_equal(np.array([0., 1., 1.5, 2., 2.5]),
-                                       preemphasis(np.arange(5), coeff=0.5)))
-
     def test_signal_to_frame(self):
         sq = Ugen().square(freq=20, sr=8000, channels=1)
         frames = signal_to_frame(sq.sig, 400, 400)
@@ -125,14 +121,3 @@ class TestHelpers(TestCase):
     def test_melhzconversion(self):
         self.assertAlmostEqual(hz2mel(440), 549.64, 2)
         self.assertAlmostEqual(mel2hz(549.64), 440, 2)
-
-    def test_melfb(self):
-        fb = mel_filterbanks(8000)  # Using default
-        self.assertEqual(fb.shape, (26, 257))  # nfilters, NFFT // 2 + 1
-
-    def test_lifter(self):
-        fake_cepstra = np.ones((20, 13))
-        lifted_ceps = lifter(fake_cepstra, L=22)
-        self.assertEqual(fake_cepstra.shape, lifted_ceps.shape)
-        lifted_ceps = lifter(fake_cepstra, L=-3)  # if L negative, no lifting applied
-        self.assertTrue(np.array_equal(lifted_ceps, fake_cepstra))

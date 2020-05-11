@@ -190,7 +190,8 @@ def find_device(min_input=0, min_output=0):
 
 
 def padding(x, width, tail=True, constant_values=0):
-    """Pad signal with certain width, support 1-3D tensors. Use it to add silence to a signal
+    """Pad signal with certain width, support 1-3D tensors. 
+    Use it to add silence to a signal
     TODO: CHECK pad array
 
 
@@ -227,7 +228,8 @@ def is_pow2(val):
 
 
 def next_pow2(x):
-    """Find the closest pow of 2 that is great or equal or x, based on shift_bit_length
+    """Find the closest pow of 2 that is great or equal or x, 
+    based on shift_bit_length
 
     Parameters
     ----------
@@ -242,26 +244,6 @@ def next_pow2(x):
     if x < 0:
         raise AttributeError("x needs to be positive integer.")
     return 1 << (x - 1).bit_length()
-
-
-def preemphasis(x, coeff=0.97):
-    """Pre-emphasis filter to whiten the spectrum.
-    Pre-emphasis is a way of compensating for the rapid decaying spectrum of speech.
-    Can often skip this step in the cases of music for example
-
-    Parameters
-    ----------
-    x : numpy.ndarray
-        Signal array
-    coeff : float
-        Preemphasis coefficient. The larger the stronger smoothing and the slower response to change.
-
-    Returns
-    -------
-    _ : numpy.ndarray
-        The whitened signal.
-    """
-    return np.append(x[0], x[1:] - coeff * x[:-1])
 
 
 def round_half_up(number):
@@ -350,7 +332,8 @@ def magspec(frames, NFFT):
 
 
 def powspec(frames, NFFT):
-    """Compute the power spectrum of each frame in frames, first comeputer the magnitude spectrum
+    """Compute the power spectrum of each frame in frames, 
+    first comeputer the magnitude spectrum
 
     Parameters
     ----------
@@ -362,7 +345,8 @@ def powspec(frames, NFFT):
     Returns
     -------
     _ : numpy array
-        Power spectrum of the framed signal. Each row has the size of NFFT / 2 + 1 due to rfft.
+        Power spectrum of the framed signal. 
+        Each row has the size of NFFT / 2 + 1 due to rfft.
     """
     return 1.0 / NFFT * np.square(magspec(frames, NFFT))
 
@@ -397,76 +381,3 @@ def mel2hz(mel):
         value in Mels, same type as the input.
     """
     return 700 * (10 ** (mel / 2595.0) - 1)
-
-
-def mel_filterbanks(sr, nfilters=26, nfft=512, lowfreq=0, highfreq=None):
-    """Compute a Mel-filterbank. The filters are stored in the rows, the columns correspond
-    to fft bins. The filters are returned as an array of size nfilt * (nfft/2 + 1)
-
-    Parameters
-    ----------
-    sr : int
-        Sampling rate
-    nfilters : int
-        The number of filters, default 20
-    nfft : int
-        The size of FFT, default 512
-    lowfreq : int or float
-        The lowest band edge of the mel filters, default 0 Hz
-    highfreq : int or float
-        The highest band edge of the mel filters, default sr // 2
-
-    Returns
-    -------
-    _ : numpy.ndarray
-        A numpy array of size nfilt * (nfft/2 + 1) containing filterbank. Each row holds 1 filter.
-    """
-    highfreq = highfreq or sr // 2
-
-    # compute points evenly spaced in mels
-    lowmel = hz2mel(lowfreq)
-    highmel = hz2mel(highfreq)
-    melpoints = np.linspace(lowmel, highmel, nfilters + 2)
-    # our points are in Hz, but we use fft bins, so we have to convert
-    #  from Hz to fft bin number
-    bin = np.floor((nfft + 1) * mel2hz(melpoints) / sr)
-
-    filter_banks = np.zeros([nfilters, nfft // 2 + 1])
-    for j in range(0, nfilters):
-        for i in range(int(bin[j]), int(bin[j + 1])):
-            filter_banks[j, i] = (i - bin[j]) / (bin[j + 1] - bin[j])
-        for i in range(int(bin[j + 1]), int(bin[j + 2])):
-            filter_banks[j, i] = (bin[j + 2] - i) / (bin[j + 2] - bin[j + 1])
-    return filter_banks
-
-
-def lifter(cepstra, L=22):
-    """Apply a cepstral lifter the the matrix of cepstra. This has the effect of increasing the
-    magnitude of the high frequency DCT coeffs.
-
-    Liftering operation is similar to filtering operation in the frequency domain
-    where a desired quefrency region for analysis is selected by multiplying the whole cepstrum
-    by a rectangular window at the desired position.
-    There are two types of liftering performed, low-time liftering and high-time liftering.
-    Low-time liftering operation is performed to extract the vocal tract characteristics in the quefrency domain
-    and high-time liftering is performed to get the excitation characteristics of the analysis speech frame.
-
-
-    Parameters
-    ----------
-    cepstra : numpy.ndarray
-        The matrix of mel-cepstra
-    L : int
-        The liftering coefficient to use. Default is 22, since cepstra usually has 13 elements, 22
-        L will result almost half pi of sine lift. It essential try to emphasis to lower ceptral coefficient
-        while deemphasize higher ceptral coefficient as they are less discriminative for speech contents.
-    """
-    if L > 0:
-        nframes, ncoeff = np.shape(cepstra)
-        n = np.arange(ncoeff)
-        lift = 1 + (L / 2.) * np.sin(np.pi * n / L)
-        return lift * cepstra
-    else:
-        # values of L <= 0, do nothing
-        return cepstra
-
