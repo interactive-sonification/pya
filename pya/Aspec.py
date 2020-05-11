@@ -1,4 +1,3 @@
-from warnings import warn
 import logging
 import numpy as np
 import scipy.interpolate
@@ -31,16 +30,15 @@ class Aspec:
             self.label = x.label + "_spec"
             self.samples = x.samples
             self.channels = x.channels
-            self.cn = x.cn
-            if cn is not None and self.cn != cn:
-                warn("Aspec:init: given cn  different from Asig cn: using Asig.cn")
+            self.cn = cn or x.cn
         elif type(x) == list or type(x) == np.ndarray:
             self.rfftspec = np.array(x)
             self.sr = sr
             self.samples = (len(x) - 1) * 2
             self.channels = x.ndim
         else:
-            raise TypeError("unknown initializer, argument x needs to be an Asig or array")
+            s = "argument x must be an Asig or an array"
+            raise TypeError(s)
         if label:
             self.label = label
         if cn:
@@ -54,7 +52,7 @@ class Aspec:
 
     def to_sig(self):
         """Convert Aspec into Asig"""
-        return Asig.Asig(np.fft.irfft(self.rfftspec), 
+        return Asig.Asig(np.fft.irfft(self.rfftspec),
                          sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
     def weight(self, weights, freqs=None, curve=1, kind='linear'):
@@ -82,7 +80,8 @@ class Aspec:
             if nfreqs != len(freqs):
                 _LOGGER.error("len(weights)!=len(freqs)")
                 return self
-            if all(freqs[i] < freqs[i + 1] for i in range(len(freqs) - 1)):  # check if list is monotonous
+            if all(freqs[i] < freqs[i + 1] for i in range(len(freqs) - 1)):
+                # check if list is monotonous
                 if freqs[0] > 0:
                     freqs = np.insert(np.array(freqs), 0, 0)
                     weights = np.insert(np.array(weights), 0, weights[0])
@@ -94,14 +93,17 @@ class Aspec:
                 return self
             given_freqs = freqs
         if nfreqs != self.nr_freqs:
-            interp_fn = scipy.interpolate.interp1d(given_freqs, weights, kind=kind)
+            interp_fn = scipy.interpolate.interp1d(given_freqs,
+                                                   weights, kind=kind)
             # ToDo: curve segmentwise!!!
-            rfft_new = self.rfftspec * interp_fn(self.freqs) ** curve  
+            rfft_new = self.rfftspec * interp_fn(self.freqs) ** curve
         else:
             rfft_new = self.rfftspec * weights ** curve
-        return Aspec(rfft_new, self.sr, label=self.label + "_weighted", cn=self.cn)
+        return Aspec(rfft_new, self.sr,
+                     label=self.label + "_weighted", cn=self.cn)
 
-    def plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs):  # TODO add ax option
+    def plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs):
+        # TODO add ax option
         """Plot spectrum
 
         Parameters
@@ -134,6 +136,5 @@ class Aspec:
 
     def __repr__(self):
         return "Aspec('{}'): {} x {} @ {} Hz = {:.3f} s".format(
-            self.label, self.channels, self.samples, 
+            self.label, self.channels, self.samples,
             self.sr, self.samples / self.sr)
-
