@@ -45,15 +45,6 @@ def cpsmidi(c):
     return 69 + 12 * np.log2(c / 440.0)
 
 
-def clip(value, minimum=-float("inf"), maximum=float("inf")):
-    """Signal hard clipping"""
-    if value < minimum:
-        return minimum
-    if value > maximum:
-        return maximum
-    return value
-
-
 def dbamp(db):
     """Convert db to amplitude"""
     return 10 ** (db / 20.0)

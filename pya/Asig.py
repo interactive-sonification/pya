@@ -13,7 +13,7 @@ from .Aserver import Aserver
 from . import Aspec
 from . import Astft
 from . import Amfcc
-from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, buf_to_float
+from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, buf_to_float
 from .helper import spectrum, audio_from_file, padding
 from copy import copy, deepcopy
 
