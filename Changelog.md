@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 (April 2020)
+* new Amfcc class for MFCC feature extraction
+* new helper.visualization.py and gridplot()
+* new helper functions: padding, is_pow2, next_pow2, round_half_up, rolling_window, signal_to_frame,
+  magspec, powspec, hz2mel, mel2hz_
+
 ## 0.3.3 (February 2020)
 
 * Bugfix #34: Improve indexing of Asig
