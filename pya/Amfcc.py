@@ -1,4 +1,5 @@
 import numpy as np
+from warnings import warn
 from .helper import next_pow2, signal_to_frame, round_half_up, magspec
 from .helper import mel2hz, hz2mel, is_pow2
 from .helper import basicplot
@@ -110,6 +111,7 @@ class Amfcc:
         # ----------Prepare attributes ------------`-------------
         # First prepare for parameters
         # x represent the audio signal, which can be Asig object or np.array.
+        self.im = None
         if type(x) == Asig.Asig:
             self.sr = x.sr
             self.x = x.sig
@@ -333,12 +335,16 @@ class Amfcc:
         nxlabel : int, optional
             The amountt of labels on the x axis. Default is 8 . 
         """
-        ax = basicplot(self.cepstra.T, None,
-                      channels=self.channels,
-                      cn=self.cn, offset=offset, scale=scale,
-                      ax=ax, typ='mfcc', show_bar=show_bar,
-                      xlabel='time', xlim=xlim, ylim=ylim, **kwargs)
-
+        if self.channels > 1:
+            warn("Multichannel mfcc is not yet implemented. Please use "
+                 "mono signal for now, no plot is made")
+            return self
+        im, ax = basicplot(self.cepstra.T, None,
+                           channels=self.channels,
+                           cn=self.cn, offset=offset, scale=scale,
+                           ax=ax, typ='mfcc', show_bar=show_bar,
+                           xlabel='time', xlim=xlim, ylim=ylim, **kwargs)
+        self.im = im
         # ax = plt.gca() or ax
         # self.im = ax.pcolormesh(self.cepstra.T, cmap=plt.get_cmap(cmap))
         xticks = np.linspace(0, self.nframes, nxlabel, dtype=int)
