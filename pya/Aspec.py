@@ -118,21 +118,23 @@ class Aspec:
             Set x axis range (Default value = None)
         ylim : tuple or list or None
             Set y axis range (Default value = None)
+        offset : int or float
+            This is the absolute value each plot is shift vertically
+            to each other.
+        scale : float
+            Scaling factor of the plot, use in multichannel plotting.
         **kwargs :
             Keyword arguments for matplotlib.pyplot.plot()
-
         Returns
         -------
         _ : Asig
             self
         """
-        _ = basicplot(fn(self.rfftspec), self.freqs,
-                      sr=self.sr, channels=self.channels,
-                      cn=self.cn, offset=offset, scale=scale,
-                      ax=ax, typ='plot',
-                      xlabel='freq (Hz)',
-                      ylabel=f'{fn.__name__}(freq)',
-                      xlim=xlim, ylim=ylim, **kwargs)
+        _, ax = basicplot(fn(self.rfftspec), self.freqs, channels=self.channels,
+                          cn=self.cn, offset=offset, scale=scale,
+                          ax=ax, typ='plot',
+                          xlabel='freq (Hz)', ylabel=f'{fn.__name__}(freq)',
+                          xlim=xlim, ylim=ylim, **kwargs)
         return self
 
     def __repr__(self):
