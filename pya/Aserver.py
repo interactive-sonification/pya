@@ -228,7 +228,7 @@ class Aserver:
         """callback function, called from pastream thread when data needed."""
         tnow = self.block_time
         self.block_time += self.block_duration
-        self.block_cnt += 1
+        # self.block_cnt += 1  # TODO this will get very large eventually
         # just curious - not needed but for time stability check
         self.timejitter = time.time() - self.block_time
         if self.timejitter > 3 * self.block_duration:
@@ -243,7 +243,6 @@ class Aserver:
             self.srv_curpos.clear()
             self.srv_outs.clear()
             return self.backend.process_buffer(self.empty_buffer)
-
         data = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
         # iterate through all registered asigs, adding samples to play
         dellist = []  # memorize completed items for deletion
