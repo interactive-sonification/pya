@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-
+from warnings import warn
 import matplotlib.pyplot as plt
 import math
 import numpy as np
@@ -7,7 +7,7 @@ import matplotlib.gridspec as grd
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-def basicplot(data, ticks, sr, channels, offset=0, scale=1,
+def basicplot(data, ticks, channels, offset=0, scale=1,
               cn=None, ax=None, typ='plot', cmap='inferno',
               xlim=None, ylim=None, xlabel='', ylabel='',
               show_bar=True,
@@ -37,11 +37,13 @@ def basicplot(data, ticks, sr, channels, offset=0, scale=1,
         # Plot everything on top of each other.
         if typ == 'plot':
             p = ax.plot(ticks, data, **kwargs)
-        elif typ == 'pcolormesh':
-            # ticks is (times, freqs) for Spectrogram
-            p = ax.pcolormesh(ticks[0], ticks[1], np.abs(data),
+        elif typ == 'spectrogram':
+            # ticks is (times, freqs)
+            p = ax.pcolormesh(ticks[0], ticks[1], data,
                               cmap=plt.get_cmap(cmap), **kwargs)
-            ax.set_ylabel(ylabel)
+        elif typ == 'mfcc':
+            p = ax.pcolormesh(data, cmap=plt.get_cmap(cmap), **kwargs)
+    
     else:
         if typ == 'plot': 
             for idx, val in enumerate(data.T):
@@ -49,24 +51,30 @@ def basicplot(data, ticks, sr, channels, offset=0, scale=1,
                 ax.set_xlabel(xlabel)
                 if cn:
                     ax.text(0, (idx + 0.1) * offset, cn[idx])
-        elif typ == 'pcolormesh':
+        elif typ == 'spectrogram':
             for idx in range(data.shape[1]):
                 p = ax.pcolormesh(ticks[0], idx * offset + scale * ticks[1], 
-                                  np.abs(data[:, idx, :]),
-                                  cmap=plt.get_cmap(cmap), **kwargs)
+                                  data[:, idx, :], cmap=plt.get_cmap(cmap),
+                                  **kwargs)
                 if cn:
                     ax.text(0, (idx + 0.1) * offset, cn[idx])
             ax.set_yticklabels([])
-            if show_bar:
-                divider = make_axes_locatable(ax)
-                cax = divider.append_axes('right', size="2%", pad=0.03)
-                _ = plt.colorbar(p, cax=cax)  # Add
-            ax.set_ylabel(ylabel)
+        elif typ == 'mfcc':
+            warn("Multichannel mfcc is not yet implemented. Please use "
+                 "mono signal for now")
+            return ax
+            
+            
     ax.set_xlabel(xlabel)
     if xlim:
         ax.set_xlim([xlim[0], xlim[1]])
     if ylim:
         ax.set_ylim([ylim[0], ylim[1]])
+    # Colorbar
+    if show_bar:
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes('right', size="2%", pad=0.03)
+        _ = plt.colorbar(p, cax=cax)  # Add
     return ax
 
 

@@ -1,6 +1,7 @@
 import numpy as np
 from .helper import next_pow2, signal_to_frame, round_half_up, magspec
 from .helper import mel2hz, hz2mel, is_pow2
+from .helper import basicplot
 import logging
 from scipy.signal import get_window
 from scipy.fftpack import dct
@@ -114,6 +115,8 @@ class Amfcc:
             self.x = x.sig
             self.label = ''.join([x.label, "_mfccs"])
             self.duration = x.get_duration()
+            self.channels = x.channels
+            self.cn = x.cn
 
         elif isinstance(x, np.ndarray):
             self.x = x
@@ -125,6 +128,8 @@ class Amfcc:
                 raise AttributeError(msg)
             self.duration = np.shape(x)[0] / self.sr
             self.label = label
+            self.channels if self.x.ndim == 1 else self.x.shape[1]
+            self.cn = None
         else:
             msg = "x can only be either a numpy.ndarray or pya.Asig object."
             raise TypeError(msg)
@@ -311,7 +316,8 @@ class Amfcc:
             return cepstra
 
     def plot(self, cmap='inferno', show_bar=True,
-             x_as_time=True, nxlabel=8, axis=None):
+             offset=0, scale=1., xlim=None, ylim=None,
+             x_as_time=True, nxlabel=8, ax=None, **kwargs):
         """Plot Amfcc.features via matshow, x is frames/time, y is the MFCCs
 
         Parameters
@@ -327,13 +333,17 @@ class Amfcc:
         nxlabel : int, optional
             The amountt of labels on the x axis. Default is 8 . 
         """
-        ax = plt.gca() or axis
-        # self.im = ax.matshow(self.cepstra.T, 
-        # cmap=plt.get_cmap(cmap), origin='lower', aspect='auto', **kwargs)
-        self.im = ax.pcolormesh(self.cepstra.T, cmap=plt.get_cmap(cmap))
+        ax = basicplot(self.cepstra.T, None,
+                      channels=self.channels,
+                      cn=self.cn, offset=offset, scale=scale,
+                      ax=ax, typ='mfcc', show_bar=show_bar,
+                      xlabel='time', xlim=xlim, ylim=ylim, **kwargs)
+
+        # ax = plt.gca() or ax
+        # self.im = ax.pcolormesh(self.cepstra.T, cmap=plt.get_cmap(cmap))
         xticks = np.linspace(0, self.nframes, nxlabel, dtype=int)
         ax.set_xticks(xticks)
-        # ax.set_ytitle("MFCC Coefficient")
+        # ax.set_("MFCC Coefficient")
         if x_as_time:
             xlabels = np.round(np.linspace(0, self.duration, nxlabel), 
                                decimals=2)
@@ -341,8 +351,4 @@ class Amfcc:
             ax.set_xticklabels(xlabels)
             ax.xaxis.tick_bottom()
             # ax.set_xtitle("Time (s)")
-        if show_bar:
-            divider = make_axes_locatable(ax)
-            cax = divider.append_axes('right', size="2%", pad=0.03)
-            _ = plt.colorbar(self.im, cax=cax)   # Add
-        return self  # ToDo maybe return the axis instead.
+        return self
