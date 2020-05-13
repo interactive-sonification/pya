@@ -14,6 +14,7 @@ from . import Astft
 from . import Amfcc
 from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, buf_to_float
 from .helper import spectrum, audio_from_file, padding
+from .helper import basicplot
 from copy import copy, deepcopy
 
 _LOGGER = logging.getLogger(__name__)
@@ -490,8 +491,7 @@ class Asig:
                         self.sig[-nn:, cidx] = src[dn:]
                 else:  # this is when start is beyond length of dest...
                     nn = ridx.start + sn
-                    self.sig = np.r_[
-                        self.sig, np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:])]
+                    self.sig = np.r_[self.sig, np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:])]
                     if self.sig.ndim == 1:
                         self.sig[-sn:] = src
                     else:
@@ -702,7 +702,8 @@ class Asig:
                 raise AttributeError(msg)
 
         sig = np.stack((left_sig, right_sig), axis=1)
-        return Asig(sig, self.sr, label=self.label + '_to_stereo', cn=['l', 'r'])
+        return Asig(sig, self.sr,
+                    label=self.label + '_to_stereo', cn=['l', 'r'])
 
     def rewire(self, dic):
         """Rewire channels to flexibly allow weighted channel permutations.
@@ -852,7 +853,8 @@ class Asig:
         """
         return np.sqrt(np.mean(np.square(self.sig), axis))
 
-    def plot(self, fn=None, offset=0, scale=1, xlim=None, ylim=None, **kwargs):
+    def plot(self, fn=None, offset=0, scale=1, x_as_time=True,
+             ax=None, xlim=None, ylim=None, **kwargs):
         """Display signal graph
 
         Parameters
@@ -880,27 +882,18 @@ class Asig:
                 def fn(x): 
                     return np.sign(x) * ampdb((abs(x) * 2 ** 16 + 1))
             elif not callable(fn):
-                raise AttributeError("Asig.plot: fn is neither keyword nor function")
+                msg = "Asig.plot: fn is neither keyword nor function"
+                raise AttributeError(msg)
             plot_sig = fn(self.sig)
         else:
             plot_sig = self.sig
-        if self.channels == 1 or (offset == 0 and scale == 1):
-            self._['plot'] = plt.plot(
-                np.arange(0, self.samples) / self.sr, plot_sig, **kwargs)
-        else:
-            p = []
-            ts = np.linspace(0, self.samples / self.sr, self.samples)
-            for i, c in enumerate(self.sig.T):
-                p.append(plt.plot(ts, i * offset + c * scale, **kwargs))
-                plt.xlabel("time [s]")
-                if self.cn:
-                    plt.text(0, (i + 0.1) * offset, self.cn[i])
-        if xlim is not None:
-            plt.xlim([xlim[0], xlim[1]])
-        else:
-            plt.xlim([0, self.get_duration()])
-        if ylim is not None:
-            plt.ylim([ylim[0], ylim[1]])
+        xticks = np.arange(0, self.samples) / self.sr if \
+            x_as_time else np.arange(0, self.samples)
+        # From here onward we can abstract it. 
+        self._['plot'], ax = basicplot(plot_sig, xticks, channels=self.channels,
+                                       cn=self.cn, offset=offset, scale=scale,
+                                       ax=ax, typ='plot',
+                                       xlim=xlim, ylim=ylim, **kwargs)
         return self
 
     def get_duration(self):
@@ -1031,7 +1024,8 @@ class Asig:
             return Asig(result, self.sr, label=self.label + "_added", cn=self.cn)
 
     def __radd__(self, other):
-        return Asig(other + self.sig, self.sr, label=self.label + "_added", cn=self.cn)
+        return Asig(other + self.sig, self.sr,
+                    label=self.label + "_added", cn=self.cn)
 
     def __sub__(self, other):
         """Magic method for subtraction. You can either minus a scalar or an Asig object. If subtracting an Asig,
@@ -1041,7 +1035,8 @@ class Asig:
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
         if isinstance(othersig, numbers.Number):  # When other is just a scalar
-            return Asig(selfsig - othersig, self.sr, label=self.label + "_subtracted", cn=self.cn)
+            return Asig(selfsig - othersig,
+                        self.sr, label=self.label + "_subtracted", cn=self.cn)
         else:
             if self.mix_mode == 'bound':
                 try:
@@ -1289,53 +1284,6 @@ class Asig:
         """
         w, h = scipy.signal.freqz(self._['b'], self._['a'], worN)
         plt.plot(w * self.sr / 2 / np.pi, ampdb(abs(h)), **kwargs)
-
-    # TODO remove add() for now as same functionality can be done by __add__()
-    # def add(self, sig, pos=None, amp=1, onset=None):
-    #     """Add a signal ToDo is this even necessary anymore.
-
-    #     Parameters
-    #     ----------
-    #     sig : asig
-    #         Signal to add
-    #     pos : int, None
-    #         Postion to add (Default value = None)
-    #     amp : float
-    #         Aplitude (Default value = 1)
-    #     onset : float or None
-    #         Similar to pos but in time rather sample,
-    #         given a value to this will overwrite pos (Default value = None)
-
-    #     Returns
-    #     -------
-    #     _ : Asig
-    #         Asig with the added signal.
-
-    #     """
-    #     if type(sig) == Asig:
-    #         n = sig.samples
-    #         sr = sig.sr
-    #         sigar = sig.sig
-    #         if sig.channels != self.channels:
-    #             warn("channel mismatch!")
-    #             return -1
-    #         if sr != self.sr:
-    #             warn("sr mismatch: use resample")
-    #             return -1
-    #     else:
-    #         n = np.shape(sig)[0]
-    #         sr = self.sr  # assume same sr as self
-    #         sigar = sig
-    #     if onset:   # onset overwrites pos, time has priority
-    #         pos = int(onset * self.sr)
-    #     if not pos:
-    #         pos = 0  # add to begin if neither pos nor onset have been specified
-    #     last = pos + n
-    #     if last > self.samples:
-    #         last = self.samples
-    #         sigar = sigar[:last - pos]
-    #     self.sig[pos:last] += amp * sigar
-    #     return self
 
     def envelope(self, amps, ts=None, curve=1, kind='linear'):
         """Create an envelop and multiply by the signal.
