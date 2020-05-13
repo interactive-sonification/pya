@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from warnings import warn
 import matplotlib.pyplot as plt
 import math
 import numpy as np
@@ -10,7 +9,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 def basicplot(data, ticks, channels, offset=0, scale=1,
               cn=None, ax=None, typ='plot', cmap='inferno',
               xlim=None, ylim=None, xlabel='', ylabel='',
-              show_bar=True,
+              show_bar=False,
               **kwargs):
     """Basic version of the plot for pya, this can be directly used
     by Asig. Aspec/Astft/Amfcc will have different extra setting
@@ -37,13 +36,13 @@ def basicplot(data, ticks, channels, offset=0, scale=1,
         # Plot everything on top of each other.
         if typ == 'plot':
             p = ax.plot(ticks, data, **kwargs)
+            # return p, ax
         elif typ == 'spectrogram':
             # ticks is (times, freqs)
             p = ax.pcolormesh(ticks[0], ticks[1], data,
                               cmap=plt.get_cmap(cmap), **kwargs)
         elif typ == 'mfcc':
             p = ax.pcolormesh(data, cmap=plt.get_cmap(cmap), **kwargs)
-    
     else:
         if typ == 'plot': 
             for idx, val in enumerate(data.T):
@@ -59,12 +58,6 @@ def basicplot(data, ticks, channels, offset=0, scale=1,
                 if cn:
                     ax.text(0, (idx + 0.1) * offset, cn[idx])
             ax.set_yticklabels([])
-        elif typ == 'mfcc':
-            warn("Multichannel mfcc is not yet implemented. Please use "
-                 "mono signal for now")
-            return ax
-            
-            
     ax.set_xlabel(xlabel)
     if xlim:
         ax.set_xlim([xlim[0], xlim[1]])
@@ -75,7 +68,7 @@ def basicplot(data, ticks, channels, offset=0, scale=1,
         divider = make_axes_locatable(ax)
         cax = divider.append_axes('right', size="2%", pad=0.03)
         _ = plt.colorbar(p, cax=cax)  # Add
-    return ax
+    return p, ax
 
 
 def gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None):
@@ -146,16 +139,20 @@ def gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None):
                 # Truncate if str too long
                 title = (title[:30] + "..." if len(title) > 30 else title)
                 ax.set_title(title)
-                if isinstance(pya_objects[idx], Asig.Asig):
-                    pya_objects[idx].plot()
-                elif isinstance(pya_objects[idx], Aspec.Aspec):
-                    pya_objects[idx].plot()
-                elif isinstance(pya_objects[idx], Astft.Astft):
-                    pya_objects[idx].plot(show_bar=False)
+                if isinstance(pya_objects[idx], Asig):
+                    print("is asig")
+                    pya_objects[idx].plot(ax=ax)
+                elif isinstance(pya_objects[idx], Aspec):
+                    print("is aspec")
+                    pya_objects[idx].plot(ax=ax)
+                elif isinstance(pya_objects[idx], Astft):
+                    print("is astft")
+                    pya_objects[idx].plot(show_bar=False, ax=ax)
                     next_ax = plt.subplot(grid[i + 1])
                     _ = plt.colorbar(pya_objects[idx].im, cax=next_ax)
-                elif isinstance(pya_objects[idx], Amfcc.Amfcc):
-                    pya_objects[idx].plot(show_bar=False, axis=ax)
+                elif isinstance(pya_objects[idx], Amfcc):
+                    print("is amfcc")
+                    pya_objects[idx].plot(show_bar=False, ax=ax)
                     next_ax = plt.subplot(grid[i + 1])
                     _ = plt.colorbar(pya_objects[idx].im, cax=next_ax)
     return fig
