@@ -3,6 +3,7 @@ import numpy as np
 import scipy.interpolate
 import matplotlib.pyplot as plt
 from . import Asig
+from .helper import basicplot
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -26,7 +27,7 @@ class Aspec:
         """
         if type(x) == Asig.Asig:
             self.sr = x.sr
-            self.rfftspec = np.fft.rfft(x.sig)
+            self.rfftspec = np.fft.rfft(x.sig, axis=0)
             self.label = x.label + "_spec"
             self.samples = x.samples
             self.channels = x.channels
@@ -102,14 +103,17 @@ class Aspec:
         return Aspec(rfft_new, self.sr,
                      label=self.label + "_weighted", cn=self.cn)
 
-    def plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs):
-        # TODO add ax option
+    def plot(self, fn=np.abs, ax=None,
+             offset=0, scale=1,
+             xlim=None, ylim=None, **kwargs):
         """Plot spectrum
 
         Parameters
         ----------
         fn : func
             function for processing the rfft spectrum. (Default value = np.abs)
+        x_as_time : bool, optional
+            By default x axis display the time, if faulse display samples
         xlim : tuple or list or None
             Set x axis range (Default value = None)
         ylim : tuple or list or None
@@ -122,16 +126,13 @@ class Aspec:
         _ : Asig
             self
         """
-        plt.plot(self.freqs, fn(self.rfftspec), **kwargs)
-        if xlim is not None:
-            plt.xlim([xlim[0], xlim[1]])
-        else:
-            plt.xlim(0, self.freqs.shape[0])
-        if ylim is not None:
-            plt.ylim([ylim[0], ylim[1]])
-
-        plt.xlabel('freq (Hz)')
-        plt.ylabel(f'{fn.__name__}(freq)')
+        _ = basicplot(fn(self.rfftspec), self.freqs,
+                      sr=self.sr, channels=self.channels,
+                      cn=self.cn, offset=offset, scale=scale,
+                      ax=ax, typ='plot',
+                      xlabel='freq (Hz)',
+                      ylabel=f'{fn.__name__}(freq)',
+                      xlim=xlim, ylim=ylim, **kwargs)
         return self
 
     def __repr__(self):
