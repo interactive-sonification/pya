@@ -31,7 +31,8 @@ class Astft:
             x can be two forms, the most commonly used is an Asig object. 
             Such as directly acquired from an Asig object via Asig.to_stft().
         sr : int
-            sampling rate, this is only necessary if x is not Asig. (Default value = None)
+            sampling rate, this is only necessary if x is not Asig.
+            (Default value = None)
         label : str
             name of the Asig. (Default value = None)
         window : str
@@ -72,6 +73,7 @@ class Astft:
         self.boundary = boundary
         self.padded = padded
         # self.cn = cn
+        self.im = None  # buffer for the image
 
         if type(x) == Asig.Asig:
             self.sr = x.sr
@@ -103,7 +105,6 @@ class Astft:
                  noverlap=noverlap, nfft=nfft, detrend=detrend,
                  return_onesided=return_onesided, boundary=boundary,
                  padded=padded, axis=0)
-
 
         # # TODO simplify code by giving axis=0 to stft()
         # if self.channels == 1:
@@ -149,7 +150,8 @@ class Astft:
                 raise AttributeError("Length of cn should equal channels.")
 
     def to_sig(self, **kwargs):
-        """Create signal from stft, i.e. perform istft,kwargs overwrite Astft values for istft
+        """Create signal from stft, i.e. perform istft,
+        kwargs overwrite Astft values for istft
 
         Parameters
         ----------
@@ -181,7 +183,7 @@ class Astft:
             return Asig.Asig(np.transpose(sig),
                              sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
-    def plot(self, fn=lambda x: x, ch=None, ax=None, 
+    def plot(self, fn=lambda x: x, ax=None, 
              offset=0, scale=1., xlim=None, ylim=None,
              show_bar=True, **kwargs):
         """Plot spectrogram
@@ -206,14 +208,15 @@ class Astft:
         _ : Asig
             self
         """
-        im = basicplot(self.stft, (self.times, self.freqs),
-                      sr=self.sr, channels=self.channels,
-                      cn=self.cn, offset=offset, scale=scale,
-                      ax=ax, typ='pcolormesh', show_bar=show_bar,
-                      xlabel='time', ylabel='freq',
-                      xlim=xlim, ylim=ylim, **kwargs)
-        return im
+        self.im, ax = basicplot(fn(np.abs(self.stft)), (self.times, self.freqs),
+                                channels=self.channels,
+                                cn=self.cn, offset=offset, scale=scale,
+                                ax=ax, typ='spectrogram', show_bar=show_bar,
+                                xlabel='time', xlim=xlim, ylim=ylim, **kwargs)
+        ax.set_ylabel('freq')
+        return self
 
     def __repr__(self):
         return "Astft('{}'): {} x {} @ {} Hz = {:.3f} s cn={}".format(
-            self.label, self.channels, self.samples, self.sr, self.samples / self.sr, self.cn)
+            self.label, self.channels, self.samples,
+            self.sr, self.samples / self.sr, self.cn)
