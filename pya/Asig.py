@@ -1,4 +1,3 @@
-
 import numbers
 from warnings import warn
 import logging
@@ -22,8 +21,10 @@ _LOGGER.addHandler(logging.NullHandler())
 
 
 class Asig:
-    """Audio signal class. Asig enables manipulation of audio signals in the style of numpy and more. 
-    Asig offer functions for plotting (via matplotlib) and playing audio (using the pya.Aserver class) 
+    """Audio signal class. 
+    Asig enables manipulation of audio signals in the style of numpy and more. 
+    Asig offer functions for plotting (via matplotlib) and playing audio 
+    (using the pya.Aserver class) 
 
     Attributes
     ----------
@@ -36,14 +37,16 @@ class Asig:
     channels : int
         Number of channels
     cn : list of str, None
-        cn short for channel names is a list of string of size channels, 
-        to give each channel a unique name. 
-        channel names can be used to subset signal channels in a more readible way, 
-        e.g. asig[:, ['left', 'front']] subsets the left and front channels of the signal. 
+        cn short for channel names is a list of string of size channels,
+        to give each channel a unique name.
+        channel names can be used to subset signal channels in a more readible way,
+        e.g. asig[:, ['left', 'front']] subsets the left and front channels of the signal.
     mix_mode : str or None
         used to extend numpy __setitem__() operation to frequent audio manipulations such as
-        mixing, extending, boundary, replacing. Current Asig supports the mix_modes: 
-        bound, extend, overwrite.  mix_mode should not be set directly but is set temporarilty when using 
+        mixing, extending, boundary, replacing.
+        Current Asig supports the mix_modes: 
+        bound, extend, overwrite.  mix_mode should not be 
+        set directly but is set temporarilty when using 
         the .bound, .extend and .overwrite properties.
     """
 
@@ -53,14 +56,17 @@ class Asig:
         Parameters
         ----------
             sig: numpy.array or int or float or str
-                numpy.array for audio signal, str for filepath, int create x samples of silence, 
+                numpy.array for audio signal,
+                str for filepath, int create x samples of silence,
                 float creates x seconds of seconds.
             sr : int 
                 Sampling rate
             label : str 
                 Label for the object
             channels : int
-                Number of channels, no need to set it if you already have a signal for the sig argument.
+                Number of channels,
+                no need to set it if you already have a
+                signal for the sig argument.
             cn : list or None
                 A list of channel names, size should match the channels.
         """
@@ -111,7 +117,8 @@ class Asig:
             self._cn = None
         else:
             if len(val) == self.channels:
-                if all(isinstance(x, str) for x in val):  # check if all elements are str
+                # check if all elements are str
+                if all(isinstance(x, str) for x in val): 
                     self._cn = val
                 else:
                     raise TypeError(
@@ -122,7 +129,7 @@ class Asig:
 
     def _load_audio_file(self, fname):
         """Load audio file, and set self.sig to the signal and self.sr to the sampling rate. 
-        Currently support two types of audio loader: 1) Standard library for .wav, .aiff, 
+        Currently support two types of audio loader: 1) Standard library for .wav, .aiff,
         and ffmpeg for other such as .mp3.
 
         Parameters
