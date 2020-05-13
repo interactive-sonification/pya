@@ -10,6 +10,7 @@ from .Arecorder import Arecorder
 from .Ugen import Ugen
 from .version import __version__
 from .helper import *
+# from .helper.visualization import basicplots
 from .backend import *
 
 
