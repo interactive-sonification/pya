@@ -3,8 +3,10 @@
 ## 0.4.0 (April 2020)
 * new Amfcc class for MFCC feature extraction
 * new helper.visualization.py and gridplot()
+* optimise plot() methods of all classes for better consistency in both style and the API
 * new helper functions: padding, is_pow2, next_pow2, round_half_up, rolling_window, signal_to_frame,
   magspec, powspec, hz2mel, mel2hz_
+* Fixed bug that for multichanels spectrum the rfft is not performed on the x-axis
 
 ## 0.3.3 (February 2020)
 
