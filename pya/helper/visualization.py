@@ -140,18 +140,14 @@ def gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None):
                 title = (title[:30] + "..." if len(title) > 30 else title)
                 ax.set_title(title)
                 if isinstance(pya_objects[idx], Asig):
-                    print("is asig")
                     pya_objects[idx].plot(ax=ax)
                 elif isinstance(pya_objects[idx], Aspec):
-                    print("is aspec")
                     pya_objects[idx].plot(ax=ax)
                 elif isinstance(pya_objects[idx], Astft):
-                    print("is astft")
                     pya_objects[idx].plot(show_bar=False, ax=ax)
                     next_ax = plt.subplot(grid[i + 1])
                     _ = plt.colorbar(pya_objects[idx].im, cax=next_ax)
                 elif isinstance(pya_objects[idx], Amfcc):
-                    print("is amfcc")
                     pya_objects[idx].plot(show_bar=False, ax=ax)
                     next_ax = plt.subplot(grid[i + 1])
                     _ = plt.colorbar(pya_objects[idx].im, cax=next_ax)
