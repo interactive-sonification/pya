@@ -1,4 +1,3 @@
-
 import numbers
 from warnings import warn
 import logging
@@ -12,8 +11,10 @@ from scipy.io import wavfile
 from .Aserver import Aserver
 from . import Aspec
 from . import Astft
-from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, clip, buf_to_float
-from .helper import spectrum, audio_from_file
+from . import Amfcc
+from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, buf_to_float
+from .helper import spectrum, audio_from_file, padding
+from .helper import basicplot
 from copy import copy, deepcopy
 
 _LOGGER = logging.getLogger(__name__)
@@ -21,8 +22,10 @@ _LOGGER.addHandler(logging.NullHandler())
 
 
 class Asig:
-    """Audio signal class. Asig enables manipulation of audio signals in the style of numpy and more. 
-    Asig offer functions for plotting (via matplotlib) and playing audio (using the pya.Aserver class) 
+    """Audio signal class. 
+    Asig enables manipulation of audio signals in the style of numpy and more. 
+    Asig offer functions for plotting (via matplotlib) and playing audio 
+    (using the pya.Aserver class) 
 
     Attributes
     ----------
@@ -35,14 +38,16 @@ class Asig:
     channels : int
         Number of channels
     cn : list of str, None
-        cn short for channel names is a list of string of size channels, 
-        to give each channel a unique name. 
-        channel names can be used to subset signal channels in a more readible way, 
-        e.g. asig[:, ['left', 'front']] subsets the left and front channels of the signal. 
+        cn short for channel names is a list of string of size channels,
+        to give each channel a unique name.
+        channel names can be used to subset signal channels in a more readible way,
+        e.g. asig[:, ['left', 'front']] subsets the left and front channels of the signal.
     mix_mode : str or None
         used to extend numpy __setitem__() operation to frequent audio manipulations such as
-        mixing, extending, boundary, replacing. Current Asig supports the mix_modes: 
-        bound, extend, overwrite.  mix_mode should not be set directly but is set temporarilty when using 
+        mixing, extending, boundary, replacing.
+        Current Asig supports the mix_modes: 
+        bound, extend, overwrite.  mix_mode should not be 
+        set directly but is set temporarilty when using 
         the .bound, .extend and .overwrite properties.
     """
 
@@ -52,20 +57,24 @@ class Asig:
         Parameters
         ----------
             sig: numpy.array or int or float or str
-                numpy.array for audio signal, str for filepath, int create x samples of silence, 
+                numpy.array for audio signal,
+                str for filepath, int create x samples of silence,
                 float creates x seconds of seconds.
             sr : int 
                 Sampling rate
             label : str 
                 Label for the object
             channels : int
-                Number of channels, no need to set it if you already have a signal for the sig argument.
+                Number of channels,
+                no need to set it if you already have a
+                signal for the sig argument.
             cn : list or None
                 A list of channel names, size should match the channels.
         """
         self.sr = sr
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
+        self.label = label
         if isinstance(sig, str):
             self._load_audio_file(sig)
         elif isinstance(sig, int):  # sample length
@@ -81,13 +90,12 @@ class Asig:
                     (int(sig * sr), channels)).astype("float32")
         else:
             self.sig = np.array(sig).astype("float32")
-        self.label = label
         self.cn = cn
         self._set_col_names()
 
     @property
     def channels(self):
-        """Channel property"""
+        """Return the number of channels"""
         try:
             return self.sig.shape[1]
         except IndexError:
@@ -96,7 +104,7 @@ class Asig:
     @property
     def samples(self):
         """Return the length of signal in samples"""
-        return np.shape(self.sig)[0]  # Update it.
+        return np.shape(self.sig)[0]  
 
     @property
     def cn(self):
@@ -110,7 +118,8 @@ class Asig:
             self._cn = None
         else:
             if len(val) == self.channels:
-                if all(isinstance(x, str) for x in val):  # check if all elements are str
+                # check if all elements are str
+                if all(isinstance(x, str) for x in val): 
                     self._cn = val
                 else:
                     raise TypeError(
@@ -121,7 +130,7 @@ class Asig:
 
     def _load_audio_file(self, fname):
         """Load audio file, and set self.sig to the signal and self.sr to the sampling rate. 
-        Currently support two types of audio loader: 1) Standard library for .wav, .aiff, 
+        Currently support two types of audio loader: 1) Standard library for .wav, .aiff,
         and ffmpeg for other such as .mp3.
 
         Parameters
@@ -129,6 +138,8 @@ class Asig:
         fname : str
             Path to file."""
         self.sig, self.sr = audio_from_file(fname)
+        if self.label == "":
+            self.label = fname
 
     def save_wavfile(self, fname="asig.wav", dtype='float32'):
         """Save signal as .wav file, return self.
@@ -418,7 +429,7 @@ class Asig:
             src = value
             # for list (assume values for channels), mode makes no sense...
             mode = None
-            # TODO: check if useful behavior also for numpy arrays
+
         else:
             _LOGGER.debug("value not asig, ndarray, list")
             src = value
@@ -480,8 +491,7 @@ class Asig:
                         self.sig[-nn:, cidx] = src[dn:]
                 else:  # this is when start is beyond length of dest...
                     nn = ridx.start + sn
-                    self.sig = np.r_[
-                        self.sig, np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:])]
+                    self.sig = np.r_[self.sig, np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:])]
                     if self.sig.ndim == 1:
                         self.sig[-sn:] = src
                     else:
@@ -692,7 +702,8 @@ class Asig:
                 raise AttributeError(msg)
 
         sig = np.stack((left_sig, right_sig), axis=1)
-        return Asig(sig, self.sr, label=self.label + '_to_stereo', cn=['l', 'r'])
+        return Asig(sig, self.sr,
+                    label=self.label + '_to_stereo', cn=['l', 'r'])
 
     def rewire(self, dic):
         """Rewire channels to flexibly allow weighted channel permutations.
@@ -842,7 +853,8 @@ class Asig:
         """
         return np.sqrt(np.mean(np.square(self.sig), axis))
 
-    def plot(self, fn=None, offset=0, scale=1, xlim=None, ylim=None, **kwargs):
+    def plot(self, fn=None, offset=0, scale=1, x_as_time=True,
+             ax=None, xlim=None, ylim=None, **kwargs):
         """Display signal graph
 
         Parameters
@@ -870,25 +882,18 @@ class Asig:
                 def fn(x): 
                     return np.sign(x) * ampdb((abs(x) * 2 ** 16 + 1))
             elif not callable(fn):
-                raise AttributeError("Asig.plot: fn is neither keyword nor function")
+                msg = "Asig.plot: fn is neither keyword nor function"
+                raise AttributeError(msg)
             plot_sig = fn(self.sig)
         else:
             plot_sig = self.sig
-        if self.channels == 1 or (offset == 0 and scale == 1):
-            self._['plot'] = plt.plot(
-                np.arange(0, self.samples) / self.sr, plot_sig, **kwargs)
-        else:
-            p = []
-            ts = np.linspace(0, self.samples / self.sr, self.samples)
-            for i, c in enumerate(self.sig.T):
-                p.append(plt.plot(ts, i * offset + c * scale, **kwargs))
-                plt.xlabel("time [s]")
-                if self.cn:
-                    plt.text(0, (i + 0.1) * offset, self.cn[i])
-        if xlim is not None:
-            plt.xlim([xlim[0], xlim[1]])
-        if ylim is not None:
-            plt.ylim([ylim[0], ylim[1]])
+        xticks = np.arange(0, self.samples) / self.sr if \
+            x_as_time else np.arange(0, self.samples)
+        # From here onward we can abstract it. 
+        self._['plot'], ax = basicplot(plot_sig, xticks, channels=self.channels,
+                                       cn=self.cn, offset=offset, scale=scale,
+                                       ax=ax, typ='plot',
+                                       xlim=xlim, ylim=ylim, **kwargs)
         return self
 
     def get_duration(self):
@@ -1019,7 +1024,8 @@ class Asig:
             return Asig(result, self.sr, label=self.label + "_added", cn=self.cn)
 
     def __radd__(self, other):
-        return Asig(other + self.sig, self.sr, label=self.label + "_added", cn=self.cn)
+        return Asig(other + self.sig, self.sr,
+                    label=self.label + "_added", cn=self.cn)
 
     def __sub__(self, other):
         """Magic method for subtraction. You can either minus a scalar or an Asig object. If subtracting an Asig,
@@ -1029,7 +1035,8 @@ class Asig:
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
         if isinstance(othersig, numbers.Number):  # When other is just a scalar
-            return Asig(selfsig - othersig, self.sr, label=self.label + "_subtracted", cn=self.cn)
+            return Asig(selfsig - othersig,
+                        self.sr, label=self.label + "_subtracted", cn=self.cn)
         else:
             if self.mix_mode == 'bound':
                 try:
@@ -1278,53 +1285,6 @@ class Asig:
         w, h = scipy.signal.freqz(self._['b'], self._['a'], worN)
         plt.plot(w * self.sr / 2 / np.pi, ampdb(abs(h)), **kwargs)
 
-    # TODO remove add() for now as same functionality can be done by __add__()
-    # def add(self, sig, pos=None, amp=1, onset=None):
-    #     """Add a signal ToDo is this even necessary anymore.
-
-    #     Parameters
-    #     ----------
-    #     sig : asig
-    #         Signal to add
-    #     pos : int, None
-    #         Postion to add (Default value = None)
-    #     amp : float
-    #         Aplitude (Default value = 1)
-    #     onset : float or None
-    #         Similar to pos but in time rather sample,
-    #         given a value to this will overwrite pos (Default value = None)
-
-    #     Returns
-    #     -------
-    #     _ : Asig
-    #         Asig with the added signal.
-
-    #     """
-    #     if type(sig) == Asig:
-    #         n = sig.samples
-    #         sr = sig.sr
-    #         sigar = sig.sig
-    #         if sig.channels != self.channels:
-    #             warn("channel mismatch!")
-    #             return -1
-    #         if sr != self.sr:
-    #             warn("sr mismatch: use resample")
-    #             return -1
-    #     else:
-    #         n = np.shape(sig)[0]
-    #         sr = self.sr  # assume same sr as self
-    #         sigar = sig
-    #     if onset:   # onset overwrites pos, time has priority
-    #         pos = int(onset * self.sr)
-    #     if not pos:
-    #         pos = 0  # add to begin if neither pos nor onset have been specified
-    #     last = pos + n
-    #     if last > self.samples:
-    #         last = self.samples
-    #         sigar = sigar[:last - pos]
-    #     self.sig[pos:last] += amp * sigar
-    #     return self
-
     def envelope(self, amps, ts=None, curve=1, kind='linear'):
         """Create an envelop and multiply by the signal.
 
@@ -1535,6 +1495,13 @@ class Asig:
         scipy.signal.stft(). """
         return Astft.Astft(self, **kwargs)
 
+    def to_mfcc(self, n_per_frame=None, hopsize=None, nfft=None, window='hann',
+                nfilters=26, ncep=13, ceplifter=22, preemph=0.95, append_energy=True):
+        """Return Amfcc object. """
+        return Amfcc.Amfcc(self, label=self.label, n_per_frame=n_per_frame, hopsize=hopsize,
+                           nfft=nfft, window=window, nfilters=nfilters, ncep=ncep, ceplifter=ceplifter,
+                           preemph=preemph, append_energy=append_energy, cn=self.cn)
+
     def plot_spectrum(self, offset=0, scale=1., xlim=None, **kwargs):
         """Plot spectrum of the signal
 
@@ -1680,6 +1647,29 @@ class Asig:
             sigar = sigar[:last - pos]
         self.sig[pos:last] += amp * sigar
         return self
+
+    def flatten(self):
+        """Flatten a multidimentional array into a vector using np.ravel()"""
+        return Asig(self.sig.ravel(), sr=self.sr, label=self.label + '_flattened', channels=1, cn=None)
+
+    def pad(self, width, tail=True, constant_values=0):
+        """Pads the signal
+
+        Parameters
+        ----------
+        width : int
+            The number of sampels to add to the tail or head of the array.
+        tail : bool
+            By default it is True, if trail pad to the end, else pad to the start.
+
+        Returns
+        -------
+        _ : Asig
+            Asig of the pad signal.
+        """
+        return Asig(padding(self.sig, width, tail=tail), 
+                    sr=self.sr, label=self.label + '_padded', 
+                    channels=self.channels, cn=self.cn)
 
     def custom(self, func, **kwargs):
         """custom function method. TODO add example"""

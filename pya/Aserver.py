@@ -47,7 +47,8 @@ class Aserver:
         else:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    def __init__(self, sr=44100, bs=None, device=None, channels=2, backend=None, **kwargs):
+    def __init__(self, sr=44100, bs=None, device=None,
+                 channels=2, backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
 
@@ -104,7 +105,8 @@ class Aserver:
         self.block_duration = self.bs / self.sr  # nominal time increment per callback
         self.block_time = None  # estimated time stamp for current block
         self._stop = True
-        self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
+        self.empty_buffer = np.zeros((self.bs, self.channels),
+                                     dtype=self.backend.dtype)
 
     @property
     def device(self):
@@ -168,8 +170,10 @@ class Aserver:
         self.block_time = self.boot_time
         self.block_cnt = 0
         self.stream = self.backend.open(channels=self.channels, rate=self.sr,
-                                        input_flag=False, output_flag=True, frames_per_buffer=self.bs,
-                                        output_device_index=self.device, stream_callback=self._play_callback)
+                                        input_flag=False, output_flag=True,
+                                        frames_per_buffer=self.bs,
+                                        output_device_index=self.device,
+                                        stream_callback=self._play_callback)
         _LOGGER.info("Server Booted")
         return self
 
@@ -228,14 +232,15 @@ class Aserver:
         """callback function, called from pastream thread when data needed."""
         tnow = self.block_time
         self.block_time += self.block_duration
-        self.block_cnt += 1
+        # self.block_cnt += 1  # TODO this will get very large eventually
         # just curious - not needed but for time stability check
         self.timejitter = time.time() - self.block_time
         if self.timejitter > 3 * self.block_duration:
-            _LOGGER.debug(f"Aserver late by {self.timejitter} seconds: block_time reset!")
+            msg = f"Aserver late by {self.timejitter} seconds: block_time reset!"
+            _LOGGER.debug(msg)
             self.block_time = time.time()
-
-        if not self.srv_asigs or self.srv_onsets[0] > tnow:  # to shortcut computing
+        # to shortcut computing
+        if not self.srv_asigs or self.srv_onsets[0] > tnow:
             return self.backend.process_buffer(self.empty_buffer)
         elif self._stop:
             self.srv_asigs.clear()
@@ -243,7 +248,6 @@ class Aserver:
             self.srv_curpos.clear()
             self.srv_outs.clear()
             return self.backend.process_buffer(self.empty_buffer)
-
         data = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
         # iterate through all registered asigs, adding samples to play
         dellist = []  # memorize completed items for deletion
@@ -260,7 +264,8 @@ class Aserver:
             tmpsig = a.sig[c:c + self.bs - io0]
             n, nch = tmpsig.shape
             out = self.srv_outs[i]
-            data[io0:io0 + n, out:out + nch] += tmpsig  # .reshape(n, nch) not needed as moved to play
+            # .reshape(n, nch) not needed as moved to play
+            data[io0:io0 + n, out:out + nch] += tmpsig
             self.srv_curpos[i] += n
             if self.srv_curpos[i] >= a.samples:
                 dellist.append(i)  # store for deletion

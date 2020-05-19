@@ -7,7 +7,7 @@ import time
 class PyAudioBackend(BackendBase):
 
     _boot_delay = 0.5  # a short delay to prevent PyAudio racing conditions
-    bs = 256
+    bs = 512
 
     def __init__(self, format=pyaudio.paFloat32):
         self.pa = pyaudio.PyAudio()

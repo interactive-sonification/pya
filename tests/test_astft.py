@@ -35,14 +35,6 @@ class TestAstft(TestCase):
         self.assertEqual(astft.channels, 3)
         self.assertEqual(len(astft.cn), 3)
 
-    # def test_mock_plot(self):
-    #     mono = self.asig.to_stft()
-    #     stereo = self.asig2.to_stft()
-    #     mock_plot = MockPlot()
-    #     with mock.patch('plt', return_value=mock_plot):
-    #         mono.plot()
-    #         self.assertTrue(mock_plot.pcolormesh.called)
-
     def test_input_as_stft(self):
         sr = 10e3
         N = 1e5
@@ -58,9 +50,3 @@ class TestAstft(TestCase):
 
     def test_plot(self):
         self.asig.to_stft().plot()
-        self.asig2.to_stft().plot(ch=0)
-        self.asig2.to_stft().plot(ch='a')
-        with self.assertRaises(AttributeError):  # self.asig3 has no cn defined. 
-            self.asig3.to_stft().plot(ch='a')
-        with self.assertRaises(AttributeError):  # self.asig2 has cn but 'd' is not one of them. 
-            self.asig2.to_stft().plot(ch='d')

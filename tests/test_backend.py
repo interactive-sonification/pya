@@ -1,7 +1,7 @@
 from .test_play import TestPlayBase
 from .test_arecorder import TestArecorderBase
-from pya.backend import DummyBackend, JupyterBackend
-
+from pya.backend import DummyBackend
+from pya.backend import JupyterBackend
 from unittest import TestCase
 import time
 
@@ -20,7 +20,6 @@ class TestDummyBackendRecord(TestArecorderBase):
 
 
 class TestJupyterBackendPlay(TestCase):
-
     def test_boot(self):
         b = JupyterBackend()
         s = b.open(channels=2, rate=44100)

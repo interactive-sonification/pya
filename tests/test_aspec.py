@@ -35,4 +35,4 @@ class TestAspec(TestCase):
 
     def test_cn_conflict(self):
         with warnings.catch_warnings(record=True):
-            aspec = Aspec(self.asig, cn=['jf', 'dj'])
+            _ = Aspec(self.asig, cn=['jf', 'dj'])
