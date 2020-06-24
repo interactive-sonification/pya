@@ -75,21 +75,22 @@ class Asig:
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
         self.label = label
+        self.dtype = "float32"
         if isinstance(sig, str):
             self._load_audio_file(sig)
         elif isinstance(sig, int):  # sample length
             if channels == 1:
-                self.sig = np.zeros(sig).astype("float32")
+                self.sig = np.zeros(sig).astype(self.dtype)
             else:
-                self.sig = np.zeros((sig, channels)).astype("float32")
+                self.sig = np.zeros((sig, channels)).astype(self.dtype)
         elif isinstance(sig, float):  # if float interpret as duration
             if channels == 1:
-                self.sig = np.zeros(int(sig * sr)).astype("float32")
+                self.sig = np.zeros(int(sig * sr)).astype(self.dtype)
             else:
                 self.sig = np.zeros(
-                    (int(sig * sr), channels)).astype("float32")
+                    (int(sig * sr), channels)).astype(self.dtype)
         else:
-            self.sig = np.array(sig).astype("float32")
+            self.sig = np.array(sig).astype(self.dtype)
         self.cn = cn
         self._set_col_names()
 
@@ -483,15 +484,17 @@ class Asig:
                 # now extend by nn = sn-dn additional rows
                 if dn > 0:
                     nn = sn - dn  # nr of needed additional rows
+                    # import pdb; pdb.set_trace()
                     self.sig = np.r_[self.sig, np.zeros(
-                        (nn,) + self.sig.shape[1:])]
+                        (nn,) + self.sig.shape[1:])].astype(self.dtype)
                     if self.sig.ndim == 1:
                         self.sig[-nn:] = src[dn:]
                     else:
                         self.sig[-nn:, cidx] = src[dn:]
                 else:  # this is when start is beyond length of dest...
                     nn = ridx.start + sn
-                    self.sig = np.r_[self.sig, np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:])]
+                    self.sig = np.r_[self.sig,
+                        np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:])].astype(self.dtype)
                     if self.sig.ndim == 1:
                         self.sig[-sn:] = src
                     else:
