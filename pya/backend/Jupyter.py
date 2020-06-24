@@ -3,7 +3,11 @@ from .base import BackendBase, StreamBase
 import asyncio
 import threading
 from IPython.display import Javascript, HTML, display
-from sanic import Sanic
+
+try:
+    from sanic import Sanic
+except ImportError:
+    Sanic = None
 
 
 class JupyterBackend(BackendBase):
@@ -13,6 +17,10 @@ class JupyterBackend(BackendBase):
     bs = 4096  # streaming introduces lack which has to be covered by the buffer
 
     def __init__(self, port=8765, proxy_suffix=None):
+        if not Sanic:
+            raise Exception("JupyterBackend requires 'sanic' but it could not be imported. "
+                            "Did you miss installing optional 'remote' requirements?")
+
         self.dummy_devices = [dict(maxInputChannels=0, maxOutputChannels=2, index=0, name="JupyterBackend")]
         self.port = port
         self.proxy_suffix = proxy_suffix

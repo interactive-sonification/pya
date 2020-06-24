@@ -6,11 +6,15 @@ from os.path import join
 project_root = os.path.dirname(os.path.abspath(__file__))
 
 version = {}
+REQUIRED_EXTRAS = {}
 with open(join(project_root, 'pya/version.py')) as read_file:
     exec(read_file.read(), version)
 
 with open(join(project_root, 'requirements.txt')) as read_file:
     REQUIRED = read_file.read().splitlines()
+
+with open(join(project_root, 'requirements_remote.txt')) as read_file:
+    REQUIRED_EXTRAS['remote'] = read_file.read().splitlines()
 
 with open(join(project_root, 'requirements_test.txt')) as read_file:
     REQUIRED_TEST = read_file.read().splitlines()
@@ -27,6 +31,7 @@ setup(
     license='MIT',
     packages=find_packages(exclude=["tests"]),
     install_requires=REQUIRED,
+    extras_require=REQUIRED_EXTRAS,
     tests_require=REQUIRED_TEST,
     author='Thomas Hermann',
     author_email='thermann@techfak.uni-bielefeld.de',
