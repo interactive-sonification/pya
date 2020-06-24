@@ -469,4 +469,4 @@ def audio_read(fp):
             return BackendClass(fp)
         except DecodeError:
             pass
-    raise NoBackendError("Couldn't find a suitable backend to load the file.")  # If all backends fails 
+    raise NoBackendError("Couldn't find a suitable backend to load the file. Most likely FFMPEG is not installed. Check github repo for installation guide.")  # If all backends fails 

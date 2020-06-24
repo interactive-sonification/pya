@@ -493,8 +493,7 @@ class Asig:
                         self.sig[-nn:, cidx] = src[dn:]
                 else:  # this is when start is beyond length of dest...
                     nn = ridx.start + sn
-                    self.sig = np.r_[self.sig,
-                        np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:])].astype(self.dtype)
+                    self.sig = np.r_[self.sig, np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:])].astype(self.dtype)
                     if self.sig.ndim == 1:
                         self.sig[-sn:] = src
                     else:
