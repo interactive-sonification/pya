@@ -1708,4 +1708,5 @@ class Asig:
             # It is array like
             pass
         else:
-            raise TypeError("ir must be an array.")
+            raise TypeError("Illegal type. ir must be an array.")
+    
