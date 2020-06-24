@@ -1675,3 +1675,37 @@ class Asig:
         """custom function method. TODO add example"""
         func(self, **kwargs)
         return self
+
+    def conv(self, ir, mode='full', method='auto')
+        """Convolution based on scipy.signal.convolve.
+        
+        Parameters
+        ----------
+            ir : array_like
+                Normally it should have the same dimensions as self.sr. If not, it should be 1d 
+                and the method will use the same array on all channels. 
+            mode : str {'full', 'valid', 'same'}, optional
+                A string indicating the size of the output:
+                full
+                    The output is the full discrete linear convolution of the inputs. (Default)
+                valid
+                    The output consists only of those elements that do not rely on the zero-padding.
+                    self.sr or ir must be at least as large as the other in every dimension.
+                same
+                    The output is the same size as self.sr, centered with respect to the full output.
+            method : str {'auto', 'direct', 'fft'}, optional
+                A string indicating which method to use to calculate the convolution
+                direct
+                    Compute directly from sums, the definition of convolution
+                fft 
+                    The Fourier Transform is used to perform the convolution by calling fftconvolve
+                auto
+                    Automatically chooses direct or Fourier method based on an estimate of which is faster.
+                    (Default)
+        """
+        # Perform dimension check of the input
+        if hasattr(ir, __iter__):
+            # It is array like
+            pass
+        else:
+            raise TypeError("ir must be an array.")
