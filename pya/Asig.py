@@ -1704,6 +1704,11 @@ class Asig:
                     Automatically chooses direct or Fourier method based on an estimate of which is faster.
             equal_vol : bool, optional
                 If true, regulate the output amplitude to have the same peak as the original signal.
+
+        Returns
+        -------
+        _ : Asig
+            A new asig with convlved signal. The size will depends on mode.
         """
         # Perform dimension check of the input
         # ins can be an asig or an array
@@ -1732,7 +1737,6 @@ class Asig:
         else:
             # pad source 
             asig = self.pad(ins_size - self.samples)
-
         # Now perform convolution
         if self.channels == 1:
             result = np.array(scipy.signal.convolve(self.sig, ins_sig, mode=mode, method=method))
@@ -1743,7 +1747,7 @@ class Asig:
                 if i == 0:
                     result = np.zeros((len(r_1ch), self.channels))
                 result[:, i] = r_1ch
-        
+
         # Not sure if this is the best way to regulate output volume
         if equal_vol:
             result = result / np.max(np.abs(result)) * np.max(np.abs(self.sig))
