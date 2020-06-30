@@ -1678,63 +1678,72 @@ class Asig:
         func(self, **kwargs)
         return self
 
-    def conv(self, ir, mode='full', method='fft', equal_vol=True):
+    def conv(self, ins, mode='full', method='fft', equal_vol=True):
         """Convolution based on scipy.signal.convolve.
-        
+
         Parameters
         ----------
-            ir : array_like
-                Normally it should have the same dimensions as self.sr. If not, it should be mono 
-                and the method will use the same array on all channels. 
+            ins : Asig or array_like
+                Input signal to convolve with, e.g. impulse response.
             mode : str {'full', 'valid', 'same'}, optional
                 A string indicating the size of the output:
                 full
                     The output is the full discrete linear convolution of the inputs. (Default)
                 valid
                     The output consists only of those elements that do not rely on the zero-padding.
-                    self.sr or ir must be at least as large as the other in every dimension.
+                    self.sr or ins must be at least as large as the other in every dimension.
                 same
                     The output is the same size as self.sr, centered with respect to the full output.
             method : str {'auto', 'direct', 'fft'}, optional
                 A string indicating which method to use to calculate the convolution
                 direct
                     Compute directly from sums, the definition of convolution
-                fft 
+                fft (default) 
                     The Fourier Transform is used to perform the convolution by calling fftconvolve
                 auto
                     Automatically chooses direct or Fourier method based on an estimate of which is faster.
-                    (Default)
+            equal_vol : bool, optional
+                If true, regulate the output amplitude to have the same peak as the original signal.
         """
         # Perform dimension check of the input
-        # ir can be an asig or an array
-        if isinstance(ir, Asig):
-            if ir.channels > 1:
+        # ins can be an asig or an array
+        if isinstance(ins, Asig):
+            if ins.channels > 1:
                 # If multichannel ir, convert to mono signal.
-                ir = ir.mono()
-            if ir.sr != self.sr:
+                ins = ins.mono()
+            if ins.sr != self.sr:
                 _LOGGER.warning("impulse response sr not the same as source, perform resample to ir...")
-                ir = ir.resample(target_sr=self.sr)
-            ir_sig = ir.sig
-            ir_size = ir.samples
-        elif hasattr(ir, "__iter__"):
-            ir_sig = ir
-            ir_size = len(ir)
+                ins = ins.resample(target_sr=self.sr)
+            ins_sig = ins.sig
+            ins_size = ins.samples
+        elif hasattr(ins, "__iter__"):
+            ins_sig = ins
+            ins_size = len(ins)
         else:
-            raise TypeError("Illegal type. ir must be an array.")
-        # Compare size of A B
-        if self.samples > ir_size:
+            raise TypeError("Illegal type. ir must be an Asig object or an array.")
+        # Compare size of A B, and pad zeros if needed.
+        if self.samples > ins_size:
             # pad ir
-            pad = (0, self.samples - ir_size)
-            if ir_sig.ndim == 1:
-                ir_sig = np.pad(ir_sig, (pad), mode='constant', constant_values=0)
-            elif ir_sig.ndim == 2:
-                ir_sig =  np.pad(ir_sig, (pad, (0, 0)), mode='constant', constant_values=0)
+            pad = (0, self.samples - ins_size)
+            if ins_sig.ndim == 1:
+                ins_sig = np.pad(ins_sig, (pad), mode='constant', constant_values=0)
+            elif ins_sig.ndim == 2:
+                ins_sig = np.pad(ins_sig, (pad, (0, 0)), mode='constant', constant_values=0)
         else:
             # pad source 
-            asig = self.pad(ir_size - self.samples)
+            asig = self.pad(ins_size - self.samples)
 
         # Now perform convolution
-        result = np.array(scipy.signal.convolve(self.sig, ir_sig, mode=mode, method=method))
+        if self.channels == 1:
+            result = np.array(scipy.signal.convolve(self.sig, ins_sig, mode=mode, method=method))
+        else:
+            # Perform conv on each channel. 
+            for i in range(self.channels):
+                r_1ch = np.array(scipy.signal.convolve(self.sig[:, i], ins_sig, mode=mode, method=method))
+                if i == 0:
+                    result = np.zeros((len(r_1ch), self.channels))
+                result[:, i] = r_1ch
+        
         # Not sure if this is the best way to regulate output volume
         if equal_vol:
             result = result / np.max(np.abs(result)) * np.max(np.abs(self.sig))
