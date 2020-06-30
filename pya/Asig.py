@@ -1678,13 +1678,13 @@ class Asig:
         func(self, **kwargs)
         return self
 
-    def conv(self, ir, mode='full', method='auto')
+    def conv(self, ir, mode='full', method='fft', equal_vol=True):
         """Convolution based on scipy.signal.convolve.
         
         Parameters
         ----------
             ir : array_like
-                Normally it should have the same dimensions as self.sr. If not, it should be 1d 
+                Normally it should have the same dimensions as self.sr. If not, it should be mono 
                 and the method will use the same array on all channels. 
             mode : str {'full', 'valid', 'same'}, optional
                 A string indicating the size of the output:
@@ -1706,9 +1706,36 @@ class Asig:
                     (Default)
         """
         # Perform dimension check of the input
-        if hasattr(ir, __iter__):
-            # It is array like
-            pass
+        # ir can be an asig or an array
+        if isinstance(ir, Asig):
+            if ir.channels > 1:
+                # If multichannel ir, convert to mono signal.
+                ir = ir.mono()
+            if ir.sr != self.sr:
+                _LOGGER.warning("impulse response sr not the same as source, perform resample to ir...")
+                ir = ir.resample(target_sr=self.sr)
+            ir_sig = ir.sig
+            ir_size = ir.samples
+        elif hasattr(ir, "__iter__"):
+            ir_sig = ir
+            ir_size = len(ir)
         else:
             raise TypeError("Illegal type. ir must be an array.")
-    
+        # Compare size of A B
+        if self.samples > ir_size:
+            # pad ir
+            pad = (0, self.samples - ir_size)
+            if ir_sig.ndim == 1:
+                ir_sig = np.pad(ir_sig, (pad), mode='constant', constant_values=0)
+            elif ir_sig.ndim == 2:
+                ir_sig =  np.pad(ir_sig, (pad, (0, 0)), mode='constant', constant_values=0)
+        else:
+            # pad source 
+            asig = self.pad(ir_size - self.samples)
+
+        # Now perform convolution
+        result = np.array(scipy.signal.convolve(self.sig, ir_sig, mode=mode, method=method))
+        # Not sure if this is the best way to regulate output volume
+        if equal_vol:
+            result = result / np.max(np.abs(result)) * np.max(np.abs(self.sig))
+        return Asig(result, sr=self.sr, label=self.label, channels=self.channels, cn=self.cn)
