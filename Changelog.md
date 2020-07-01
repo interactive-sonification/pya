@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1 (July 2020)
+* Fix bug of extend mode result in a change of dtype (from the default f32 to f64). Now it is fixed at f32.
+* Add convolve() method. A convolution method (default to fft). Now you can apply reverb, do autocorrelation to the signal.
+* Add unittest to Asig.
+
 ## 0.4.0 (April 2020)
 * new Amfcc class for MFCC feature extraction
 * new helper.visualization.py and gridplot()
