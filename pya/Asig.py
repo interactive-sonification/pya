@@ -1729,14 +1729,10 @@ class Asig:
         # Compare size of A B, and pad zeros if needed.
         if self.samples > ins_size:
             # pad ir
-            pad = (0, self.samples - ins_size)
-            if ins_sig.ndim == 1:
-                ins_sig = np.pad(ins_sig, (pad), mode='constant', constant_values=0)
-            elif ins_sig.ndim == 2:
-                ins_sig = np.pad(ins_sig, (pad, (0, 0)), mode='constant', constant_values=0)
+            ins_sig = padding(ins_sig, width=self.samples - ins_size)
         else:
             # pad source 
-            asig = self.pad(ins_size - self.samples)
+            asig = padding(self.sig, width=ins_size - self.samples)
         # Now perform convolution
         if self.channels == 1:
             result = np.array(scipy.signal.convolve(self.sig, ins_sig, mode=mode, method=method))
