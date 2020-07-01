@@ -1,6 +1,6 @@
 from unittest import TestCase
 from pya import *
-import numpy as np 
+import numpy as np
 from math import inf
 import os
 
@@ -34,8 +34,8 @@ class TestAsig(TestCase):
     def test_duration(self):
         self.assertEqual(self.asine.get_duration(), 1.)
         get_time = self.asine.get_times()
-        self.assertTrue(np.array_equal(np.linspace(0, 
-                                                   (self.asine.samples - 1) / self.asine.sr, 
+        self.assertTrue(np.array_equal(np.linspace(0,
+                                                   (self.asine.samples - 1) / self.asine.sr,
                                                    self.asine.samples), self.asine.get_times()))
 
     def test_fader(self):
@@ -96,7 +96,7 @@ class TestAsig(TestCase):
         result = self.astereo.gain(db=3.)
         with self.assertRaises(AttributeError):
             _ = self.astereo.gain(amp=1, db=3.)
-        result = self.astereo.gain()  # by default amp=1. nothing change. 
+        result = self.astereo.gain()  # by default amp=1. nothing change.
 
     def test_rms(self):
         result = self.asine16ch.rms()
@@ -117,31 +117,31 @@ class TestAsig(TestCase):
         self.assertTrue(np.array_equal([10, 12, 14, 16], adding.sig))
 
         # asig + ndarray  actually we don't encourage that. Because of sampling rate may differ
-        # also because ndarray + asig works. so it is strongly against adding asig with ndarray. 
-        # just maker another asig and add both together. 
+        # also because ndarray + asig works. so it is strongly against adding asig with ndarray.
+        # just maker another asig and add both together.
         adding = a + b0
         self.assertIsInstance(adding, Asig)
         self.assertTrue(np.array_equal([10, 12, 14, 16], adding.sig))
 
-        # adding with different size will extend to the new size. 
+        # adding with different size will extend to the new size.
         b2 = Asig(np.arange(6), sr=2)
         with self.assertRaises(ValueError):
             adding = a + b2
         adding = a.x + b2
         self.assertEqual(b2.samples, 6)
 
-        # TODO  to decide what to do with different channels. Currently not allow. 
-        # so that it wont get too messy. 
+        # TODO  to decide what to do with different channels. Currently not allow.
+        # so that it wont get too messy.
         b3 = Asig(np.ones((4, 2)), sr=2)
-        # adding different channels asigs are not allowed. 
-        with self.assertRaises(ValueError): 
+        # adding different channels asigs are not allowed.
+        with self.assertRaises(ValueError):
             adding = a + b3
 
-        # Both multichannels are ok. 
+        # Both multichannels are ok.
         adding = b3 + b3
         self.assertTrue(np.array_equal(np.ones((4, 2)) + np.ones((4, 2)), adding.sig))
 
-        # Test bound mode. In the audio is not extended. but bound to the lower one.  
+        # Test bound mode. In the audio is not extended. but bound to the lower one.
         adding = a.bound + b2
         self.assertEqual(adding.samples, 4)
 
@@ -171,13 +171,13 @@ class TestAsig(TestCase):
         a = Asig(np.arange(4), sr=2)
         b = Asig(np.ones(6), sr=2)
         self.assertTrue(np.array_equal([-1, 0, 1, 2], (a.bound - b).sig))
-        with self.assertRaises(ValueError): 
+        with self.assertRaises(ValueError):
             adding = a - b
         self.assertTrue(np.array_equal([-1, 0, 1, 2, -1, -1], (a.x - b).sig))
 
     def test_division(self):
         # Testing multiplication beween asig and asig, or asig with a scalar.
-        # 
+        #
         a = Asig(np.arange(4), sr=2)
         a2 = Asig(np.arange(8), sr=2)
         a4ch = Asig(np.ones((4, 4)), sr=2)
@@ -189,17 +189,17 @@ class TestAsig(TestCase):
 
     def test_windowing(self):
         asig = Asig(np.ones(10), sr=2)
-        asig_windowed = asig.window_op(nperseg=2, stride=1, 
+        asig_windowed = asig.window_op(nperseg=2, stride=1,
                                        win='hanning', fn='rms', pad='mirror')
         self.assertTrue(np.allclose([1., 0.70710677, 0.70710677, 0.70710677,
-                                    0.70710677, 0.70710677, 0.70710677, 
-                                    0.70710677, 0.70710677, 1.], 
+                                    0.70710677, 0.70710677, 0.70710677,
+                                    0.70710677, 0.70710677, 1.],
                                     asig_windowed.sig))
 
         asig2ch = Asig(np.ones((10, 2)), sr=2)
         asig2ch.window_op(nperseg=2, stride=1, win='hanning', fn='rms', pad='mirror')
-        a = [1., 0.70710677, 0.70710677, 0.70710677, 
-             0.70710677, 0.70710677, 0.70710677, 
+        a = [1., 0.70710677, 0.70710677, 0.70710677,
+             0.70710677, 0.70710677, 0.70710677,
              0.70710677, 0.70710677, 1.]
         res = np.array([a, a]).T
         self.assertTrue(np.allclose(a, asig_windowed.sig))
@@ -208,7 +208,7 @@ class TestAsig(TestCase):
         # Do self autocorrelatin, the middle point should always have a corr val near 1.0
         test = Asig(np.sin(np.arange(0, 21)), sr=21)
         result = test.convolve(test.sig[::-1], mode='same')
-        # The middle point should have high corr 
+        # The middle point should have high corr
         self.assertTrue(result.sig[10] > 0.99, msg="middle point of a self correlation should always has high corr val.")
         # Test different modes
         self.assertEqual(result.samples, test.samples, msg="'same' mode should result in the same size")
@@ -222,7 +222,7 @@ class TestAsig(TestCase):
         self.assertTrue(result.sig[10] > 0.99, msg="middle point of a self correlation should always has high corr val.")
 
         with self.assertRaises(TypeError, msg="ins can only be array or Asig"):
-            result = test.convolve("string input") 
+            result = test.convolve("string input")
 
         # test signal is multichannel
         # TODO define what to check.
