@@ -6,6 +6,7 @@ import os
 
 
 class TestAsig(TestCase):
+    """Unit Tests for Asig"""
     def setUp(self):
         self.sig = np.sin(2 * np.pi * 100 * np.linspace(0, 1, 44100))
         self.asine = Asig(self.sig, sr=44100, label="test_sine")
@@ -202,3 +203,29 @@ class TestAsig(TestCase):
              0.70710677, 0.70710677, 1.]
         res = np.array([a, a]).T
         self.assertTrue(np.allclose(a, asig_windowed.sig))
+
+    def test_convolve(self):
+        # Do self autocorrelatin, the middle point should always have a corr val near 1.0
+        test = Asig(np.sin(np.arange(0, 21)), sr=21)
+        result = test.convolve(test.sig[::-1], mode='same')
+        # The middle point should have high corr 
+        self.assertTrue(result.sig[10] > 0.99, msg="middle point of a self correlation should always has high corr val.")
+        
+        # Test different modes
+        self.assertEqual(result.samples, test.samples, msg="'same' mode should result in the same size")
+        result = test.convolve(test.sig[::-1], mode='full')
+
+        self.assertEqual(result.samples, test.samples * 2 - 1, msg="full mode should have 2x - 1 samples.")
+
+        # Test input type
+        ir = Asig(test.sig[::-1], sr=21)
+        result = test.convolve(ir, mode='same')
+        self.assertTrue(result.sig[10] > 0.99, msg="middle point of a self correlation should always has high corr val.")
+
+        with self.assertRaises(TypeError, msg="ins can only be array or Asig"):
+            result = test.convolve("string input") 
+
+        # test signal is multichannel
+        # TODO define what to check.
+        test = Asig(np.ones((20, 10)), sr=20)
+        result = test.convolve(test)

@@ -1721,8 +1721,13 @@ class Asig:
                 ins = ins.resample(target_sr=self.sr)
             ins_sig = ins.sig
             ins_size = ins.samples
-        elif isinstance(ins, np.ndarray) or isinstance(ins, list):
-            ins_sig = ins
+        elif isinstance(ins, np.ndarray):
+            # If ins is multichannels 
+            # TODO What input is a list?
+            if ins.ndim > 1:
+                ins_sig = np.mean(ins, axis=1)
+            else:
+                ins_sig = ins
             ins_size = len(ins)
         else:
             raise TypeError("Illegal type. ir must be an Asig object or an array.")
