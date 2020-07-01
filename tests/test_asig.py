@@ -210,7 +210,6 @@ class TestAsig(TestCase):
         result = test.convolve(test.sig[::-1], mode='same')
         # The middle point should have high corr 
         self.assertTrue(result.sig[10] > 0.99, msg="middle point of a self correlation should always has high corr val.")
-        
         # Test different modes
         self.assertEqual(result.samples, test.samples, msg="'same' mode should result in the same size")
         result = test.convolve(test.sig[::-1], mode='full')
