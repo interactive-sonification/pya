@@ -1924,8 +1924,6 @@ class Asig:
         _ : Asig
             A new asig with convlved signal. The size will depends on mode.
         """
-        # Perform dimension check of the input
-        # ins can be an asig or an array
         if isinstance(sig, Asig):
             if sig.sr != self.sr:
                 _LOGGER.warning("sampling rate not matched, perform resampling...")
@@ -1934,17 +1932,9 @@ class Asig:
             sig_size = sig.samples
             sig_channels = sig.channels
         elif isinstance(sig, np.ndarray):
-            # If ins is multichannels
-            # TODO What input is a list?
-            if sig.ndim > 1:
-                sig_array = np.mean(sig, axis=1)
-            else:
-                sig_array = sig
+            sig_array = sig
             sig_size = len(sig)
-            if sig_array.ndim == 1:
-                sig_channels = 1
-            else:
-                sig_channels = sig_array.shape[1]
+            sig_channels = 1 if sig_array.ndim == 1 else sig_array.shape[1]
         else:
             raise TypeError("Illegal type. ir must be an Asig object or an array.")
         # Compare size of A B, and pad zeros if needed.
