@@ -1678,7 +1678,7 @@ class Asig:
         func(self, **kwargs)
         return self
 
-    def conv(self, ins, mode='full', method='fft', equal_vol=True):
+    def convolve(self, ins, mode='full', method='fft', equal_vol=True):
         """Convolution based on scipy.signal.convolve.
 
         Parameters
@@ -1721,7 +1721,7 @@ class Asig:
                 ins = ins.resample(target_sr=self.sr)
             ins_sig = ins.sig
             ins_size = ins.samples
-        elif hasattr(ins, "__iter__"):
+        elif isinstance(ins, np.ndarray) or isinstance(ins, list):
             ins_sig = ins
             ins_size = len(ins)
         else:
