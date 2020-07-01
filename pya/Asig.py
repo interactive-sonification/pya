@@ -1654,21 +1654,27 @@ class Asig:
         """Flatten a multidimentional array into a vector using np.ravel()"""
         return Asig(self.sig.ravel(), sr=self.sr, label=self.label + '_flattened', channels=1, cn=None)
 
-    def pad(self, width, tail=True, constant_values=0):
+    def pad(self, width=0, tail=True, constant_values=0, dur=None):
         """Pads the signal
 
         Parameters
         ----------
         width : int
-            The number of sampels to add to the tail or head of the array.
+            The number of samples to append to the tail or head of the array.
         tail : bool
             By default it is True, if trail pad to the end, else pad to the start.
+        constant_values: float32
+            value to be padded, defaults to 0
+        dur : float
+            duration to be padded;  if specified, it overrides the parameter width
 
         Returns
         -------
         _ : Asig
             Asig of the pad signal.
         """
+        if dur:
+            width = self.sr*dur
         return Asig(padding(self.sig, width, tail=tail), 
                     sr=self.sr, label=self.label + '_padded', 
                     channels=self.channels, cn=self.cn)
