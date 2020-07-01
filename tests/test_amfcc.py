@@ -34,5 +34,5 @@ class TestAmfcc(TestCase):
         lifted_ceps = Amfcc.lifter(fake_cepstra, L=22)
         self.assertEqual(fake_cepstra.shape, lifted_ceps.shape)
         # if L negative, no lifting applied
-        lifted_ceps = Amfcc.lifter(fake_cepstra, L=-3)  
+        lifted_ceps = Amfcc.lifter(fake_cepstra, L=-3)
         self.assertTrue(np.array_equal(lifted_ceps, fake_cepstra))

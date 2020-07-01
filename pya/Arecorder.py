@@ -57,7 +57,7 @@ class Arecorder(Aserver):
             self.channels = self.max_in_chn
 
     def set_tracks(self, tracks, gains):
-        """Define the number of track to be recorded and their gains. 
+        """Define the number of track to be recorded and their gains.
 
         parameters
         ----------
@@ -74,8 +74,8 @@ class Arecorder(Aserver):
             self.tracks = tracks
             self.gains = np.array([dbamp(g) for g in gains], dtype="float32")
         elif isinstance(tracks, numbers.Number) and isinstance(gains, numbers.Number):
-            self.tracks = [tracks] 
-            self.gains = dbamp(gains) 
+            self.tracks = [tracks]
+            self.gains = dbamp(gains)
         else:
             raise TypeError("Arguments need to be both list or both number.")
 
@@ -91,7 +91,7 @@ class Arecorder(Aserver):
         # self.block_cnt = 0
         self.record_buffer = []
         self._recording = False
-        self.stream = self.backend.open(rate=self.sr, channels=self.channels, frames_per_buffer=self.bs, 
+        self.stream = self.backend.open(rate=self.sr, channels=self.channels, frames_per_buffer=self.bs,
                                         input_device_index=self.device, output_flag=False,
                                         input_flag=True, stream_callback=self._recorder_callback)
         _LOGGER.info("Server Booted")
@@ -104,8 +104,8 @@ class Arecorder(Aserver):
             sigar = np.frombuffer(in_data, dtype=self.backend.dtype)
             # (chunk length, chns)
             data_float = np.reshape(sigar, (len(sigar) // self.channels, self.channels))
-            data_float = data_float[:, self.tracks] * self.gains  # apply channel selection and gains. 
-            # if not self._record_all  
+            data_float = data_float[:, self.tracks] * self.gains  # apply channel selection and gains.
+            # if not self._record_all
             self.record_buffer.append(data_float)
             # E = 10 * np.log10(np.mean(data_float ** 2)) # energy in dB
             # os.write(1, f"\r{E}    | {self.block_cnt}".encode())
@@ -135,5 +135,5 @@ class Arecorder(Aserver):
             state = self.stream.is_active()
         msg = f"""Arecorder: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}
            Input: {self.device_dict['name']}, Index: {self.device_dict['index']}
-           """        
+           """
         return msg

@@ -5,8 +5,8 @@ from .helper import normalize
 
 
 def get_num_of_rows(dur, n_rows, sr):
-    """Return total number of samples. If dur is set, return dur*sr, if num_samples is set, return num_samples, 
-    if both set, raise an AttributeError. Only use one of the two. 
+    """Return total number of samples. If dur is set, return dur*sr, if num_samples is set, return num_samples,
+    if both set, raise an AttributeError. Only use one of the two.
     """
     if dur and n_rows is None:
         return int(dur * sr)
@@ -21,11 +21,11 @@ def get_num_of_rows(dur, n_rows, sr):
 class Ugen(Asig):
     """Unit Generator for to create Asig with predefined signal"""
     def __init__(self):
-        pass  
+        pass
 
     def sine(self, freq=440, amp=1.0, dur=None, n_rows=None,
              sr=44100, channels=1, cn=None, label="sine"):
-        """Generate Sine signal Asig object. 
+        """Generate Sine signal Asig object.
 
         Parameters
         ----------
@@ -60,7 +60,7 @@ class Ugen(Asig):
 
     def cos(self, freq=440, amp=1.0, dur=None, n_rows=None,
             sr=44100, channels=1, cn=None, label="cosine"):
-        """Generate Cosine signal Asig object. 
+        """Generate Cosine signal Asig object.
 
         Parameters
         ----------
@@ -95,7 +95,7 @@ class Ugen(Asig):
     def square(self, freq=440, amp=1.0, dur=None, n_rows=None,
                duty=0.5, sr=44100, sample_shift=0.5,
                channels=1, cn=None, label="square"):
-        """Generate square wave signal Asig object. 
+        """Generate square wave signal Asig object.
 
         Parameters
         ----------
@@ -124,7 +124,7 @@ class Ugen(Asig):
         """
         length = get_num_of_rows(dur, n_rows, sr)
         sig = amp * signal.square(
-            2 * np.pi * freq * ((sample_shift / length) + np.linspace(0, length / sr, length, endpoint=False)), 
+            2 * np.pi * freq * ((sample_shift / length) + np.linspace(0, length / sr, length, endpoint=False)),
             duty=duty)
         if channels > 1:
             sig = np.repeat(sig, channels)
@@ -133,7 +133,7 @@ class Ugen(Asig):
 
     def sawtooth(self, freq=440, amp=1.0, dur=None, n_rows=None,
                  width=1., sr=44100, channels=1, cn=None, label="sawtooth"):
-        """Generate sawtooth wave signal Asig object. 
+        """Generate sawtooth wave signal Asig object.
 
         Parameters
         ----------
@@ -170,7 +170,7 @@ class Ugen(Asig):
 
     def noise(self, type="white", amp=1.0, dur=None, n_rows=None,
               sr=44100, channels=1, cn=None, label="noise"):
-        """Generate noise signal Asig object. 
+        """Generate noise signal Asig object.
 
         Parameters
         ----------

@@ -112,7 +112,7 @@ class Aserver:
     def device(self):
         return self._device
 
-    @device.setter 
+    @device.setter
     def device(self, val):
         self._device = val if val is not None else self.backend.get_default_output_device_info()['index']
         self.device_dict = self.backend.get_device_info_by_index(self._device)
@@ -133,15 +133,15 @@ class Aserver:
         """Return (and optionally print) available input and output device"""
         if verbose:
             print("Input Devices: ")
-            [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}") 
+            [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}")
              for i in self.input_devices]
             print("Output Devices: ")
-            [print(f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}") 
+            [print(f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}")
              for i in self.output_devices]
         return self.input_devices, self.output_devices
 
     def set_device(self, idx, reboot=True):
-        """Set audio device 
+        """Set audio device
 
         Parameters
         ----------
