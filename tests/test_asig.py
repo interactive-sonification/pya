@@ -231,11 +231,10 @@ class TestAsig(TestCase):
         result = test.convolve(test)
 
     # # At the top I import Asig by: from pya import Asig
-    # @mock.patch("Asig.wavfile")
-    # def test_save_wavefile(self, mock_wavfile):
-    #     test = Asig(np.array([0, 0.2, 0.4, 0.6, 0.8, 1.0]), sr=6)
-    #     # self.assertEqual(test.dtype, "float32")
-    #     # Now mock the write.
-    #     test.save_wavfile(fname="mock save")
-    #     mock_wavfile.write.assert_called_once()
-    #     # mock_wavfile.write.assert_called_once_with(("mock save", 6, test.sig))
+    @mock.patch("pya.asig.wavfile")
+    def test_save_wavefile(self, mock_wavfile):
+        test = Asig(np.array([0, 0.2, 0.4, 0.6, 0.8, 1.0]), sr=6)
+        # self.assertEqual(test.dtype, "float32")
+        # Now mock the write.
+        test.save_wavfile(fname="mock save")
+        mock_wavfile.write.assert_called_once()

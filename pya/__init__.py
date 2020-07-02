@@ -1,10 +1,10 @@
-from .Asig import Asig
-from .Astft import Astft
-from .Aspec import Aspec
-from .Amfcc import Amfcc
-from .Aserver import Aserver
-from .Arecorder import Arecorder
-from .Ugen import Ugen
+from .aserver import Aserver
+from .asig import Asig
+from .astft import Astft
+from .aspec import Aspec
+from .amfcc import Amfcc
+from .arecorder import Arecorder
+from .ugen import Ugen
 from .version import __version__
 from .helper import *
 # from .helper.visualization import basicplots

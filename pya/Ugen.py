@@ -1,4 +1,4 @@
-from .Asig import Asig
+from . import Asig
 import numpy as np
 from scipy import signal
 from .helper import normalize

@@ -8,10 +8,12 @@ import scipy.interpolate
 import scipy.signal
 from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
-from .Aserver import Aserver
-from . import Aspec
-from . import Astft
-from . import Amfcc
+from . import Aserver
+import pya.aspec
+import pya.astft 
+import pya.amfcc
+# from . import Astft
+# from . import Amfcc
 from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, buf_to_float
 from .helper import spectrum, audio_from_file, padding
 from .helper import basicplot
@@ -1653,12 +1655,12 @@ class Asig:
 
     def to_spec(self):
         """Return Aspec object which is the rfft of the signal."""
-        return Aspec.Aspec(self)
+        return pya.aspec.Aspec(self)
 
     def to_stft(self, **kwargs):
         """Return Astft object which is the stft of the signal. Keyword arguments are the arguments for
         scipy.signal.stft(). """
-        return Astft.Astft(self, **kwargs)
+        return pya.astft.Astft(self, **kwargs)
 
     def to_mfcc(
         self,
@@ -1673,7 +1675,7 @@ class Asig:
         append_energy=True,
     ):
         """Return Amfcc object. """
-        return Amfcc.Amfcc(
+        return pya.amfcc.Amfcc(
             self,
             label=self.label,
             n_per_frame=n_per_frame,

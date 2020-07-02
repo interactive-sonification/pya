@@ -6,7 +6,7 @@ from .helper import basicplot
 import logging
 from scipy.signal import get_window
 from scipy.fftpack import dct
-from . import Asig
+import pya.asig
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
@@ -112,7 +112,7 @@ class Amfcc:
         # First prepare for parameters
         # x represent the audio signal, which can be Asig object or np.array.
         self.im = None
-        if type(x) == Asig.Asig:
+        if type(x) == pya.asig.Asig:
             self.sr = x.sr
             self.x = x.sig
             self.label = ''.join([x.label, "_mfccs"])

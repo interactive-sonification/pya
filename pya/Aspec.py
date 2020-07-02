@@ -2,7 +2,7 @@ import logging
 import numpy as np
 import scipy.interpolate
 import matplotlib.pyplot as plt
-from . import Asig
+import pya.asig
 from .helper import basicplot
 
 
@@ -22,10 +22,10 @@ class Aspec:
             sampling rate (Default value = 44100)
         label : str or None
             Asig label (Default value = None)
-        cn : list or None
+        cn : list or Nonpya.asige
             Channel names (Default value = None)
         """
-        if type(x) == Asig.Asig:
+        if type(x) == pya.asig.Asig:
             self.sr = x.sr
             self.rfftspec = np.fft.rfft(x.sig, axis=0)
             self.label = x.label + "_spec"
@@ -54,8 +54,8 @@ class Aspec:
 
     def to_sig(self):
         """Convert Aspec into Asig"""
-        return Asig.Asig(np.fft.irfft(self.rfftspec),
-                         sr=self.sr, label=self.label + '_2sig', cn=self.cn)
+        return pya.asig.Asig(np.fft.irfft(self.rfftspec),
+                             sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
     def weight(self, weights, freqs=None, curve=1, kind='linear'):
         """TODO

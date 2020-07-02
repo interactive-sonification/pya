@@ -5,7 +5,7 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import stft, istft
-from . import Asig
+import pya.asig
 from .helper import basicplot
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
@@ -75,7 +75,7 @@ class Astft:
         # self.cn = cn
         self.im = None  # buffer for the image
 
-        if type(x) == Asig.Asig:
+        if type(x) == pya.asig.Asig:
             self.sr = x.sr
             self.channels = x.channels
             self.label = x.label + "_stft"
@@ -176,12 +176,12 @@ class Astft:
         if self.channels == 1:
             # _ since 1st return value 'times' unused
             _, sig = istft(self.stft, **kwargs)
-            return Asig.Asig(sig, sr=self.sr,
-                             label=self.label + '_2sig', cn=self.cn)
+            return pya.asig.Asig(sig, sr=self.sr,
+                                 abel=self.label + '_2sig', cn=self.cn)
         else:
             _, sig = istft(self.stft, **kwargs)
-            return Asig.Asig(np.transpose(sig),
-                             sr=self.sr, label=self.label + '_2sig', cn=self.cn)
+            return pya.asig.Asig(np.transpose(sig),
+                                 sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
     def plot(self, fn=lambda x: x, ax=None,
              offset=0, scale=1., xlim=None, ylim=None,
