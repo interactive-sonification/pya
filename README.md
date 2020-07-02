@@ -95,6 +95,12 @@ Other ways of creating an Asig object:
 
 Audio files are also possible using the file path. `WAV` should work without issues. `MP3` is supported but may raise error if [FFmpeg](https://ffmpeg.org/).
 
+If you use Anacodna, installation is quite easy:
+
+`conda install -c conda-forge ffmpeg`
+
+Otherwise:
+
 * Mac or Linux with brew
     - `brew install ffmpeg`
 * On Linux
