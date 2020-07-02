@@ -130,7 +130,7 @@ class Amfcc:
                 raise AttributeError(msg)
             self.duration = np.shape(x)[0] / self.sr
             self.label = label
-            self.channels if self.x.ndim == 1 else self.x.shape[1]
+            self.channels = 1 if self.x.ndim == 1 else self.x.shape[1]
             self.cn = None
         else:
             msg = "x can only be either a numpy.ndarray or pya.Asig object."
@@ -142,11 +142,11 @@ class Amfcc:
         self.hopsize = hopsize or int(round_half_up(self.sr * 0.01))
         if self.hopsize > self.n_per_frame:
             msg = "noverlap > nperseg, this leaves gaps between frames."
-            raise _LOGGER.warning(msg)
+            warn(msg)
         self.nfft = nfft or next_pow2(self.n_per_frame)
         if not is_pow2(self.nfft):
             msg = "nfft is not power of 2, this may effects computation time."
-            raise _LOGGER.warning(msg)
+            warn(msg)
         if window:
             self.window = get_window(window, self.n_per_frame)
         else:

@@ -2,7 +2,7 @@
 from pya import Asig, Ugen, Amfcc
 from unittest import TestCase
 import numpy as np
-
+import warnings
 
 class TestAmfcc(TestCase):
     def setUp(self):
@@ -15,11 +15,28 @@ class TestAmfcc(TestCase):
     def test_construct(self):
         # If x is asig, it will ignore sr but use x.sr instead.
         amfcc = Amfcc(self.test_asig, sr=45687)
-        self.assertEqual(amfcc.sr, 8000)
+        self.assertEqual(amfcc.sr, 8000, msg='sr does not match.')
 
         # if x is ndarray and sr is not given
         with self.assertRaises(AttributeError):
             _ = Amfcc(self.test_sig)
+
+        # x is ndarray and sr is given.
+        amfcc = Amfcc(self.test_sig, sr=1000)
+        self.assertEqual(amfcc.sr, 1000, msg="sr does not match.")
+
+    def test_hopsize_greater_than_npframe(self):
+        with warnings.catch_warnings(record=True):
+            amfcc = Amfcc(self.test_asig, hopsize=100, n_per_frame=50)
+
+    def test_nfft_not_pow2(self):
+        with warnings.catch_warnings(record=True):
+            amfcc = Amfcc(self.test_asig, nfft=23)
+
+    def test_nowindowing(self):
+        amfcc = Amfcc(self.test_asig, window=False)
+        result = np.ones((amfcc.n_per_frame,))
+        self.assertTrue(np.array_equal(result, amfcc.window))
 
     def test_preemphasis(self):
         self.assertTrue(np.array_equal(np.array([0., 1., 1.5, 2., 2.5]),
