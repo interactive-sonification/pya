@@ -4,6 +4,7 @@ from unittest import TestCase
 import numpy as np
 import warnings
 
+
 class TestAmfcc(TestCase):
     def setUp(self):
         self.test_asig = Ugen().square(freq=20, sr=8000)
@@ -24,6 +25,15 @@ class TestAmfcc(TestCase):
         # x is ndarray and sr is given.
         amfcc = Amfcc(self.test_sig, sr=1000)
         self.assertEqual(amfcc.sr, 1000, msg="sr does not match.")
+
+        # Unsupported input type
+        with self.assertRaises(TypeError):
+            _ = Amfcc(x="String")
+
+    def test_get_attributes(self):
+        amfcc = Amfcc(self.test_asig)
+        self.assertTrue(amfcc.timestamp is not None)
+        self.assertTrue(amfcc.features is not None)
 
     def test_hopsize_greater_than_npframe(self):
         with warnings.catch_warnings(record=True):
@@ -53,3 +63,9 @@ class TestAmfcc(TestCase):
         # if L negative, no lifting applied
         lifted_ceps = Amfcc.lifter(fake_cepstra, L=-3)
         self.assertTrue(np.array_equal(lifted_ceps, fake_cepstra))
+
+    def test_plot_with_multichannel(self):
+        asig = Ugen().sine(channels=2)
+        amfcc = asig.to_mfcc()
+        with warnings.catch_warnings(record=True):
+            amfcc.plot()
