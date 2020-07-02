@@ -177,7 +177,7 @@ class Astft:
             # _ since 1st return value 'times' unused
             _, sig = istft(self.stft, **kwargs)
             return pya.asig.Asig(sig, sr=self.sr,
-                                 abel=self.label + '_2sig', cn=self.cn)
+                                 label=self.label + '_2sig', cn=self.cn)
         else:
             _, sig = istft(self.stft, **kwargs)
             return pya.asig.Asig(np.transpose(sig),
