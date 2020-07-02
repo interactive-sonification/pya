@@ -144,6 +144,7 @@ class Asig:
         if self.label == "":
             self.label = fname
 
+    # Asig.py
     def save_wavfile(self, fname="asig.wav", dtype="float32"):
         """Save signal as .wav file, return self.
 
@@ -162,7 +163,7 @@ class Asig:
             data = (self.sig * 127 + 128).astype("uint8")
         elif dtype == "float32":
             data = self.sig.astype("float32")
-        scipy.io.wavfile.write(fname, self.sr, data)
+        wavfile.write(fname, self.sr, data)
         return self
 
     def _set_col_names(self):

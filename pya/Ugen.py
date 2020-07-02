@@ -30,7 +30,7 @@ class Ugen(Asig):
 
     >>> from pya import Ugen
     >>> # Create a sine wave of 440Hz at 44100Hz sr for 2 seconds. Same for cos()
-    >>> sin = Ugen().sin(freq=440, amp=0.8, dur=2.,label="sine")
+    >>> sine = Ugen().sine(freq=440, amp=0.8, dur=2.,label="sine")
     >>> # Create a square wave of 25Hz, 2000 samples at 100 sr, stereo.
     >>> sq = Ugen().square(freq=25, n_rows=2000, sr=100, channels=2, cn=['l', 'r'])
     >>> # Make a white noise, another option is 'pink', at 44100Hz for 1second.

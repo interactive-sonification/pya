@@ -1,6 +1,3 @@
-"""Collection of classes and functions for processing audio signals
- in python and jupyter notebooks, for synthesis, effects, analysis and plotting.
-"""
 from .Asig import Asig
 from .Astft import Astft
 from .Aspec import Aspec

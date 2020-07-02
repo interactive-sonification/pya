@@ -10,7 +10,7 @@ class TestCodeFormat(unittest.TestCase):
         # W391 blank line at end of file
         # W292 no newline at end of file
         # E722 bare except
-        style = pycodestyle.StyleGuide(quiet=False, 
+        style = pycodestyle.StyleGuide(quiet=False,
                                        ignore=['E501', 'E731', 'W291', 'W391', 'W292', 'E722', 'E402'])
         # style.input_dir('../../pya')
         style.input_dir('./')
