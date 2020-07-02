@@ -19,7 +19,23 @@ def get_num_of_rows(dur, n_rows, sr):
 
 
 class Ugen(Asig):
-    """Unit Generator for to create Asig with predefined signal"""
+    """Unit Generator for to create Asig with predefined signal
+
+    Currently avaiable:
+        sine, cos, square, sawtooth, noise
+
+    Examples
+    --------
+    Create common waveform in Asig.
+
+    >>> from pya import Ugen
+    >>> # Create a sine wave of 440Hz at 44100Hz sr for 2 seconds. Same for cos()
+    >>> sin = Ugen().sin(freq=440, amp=0.8, dur=2.,label="sine")
+    >>> # Create a square wave of 25Hz, 2000 samples at 100 sr, stereo.
+    >>> sq = Ugen().square(freq=25, n_rows=2000, sr=100, channels=2, cn=['l', 'r'])
+    >>> # Make a white noise, another option is 'pink', at 44100Hz for 1second.
+    >>> noi = Ugen().noise(type='white')
+    """
     def __init__(self):
         pass
 
@@ -33,10 +49,10 @@ class Ugen(Asig):
             signal frequency (Default value = 440)
         amp : int, float
             signal amplitude (Default value = 1.0)
-        dur : int, float
-            duration in second. dur and num_samples only use one of the two. (Default value = 1.0)
-        num_samples : int
-            number of sample. dur and num_samples only use one of the two(Default value = None)
+        dur : float
+            duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+        num_rows : int
+            number of rows (samples). dur and num_rows only use one of the two(Default value = None)
         sr : int
             sampling rate (Default value = 44100)
         channels : int
@@ -48,9 +64,8 @@ class Ugen(Asig):
 
         Returns
         -------
-        Asig object
+        Asig
         """
-
         length = get_num_of_rows(dur, n_rows, sr)
         sig = amp * np.sin(2 * np.pi * freq * np.linspace(0, length / sr, length))
         if channels > 1:
@@ -69,9 +84,9 @@ class Ugen(Asig):
         amp : int, float
             signal amplitude (Default value = 1.0)
         dur : int, float
-            duration in second. dur and num_samples only use one of the two. (Default value = 1.0)
-        num_samples : int
-            number of sample. dur and num_samples only use one of the two(Default value = None)
+            duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+        num_rows : int
+            number of rows (samples). dur and num_rows only use one of the two(Default value = None)
         sr : int
             sampling rate (Default value = 44100)
         channels : int
@@ -83,7 +98,7 @@ class Ugen(Asig):
 
         Returns
         -------
-        Asig object
+        Asig
         """
         length = get_num_of_rows(dur, n_rows, sr)
         sig = amp * np.cos(2 * np.pi * freq * np.linspace(0, length / sr, length))
@@ -104,9 +119,9 @@ class Ugen(Asig):
         amp : int, float
             signal amplitude (Default value = 1.0)
         dur : int, float
-            duration in second. dur and num_samples only use one of the two. (Default value = 1.0)
-        num_samples : int
-            number of sample. dur and num_samples only use one of the two(Default value = None)
+            duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+        num_rows : int
+            number of row (samples). dur and num_rows only use one of the two(Default value = None)
         duty : float
             duty cycle (Default value = 0.4)
         sr : int
@@ -120,7 +135,7 @@ class Ugen(Asig):
 
         Returns
         -------
-        Asig object
+        Asig
         """
         length = get_num_of_rows(dur, n_rows, sr)
         sig = amp * signal.square(
@@ -142,9 +157,9 @@ class Ugen(Asig):
         amp : int, float
             signal amplitude (Default value = 1.0)
         dur : int, float
-            duration in second. dur and num_samples only use one of the two. (Default value = 1.0)
-        num_samples : int
-            number of sample. dur and num_samples only use one of the two(Default value = None)
+            duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+        num_rows : int
+            number of rows (samples). dur and num_rows only use one of the two(Default value = None)
         width : float
             tooth width (Default value = 1.0)
         sr : int
@@ -158,7 +173,7 @@ class Ugen(Asig):
 
         Returns
         -------
-        Asig object
+        Asig
         """
         length = get_num_of_rows(dur, n_rows, sr)
         sig = amp * signal.sawtooth(2 * np.pi * freq * np.linspace(0, length / sr, length, endpoint=False),
@@ -179,9 +194,9 @@ class Ugen(Asig):
         amp : int, float
             signal amplitude (Default value = 1.0)
         dur : int, float
-            duration in second. dur and num_samples only use one of the two. (Default value = 1.0)
-        num_samples : int
-            number of sample. dur and num_samples only use one of the two(Default value = None)
+            duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+        num_rows : int
+            number of rows (samples). dur and num_rows only use one of the two(Default value = None)
         sr : int
             sampling rate (Default value = 44100)
         channels : int
@@ -193,7 +208,7 @@ class Ugen(Asig):
 
         Returns
         -------
-        Asig object
+        Asig
         """
         length = get_num_of_rows(dur, n_rows, sr)
         # Question is that will be that be too slow.]
