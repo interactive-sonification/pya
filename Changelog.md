@@ -5,6 +5,7 @@
 * Add convolve() method. A convolution method (default to fft). Now you can apply reverb, do autocorrelation to the signal.
 * Update Ugen docstring and remove deprecated variable names
 * namespace improvement.
+* `sanic` and `notebook` are now optional: If you plan to use `JupyterBackend`, install `pya` with `pip install pya[remote]`
 
 ## 0.4.0 (April 2020)
 * new Amfcc class for MFCC feature extraction
