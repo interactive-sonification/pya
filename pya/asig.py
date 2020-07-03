@@ -1975,6 +1975,8 @@ class Asig:
         # Not sure if this is the best way to regulate output volume
         if norm.lower() == "amp":
             result = result / np.max(np.abs(result)) * np.max(np.abs(self.sig))
+        # elif norm.lower() == "energy":
+        #     result = result / np.var(result, axis=0) * np.var(self.sig, axis=0)
         return Asig(
             result, sr=self.sr, label=self.label, channels=self.channels, cn=self.cn
         )

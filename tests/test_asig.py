@@ -233,8 +233,15 @@ class TestAsig(TestCase):
     # # At the top I import Asig by: from pya import Asig
     @mock.patch("pya.asig.wavfile")
     def test_save_wavefile(self, mock_wavfile):
+
         test = Asig(np.array([0, 0.2, 0.4, 0.6, 0.8, 1.0]), sr=6)
-        # self.assertEqual(test.dtype, "float32")
-        # Now mock the write.
         test.save_wavfile(fname="mock save")
         mock_wavfile.write.assert_called_once()
+
+        # int 16
+        test = Asig(np.array([0, 0.2, 0.4, 0.6, 0.8, 1.0]), sr=6)
+        test.save_wavfile(dtype="int16")
+
+        # unit8
+        test = Asig(np.array([0, 0.2, 0.4, 0.6, 0.8, 1.0]), sr=6)
+        test.save_wavfile(dtype="uint8")
