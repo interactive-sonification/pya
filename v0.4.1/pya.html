@@ -1,0 +1,616 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pya package &mdash; pya  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pya.backend package" href="pya.backend.html" />
+    <link rel="prev" title="modules" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+
+<a href="index.html" class="icon icon-home" alt="Documentation Home"> pya
+
+
+
+</a>
+
+
+
+
+
+<div class="version">
+version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
+
+  <option value="/pya/v0.4.1/" selected="selected">v0.4.1</option>
+
+  <option value="/pya/master/" >master</option>
+
+  <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.0/" >v0.4.0</option>
+
+  <option value="/pya/v0.3.3/" >v0.3.3</option>
+
+  <option value="/pya/v0.3.2/" >v0.3.2</option>
+
+<select>
+</div>
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">pya</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">modules</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pya package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pya.backend.html">pya.backend package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.helper.html">pya.helper package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pya.Arecorder">pya.Arecorder module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pya.Aserver">pya.Aserver module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Examples:</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pya.Asig">pya.Asig module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pya.Aspec">pya.Aspec module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pya.Astft">pya.Astft module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pya.Ugen">pya.Ugen module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pya.version">pya.version module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pya">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pya</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">modules</a> &raquo;</li>
+        
+      <li>pya package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pya.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pya-package">
+<h1>pya package<a class="headerlink" href="#pya-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pya.backend.html">pya.backend package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#module-pya.backend.Dummy">pya.backend.Dummy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#module-pya.backend.PyAudio">pya.backend.PyAudio module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#module-pya.backend.base">pya.backend.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#module-pya.backend">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pya.helper.html">pya.helper package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pya.helper.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.helper.html#module-pya.helper.codec">pya.helper.codec module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.helper.html#module-pya.helper.helpers">pya.helper.helpers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.helper.html#module-pya.helper">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pya.Arecorder">
+<span id="pya-arecorder-module"></span><h2>pya.Arecorder module<a class="headerlink" href="#module-pya.Arecorder" title="Permalink to this headline">¶</a></h2>
+<p>pya audio recorder Based on pyaudio, uses callbacks to save audio data
+for pyaudio signals into ASigs</p>
+<div class="section" id="examples">
+<h3>Examples:<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="n">Arecorder</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span> <span class="o">=</span> <span class="n">Arecorder</span><span class="p">()</span><span class="o">.</span><span class="n">boot</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span><span class="o">.</span><span class="n">record</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">recordings</span><span class="p">)</span>  
+<span class="go">[Asig(&#39;&#39;): ... x ... @ 44100Hz = ...</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="pya.Arecorder.device">
+<code class="sig-prename descclassname">pya.Arecorder.</code><code class="sig-name descname">device</code><a class="headerlink" href="#pya.Arecorder.device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-pya.Aserver">
+<span id="pya-aserver-module"></span><h2>pya.Aserver module<a class="headerlink" href="#module-pya.Aserver" title="Permalink to this headline">¶</a></h2>
+<p>Pya audio server
+Based on pyaudio, works as a FIFO style audio stream pipeline,
+allowing Asig.play() to send audio segement into the stream.</p>
+<div class="section" id="id1">
+<h3>Examples:<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span> <span class="o">=</span> <span class="n">Aserver</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span><span class="o">.</span><span class="n">boot</span><span class="p">()</span>
+<span class="go">AServer: sr: 44100, blocksize: ...,</span>
+<span class="go">         Stream Active: True, Device: ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">asine</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">sine</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">asine</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">ser</span><span class="p">)</span>
+<span class="go">Asig(&#39;sine&#39;): 1 x 44100 @ 44100Hz = 1.000s cn=[&#39;0&#39;]</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="pya.Aserver.device">
+<code class="sig-prename descclassname">pya.Aserver.</code><code class="sig-name descname">device</code><a class="headerlink" href="#pya.Aserver.device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-pya.Asig">
+<span id="pya-asig-module"></span><h2>pya.Asig module<a class="headerlink" href="#module-pya.Asig" title="Permalink to this headline">¶</a></h2>
+<p>Audio signal class.
+Asig enables manipulation of audio signals in the style of numpy and more.
+Asig offer functions for plotting (via matplotlib) and playing audio
+(using the pya.Aserver class)</p>
+<dl class="attribute">
+<dt id="pya.Asig.sig">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">sig</code><a class="headerlink" href="#pya.Asig.sig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array for the audio signal. Can be mono or multichannel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.sr">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">sr</code><a class="headerlink" href="#pya.Asig.sr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sampling rate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.label">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">label</code><a class="headerlink" href="#pya.Asig.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string label to give the object a unique identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.channels">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">channels</code><a class="headerlink" href="#pya.Asig.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of channels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.cn">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">cn</code><a class="headerlink" href="#pya.Asig.cn" title="Permalink to this definition">¶</a></dt>
+<dd><p>cn short for channel names is a list of string of size channels,
+to give each channel a unique name.
+channel names can be used to subset signal channels in a more readible way,
+e.g. asig[:, [‘left’, ‘front’]] subsets the left and front channels of the signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list of str, None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.mix_mode">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">mix_mode</code><a class="headerlink" href="#pya.Asig.mix_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>used to extend numpy __setitem__() operation to frequent audio manipulations such as
+mixing, extending, boundary, replacing.
+Current Asig supports the mix_modes:
+bound, extend, overwrite.  mix_mode should not be
+set directly but is set temporarilty when using
+the .bound, .extend and .overwrite properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.b">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">b</code><a class="headerlink" href="#pya.Asig.b" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Bound mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.bound">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">bound</code><a class="headerlink" href="#pya.Asig.bound" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Bound mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">channels</code></dt>
+<dd><p>Return the number of channels</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">cn</code></dt>
+<dd><p>Channel names getter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.extend">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">extend</code><a class="headerlink" href="#pya.Asig.extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode allows destination sig size in assignment to be extended through setitem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Extend mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.o">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">o</code><a class="headerlink" href="#pya.Asig.o" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode cuts and replaces target selection by source signal on assignment via setitem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Overwrite mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.overwrite">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">overwrite</code><a class="headerlink" href="#pya.Asig.overwrite" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode cuts and replaces target selection by source signal on assignment via setitem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Overwrite mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.samples">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">samples</code><a class="headerlink" href="#pya.Asig.samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the length of signal in samples</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Asig.x">
+<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">x</code><a class="headerlink" href="#pya.Asig.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode allows destination sig size in assignment to be extended through setitem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Extend mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pya.Aspec">
+<span id="pya-aspec-module"></span><h2>pya.Aspec module<a class="headerlink" href="#module-pya.Aspec" title="Permalink to this headline">¶</a></h2>
+<p>Audio spectrum class using rfft</p>
+</div>
+<div class="section" id="module-pya.Astft">
+<span id="pya-astft-module"></span><h2>pya.Astft module<a class="headerlink" href="#module-pya.Astft" title="Permalink to this headline">¶</a></h2>
+<p>Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
+attribute cn being the list of channel names, and label being the name of the Asig</p>
+</div>
+<div class="section" id="module-pya.Ugen">
+<span id="pya-ugen-module"></span><h2>pya.Ugen module<a class="headerlink" href="#module-pya.Ugen" title="Permalink to this headline">¶</a></h2>
+<p>Unit Generator for to create Asig with predefined signal</p>
+<dl class="simple">
+<dt>Currently avaiable:</dt><dd><p>sine, cos, square, sawtooth, noise</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Create common waveform in Asig.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="n">Ugen</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a sine wave of 440Hz at 44100Hz sr for 2 seconds. Same for cos()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sine</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">sine</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mi">440</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">dur</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;sine&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a square wave of 25Hz, 2000 samples at 100 sr, stereo.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sq</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cn</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Make a white noise, another option is &#39;pink&#39;, at 44100Hz for 1second.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">noi</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">noise</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="pya.Ugen.b">
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">b</code><a class="headerlink" href="#pya.Ugen.b" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Bound mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Ugen.bound">
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">bound</code><a class="headerlink" href="#pya.Ugen.bound" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Bound mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Ugen.channels">
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">channels</code><a class="headerlink" href="#pya.Ugen.channels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of channels</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Ugen.cn">
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">cn</code><a class="headerlink" href="#pya.Ugen.cn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Channel names getter</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Ugen.extend">
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">extend</code><a class="headerlink" href="#pya.Ugen.extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode allows destination sig size in assignment to be extended through setitem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Extend mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Ugen.o">
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">o</code><a class="headerlink" href="#pya.Ugen.o" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode cuts and replaces target selection by source signal on assignment via setitem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Overwrite mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Ugen.overwrite">
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">overwrite</code><a class="headerlink" href="#pya.Ugen.overwrite" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode cuts and replaces target selection by source signal on assignment via setitem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Overwrite mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Ugen.samples">
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">samples</code><a class="headerlink" href="#pya.Ugen.samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the length of signal in samples</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pya.Ugen.x">
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">x</code><a class="headerlink" href="#pya.Ugen.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>this mode allows destination sig size in assignment to be extended through setitem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Extend mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pya.version">
+<span id="pya-version-module"></span><h2>pya.version module<a class="headerlink" href="#module-pya.version" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pya">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pya" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pya.shutdown">
+<code class="sig-prename descclassname">pya.</code><code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pya.startup">
+<code class="sig-prename descclassname">pya.</code><code class="sig-name descname">startup</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.startup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pya.backend.html" class="btn btn-neutral float-right" title="pya.backend package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral float-left" title="modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Thomas Hermann, Jiajun Yang, Alexander Neumann
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
