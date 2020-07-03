@@ -63,11 +63,15 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.3.3/" >v0.3.3</option>
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" selected="selected">develop</option>
+
+  <option value="/pya/v0.4.0/" >v0.4.0</option>
+
+  <option value="/pya/v0.3.3/" >v0.3.3</option>
 
   <option value="/pya/v0.3.2/" >v0.3.2</option>
 
@@ -272,6 +276,9 @@ asig_ugen = Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen cla
 </pre></div>
 </div>
 <p>Audio files are also possible using the file path. <code class="docutils literal notranslate"><span class="pre">WAV</span></code> should work without issues. <code class="docutils literal notranslate"><span class="pre">MP3</span></code> is supported but may raise error if <a class="reference external" href="https://ffmpeg.org/">FFmpeg</a>.</p>
+<p>If you use Anacodna, installation is quite easy:</p>
+<p><code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">conda-forge</span> <span class="pre">ffmpeg</span></code></p>
+<p>Otherwise:</p>
 <ul class="simple">
 <li><p>Mac or Linux with brew</p>
 <ul>

@@ -62,11 +62,15 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.3.3/" >v0.3.3</option>
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
 
   <option value="/pya/master/" selected="selected">master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.0/" >v0.4.0</option>
+
+  <option value="/pya/v0.3.3/" >v0.3.3</option>
 
   <option value="/pya/v0.3.2/" >v0.3.2</option>
 
@@ -402,12 +406,6 @@ into numpy arrays.
 </dd></dl>
 
 <dl class="function">
-<dt id="pya.helper.helpers.clip">
-<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">clip</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">minimum=-inf</em>, <em class="sig-param">maximum=inf</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.clip" title="Permalink to this definition">¶</a></dt>
-<dd><p>Signal hard clipping</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="pya.helper.helpers.cpsmidi">
 <code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">cpsmidi</code><span class="sig-paren">(</span><em class="sig-param">c</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.cpsmidi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert cycle per second into midi number</p>
@@ -429,6 +427,28 @@ into numpy arrays.
 <dt id="pya.helper.helpers.find_device">
 <code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">find_device</code><span class="sig-paren">(</span><em class="sig-param">min_input=0</em>, <em class="sig-param">min_output=0</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.find_device" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="function">
+<dt id="pya.helper.helpers.hz2mel">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">hz2mel</code><span class="sig-paren">(</span><em class="sig-param">hz</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.hz2mel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a value in Hertz to Mels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hz</strong> (<em>number of array</em>) – value in Hz, can be an array</p></li>
+<li><p><strong>Returns</strong> – </p></li>
+<li><p><strong>--------</strong> – </p></li>
+<li><p><strong>_</strong> (<em>number of array</em>) – value in Mels, same type as the input.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pya.helper.helpers.is_pow2">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">is_pow2</code><span class="sig-paren">(</span><em class="sig-param">val</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.is_pow2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if input is a power of 2 return a bool result.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="pya.helper.helpers.linlin">
@@ -454,15 +474,151 @@ into numpy arrays.
 </dd></dl>
 
 <dl class="function">
+<dt id="pya.helper.helpers.magspec">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">magspec</code><span class="sig-paren">(</span><em class="sig-param">frames</em>, <em class="sig-param">NFFT</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.magspec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the magnitude spectrum of each frame in frames.
+If frames is an NxD matrix, output will be Nx(NFFT/2+1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frames</strong> (<em>numpy.ndarray</em>) – The framed array, each row is a frame, can be just a single frame.</p></li>
+<li><p><strong>NFFT</strong> (<em>int</em>) – FFT length. If NFFT &gt; frame_len, the frames are zero_padded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – If frames is an NxD matrix, output will be Nx(NFFT/2+1).
+Each row will be the magnitude spectrum of the corresponding frame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pya.helper.helpers.mel2hz">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">mel2hz</code><span class="sig-paren">(</span><em class="sig-param">mel</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.mel2hz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a value in Hertz to Mels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hz</strong> (<em>number of array</em>) – value in Hz, can be an array</p></li>
+<li><p><strong>Returns</strong> – </p></li>
+<li><p><strong>--------</strong> – </p></li>
+<li><p><strong>_</strong> (<em>number of array</em>) – value in Mels, same type as the input.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="pya.helper.helpers.midicps">
 <code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">midicps</code><span class="sig-paren">(</span><em class="sig-param">m</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.midicps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert midi number into cycle per second</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="pya.helper.helpers.next_pow2">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">next_pow2</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.next_pow2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the closest pow of 2 that is great or equal or x,
+based on shift_bit_length</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>int</em>) – A positive number</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – The cloest  integer that is greater or equal to input x.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="pya.helper.helpers.normalize">
 <code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">d</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.normalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the normalized input array</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pya.helper.helpers.padding">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">padding</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">width</em>, <em class="sig-param">tail=True</em>, <em class="sig-param">constant_values=0</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.padding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pad signal with certain width, support 1-3D tensors.
+Use it to add silence to a signal
+TODO: CHECK pad array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – A numpy array</p></li>
+<li><p><strong>width</strong> (<em>int</em>) – The amount of padding.</p></li>
+<li><p><strong>tail</strong> (<em>bool</em>) – If true pad to the tail, else pad to the start.</p></li>
+<li><p><strong>constant_values</strong> (<em>int</em><em> or </em><em>float</em><em> or </em><em>None</em>) – The value to be padded, add None will pad nan to the array</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – Padded array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pya.helper.helpers.powspec">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">powspec</code><span class="sig-paren">(</span><em class="sig-param">frames</em>, <em class="sig-param">NFFT</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.powspec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the power spectrum of each frame in frames,
+first comeputer the magnitude spectrum</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frames</strong> (<em>numpy.ndarray</em>) – Framed signal, can be just a single frame.</p></li>
+<li><p><strong>NFFT</strong> (<em>int</em>) – The FFT length to use. If NFFT &gt; frame_len, the frames are zero-padded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – Power spectrum of the framed signal.
+Each row has the size of NFFT / 2 + 1 due to rfft.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pya.helper.helpers.rolling_window">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">rolling_window</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">window</em>, <em class="sig-param">step=1</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.rolling_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pya.helper.helpers.round_half_up">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">round_half_up</code><span class="sig-paren">(</span><em class="sig-param">number</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.round_half_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Round up if &gt;= .5</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pya.helper.helpers.signal_to_frame">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">signal_to_frame</code><span class="sig-paren">(</span><em class="sig-param">sig</em>, <em class="sig-param">n_per_frame</em>, <em class="sig-param">frame_step</em>, <em class="sig-param">window=None</em>, <em class="sig-param">stride_trick=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.signal_to_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Frame a signal into overlapping frames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sig</strong> (<em>numpy.ndarray</em>) – The audio signal</p></li>
+<li><p><strong>n_per_frame</strong> (<em>int</em>) – Number of samples each frame</p></li>
+<li><p><strong>frame_step</strong> (<em>int</em>) – Number of samples after the start of the previous frame that the next frame should begin.</p></li>
+<li><p><strong>window</strong> (<em>numpy.ndarray</em><em> or </em><em>None</em>) – A window array, e.g,</p></li>
+<li><p><strong>stride_trick</strong> (<em>bool</em>) – Use stride trick to compute the rolling window and window multiplication faster</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – an array of frames.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
