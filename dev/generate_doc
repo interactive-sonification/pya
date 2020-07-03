@@ -10,6 +10,9 @@ from os.path import exists, dirname, basename
 
 SILENCE = "> /dev/null 2>&1"
 
+# this requires m2r, sphinx (<3.0 due to m2r) and sphinx_rtd_theme
+# you usually want to run:  
+#   python dev/generate_doc --doctree --publish --clean --no-show
 
 def generate():
     git_root = subprocess.check_output(f'git -C {dirname(__file__)} rev-parse --show-toplevel'.split(' '))
@@ -87,7 +90,7 @@ def generate_tree(out_folder, publish=False, branches=['master', 'develop'], tag
             fp.write(f"""<!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="0; url={doclist[0]}/index.html">
+    <meta http-equiv="refresh" content="0; url={doclist[0]}/">
   </head>
 </html>
 """)
@@ -102,6 +105,7 @@ def generate_tree(out_folder, publish=False, branches=['master', 'develop'], tag
 
     # commit and push changes when publish has been passed
     if publish:
+        os.system(f'git -C {doctree_root} add -A')
         os.system(f'git -C {doctree_root} commit -a -m "update doctree"')
         os.system(f'git -C {doctree_root} push')
 
