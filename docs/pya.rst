@@ -12,50 +12,58 @@ Subpackages
 Submodules
 ----------
 
-pya.Arecorder module
+pya.arecorder module
 --------------------
 
-.. automodule:: pya.Arecorder
+.. automodule:: pya.arecorder
    :members:
    :undoc-members:
    :show-inheritance:
 
-pya.Aserver module
+pya.aserver module
 ------------------
 
-.. automodule:: pya.Aserver
+.. automodule:: pya.aserver
    :members:
    :undoc-members:
    :show-inheritance:
 
-pya.Asig module
+pya.asig module
 ---------------
 
-.. automodule:: pya.Asig
+.. automodule:: pya.asig
    :members:
    :undoc-members:
    :show-inheritance:
 
-pya.Aspec module
+pya.aspec module
 ----------------
 
-.. automodule:: pya.Aspec
+.. automodule:: pya.aspec
    :members:
    :undoc-members:
    :show-inheritance:
 
-pya.Astft module
+pya.astft module
 ----------------
 
-.. automodule:: pya.Astft
+.. automodule:: pya.astft
    :members:
    :undoc-members:
    :show-inheritance:
 
-pya.Ugen module
+pya.amfcc module
+----------------
+
+.. automodule:: pya.amfcc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pya.ugen module
 ---------------
 
-.. automodule:: pya.Ugen
+.. automodule:: pya.ugen
    :members:
    :undoc-members:
    :show-inheritance:

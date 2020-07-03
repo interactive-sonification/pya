@@ -20,6 +20,13 @@ pya.helper.helpers module
    :undoc-members:
    :show-inheritance:
 
+pya.helper.visualization module
+-------------------------
+
+.. automodule:: pya.helper.visualization
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
