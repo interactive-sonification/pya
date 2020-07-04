@@ -33,10 +33,9 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pya.backend package" href="pya.backend.html" />
-    <link rel="prev" title="modules" href="modules.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -101,30 +100,281 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
               
             
             
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="includeme.html">pya</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">modules</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">pya package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html">pya.backend package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.helper.html">pya.helper package</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">pya package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pya.Arecorder">pya.Arecorder module</a></li>
+<li><a class="reference internal" href="#module-pya.Aserver">pya.Aserver module</a></li>
+<li><a class="reference internal" href="#module-pya.Asig">pya.Asig module</a></li>
+<li><a class="reference internal" href="#module-pya.Aspec">pya.Aspec module</a></li>
+<li><a class="reference internal" href="#module-pya.Astft">pya.Astft module</a></li>
+<li><a class="reference internal" href="#module-pya.Ugen">pya.Ugen module</a></li>
+<li><a class="reference internal" href="#module-pya.version">pya.version module</a></li>
+<li><a class="reference internal" href="#module-pya">Module contents</a><ul>
+<li><a class="reference internal" href="#pya.Arecorder.Arecorder">Arecorder</a><ul>
+<li><a class="reference internal" href="#pya.Arecorder.Arecorder.boot">boot</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Arecorder.Arecorder.device">device</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Arecorder.Arecorder.pause">pause</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Arecorder.Arecorder.record">record</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Arecorder.Arecorder.reset">reset</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Arecorder.Arecorder.set_tracks">set_tracks</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Arecorder.Arecorder.stop">stop</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pya.Arecorder">pya.Arecorder module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pya.Aserver">pya.Aserver module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pya.Asig">pya.Asig module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pya.Aspec">pya.Aspec module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pya.Astft">pya.Astft module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pya.Ugen">pya.Ugen module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pya.version">pya.version module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pya">Module contents</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver">Aserver</a><ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver.boot">boot</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver.default">default</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver.device">device</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver.get_devices">get_devices</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver.play">play</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver.quit">quit</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver.set_device">set_device</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver.shutdown_default_server">shutdown_default_server</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver.startup_default_server">startup_default_server</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aserver.Aserver.stop">stop</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig">Asig</a><ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.sig">sig</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.sr">sr</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.label">label</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.channels">channels</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.cn">cn</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.mix_mode">mix_mode</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.add">add</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.adsr">adsr</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.append">append</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.b">b</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.bound">bound</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#id0">channels</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#id1">cn</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.custom">custom</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.envelope">envelope</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.extend">extend</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.fade_in">fade_in</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.fade_out">fade_out</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.find_events">find_events</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.gain">gain</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.get_duration">get_duration</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.get_size">get_size</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.get_times">get_times</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.iirfilter">iirfilter</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.mono">mono</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.norm">norm</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.o">o</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.overlap_add">overlap_add</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.overwrite">overwrite</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.pan2">pan2</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.play">play</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.plot">plot</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.plot_events">plot_events</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.plot_freqz">plot_freqz</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.plot_spectrum">plot_spectrum</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.remove_DC">remove_DC</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.resample">resample</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.rewire">rewire</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.rms">rms</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.samples">samples</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.save_wavfile">save_wavfile</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.select_event">select_event</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.shift_channel">shift_channel</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.spectrogram">spectrogram</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.stereo">stereo</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.to_spec">to_spec</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.to_stft">to_stft</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.window">window</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.window_op">window_op</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Asig.Asig.x">x</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aspec.Aspec">Aspec</a><ul>
+<li><a class="reference internal" href="#pya.Aspec.Aspec.plot">plot</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aspec.Aspec.to_sig">to_sig</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Aspec.Aspec.weight">weight</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Astft.Astft">Astft</a><ul>
+<li><a class="reference internal" href="#pya.Astft.Astft.plot">plot</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Astft.Astft.to_sig">to_sig</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen">Ugen</a><ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen.cos">cos</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen.noise">noise</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen.sawtooth">sawtooth</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen.sine">sine</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen.square">square</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.get_num_of_rows">get_num_of_rows</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.shutdown">shutdown</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.startup">startup</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-
+</div>
             
           
         </div>
@@ -167,8 +417,6 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
   <ul class="wy-breadcrumbs">
     
       <li><a href="index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="modules.html">modules</a> &raquo;</li>
         
       <li>pya package</li>
     
@@ -218,9 +466,9 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </div>
 <div class="section" id="module-pya.Arecorder">
 <span id="pya-arecorder-module"></span><h2>pya.Arecorder module<a class="headerlink" href="#module-pya.Arecorder" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="pya.Arecorder.Arecorder">
-<em class="property">class </em><code class="sig-prename descclassname">pya.Arecorder.</code><code class="sig-name descname">Arecorder</code><span class="sig-paren">(</span><em class="sig-param">sr=44100</em>, <em class="sig-param">bs=256</em>, <em class="sig-param">device=None</em>, <em class="sig-param">channels=None</em>, <em class="sig-param">backend=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Arecorder.Arecorder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pya.Arecorder.</code><code class="sig-name descname">Arecorder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">bs</span><span class="o">=</span><span class="default_value">256</span></em>, <em class="sig-param"><span class="n">device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">backend</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Arecorder.Arecorder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pya.Aserver.Aserver" title="pya.Aserver.Aserver"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.Aserver.Aserver</span></code></a></p>
 <p>pya audio recorder
 Based on pyaudio, uses callbacks to save audio data
@@ -235,37 +483,37 @@ for pyaudio signals into ASigs</p>
 <span class="go">[Asig(&#39;&#39;): ... x ... @ 44100Hz = ...</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Arecorder.Arecorder.boot">
 <code class="sig-name descname">boot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Arecorder.Arecorder.boot" title="Permalink to this definition">¶</a></dt>
 <dd><p>boot recorder</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Arecorder.Arecorder.device">
 <em class="property">property </em><code class="sig-name descname">device</code><a class="headerlink" href="#pya.Arecorder.Arecorder.device" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Arecorder.Arecorder.pause">
 <code class="sig-name descname">pause</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Arecorder.Arecorder.pause" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pause the recording, but the record_buffer remains</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Arecorder.Arecorder.record">
 <code class="sig-name descname">record</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Arecorder.Arecorder.record" title="Permalink to this definition">¶</a></dt>
 <dd><p>Activate recording</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Arecorder.Arecorder.reset">
 <code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Arecorder.Arecorder.reset" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Arecorder.Arecorder.set_tracks">
-<code class="sig-name descname">set_tracks</code><span class="sig-paren">(</span><em class="sig-param">tracks</em>, <em class="sig-param">gains</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Arecorder.Arecorder.set_tracks" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_tracks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tracks</span></em>, <em class="sig-param"><span class="n">gains</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Arecorder.Arecorder.set_tracks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define the number of track to be recorded and their gains.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -277,7 +525,7 @@ for pyaudio signals into ASigs</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Arecorder.Arecorder.stop">
 <code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Arecorder.Arecorder.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stop recording, then stores the data from record_buffer into recordings</p>
@@ -288,9 +536,9 @@ for pyaudio signals into ASigs</p>
 </div>
 <div class="section" id="module-pya.Aserver">
 <span id="pya-aserver-module"></span><h2>pya.Aserver module<a class="headerlink" href="#module-pya.Aserver" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="pya.Aserver.Aserver">
-<em class="property">class </em><code class="sig-prename descclassname">pya.Aserver.</code><code class="sig-name descname">Aserver</code><span class="sig-paren">(</span><em class="sig-param">sr=44100</em>, <em class="sig-param">bs=None</em>, <em class="sig-param">device=None</em>, <em class="sig-param">channels=2</em>, <em class="sig-param">backend=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pya.Aserver.</code><code class="sig-name descname">Aserver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">bs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">backend</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Pya audio server
 Based on pyaudio, works as a FIFO style audio stream pipeline,
@@ -305,43 +553,43 @@ allowing Asig.play() to send audio segement into the stream.</p>
 <span class="go">Asig(&#39;sine&#39;): 1 x 44100 @ 44100Hz = 1.000s cn=[&#39;0&#39;]</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aserver.Aserver.boot">
 <code class="sig-name descname">boot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.boot" title="Permalink to this definition">¶</a></dt>
 <dd><p>boot Aserver = start stream, setting its callback to this callback.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pya.Aserver.Aserver.default">
 <code class="sig-name descname">default</code><em class="property"> = None</em><a class="headerlink" href="#pya.Aserver.Aserver.default" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aserver.Aserver.device">
 <em class="property">property </em><code class="sig-name descname">device</code><a class="headerlink" href="#pya.Aserver.Aserver.device" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aserver.Aserver.get_devices">
-<code class="sig-name descname">get_devices</code><span class="sig-paren">(</span><em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.get_devices" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_devices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.get_devices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return (and optionally print) available input and output device</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aserver.Aserver.play">
-<code class="sig-name descname">play</code><span class="sig-paren">(</span><em class="sig-param">asig</em>, <em class="sig-param">onset=0</em>, <em class="sig-param">out=0</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.play" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">asig</span></em>, <em class="sig-param"><span class="n">onset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.play" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dispatch asigs or arrays for given onset.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aserver.Aserver.quit">
 <code class="sig-name descname">quit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.quit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aserver quit server: stop stream and terminate pa</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aserver.Aserver.set_device">
-<code class="sig-name descname">set_device</code><span class="sig-paren">(</span><em class="sig-param">idx</em>, <em class="sig-param">reboot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.set_device" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_device</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx</span></em>, <em class="sig-param"><span class="n">reboot</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.set_device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set audio device</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -353,17 +601,17 @@ allowing Asig.play() to send audio segement into the stream.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aserver.Aserver.shutdown_default_server">
 <em class="property">static </em><code class="sig-name descname">shutdown_default_server</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.shutdown_default_server" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aserver.Aserver.startup_default_server">
-<em class="property">static </em><code class="sig-name descname">startup_default_server</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.startup_default_server" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">startup_default_server</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.startup_default_server" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aserver.Aserver.stop">
 <code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.Aserver.stop" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -373,13 +621,13 @@ allowing Asig.play() to send audio segement into the stream.</p>
 </div>
 <div class="section" id="module-pya.Asig">
 <span id="pya-asig-module"></span><h2>pya.Asig module<a class="headerlink" href="#module-pya.Asig" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="pya.Asig.Asig">
-<em class="property">class </em><code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">Asig</code><span class="sig-paren">(</span><em class="sig-param">sig</em>, <em class="sig-param">sr=44100</em>, <em class="sig-param">label=''</em>, <em class="sig-param">channels=1</em>, <em class="sig-param">cn=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">Asig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sig</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Audio signal class. Asig enables manipulation of audio signals in the style of numpy and more.
 Asig offer functions for plotting (via matplotlib) and playing audio (using the pya.Aserver class)</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pya.Asig.Asig.sig">
 <code class="sig-name descname">sig</code><a class="headerlink" href="#pya.Asig.Asig.sig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Array for the audio signal. Can be mono or multichannel.</p>
@@ -390,7 +638,7 @@ Asig offer functions for plotting (via matplotlib) and playing audio (using the 
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pya.Asig.Asig.sr">
 <code class="sig-name descname">sr</code><a class="headerlink" href="#pya.Asig.Asig.sr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sampling rate</p>
@@ -401,7 +649,7 @@ Asig offer functions for plotting (via matplotlib) and playing audio (using the 
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pya.Asig.Asig.label">
 <code class="sig-name descname">label</code><a class="headerlink" href="#pya.Asig.Asig.label" title="Permalink to this definition">¶</a></dt>
 <dd><p>A string label to give the object a unique identifier.</p>
@@ -412,7 +660,7 @@ Asig offer functions for plotting (via matplotlib) and playing audio (using the 
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pya.Asig.Asig.channels">
 <code class="sig-name descname">channels</code><a class="headerlink" href="#pya.Asig.Asig.channels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of channels</p>
@@ -423,7 +671,7 @@ Asig offer functions for plotting (via matplotlib) and playing audio (using the 
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pya.Asig.Asig.cn">
 <code class="sig-name descname">cn</code><a class="headerlink" href="#pya.Asig.Asig.cn" title="Permalink to this definition">¶</a></dt>
 <dd><p>cn short for channel names is a list of string of size channels,
@@ -437,7 +685,7 @@ e.g. asig[:, [‘left’, ‘front’]] subsets the left and front channels of t
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pya.Asig.Asig.mix_mode">
 <code class="sig-name descname">mix_mode</code><a class="headerlink" href="#pya.Asig.Asig.mix_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>used to extend numpy __setitem__() operation to frequent audio manipulations such as
@@ -451,9 +699,9 @@ the .bound, .extend and .overwrite properties.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">sig</em>, <em class="sig-param">pos=None</em>, <em class="sig-param">amp=1</em>, <em class="sig-param">onset=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sig</span></em>, <em class="sig-param"><span class="n">pos</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">onset</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a signal</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -474,9 +722,9 @@ given a value to this will overwrite pos (Default value = None)</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.adsr">
-<code class="sig-name descname">adsr</code><span class="sig-paren">(</span><em class="sig-param">att=0</em>, <em class="sig-param">dec=0.1</em>, <em class="sig-param">sus=0.7</em>, <em class="sig-param">rel=0.1</em>, <em class="sig-param">curve=1</em>, <em class="sig-param">kind='linear'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.adsr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">adsr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">att</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">dec</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">sus</span><span class="o">=</span><span class="default_value">0.7</span></em>, <em class="sig-param"><span class="n">rel</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">curve</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'linear'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.adsr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create and applied a ADSR evelope to signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -498,9 +746,9 @@ given a value to this will overwrite pos (Default value = None)</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.append">
-<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">asig</em>, <em class="sig-param">amp=1</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.append" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">asig</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.append" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apppend an asig with another. Conditions: the appended asig should have the same channels. If
 appended asig has a different sampling rate, resample it to match the orginal.</p>
 <dl class="field-list simple">
@@ -519,7 +767,7 @@ appended asig has a different sampling rate, resample it to match the orginal.</
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.b">
 <em class="property">property </em><code class="sig-name descname">b</code><a class="headerlink" href="#pya.Asig.Asig.b" title="Permalink to this definition">¶</a></dt>
 <dd><p>this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
@@ -530,7 +778,7 @@ appended asig has a different sampling rate, resample it to match the orginal.</
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.bound">
 <em class="property">property </em><code class="sig-name descname">bound</code><a class="headerlink" href="#pya.Asig.Asig.bound" title="Permalink to this definition">¶</a></dt>
 <dd><p>this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
@@ -541,27 +789,27 @@ appended asig has a different sampling rate, resample it to match the orginal.</
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">channels</code></dt>
+<dl class="py method">
+<dt id="id0">
+<em class="property">property </em><code class="sig-name descname">channels</code><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Channel property</p>
 </dd></dl>
 
-<dl class="method">
-<dt>
-<em class="property">property </em><code class="sig-name descname">cn</code></dt>
+<dl class="py method">
+<dt id="id1">
+<em class="property">property </em><code class="sig-name descname">cn</code><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Channel names getter</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.custom">
-<code class="sig-name descname">custom</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.custom" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">custom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.custom" title="Permalink to this definition">¶</a></dt>
 <dd><p>custom function method. TODO add example</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.envelope">
-<code class="sig-name descname">envelope</code><span class="sig-paren">(</span><em class="sig-param">amps</em>, <em class="sig-param">ts=None</em>, <em class="sig-param">curve=1</em>, <em class="sig-param">kind='linear'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.envelope" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">envelope</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">amps</span></em>, <em class="sig-param"><span class="n">ts</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">curve</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'linear'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.envelope" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an envelop and multiply by the signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -581,7 +829,7 @@ appended asig has a different sampling rate, resample it to match the orginal.</
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.extend">
 <em class="property">property </em><code class="sig-name descname">extend</code><a class="headerlink" href="#pya.Asig.Asig.extend" title="Permalink to this definition">¶</a></dt>
 <dd><p>this mode allows destination sig size in assignment to be extended through setitem</p>
@@ -592,9 +840,9 @@ appended asig has a different sampling rate, resample it to match the orginal.</
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.fade_in">
-<code class="sig-name descname">fade_in</code><span class="sig-paren">(</span><em class="sig-param">dur=0.1</em>, <em class="sig-param">curve=1</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.fade_in" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fade_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">curve</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.fade_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fade in the signal at the beginning</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -612,9 +860,9 @@ appended asig has a different sampling rate, resample it to match the orginal.</
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.fade_out">
-<code class="sig-name descname">fade_out</code><span class="sig-paren">(</span><em class="sig-param">dur=0.1</em>, <em class="sig-param">curve=1</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.fade_out" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fade_out</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">curve</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.fade_out" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fade out the signal at the end</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -632,9 +880,9 @@ appended asig has a different sampling rate, resample it to match the orginal.</
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.find_events">
-<code class="sig-name descname">find_events</code><span class="sig-paren">(</span><em class="sig-param">step_dur=0.001, sil_thr=-20, evt_min_dur=0, sil_min_dur=0.1, sil_pad=[0.001, 0.1]</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.find_events" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">find_events</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">step_dur</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">sil_thr</span><span class="o">=</span><span class="default_value">- 20</span></em>, <em class="sig-param"><span class="n">evt_min_dur</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">sil_min_dur</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">sil_pad</span><span class="o">=</span><span class="default_value">[0.001, 0.1]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.find_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Locate meaningful ‘events’ in the signal and create event list. Onset detection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -657,9 +905,9 @@ found event locations to the event ranges. If it is a list, you can set the padd
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.gain">
-<code class="sig-name descname">gain</code><span class="sig-paren">(</span><em class="sig-param">amp=None</em>, <em class="sig-param">db=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.gain" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">gain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">db</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.gain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply gain in amplitude or dB, only use one or the other arguments. Argument can be either a scalar
 or a list (to apply individual gain to each channel). The method returns a new asig with gain applied.</p>
 <dl class="field-list simple">
@@ -678,27 +926,27 @@ or a list (to apply individual gain to each channel). The method returns a new a
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.get_duration">
 <code class="sig-name descname">get_duration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.get_duration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the duration in second.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.get_size">
 <code class="sig-name descname">get_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.get_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return signal array shape and duration in seconds.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.get_times">
 <code class="sig-name descname">get_times</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.get_times" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get time stamps for left-edge of sample-and-hold-signal</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.iirfilter">
-<code class="sig-name descname">iirfilter</code><span class="sig-paren">(</span><em class="sig-param">cutoff_freqs</em>, <em class="sig-param">btype='bandpass'</em>, <em class="sig-param">ftype='butter'</em>, <em class="sig-param">order=4</em>, <em class="sig-param">filter='lfilter'</em>, <em class="sig-param">rp=None</em>, <em class="sig-param">rs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.iirfilter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">iirfilter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cutoff_freqs</span></em>, <em class="sig-param"><span class="n">btype</span><span class="o">=</span><span class="default_value">'bandpass'</span></em>, <em class="sig-param"><span class="n">ftype</span><span class="o">=</span><span class="default_value">'butter'</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">filter</span><span class="o">=</span><span class="default_value">'lfilter'</span></em>, <em class="sig-param"><span class="n">rp</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.iirfilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>iirfilter based on scipy.signal.iirfilter</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -723,9 +971,9 @@ and self._[‘a’]</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.mono">
-<code class="sig-name descname">mono</code><span class="sig-paren">(</span><em class="sig-param">blend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.mono" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mono</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">blend</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.mono" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -741,9 +989,9 @@ Do nothing if signal is already mono, raise warning (Default value = None)</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.norm">
-<code class="sig-name descname">norm</code><span class="sig-paren">(</span><em class="sig-param">norm=1</em>, <em class="sig-param">in_db=False</em>, <em class="sig-param">dcflag=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.norm" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">norm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">norm</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">in_db</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">dcflag</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.norm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize signal</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -762,7 +1010,7 @@ Do nothing if signal is already mono, raise warning (Default value = None)</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.o">
 <em class="property">property </em><code class="sig-name descname">o</code><a class="headerlink" href="#pya.Asig.Asig.o" title="Permalink to this definition">¶</a></dt>
 <dd><p>this mode cuts and replaces target selection by source signal on assignment via setitem</p>
@@ -773,9 +1021,9 @@ Do nothing if signal is already mono, raise warning (Default value = None)</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.overlap_add">
-<code class="sig-name descname">overlap_add</code><span class="sig-paren">(</span><em class="sig-param">nperseg=64</em>, <em class="sig-param">stride_in=32</em>, <em class="sig-param">stride_out=32</em>, <em class="sig-param">jitter_in=None</em>, <em class="sig-param">jitter_out=None</em>, <em class="sig-param">win=None</em>, <em class="sig-param">pad='mirror'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.overlap_add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">overlap_add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nperseg</span><span class="o">=</span><span class="default_value">64</span></em>, <em class="sig-param"><span class="n">stride_in</span><span class="o">=</span><span class="default_value">32</span></em>, <em class="sig-param"><span class="n">stride_out</span><span class="o">=</span><span class="default_value">32</span></em>, <em class="sig-param"><span class="n">jitter_in</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jitter_out</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">win</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pad</span><span class="o">=</span><span class="default_value">'mirror'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.overlap_add" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -792,7 +1040,7 @@ Do nothing if signal is already mono, raise warning (Default value = None)</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.overwrite">
 <em class="property">property </em><code class="sig-name descname">overwrite</code><a class="headerlink" href="#pya.Asig.Asig.overwrite" title="Permalink to this definition">¶</a></dt>
 <dd><p>this mode cuts and replaces target selection by source signal on assignment via setitem</p>
@@ -803,9 +1051,9 @@ Do nothing if signal is already mono, raise warning (Default value = None)</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.pan2">
-<code class="sig-name descname">pan2</code><span class="sig-paren">(</span><em class="sig-param">pan=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.pan2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pan2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pan</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.pan2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stereo panning of asig to a stereo output.
 Panning is based on constant power panning, see pan below
 Behavior depends on nr of channels self.channels
@@ -825,9 +1073,9 @@ Behavior depends on nr of channels self.channels
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.play">
-<code class="sig-name descname">play</code><span class="sig-paren">(</span><em class="sig-param">rate=1</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.play" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.play" title="Permalink to this definition">¶</a></dt>
 <dd><p>Play Asig audio via Aserver, using Aserver.default (if existing)
 kwargs are propagated to Aserver:play(onset=0, out=0)</p>
 <dl class="field-list simple">
@@ -850,9 +1098,9 @@ kwargs are propagated to Aserver:play(onset=0, out=0)</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">fn=None</em>, <em class="sig-param">offset=0</em>, <em class="sig-param">scale=1</em>, <em class="sig-param">xlim=None</em>, <em class="sig-param">ylim=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">scale</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display signal graph</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -874,23 +1122,23 @@ kwargs are propagated to Aserver:play(onset=0, out=0)</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.plot_events">
 <code class="sig-name descname">plot_events</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.plot_events" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.plot_freqz">
-<code class="sig-name descname">plot_freqz</code><span class="sig-paren">(</span><em class="sig-param">worN</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.plot_freqz" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_freqz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">worN</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.plot_freqz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the frequency response of a digital filter. Perform scipy.signal.freqz then plot the response.</p>
 <p>TODO
 :param worN:
 :param **kwargs:</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.plot_spectrum">
-<code class="sig-name descname">plot_spectrum</code><span class="sig-paren">(</span><em class="sig-param">offset=0</em>, <em class="sig-param">scale=1.0</em>, <em class="sig-param">xlim=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.plot_spectrum" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_spectrum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">scale</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.plot_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot spectrum of the signal</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -911,7 +1159,7 @@ channels to create a stacked view for better viewing (Default value = 0.)</p></l
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.remove_DC">
 <code class="sig-name descname">remove_DC</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.remove_DC" title="Permalink to this definition">¶</a></dt>
 <dd><p>remove DC offset</p>
@@ -928,9 +1176,9 @@ channels to create a stacked view for better viewing (Default value = 0.)</p></l
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.resample">
-<code class="sig-name descname">resample</code><span class="sig-paren">(</span><em class="sig-param">target_sr=44100</em>, <em class="sig-param">rate=1</em>, <em class="sig-param">kind='linear'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.resample" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'linear'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.resample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resample signal based on interpolation, can process multichannel signals.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -949,9 +1197,9 @@ channels to create a stacked view for better viewing (Default value = 0.)</p></l
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.rewire">
-<code class="sig-name descname">rewire</code><span class="sig-paren">(</span><em class="sig-param">dic</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.rewire" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">rewire</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dic</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.rewire" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rewire channels to flexibly allow weighted channel permutations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -972,9 +1220,9 @@ leaving other channels unmodified</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.rms">
-<code class="sig-name descname">rms</code><span class="sig-paren">(</span><em class="sig-param">axis=0</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.rms" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">rms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.rms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return signal’s RMS</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -989,15 +1237,15 @@ leaving other channels unmodified</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.samples">
 <em class="property">property </em><code class="sig-name descname">samples</code><a class="headerlink" href="#pya.Asig.Asig.samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the length of signal in samples</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.save_wavfile">
-<code class="sig-name descname">save_wavfile</code><span class="sig-paren">(</span><em class="sig-param">fname='asig.wav'</em>, <em class="sig-param">dtype='float32'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.save_wavfile" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_wavfile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span><span class="o">=</span><span class="default_value">'asig.wav'</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">'float32'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.save_wavfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save signal as .wav file, return self.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1009,9 +1257,9 @@ leaving other channels unmodified</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.select_event">
-<code class="sig-name descname">select_event</code><span class="sig-paren">(</span><em class="sig-param">index=None</em>, <em class="sig-param">onset=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.select_event" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_event</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">onset</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.select_event" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method can be called after find_event (aka onset detection).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1029,9 +1277,9 @@ leaving other channels unmodified</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.shift_channel">
-<code class="sig-name descname">shift_channel</code><span class="sig-paren">(</span><em class="sig-param">shift=0</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.shift_channel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">shift_channel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shift</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.shift_channel" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Shift signal to other channels. This is particular useful for assigning a mono signal to a specific channel.</dt><dd><ul class="simple">
 <li><p>shift = 0: does nothing as the same signal is being routed to the same position</p></li>
@@ -1053,15 +1301,15 @@ leaving other channels unmodified</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.spectrogram">
-<code class="sig-name descname">spectrogram</code><span class="sig-paren">(</span><em class="sig-param">*argv</em>, <em class="sig-param">**kvarg</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.spectrogram" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">spectrogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">argv</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kvarg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.spectrogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform sicpy.signal.spectrogram and returns: frequencies, array of times, spectrogram</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.stereo">
-<code class="sig-name descname">stereo</code><span class="sig-paren">(</span><em class="sig-param">blend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.stereo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">stereo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">blend</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.stereo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Blend all channels of the signal to stereo. Applicable for any single-/ or multi-channel Asig.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1087,22 +1335,22 @@ of a new stereo asig. Note that for equal loudness left**2+right**2=1 should be 
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.to_spec">
 <code class="sig-name descname">to_spec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.to_spec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return Aspec object which is the rfft of the signal.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.to_stft">
-<code class="sig-name descname">to_stft</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.to_stft" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">to_stft</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.to_stft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return Astft object which is the stft of the signal. Keyword arguments are the arguments for
 scipy.signal.stft().</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.window">
-<code class="sig-name descname">window</code><span class="sig-paren">(</span><em class="sig-param">win='triang'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.window" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">win</span><span class="o">=</span><span class="default_value">'triang'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.window" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply windowing to self.sig</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1120,9 +1368,9 @@ scipy.signal.stft().</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.window_op">
-<code class="sig-name descname">window_op</code><span class="sig-paren">(</span><em class="sig-param">nperseg=64</em>, <em class="sig-param">stride=32</em>, <em class="sig-param">win=None</em>, <em class="sig-param">fn='rms'</em>, <em class="sig-param">pad='mirror'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.window_op" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">window_op</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nperseg</span><span class="o">=</span><span class="default_value">64</span></em>, <em class="sig-param"><span class="n">stride</span><span class="o">=</span><span class="default_value">32</span></em>, <em class="sig-param"><span class="n">win</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fn</span><span class="o">=</span><span class="default_value">'rms'</span></em>, <em class="sig-param"><span class="n">pad</span><span class="o">=</span><span class="default_value">'mirror'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Asig.Asig.window_op" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO add docstring</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1137,7 +1385,7 @@ scipy.signal.stft().</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Asig.Asig.x">
 <em class="property">property </em><code class="sig-name descname">x</code><a class="headerlink" href="#pya.Asig.Asig.x" title="Permalink to this definition">¶</a></dt>
 <dd><p>this mode allows destination sig size in assignment to be extended through setitem</p>
@@ -1153,12 +1401,12 @@ scipy.signal.stft().</p>
 </div>
 <div class="section" id="module-pya.Aspec">
 <span id="pya-aspec-module"></span><h2>pya.Aspec module<a class="headerlink" href="#module-pya.Aspec" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="pya.Aspec.Aspec">
-<em class="property">class </em><code class="sig-prename descclassname">pya.Aspec.</code><code class="sig-name descname">Aspec</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">sr=44100</em>, <em class="sig-param">label=None</em>, <em class="sig-param">cn=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pya.Aspec.</code><code class="sig-name descname">Aspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Audio spectrum class using rfft</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aspec.Aspec.plot">
 <code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">fn=&lt;ufunc 'absolute'&gt;</em>, <em class="sig-param">xlim=None</em>, <em class="sig-param">ylim=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot spectrum</p>
@@ -1180,15 +1428,15 @@ scipy.signal.stft().</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aspec.Aspec.to_sig">
 <code class="sig-name descname">to_sig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.to_sig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Aspec into Asig</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Aspec.Aspec.weight">
-<code class="sig-name descname">weight</code><span class="sig-paren">(</span><em class="sig-param">weights</em>, <em class="sig-param">freqs=None</em>, <em class="sig-param">curve=1</em>, <em class="sig-param">kind='linear'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.weight" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">weight</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span></em>, <em class="sig-param"><span class="n">freqs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">curve</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'linear'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.weight" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1207,13 +1455,13 @@ scipy.signal.stft().</p>
 </div>
 <div class="section" id="module-pya.Astft">
 <span id="pya-astft-module"></span><h2>pya.Astft module<a class="headerlink" href="#module-pya.Astft" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="pya.Astft.Astft">
-<em class="property">class </em><code class="sig-prename descclassname">pya.Astft.</code><code class="sig-name descname">Astft</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">sr=None</em>, <em class="sig-param">label=None</em>, <em class="sig-param">window='hann'</em>, <em class="sig-param">nperseg=256</em>, <em class="sig-param">noverlap=None</em>, <em class="sig-param">nfft=None</em>, <em class="sig-param">detrend=False</em>, <em class="sig-param">return_onesided=True</em>, <em class="sig-param">boundary='zeros'</em>, <em class="sig-param">padded=True</em>, <em class="sig-param">axis=-1</em>, <em class="sig-param">cn=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Astft.Astft" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pya.Astft.</code><code class="sig-name descname">Astft</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">'hann'</span></em>, <em class="sig-param"><span class="n">nperseg</span><span class="o">=</span><span class="default_value">256</span></em>, <em class="sig-param"><span class="n">noverlap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nfft</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">detrend</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">return_onesided</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">boundary</span><span class="o">=</span><span class="default_value">'zeros'</span></em>, <em class="sig-param"><span class="n">padded</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Astft.Astft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
 attribute cn being the list of channel names, and label being the name of the Asig</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Astft.Astft.plot">
 <code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">fn=&lt;function Astft.&lt;lambda&gt;&gt;</em>, <em class="sig-param">ch=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">xlim=None</em>, <em class="sig-param">ylim=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Astft.Astft.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot spectrogram</p>
@@ -1237,9 +1485,9 @@ attribute cn being the list of channel names, and label being the name of the As
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Astft.Astft.to_sig">
-<code class="sig-name descname">to_sig</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Astft.Astft.to_sig" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">to_sig</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Astft.Astft.to_sig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create signal from stft, i.e. perform istft, kwargs overwrite Astft values for istft</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1264,14 +1512,14 @@ attribute cn being the list of channel names, and label being the name of the As
 </div>
 <div class="section" id="module-pya.Ugen">
 <span id="pya-ugen-module"></span><h2>pya.Ugen module<a class="headerlink" href="#module-pya.Ugen" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="pya.Ugen.Ugen">
 <em class="property">class </em><code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">Ugen</code><a class="headerlink" href="#pya.Ugen.Ugen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pya.Asig.Asig" title="pya.Asig.Asig"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.Asig.Asig</span></code></a></p>
 <p>Unit Generator for to create Asig with predefined signal</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Ugen.Ugen.cos">
-<code class="sig-name descname">cos</code><span class="sig-paren">(</span><em class="sig-param">freq=440</em>, <em class="sig-param">amp=1.0</em>, <em class="sig-param">dur=None</em>, <em class="sig-param">n_rows=None</em>, <em class="sig-param">sr=44100</em>, <em class="sig-param">channels=1</em>, <em class="sig-param">cn=None</em>, <em class="sig-param">label='cosine'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.cos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">freq</span><span class="o">=</span><span class="default_value">440</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'cosine'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.cos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate Cosine signal Asig object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1295,9 +1543,9 @@ attribute cn being the list of channel names, and label being the name of the As
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Ugen.Ugen.noise">
-<code class="sig-name descname">noise</code><span class="sig-paren">(</span><em class="sig-param">type='white'</em>, <em class="sig-param">amp=1.0</em>, <em class="sig-param">dur=None</em>, <em class="sig-param">n_rows=None</em>, <em class="sig-param">sr=44100</em>, <em class="sig-param">channels=1</em>, <em class="sig-param">cn=None</em>, <em class="sig-param">label='noise'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.noise" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">noise</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span><span class="o">=</span><span class="default_value">'white'</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'noise'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.noise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate noise signal Asig object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1321,9 +1569,9 @@ attribute cn being the list of channel names, and label being the name of the As
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Ugen.Ugen.sawtooth">
-<code class="sig-name descname">sawtooth</code><span class="sig-paren">(</span><em class="sig-param">freq=440</em>, <em class="sig-param">amp=1.0</em>, <em class="sig-param">dur=None</em>, <em class="sig-param">n_rows=None</em>, <em class="sig-param">width=1.0</em>, <em class="sig-param">sr=44100</em>, <em class="sig-param">channels=1</em>, <em class="sig-param">cn=None</em>, <em class="sig-param">label='sawtooth'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.sawtooth" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sawtooth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">freq</span><span class="o">=</span><span class="default_value">440</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'sawtooth'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.sawtooth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate sawtooth wave signal Asig object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1348,9 +1596,9 @@ attribute cn being the list of channel names, and label being the name of the As
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Ugen.Ugen.sine">
-<code class="sig-name descname">sine</code><span class="sig-paren">(</span><em class="sig-param">freq=440</em>, <em class="sig-param">amp=1.0</em>, <em class="sig-param">dur=None</em>, <em class="sig-param">n_rows=None</em>, <em class="sig-param">sr=44100</em>, <em class="sig-param">channels=1</em>, <em class="sig-param">cn=None</em>, <em class="sig-param">label='sine'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.sine" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">freq</span><span class="o">=</span><span class="default_value">440</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'sine'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.sine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate Sine signal Asig object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1374,9 +1622,9 @@ attribute cn being the list of channel names, and label being the name of the As
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pya.Ugen.Ugen.square">
-<code class="sig-name descname">square</code><span class="sig-paren">(</span><em class="sig-param">freq=440</em>, <em class="sig-param">amp=1.0</em>, <em class="sig-param">dur=None</em>, <em class="sig-param">n_rows=None</em>, <em class="sig-param">duty=0.5</em>, <em class="sig-param">sr=44100</em>, <em class="sig-param">sample_shift=0.5</em>, <em class="sig-param">channels=1</em>, <em class="sig-param">cn=None</em>, <em class="sig-param">label='square'</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.square" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">square</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">freq</span><span class="o">=</span><span class="default_value">440</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">duty</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">sample_shift</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'square'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.square" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate square wave signal Asig object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1403,9 +1651,9 @@ attribute cn being the list of channel names, and label being the name of the As
 
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="pya.Ugen.get_num_of_rows">
-<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">get_num_of_rows</code><span class="sig-paren">(</span><em class="sig-param">dur</em>, <em class="sig-param">n_rows</em>, <em class="sig-param">sr</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.get_num_of_rows" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">get_num_of_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dur</span></em>, <em class="sig-param"><span class="n">n_rows</span></em>, <em class="sig-param"><span class="n">sr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.get_num_of_rows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return total number of samples. If dur is set, return dur*sr, if num_samples is set, return num_samples,
 if both set, raise an AttributeError. Only use one of the two.</p>
 </dd></dl>
@@ -1418,14 +1666,14 @@ if both set, raise an AttributeError. Only use one of the two.</p>
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pya" title="Permalink to this headline">¶</a></h2>
 <p>Collection of classes and functions for processing audio signals
 in python and jupyter notebooks, for synthesis, effects, analysis and plotting.</p>
-<dl class="function">
+<dl class="py function">
 <dt id="pya.shutdown">
-<code class="sig-prename descclassname">pya.</code><code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.shutdown" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pya.</code><code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.shutdown" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="pya.startup">
-<code class="sig-prename descclassname">pya.</code><code class="sig-name descname">startup</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pya.startup" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pya.</code><code class="sig-name descname">startup</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.startup" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -1437,21 +1685,12 @@ in python and jupyter notebooks, for synthesis, effects, analysis and plotting.<
           </div>
           <footer>
   
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="pya.backend.html" class="btn btn-neutral float-right" title="pya.backend package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="modules.html" class="btn btn-neutral float-left" title="modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Thomas Hermann, Jiajun Yang, Alexander Neumann
+        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
 
     </p>
   </div>

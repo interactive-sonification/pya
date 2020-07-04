@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pya.astft &mdash; pya  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+
+<a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pya
+
+
+
+</a>
+
+
+
+
+
+<div class="version">
+version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
+
+  <option value="/pya/v0.4.1/" selected="selected">v0.4.1</option>
+
+  <option value="/pya/master/" >master</option>
+
+  <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.0/" >v0.4.0</option>
+
+  <option value="/pya/v0.3.3/" >v0.3.3</option>
+
+  <option value="/pya/v0.3.2/" >v0.3.2</option>
+
+<select>
+</div>
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.astft</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a><ul>
+<li><a class="reference internal" href="#pya.astft._LOGGER">_LOGGER</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.astft.Astft">Astft</a><ul>
+<li><a class="reference internal" href="#pya.astft.Astft.to_sig">to_sig</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.astft.Astft.plot">plot</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.astft.Astft.__repr__">__repr__</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pya</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.astft</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/autoapi/pya/astft/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pya.astft">
+<span id="pya-astft"></span><h1><a class="reference internal" href="#module-pya.astft" title="pya.astft"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.astft</span></code></a><a class="headerlink" href="#module-pya.astft" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.astft.Astft" title="pya.astft.Astft"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Astft</span></code></a>(x, sr=None, label=None, window='hann', nperseg=256, noverlap=None, nfft=None, detrend=False, return_onesided=True, boundary='zeros', padded=True, cn=None)</p></td>
+<td><p>Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt id="pya.astft._LOGGER">
+<code class="sig-prename descclassname">pya.astft.</code><code class="sig-name descname">_LOGGER</code><a class="headerlink" href="#pya.astft._LOGGER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="pya.astft.Astft">
+<em class="property">class </em><code class="sig-prename descclassname">pya.astft.</code><code class="sig-name descname">Astft</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">'hann'</span></em>, <em class="sig-param"><span class="n">nperseg</span><span class="o">=</span><span class="default_value">256</span></em>, <em class="sig-param"><span class="n">noverlap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nfft</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">detrend</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">return_onesided</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">boundary</span><span class="o">=</span><span class="default_value">'zeros'</span></em>, <em class="sig-param"><span class="n">padded</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.astft.Astft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
+attribute cn being the list of channel names, and label being the name of the Asig</p>
+<dl class="py method">
+<dt id="pya.astft.Astft.to_sig">
+<code class="sig-name descname">to_sig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.astft.Astft.to_sig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create signal from stft, i.e. perform istft,
+kwargs overwrite Astft values for istft</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<em>str</em>) – <dl class="simple">
+<dt>optional keyboard arguments used in istft:</dt><dd><p>’sr’, ‘window’, ‘nperseg’, ‘noverlap’,
+‘nfft’, ‘input_onesided’, ‘boundary’.</p>
+</dd>
+</dl>
+<p>also convert ‘sr’ to ‘fs’ since scipy uses ‘fs’ as sampling frequency.</p>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – Asig</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../asig/index.html#pya.asig.Asig" title="pya.asig.Asig">Asig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pya.astft.Astft.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">fn</span><span class="o">=</span><span class="default_value">lambda x: ...</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">scale</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_bar</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.astft.Astft.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot spectrogram</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fn</strong> (<em>func</em>) – a function, by default is bypass</p></li>
+<li><p><strong>ch</strong> (<em>int</em><em> or </em><em>str</em><em> or </em><em>None</em>) – By default it is None,</p></li>
+<li><p><strong>ax</strong> (<em>matplotlib.axes</em>) – you can assign your plot to specific axes (Default value = None)</p></li>
+<li><p><strong>xlim</strong> (<em>tuple</em><em> or </em><em>list</em>) – x_axis range (Default value = None)</p></li>
+<li><p><strong>ylim</strong> (<em>tuple</em><em> or </em><em>list</em>) – y_axis range (Default value = None)</p></li>
+<li><p><strong>**kwargs</strong> – keyward arguments of matplotlib’s pcolormesh</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../asig/index.html#pya.asig.Asig" title="pya.asig.Asig">Asig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pya.astft.Astft.__repr__">
+<code class="sig-name descname">__repr__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.astft.Astft.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return repr(self).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

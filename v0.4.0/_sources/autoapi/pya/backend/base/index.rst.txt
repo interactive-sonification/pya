@@ -1,0 +1,90 @@
+:mod:`pya.backend.base`
+=======================
+
+.. py:module:: pya.backend.base
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   pya.backend.base.BackendBase
+   pya.backend.base.StreamBase
+
+
+
+.. py:class:: BackendBase
+
+   Bases: :class:`abc.ABC`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. method:: get_device_count(self)
+      :abstractmethod:
+
+
+
+   .. method:: get_device_info_by_index(self)
+      :abstractmethod:
+
+
+
+   .. method:: get_default_output_device_info(self)
+      :abstractmethod:
+
+
+
+   .. method:: get_default_input_device_info(self)
+      :abstractmethod:
+
+
+
+   .. method:: open(self, *args, **kwargs)
+      :abstractmethod:
+
+
+
+   .. method:: terminate(self)
+      :abstractmethod:
+
+
+
+   .. method:: process_buffer(self, *args, **kwargs)
+      :abstractmethod:
+
+
+
+
+.. py:class:: StreamBase
+
+   Bases: :class:`abc.ABC`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. method:: is_active(self)
+      :abstractmethod:
+
+
+
+   .. method:: start_stream(self)
+      :abstractmethod:
+
+
+
+   .. method:: stop_stream(self)
+      :abstractmethod:
+
+
+
+   .. method:: close(self)
+      :abstractmethod:
+
+
+
+

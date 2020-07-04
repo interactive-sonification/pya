@@ -33,10 +33,9 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="modules" href="modules.html" />
-    <link rel="prev" title="pya" href="index.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -101,27 +100,27 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
               
             
             
-              <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">pya</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#what-is-pya">What is pya?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#authors-and-contributors">Authors and Contributors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#a-simple-example">A simple example</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#startup">Startup:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#create-an-asig-signal">Create an Asig signal:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#play-signals">Play signals</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#plotting-signals">Plotting signals</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#selection-of-subsets">Selection of subsets</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#method-chaining">Method chaining</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#learning-more">Learning more</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">pya</a><ul>
+<li><a class="reference internal" href="#what-is-pya">What is pya?</a></li>
+<li><a class="reference internal" href="#authors-and-contributors">Authors and Contributors</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#a-simple-example">A simple example</a><ul>
+<li><a class="reference internal" href="#startup">Startup:</a></li>
+<li><a class="reference internal" href="#create-an-asig-signal">Create an Asig signal:</a></li>
+<li><a class="reference internal" href="#play-signals">Play signals</a></li>
+<li><a class="reference internal" href="#plotting-signals">Plotting signals</a></li>
+<li><a class="reference internal" href="#selection-of-subsets">Selection of subsets</a></li>
+<li><a class="reference internal" href="#method-chaining">Method chaining</a></li>
+<li><a class="reference internal" href="#learning-more">Learning more</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a></li>
+<li><a class="reference internal" href="#contributing">Contributing</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">modules</a></li>
 </ul>
-
+</div>
             
           
         </div>
@@ -244,7 +243,7 @@ such as sine, square, swatooth, noise</p></li>
 <a class="reference external" href="https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio">https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio</a></p></li>
 </ol>
 <p>Then pya can be installed using pip:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>pip install pya
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pya</span>
 </pre></div>
 </div>
 <p>See pyaudio installation <a class="reference external" href="http://people.csail.mit.edu/hubert/pyaudio/#downloads">http://people.csail.mit.edu/hubert/pyaudio/#downloads</a></p>
@@ -253,26 +252,26 @@ such as sine, square, swatooth, noise</p></li>
 <h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="startup">
 <h3>Startup:<a class="headerlink" href="#startup" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>from pya import *
-s = Aserver(bs=1024)
-Aserver.default = s  # to set as default server
-s.boot()
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">Aserver</span><span class="p">(</span><span class="n">bs</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+<span class="n">Aserver</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">s</span>  <span class="c1"># to set as default server</span>
+<span class="n">s</span><span class="o">.</span><span class="n">boot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="create-an-asig-signal">
 <h3>Create an Asig signal:<a class="headerlink" href="#create-an-asig-signal" title="Permalink to this headline">¶</a></h3>
 <p>A 1s / 440 Hz sine tone at sampling rate 44100 as channel name ‘left’:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>import numpy as np
-signal_array = np.sin(2 * np.pi * 440 * np.linspace(0, 1, 44100))
-atone = Asig(signal_array, sr=44100, label=&#39;1s sine tone&#39;, cn=[&#39;left&#39;])
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">signal_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">440</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">44100</span><span class="p">))</span>
+<span class="n">atone</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="n">signal_array</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1s sine tone&#39;</span><span class="p">,</span> <span class="n">cn</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Other ways of creating an Asig object:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>asig_int = Asig(44100, sr=44100)  # zero array with 44100 samples
-asig_float = Asig(2., sr=44100)  # float argument, 2 seconds of zero array
-asig_str = Asig(&#39;./song.wav&#39;)  # load audio file
-asig_ugen = Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen class to create common waveforms
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asig_int</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="mi">44100</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">)</span>  <span class="c1"># zero array with 44100 samples</span>
+<span class="n">asig_float</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="mf">2.</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">)</span>  <span class="c1"># float argument, 2 seconds of zero array</span>
+<span class="n">asig_str</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="s1">&#39;./song.wav&#39;</span><span class="p">)</span>  <span class="c1"># load audio file</span>
+<span class="n">asig_ugen</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mi">440</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">dur</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># using Ugen class to create common waveforms</span>
 </pre></div>
 </div>
 <p>Audio files are also possible using the file path. <code class="docutils literal notranslate"><span class="pre">WAV</span></code> should work without issues. <code class="docutils literal notranslate"><span class="pre">MP3</span></code> is supported but may raise error if <a class="reference external" href="https://ffmpeg.org/">FFmpeg</a>.</p>
@@ -303,7 +302,7 @@ asig_ugen = Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen cla
 </div>
 <div class="section" id="play-signals">
 <h3>Play signals<a class="headerlink" href="#play-signals" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>atone.play(server=s)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>play() uses Aserver.default if server is not specified</p>
@@ -311,11 +310,11 @@ asig_ugen = Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen cla
 <div class="section" id="plotting-signals">
 <h3>Plotting signals<a class="headerlink" href="#plotting-signals" title="Permalink to this headline">¶</a></h3>
 <p>to plot the first 1000 samples:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>atone[:1000].plot()
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="p">[:</span><span class="mi">1000</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>to plot the magnitude and phase spectrum:</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>atone.plot_spectrum()
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="o">.</span><span class="n">plot_spectrum</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>to plot the spectrum via the Aspec class</p>
@@ -323,7 +322,7 @@ asig_ugen = Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen cla
 <div><p>atone.to_spec().plot()</p>
 </div></blockquote>
 <p>to plot the spectrogram via the Astft class</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>atone.to_stft().plot(ampdb)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="o">.</span><span class="n">to_stft</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ampdb</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -341,7 +340,7 @@ asig_ugen = Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen cla
 <div class="section" id="method-chaining">
 <h3>Method chaining<a class="headerlink" href="#method-chaining" title="Permalink to this headline">¶</a></h3>
 <p>Asig methods usually return an Asig, so methods can be chained, e.g</p>
-<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>atone[{0:1.5}].fade_in(0.1).fade_out(0.8).gain(db=-6).plot(lw=0.1).play(rate=0.4, onset=1)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="p">[{</span><span class="mi">0</span><span class="p">:</span><span class="mf">1.5</span><span class="p">}]</span><span class="o">.</span><span class="n">fade_in</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">fade_out</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span><span class="o">.</span><span class="n">gain</span><span class="p">(</span><span class="n">db</span><span class="o">=-</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -366,21 +365,12 @@ asig_ugen = Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen cla
           </div>
           <footer>
   
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="modules.html" class="btn btn-neutral float-right" title="modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="index.html" class="btn btn-neutral float-left" title="pya" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Thomas Hermann, Jiajun Yang, Alexander Neumann
+        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
 
     </p>
   </div>

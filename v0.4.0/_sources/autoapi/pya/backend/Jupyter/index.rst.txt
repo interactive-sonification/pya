@@ -1,0 +1,99 @@
+:mod:`pya.backend.Jupyter`
+==========================
+
+.. py:module:: pya.backend.Jupyter
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   pya.backend.Jupyter.JupyterBackend
+   pya.backend.Jupyter.JupyterStream
+
+
+
+.. py:class:: JupyterBackend(port=8765, proxy_suffix=None)
+
+   Bases: :class:`pya.backend.base.BackendBase`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. attribute:: dtype
+      :annotation: = float32
+
+      
+
+   .. attribute:: range
+      :annotation: = 1
+
+      
+
+   .. attribute:: bs
+      :annotation: = 4096
+
+      
+
+   .. method:: get_device_count(self)
+
+
+
+   .. method:: get_device_info_by_index(self, idx)
+
+
+
+   .. method:: get_default_input_device_info(self)
+
+
+
+   .. method:: get_default_output_device_info(self)
+
+
+
+   .. method:: open(self, *args, channels, rate, stream_callback=None, **kwargs)
+
+
+
+   .. method:: process_buffer(self, buffer)
+
+
+
+   .. method:: terminate(self)
+
+
+
+
+.. py:class:: JupyterStream(channels, rate, stream_callback, port, proxy_suffix)
+
+   Bases: :class:`pya.backend.base.StreamBase`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. method:: set_buffer_threshold(buffer_limit)
+      :staticmethod:
+
+
+
+   .. method:: stop_stream(self)
+
+
+
+   .. method:: close(self)
+
+
+
+   .. method:: start_stream(self)
+
+
+
+   .. method:: is_active(self)
+
+
+
+

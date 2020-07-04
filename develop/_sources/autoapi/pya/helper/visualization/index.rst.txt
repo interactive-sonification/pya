@@ -1,0 +1,68 @@
+:mod:`pya.helper.visualization`
+===============================
+
+.. py:module:: pya.helper.visualization
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   pya.helper.visualization.basicplot
+   pya.helper.visualization.gridplot
+
+
+.. function:: basicplot(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)
+
+   Basic version of the plot for pya, this can be directly used
+   by Asig. Aspec/Astft/Amfcc will have different extra setting
+   and type.
+
+   :param data: data array
+   :type data: numpy.ndarray
+   :param channels: number of channels
+   :type channels: int
+   :param axis: Plot image on the matplotlib axis if it was given.
+                Default is None, which use plt.gca()
+   :type axis: matplotlib.axes, optional
+   :param typ: Plot type.
+   :type typ: str, optional
+
+
+.. function:: gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None)
+
+   Create a grid plot of pya objects which have plot() methods,
+   i.e. Asig, Aspec, Astft, Amfcc.
+   It takes a list of pya_objects and plot each object into a grid.
+   You can mix different types of plots
+   together.
+
+   .. rubric:: Examples
+
+   # plot all 4 different pya objects in 1 column,
+   amfcc and astft use pcolormesh so colorbar will
+   # be displayed as well
+   gridplot([asig, amfcc, aspec, astft], colwrap=2,
+             cbar_ratio=0.08, figsize=[10, 10]);
+
+   :param pya_objects: A list of pya objects with the plot() method.
+   :type pya_objects: iterable object
+   :param colwrap: Wrap column at position.
+                   Can be considered as the column size. Default is 1, meaning 1 column.
+   :type colwrap: int, optional
+   :param cbar_ratio: For each column create another column reserved for the colorbar.
+                      This is the ratio of the width relative to the plot.
+                      0.04 means 4% of the width of the data plot.
+   :type cbar_ratio: float, optional
+   :param figsize: width, height of the entire image in inches. Default size is (6.4, 4.8)
+   :type figsize: tuple, optional
+
+   :returns: **fig** -- The plt.figure() object
+   :rtype: plt.figure()
+
+

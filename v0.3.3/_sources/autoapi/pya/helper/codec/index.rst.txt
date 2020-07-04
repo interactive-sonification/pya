@@ -1,0 +1,274 @@
+:mod:`pya.helper.codec`
+=======================
+
+.. py:module:: pya.helper.codec
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   pya.helper.codec.RawAudioFile
+   pya.helper.codec.QueueReaderThread
+   pya.helper.codec.FFmpegAudioFile
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   pya.helper.codec.byteswap
+   pya.helper.codec.popen_multiple
+   pya.helper.codec.ffmpeg_available
+   pya.helper.codec.available_backends
+   pya.helper.codec.audio_read
+
+
+.. data:: COMMANDS
+   :annotation: = ['ffmpeg', 'avconv']
+
+   
+
+.. data:: PROC_FLAGS
+   :annotation: = 134217728
+
+   
+
+.. data:: TARGET_WIDTH
+   :annotation: = 2
+
+   
+
+.. data:: SUPPORTED_WIDTHS
+   :annotation: = [1, 2, 3, 4]
+
+   
+
+.. py:exception:: DecodeError
+
+   Bases: :class:`Exception`
+
+   The base exception class for all decoding errors raised by this
+   package.
+
+
+.. py:exception:: NoBackendError
+
+   Bases: :class:`pya.helper.codec.DecodeError`
+
+   The file could not be decoded by any backend. Either no backends
+   are available or each available backend failed to decode the file.
+
+
+.. py:exception:: UnsupportedError
+
+   Bases: :class:`pya.helper.codec.DecodeError`
+
+   File is not an AIFF, WAV, or Au file.
+
+
+.. py:exception:: BitWidthError
+
+   Bases: :class:`pya.helper.codec.DecodeError`
+
+   The file uses an unsupported bit width.
+
+
+.. py:exception:: FFmpegError
+
+   Bases: :class:`pya.helper.codec.DecodeError`
+
+   The base exception class for all decoding errors raised by this
+   package.
+
+
+.. py:exception:: CommunicationError
+
+   Bases: :class:`pya.helper.codec.FFmpegError`
+
+   Raised when the output of FFmpeg is not parseable.
+
+
+.. py:exception:: NotInstalledError
+
+   Bases: :class:`pya.helper.codec.FFmpegError`
+
+   Could not find the ffmpeg binary.
+
+
+.. py:exception:: ReadTimeoutError
+
+   Bases: :class:`pya.helper.codec.FFmpegError`
+
+   Reading from the ffmpeg command-line tool timed out.
+
+
+.. function:: byteswap(s)
+
+   Swaps the endianness of the bytesting s, which must be an array
+   of shorts (16-bit signed integers). This is probably less efficient
+   than it should be.
+
+
+.. py:class:: RawAudioFile(filename)
+
+   Bases: :class:`object`
+
+   An AIFF, WAV, or Au file that can be read by the Python standard
+   library modules ``wave``, ``aifc``, and ``sunau``.
+
+   .. method:: _check(self)
+
+
+      Check that the files' parameters allow us to decode it and
+      raise an error otherwise.
+
+
+   .. method:: close(self)
+
+
+      Close the underlying file.
+
+
+   .. method:: channels(self)
+      :property:
+
+
+      Number of audio channels.
+
+
+   .. method:: samplerate(self)
+      :property:
+
+
+      Sample rate in Hz.
+
+
+   .. method:: duration(self)
+      :property:
+
+
+      Length of the audio in seconds (a float).
+
+
+   .. method:: read_data(self, block_samples=1024)
+
+
+      Generates blocks of PCM data found in the file.
+
+
+   .. method:: __enter__(self)
+
+
+
+   .. method:: __exit__(self, exc_type, exc_val, exc_tb)
+
+
+
+   .. method:: __iter__(self)
+
+
+
+
+.. py:class:: QueueReaderThread(fh, blocksize=1024, discard=False)
+
+   Bases: :class:`threading.Thread`
+
+   A thread that consumes data from a filehandle and sends the data
+   over a Queue.
+
+   .. method:: run(self)
+
+
+      Method representing the thread's activity.
+
+      You may override this method in a subclass. The standard run() method
+      invokes the callable object passed to the object's constructor as the
+      target argument, if any, with sequential and keyword arguments taken
+      from the args and kwargs arguments, respectively.
+
+
+
+.. function:: popen_multiple(commands, command_args, *args, **kwargs)
+
+   Like `subprocess.Popen`, but can try multiple commands in case
+   some are not available.
+   `commands` is an iterable of command names and `command_args` are
+   the rest of the arguments that, when appended to the command name,
+   make up the full first argument to `subprocess.Popen`. The
+   other positional and keyword arguments are passed through.
+
+
+.. function:: ffmpeg_available()
+
+   Detect whether the FFmpeg backend can be used on this system.
+
+
+.. data:: windows_error_mode_lock
+   
+
+   
+
+.. py:class:: FFmpegAudioFile(filename, block_size=4096)
+
+   Bases: :class:`object`
+
+   An audio file decoded by the ffmpeg command-line utility.
+
+   .. method:: read_data(self, timeout=10.0)
+
+
+      Read blocks of raw PCM data from the file.
+
+
+   .. method:: _get_info(self)
+
+
+      Reads the tool's output from its stderr stream, extracts the
+      relevant information, and parses it.
+
+
+   .. method:: _parse_info(self, s)
+
+
+      Given relevant data from the ffmpeg output, set audio
+      parameter fields on this object.
+
+
+   .. method:: close(self)
+
+
+      Close the ffmpeg process used to perform the decoding.
+
+
+   .. method:: __del__(self)
+
+
+
+   .. method:: __iter__(self)
+
+
+
+   .. method:: __enter__(self)
+
+
+
+   .. method:: __exit__(self, exc_type, exc_val, exc_tb)
+
+
+
+
+.. function:: available_backends()
+
+   Returns a list of backends that are available on this system.
+
+
+.. function:: audio_read(fp)
+
+

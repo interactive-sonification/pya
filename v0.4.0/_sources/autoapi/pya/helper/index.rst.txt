@@ -1,0 +1,322 @@
+:mod:`pya.helper`
+=================
+
+.. py:module:: pya.helper
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   backend/index.rst
+   codec/index.rst
+   helpers/index.rst
+   visualization/index.rst
+
+
+Package Contents
+----------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   pya.helper.audio_read
+   pya.helper.linlin
+   pya.helper.midicps
+   pya.helper.cpsmidi
+   pya.helper.dbamp
+   pya.helper.ampdb
+   pya.helper.spectrum
+   pya.helper.normalize
+   pya.helper.audio_from_file
+   pya.helper.buf_to_float
+   pya.helper.device_info
+   pya.helper.find_device
+   pya.helper.padding
+   pya.helper.is_pow2
+   pya.helper.next_pow2
+   pya.helper.round_half_up
+   pya.helper.rolling_window
+   pya.helper.signal_to_frame
+   pya.helper.magspec
+   pya.helper.powspec
+   pya.helper.hz2mel
+   pya.helper.mel2hz
+   pya.helper.basicplot
+   pya.helper.gridplot
+
+
+.. function:: audio_read(fp)
+
+
+.. py:exception:: _error
+
+   Bases: :class:`Exception`
+
+   Common base class for all non-exit exceptions.
+
+
+.. function:: linlin(x, smi, sma, dmi, dma)
+
+   Linear mapping
+
+   :param x: input value
+   :type x: float
+   :param smi: input range's minimum
+   :type smi: float
+   :param sma: input range's maximum
+   :type sma: float
+   :param dmi: input range's minimum
+   :type dmi: float
+   :param dma:
+
+   :returns: **_** -- mapped output
+   :rtype: float
+
+
+.. function:: midicps(m)
+
+   Convert midi number into cycle per second
+
+
+.. function:: cpsmidi(c)
+
+   Convert cycle per second into midi number
+
+
+.. function:: dbamp(db)
+
+   Convert db to amplitude
+
+
+.. function:: ampdb(amp)
+
+   Convert amplitude to db
+
+
+.. function:: spectrum(sig, samples, channels, sr)
+
+   Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.
+
+   :param sig: signal array
+   :type sig: numpy.ndarray
+   :param samples: total amount of samples
+   :type samples: int
+   :param channels: signal channels
+   :type channels: int
+   :param sr: sampling rate
+   :type sr: int
+
+   :returns: * **frq** (*numpy.ndarray*) -- frequencies
+             * **Y** (*numpy.ndarray*) -- FFT of the signal.
+
+
+.. function:: normalize(d)
+
+   Return the normalized input array
+
+
+.. function:: audio_from_file(path, dtype=np.float32)
+
+   Load an audio buffer using audioread.
+   This loads one block at a time, and then concatenates the results.
+
+
+.. function:: buf_to_float(x, n_bytes=2, dtype=np.float32)
+
+   Convert an integer buffer to floating point values.
+   This is primarily useful when loading integer-valued wav data
+   into numpy arrays.
+   .. seealso:: :func:`buf_to_float`
+
+   :param x: The integer-valued data buffer
+   :type x: np.ndarray [dtype=int]
+   :param n_bytes: The number of bytes per sample in `x`
+   :type n_bytes: int [1, 2, 4]
+   :param dtype: The target output type (default: 32-bit float)
+   :type dtype: numeric type
+
+   :returns: **x_float** -- The input data buffer cast to floating point
+   :rtype: np.ndarray [dtype=float]
+
+
+.. function:: device_info()
+
+   Return a formatted string about available audio devices and their info
+
+
+.. function:: find_device(min_input=0, min_output=0)
+
+
+.. function:: padding(x, width, tail=True, constant_values=0)
+
+   Pad signal with certain width, support 1-3D tensors.
+   Use it to add silence to a signal
+   TODO: CHECK pad array
+
+
+   :param x: A numpy array
+   :type x: np.ndarray
+   :param width: The amount of padding.
+   :type width: int
+   :param tail: If true pad to the tail, else pad to the start.
+   :type tail: bool
+   :param constant_values: The value to be padded, add None will pad nan to the array
+   :type constant_values: int or float or None
+
+   :returns: **_** -- Padded array
+   :rtype: np.ndarray
+
+
+.. function:: is_pow2(val)
+
+   Check if input is a power of 2 return a bool result.
+
+
+.. function:: next_pow2(x)
+
+   Find the closest pow of 2 that is great or equal or x,
+   based on shift_bit_length
+
+   :param x: A positive number
+   :type x: int
+
+   :returns: **_** -- The cloest  integer that is greater or equal to input x.
+   :rtype: int
+
+
+.. function:: round_half_up(number)
+
+   Round up if >= .5
+
+
+.. function:: rolling_window(a, window, step=1)
+
+
+.. function:: signal_to_frame(sig, n_per_frame, frame_step, window=None, stride_trick=True)
+
+   Frame a signal into overlapping frames.
+
+   :param sig: The audio signal
+   :type sig: numpy.ndarray
+   :param n_per_frame: Number of samples each frame
+   :type n_per_frame: int
+   :param frame_step: Number of samples after the start of the previous frame that the next frame should begin.
+   :type frame_step: int
+   :param window: A window array, e.g,
+   :type window: numpy.ndarray or None
+   :param stride_trick: Use stride trick to compute the rolling window and window multiplication faster
+   :type stride_trick: bool
+
+   :returns: **_** -- an array of frames.
+   :rtype: numpy.ndarray
+
+
+.. function:: magspec(frames, NFFT)
+
+   Compute the magnitude spectrum of each frame in frames.
+   If frames is an NxD matrix, output will be Nx(NFFT/2+1).
+
+   :param frames: The framed array, each row is a frame, can be just a single frame.
+   :type frames: numpy.ndarray
+   :param NFFT: FFT length. If NFFT > frame_len, the frames are zero_padded.
+   :type NFFT: int
+
+   :returns: **_** -- If frames is an NxD matrix, output will be Nx(NFFT/2+1).
+             Each row will be the magnitude spectrum of the corresponding frame.
+   :rtype: numpy.ndarray
+
+
+.. function:: powspec(frames, NFFT)
+
+   Compute the power spectrum of each frame in frames,
+   first comeputer the magnitude spectrum
+
+   :param frames: Framed signal, can be just a single frame.
+   :type frames: numpy.ndarray
+   :param NFFT: The FFT length to use. If NFFT > frame_len, the frames are zero-padded.
+   :type NFFT: int
+
+   :returns: **_** -- Power spectrum of the framed signal.
+             Each row has the size of NFFT / 2 + 1 due to rfft.
+   :rtype: numpy array
+
+
+.. function:: hz2mel(hz)
+
+   Convert a value in Hertz to Mels
+
+   :param hz: value in Hz, can be an array
+   :type hz: number of array
+   :param Returns:
+   :param --------:
+   :param _: value in Mels, same type as the input.
+   :type _: number of array
+
+
+.. function:: mel2hz(mel)
+
+   Convert a value in Hertz to Mels
+
+   :param hz: value in Hz, can be an array
+   :type hz: number of array
+   :param Returns:
+   :param --------:
+   :param _: value in Mels, same type as the input.
+   :type _: number of array
+
+
+.. function:: basicplot(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)
+
+   Basic version of the plot for pya, this can be directly used
+   by Asig. Aspec/Astft/Amfcc will have different extra setting
+   and type.
+
+   :param data: data array
+   :type data: numpy.ndarray
+   :param channels: number of channels
+   :type channels: int
+   :param axis: Plot image on the matplotlib axis if it was given.
+                Default is None, which use plt.gca()
+   :type axis: matplotlib.axes, optional
+   :param typ: Plot type.
+   :type typ: str, optional
+
+
+.. function:: gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None)
+
+   Create a grid plot of pya objects which have plot() methods,
+   i.e. Asig, Aspec, Astft, Amfcc.
+   It takes a list of pya_objects and plot each object into a grid.
+   You can mix different types of plots
+   together.
+
+   .. rubric:: Examples
+
+   # plot all 4 different pya objects in 1 column,
+   amfcc and astft use pcolormesh so colorbar will
+   # be displayed as well
+   gridplot([asig, amfcc, aspec, astft], colwrap=2,
+             cbar_ratio=0.08, figsize=[10, 10]);
+
+   :param pya_objects: A list of pya objects with the plot() method.
+   :type pya_objects: iterable object
+   :param colwrap: Wrap column at position.
+                   Can be considered as the column size. Default is 1, meaning 1 column.
+   :type colwrap: int, optional
+   :param cbar_ratio: For each column create another column reserved for the colorbar.
+                      This is the ratio of the width relative to the plot.
+                      0.04 means 4% of the width of the data plot.
+   :type cbar_ratio: float, optional
+   :param figsize: width, height of the entire image in inches. Default size is (6.4, 4.8)
+   :type figsize: tuple, optional
+
+   :returns: **fig** -- The plt.figure() object
+   :rtype: plt.figure()
+
+

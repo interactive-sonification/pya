@@ -1,0 +1,457 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pya.backend &mdash; pya  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+
+<a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pya
+
+
+
+</a>
+
+
+
+
+
+<div class="version">
+version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
+
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
+
+  <option value="/pya/master/" selected="selected">master</option>
+
+  <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.0/" >v0.4.0</option>
+
+  <option value="/pya/v0.3.3/" >v0.3.3</option>
+
+  <option value="/pya/v0.3.2/" >v0.3.2</option>
+
+<select>
+</div>
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend</span></code></a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend">DummyBackend</a><ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend.dtype">dtype</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend.range">range</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend.bs">bs</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend.get_device_count">get_device_count</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend.get_device_info_by_index">get_device_info_by_index</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend.get_default_input_device_info">get_default_input_device_info</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend.get_default_output_device_info">get_default_output_device_info</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend.open">open</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend.process_buffer">process_buffer</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.DummyBackend.terminate">terminate</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.PyAudioBackend">PyAudioBackend</a><ul>
+<li><a class="reference internal" href="#pya.backend.PyAudioBackend._boot_delay">_boot_delay</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.PyAudioBackend.bs">bs</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_device_count">get_device_count</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_device_info_by_index">get_device_info_by_index</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_default_input_device_info">get_default_input_device_info</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_default_output_device_info">get_default_output_device_info</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.PyAudioBackend.open">open</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.PyAudioBackend.process_buffer">process_buffer</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.PyAudioBackend.terminate">terminate</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend._LOGGER">_LOGGER</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.backend.determine_backend">determine_backend</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pya</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/autoapi/pya/backend/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pya.backend">
+<span id="pya-backend"></span><h1><a class="reference internal" href="#module-pya.backend" title="pya.backend"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend</span></code></a><a class="headerlink" href="#module-pya.backend" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Dummy/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.Dummy</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Jupyter/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.Jupyter</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="PyAudio/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.PyAudio</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="base/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.base</span></code></a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.backend.DummyBackend" title="pya.backend.DummyBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DummyBackend</span></code></a>(dummy_devices=None)</p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.backend.PyAudioBackend" title="pya.backend.PyAudioBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PyAudioBackend</span></code></a>(format=pyaudio.paFloat32)</p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.backend.determine_backend" title="pya.backend.determine_backend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_backend</span></code></a>(force_webaudio=False, port=8765)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt id="pya.backend.DummyBackend">
+<em class="property">class </em><code class="sig-prename descclassname">pya.backend.</code><code class="sig-name descname">DummyBackend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dummy_devices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="base/index.html#pya.backend.base.BackendBase" title="pya.backend.base.BackendBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.backend.base.BackendBase</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt id="pya.backend.DummyBackend.dtype">
+<code class="sig-name descname">dtype</code><em class="property"> = float32</em><a class="headerlink" href="#pya.backend.DummyBackend.dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pya.backend.DummyBackend.range">
+<code class="sig-name descname">range</code><em class="property"> = 1</em><a class="headerlink" href="#pya.backend.DummyBackend.range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pya.backend.DummyBackend.bs">
+<code class="sig-name descname">bs</code><em class="property"> = 256</em><a class="headerlink" href="#pya.backend.DummyBackend.bs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.DummyBackend.get_device_count">
+<code class="sig-name descname">get_device_count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_device_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.DummyBackend.get_device_info_by_index">
+<code class="sig-name descname">get_device_info_by_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">idx</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_device_info_by_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.DummyBackend.get_default_input_device_info">
+<code class="sig-name descname">get_default_input_device_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_default_input_device_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.DummyBackend.get_default_output_device_info">
+<code class="sig-name descname">get_default_output_device_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_default_output_device_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.DummyBackend.open">
+<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">input_flag</span></em>, <em class="sig-param"><span class="n">output_flag</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">frames_per_buffer</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">stream_callback</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.open" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.DummyBackend.process_buffer">
+<code class="sig-name descname">process_buffer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">buffer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.process_buffer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.DummyBackend.terminate">
+<code class="sig-name descname">terminate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.terminate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pya.backend.PyAudioBackend">
+<em class="property">class </em><code class="sig-prename descclassname">pya.backend.</code><code class="sig-name descname">PyAudioBackend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">format</span><span class="o">=</span><span class="default_value">pyaudio.paFloat32</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="base/index.html#pya.backend.base.BackendBase" title="pya.backend.base.BackendBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.backend.base.BackendBase</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt id="pya.backend.PyAudioBackend._boot_delay">
+<code class="sig-name descname">_boot_delay</code><em class="property"> = 0.5</em><a class="headerlink" href="#pya.backend.PyAudioBackend._boot_delay" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pya.backend.PyAudioBackend.bs">
+<code class="sig-name descname">bs</code><em class="property"> = 512</em><a class="headerlink" href="#pya.backend.PyAudioBackend.bs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.PyAudioBackend.get_device_count">
+<code class="sig-name descname">get_device_count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_device_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.PyAudioBackend.get_device_info_by_index">
+<code class="sig-name descname">get_device_info_by_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">idx</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_device_info_by_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.PyAudioBackend.get_default_input_device_info">
+<code class="sig-name descname">get_default_input_device_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_default_input_device_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.PyAudioBackend.get_default_output_device_info">
+<code class="sig-name descname">get_default_output_device_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_default_output_device_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.PyAudioBackend.open">
+<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">input_flag</span></em>, <em class="sig-param"><span class="n">output_flag</span></em>, <em class="sig-param"><span class="n">frames_per_buffer</span></em>, <em class="sig-param"><span class="n">input_device_index</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_device_index</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">input_host_api_specific_stream_info</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_host_api_specific_stream_info</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stream_callback</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.open" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.PyAudioBackend.process_buffer">
+<code class="sig-name descname">process_buffer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">buffer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.process_buffer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pya.backend.PyAudioBackend.terminate">
+<code class="sig-name descname">terminate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.terminate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt id="pya.backend._LOGGER">
+<code class="sig-prename descclassname">pya.backend.</code><code class="sig-name descname">_LOGGER</code><a class="headerlink" href="#pya.backend._LOGGER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pya.backend.determine_backend">
+<code class="sig-prename descclassname">pya.backend.</code><code class="sig-name descname">determine_backend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force_webaudio</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">port</span><span class="o">=</span><span class="default_value">8765</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.determine_backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

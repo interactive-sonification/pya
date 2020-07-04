@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pya.Ugen &mdash; pya  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+
+<a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pya
+
+
+
+</a>
+
+
+
+
+
+<div class="version">
+version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
+
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
+
+  <option value="/pya/master/" >master</option>
+
+  <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.0/" selected="selected">v0.4.0</option>
+
+  <option value="/pya/v0.3.3/" >v0.3.3</option>
+
+  <option value="/pya/v0.3.2/" >v0.3.2</option>
+
+<select>
+</div>
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Ugen</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#pya.Ugen.get_num_of_rows">get_num_of_rows</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen">Ugen</a><ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen.sine">sine</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen.cos">cos</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen.square">square</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen.sawtooth">sawtooth</a></li>
+</ul>
+<ul>
+<li><a class="reference internal" href="#pya.Ugen.Ugen.noise">noise</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pya</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Ugen</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/autoapi/pya/Ugen/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pya.Ugen">
+<span id="pya-ugen"></span><h1><a class="reference internal" href="../../../pya.html#module-pya.Ugen" title="pya.Ugen"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Ugen</span></code></a><a class="headerlink" href="#module-pya.Ugen" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../pya.html#pya.Ugen.Ugen" title="pya.Ugen.Ugen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ugen</span></code></a>()</p></td>
+<td><p>Unit Generator for to create Asig with predefined signal</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../pya.html#pya.Ugen.get_num_of_rows" title="pya.Ugen.get_num_of_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_num_of_rows</span></code></a>(dur, n_rows, sr)</p></td>
+<td><p>Return total number of samples. If dur is set, return dur*sr, if num_samples is set, return num_samples,</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt id="pya.Ugen.get_num_of_rows">
+<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">get_num_of_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dur</span></em>, <em class="sig-param"><span class="n">n_rows</span></em>, <em class="sig-param"><span class="n">sr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.get_num_of_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return total number of samples. If dur is set, return dur*sr, if num_samples is set, return num_samples,
+if both set, raise an AttributeError. Only use one of the two.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pya.Ugen.Ugen">
+<em class="property">class </em><code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">Ugen</code><a class="headerlink" href="#pya.Ugen.Ugen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../../pya.html#pya.Asig.Asig" title="pya.Asig.Asig"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.Asig.Asig</span></code></a></p>
+<p>Unit Generator for to create Asig with predefined signal</p>
+<dl class="py method">
+<dt id="pya.Ugen.Ugen.sine">
+<code class="sig-name descname">sine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">freq</span><span class="o">=</span><span class="default_value">440</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'sine'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.sine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate Sine signal Asig object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq</strong> (<em>int</em><em>, </em><em>float</em>) – signal frequency (Default value = 440)</p></li>
+<li><p><strong>amp</strong> (<em>int</em><em>, </em><em>float</em>) – signal amplitude (Default value = 1.0)</p></li>
+<li><p><strong>dur</strong> (<em>int</em><em>, </em><em>float</em>) – duration in second. dur and num_samples only use one of the two. (Default value = 1.0)</p></li>
+<li><p><strong>num_samples</strong> (<em>int</em>) – number of sample. dur and num_samples only use one of the two(Default value = None)</p></li>
+<li><p><strong>sr</strong> (<em>int</em>) – sampling rate (Default value = 44100)</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – number of channels (Default value = 1)</p></li>
+<li><p><strong>cn</strong> (<em>list of string</em>) – channel names as a list. The size needs to match the number of channels (Default value = None)</p></li>
+<li><p><strong>label</strong> (<em>string</em>) – identifier of the object (Default value = “sine”)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Asig object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pya.Ugen.Ugen.cos">
+<code class="sig-name descname">cos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">freq</span><span class="o">=</span><span class="default_value">440</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'cosine'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.cos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate Cosine signal Asig object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq</strong> (<em>int</em><em>, </em><em>float</em>) – signal frequency (Default value = 440)</p></li>
+<li><p><strong>amp</strong> (<em>int</em><em>, </em><em>float</em>) – signal amplitude (Default value = 1.0)</p></li>
+<li><p><strong>dur</strong> (<em>int</em><em>, </em><em>float</em>) – duration in second. dur and num_samples only use one of the two. (Default value = 1.0)</p></li>
+<li><p><strong>num_samples</strong> (<em>int</em>) – number of sample. dur and num_samples only use one of the two(Default value = None)</p></li>
+<li><p><strong>sr</strong> (<em>int</em>) – sampling rate (Default value = 44100)</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – number of channels (Default value = 1)</p></li>
+<li><p><strong>cn</strong> (<em>list of string</em>) – channel names as a list. The size needs to match the number of channels (Default value = None)</p></li>
+<li><p><strong>label</strong> (<em>string</em>) – identifier of the object (Default value = “cosine”)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Asig object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pya.Ugen.Ugen.square">
+<code class="sig-name descname">square</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">freq</span><span class="o">=</span><span class="default_value">440</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">duty</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">sample_shift</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'square'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.square" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate square wave signal Asig object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq</strong> (<em>int</em><em>, </em><em>float</em>) – signal frequency (Default value = 440)</p></li>
+<li><p><strong>amp</strong> (<em>int</em><em>, </em><em>float</em>) – signal amplitude (Default value = 1.0)</p></li>
+<li><p><strong>dur</strong> (<em>int</em><em>, </em><em>float</em>) – duration in second. dur and num_samples only use one of the two. (Default value = 1.0)</p></li>
+<li><p><strong>num_samples</strong> (<em>int</em>) – number of sample. dur and num_samples only use one of the two(Default value = None)</p></li>
+<li><p><strong>duty</strong> (<em>float</em>) – duty cycle (Default value = 0.4)</p></li>
+<li><p><strong>sr</strong> (<em>int</em>) – sampling rate (Default value = 44100)</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – number of channels (Default value = 1)</p></li>
+<li><p><strong>cn</strong> (<em>list of string</em>) – channel names as a list. The size needs to match the number of channels (Default value = None)</p></li>
+<li><p><strong>label</strong> (<em>string</em>) – identifier of the object (Default value = “square”)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Asig object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pya.Ugen.Ugen.sawtooth">
+<code class="sig-name descname">sawtooth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">freq</span><span class="o">=</span><span class="default_value">440</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'sawtooth'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.sawtooth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate sawtooth wave signal Asig object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq</strong> (<em>int</em><em>, </em><em>float</em>) – signal frequency (Default value = 440)</p></li>
+<li><p><strong>amp</strong> (<em>int</em><em>, </em><em>float</em>) – signal amplitude (Default value = 1.0)</p></li>
+<li><p><strong>dur</strong> (<em>int</em><em>, </em><em>float</em>) – duration in second. dur and num_samples only use one of the two. (Default value = 1.0)</p></li>
+<li><p><strong>num_samples</strong> (<em>int</em>) – number of sample. dur and num_samples only use one of the two(Default value = None)</p></li>
+<li><p><strong>width</strong> (<em>float</em>) – tooth width (Default value = 1.0)</p></li>
+<li><p><strong>sr</strong> (<em>int</em>) – sampling rate (Default value = 44100)</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – number of channels (Default value = 1)</p></li>
+<li><p><strong>cn</strong> (<em>list of string</em>) – channel names as a list. The size needs to match the number of channels (Default value = None)</p></li>
+<li><p><strong>label</strong> (<em>string</em>) – identifier of the object (Default value = “sawtooth”)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Asig object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pya.Ugen.Ugen.noise">
+<code class="sig-name descname">noise</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">type</span><span class="o">=</span><span class="default_value">'white'</span></em>, <em class="sig-param"><span class="n">amp</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">dur</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">44100</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'noise'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Ugen.Ugen.noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate noise signal Asig object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>type</strong> (<em>string</em>) – type of noise, currently available: ‘white’ and ‘pink’ (Default value = ‘white’)</p></li>
+<li><p><strong>amp</strong> (<em>int</em><em>, </em><em>float</em>) – signal amplitude (Default value = 1.0)</p></li>
+<li><p><strong>dur</strong> (<em>int</em><em>, </em><em>float</em>) – duration in second. dur and num_samples only use one of the two. (Default value = 1.0)</p></li>
+<li><p><strong>num_samples</strong> (<em>int</em>) – number of sample. dur and num_samples only use one of the two(Default value = None)</p></li>
+<li><p><strong>sr</strong> (<em>int</em>) – sampling rate (Default value = 44100)</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – number of channels (Default value = 1)</p></li>
+<li><p><strong>cn</strong> (<em>list of string</em>) – channel names as a list. The size needs to match the number of channels (Default value = None)</p></li>
+<li><p><strong>label</strong> (<em>string</em>) – identifier of the object (Default value = “square”)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Asig object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

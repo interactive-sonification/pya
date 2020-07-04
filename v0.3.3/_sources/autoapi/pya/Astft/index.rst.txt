@@ -1,0 +1,71 @@
+:mod:`pya.Astft`
+================
+
+.. py:module:: pya.Astft
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   pya.Astft.Astft
+
+
+
+.. data:: _LOGGER
+   
+
+   
+
+.. py:class:: Astft(x, sr=None, label=None, window='hann', nperseg=256, noverlap=None, nfft=None, detrend=False, return_onesided=True, boundary='zeros', padded=True, axis=-1, cn=None)
+
+   Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
+   attribute cn being the list of channel names, and label being the name of the Asig
+
+   .. method:: to_sig(self, **kwargs)
+
+
+      Create signal from stft, i.e. perform istft, kwargs overwrite Astft values for istft
+
+      :param \*\*kwargs:
+                         optional keyboard arguments used in istft:
+                             'sr', 'window', 'nperseg', 'noverlap', 'nfft', 'input_onesided', 'boundary'.
+                         also convert 'sr' to 'fs' since scipy uses 'fs' as sampling frequency.
+      :type \*\*kwargs: str
+
+      :returns: **_** -- Asig
+      :rtype: Asig
+
+
+   .. method:: plot(self, fn=lambda x: x, ch=None, ax=None, xlim=None, ylim=None, **kwargs)
+
+
+      Plot spectrogram
+
+      :param fn: a function, by default is bypass
+      :type fn: func
+      :param ch: By default it is None,
+      :type ch: int or str or None
+      :param ax: you can assign your plot to specific axes (Default value = None)
+      :type ax: matplotlib.axes
+      :param xlim: x_axis range (Default value = None)
+      :type xlim: tuple or list
+      :param ylim: y_axis range (Default value = None)
+      :type ylim: tuple or list
+      :param \*\*kwargs: keyward arguments of matplotlib's pcolormesh
+
+      :returns: **_** -- self
+      :rtype: Asig
+
+
+   .. method:: __repr__(self)
+
+
+      Return repr(self).
+
+
+

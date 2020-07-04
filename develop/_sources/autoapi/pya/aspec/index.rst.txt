@@ -1,0 +1,81 @@
+:mod:`pya.aspec`
+================
+
+.. py:module:: pya.aspec
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   pya.aspec.Aspec
+
+
+
+.. data:: _LOGGER
+   
+
+   
+
+.. py:class:: Aspec(x, sr=44100, label=None, cn=None)
+
+   Audio spectrum class using rfft
+
+   .. method:: get_duration(self)
+
+
+      Return the duration in second.
+
+
+   .. method:: to_sig(self)
+
+
+      Convert Aspec into Asig
+
+
+   .. method:: weight(self, weights, freqs=None, curve=1, kind='linear')
+
+
+      TODO
+
+      :param weights:
+      :param freqs: (Default value = None)
+      :param curve: (Default value = 1)
+      :param kind: (Default value = 'linear')
+
+
+   .. method:: plot(self, fn=np.abs, ax=None, offset=0, scale=1, xlim=None, ylim=None, **kwargs)
+
+
+      Plot spectrum
+
+      :param fn: function for processing the rfft spectrum. (Default value = np.abs)
+      :type fn: func
+      :param x_as_time: By default x axis display the time, if faulse display samples
+      :type x_as_time: bool, optional
+      :param xlim: Set x axis range (Default value = None)
+      :type xlim: tuple or list or None
+      :param ylim: Set y axis range (Default value = None)
+      :type ylim: tuple or list or None
+      :param offset: This is the absolute value each plot is shift vertically
+                     to each other.
+      :type offset: int or float
+      :param scale: Scaling factor of the plot, use in multichannel plotting.
+      :type scale: float
+      :param \*\*kwargs: Keyword arguments for matplotlib.pyplot.plot()
+
+      :returns: **_** -- self
+      :rtype: Asig
+
+
+   .. method:: __repr__(self)
+
+
+      Return repr(self).
+
+
+
