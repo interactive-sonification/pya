@@ -42,10 +42,13 @@ def generate():
 def generate_local(doc, out, show, target='html'):
     os.system(f'sphinx-build -b {target} {doc} {out}/{target}')
     if show:
+        url = f'{out}/{target}/index.{target}'
         if platform == 'darwin':
-            os.system(f'open {out}/{target}/index.{target}')
+            os.system(f'open {url}')
+        elif platform == 'win32':
+            os.startfile(url)
         else:
-            raise NotImplementedError("show is currently only available for MacOS")
+            raise NotImplementedError("'show' is not available for your platform")
 
 
 def generate_tree(out_folder, publish=False, branches=['master', 'develop'], tags=None, template_folder=None, show=False):
@@ -79,6 +82,11 @@ def generate_tree(out_folder, publish=False, branches=['master', 'develop'], tag
             raise RuntimeError(f'Could not checkout {d}. Git returned status code {res}!')
         if template_folder:
             os.system(f'cp {template_folder}/* {doctree_root}/docs/_templates')
+
+        # override index and config for versions older than 0.5.0
+        if d[0] == 'v' and d[1] == '0' and int(d[3]) < 5:
+            os.system(f'cp {template_folder}/../conf.py {template_folder}/../index.rst {doctree_root}/docs')
+
         # PYTHONDONTWRITEBYTECODE=1 prevents __pycache__ files which we don't need when code runs only once.
         res = os.system(f'PYTHONDONTWRITEBYTECODE=1 sphinx-build -b html -D version={d} -A versions={",".join(doclist)} {doctree_root}/docs {build_folder}/{d}' + SILENCE)
         if res != 0:
@@ -110,11 +118,7 @@ def generate_tree(out_folder, publish=False, branches=['master', 'develop'], tag
         os.system(f'git -C {doctree_root} push')
 
     if show:
-        if platform == 'darwin':
-            _run_webserver(doctree_root)
-        else:
-            raise NotImplementedError("show is currently only available for MacOS")
-
+        _run_webserver(doctree_root)
 
 def _has_docs(name, doctree_root):
     os.system(f'git -C {doctree_root} checkout {name}' + SILENCE)
@@ -127,8 +131,14 @@ def _run_webserver(root):
     import socketserver
 
     def _delayed_open():
+        url = f'http://localhost:8181/{basename(root)}/index.html'
         time.sleep(0.2)
-        os.system(f'open http://localhost:8181/{basename(root)}/index.html')
+        if sys.platform == 'darwin':
+            os.system(f'open {url}')
+        elif sys.platform == 'win32':
+            os.startfile(url)
+        else:
+            raise NotImplementedError("'show' is not available for your platform")
 
     t = threading.Thread(target=_delayed_open)
     t.start()
