@@ -32,7 +32,7 @@ html_context = dict(versions=str(version))
 # ones.
 extensions = ['sphinx.ext.autodoc', 
               'sphinx.ext.napoleon',
-              'm2r']
+              'recommonmark']
 
 
 source_suffix = ['.rst', '.md']
