@@ -32,11 +32,9 @@ html_context = dict(versions=str(version))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-              'sphinx.ext.napoleon',
+extensions = ['sphinx.ext.napoleon',
               'recommonmark',
-              'autoapi.extension',
-              ]
+              'autoapi.extension']
 
 source_suffix = ['.rst', '.md']
 autoapi_type = 'python'
