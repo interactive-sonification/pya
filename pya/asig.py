@@ -1980,3 +1980,20 @@ class Asig:
         return Asig(
             result, sr=self.sr, label=self.label, channels=self.channels, cn=self.cn
         )
+
+    def apply(self, fn):
+        """apply a fn samplewise for distortion or waveshaping a signal.
+
+        Parameters
+        ----------
+            fn : scalar function
+                function to be used for wave shaping.
+
+        Returns
+        -------
+        _ : Asig
+            A new asig with samplewise applied fn.
+        """
+        vecfn = np.vectorize(fn)
+        sig_out = vecfn(self.sig)
+        return Asig(sig_out, sr=self.sr, label=self.label, channels=self.channels, cn=self.cn)
