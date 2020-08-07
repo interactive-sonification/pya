@@ -53,7 +53,8 @@ class Asig:
         the .bound, .extend and .overwrite properties.
     """
 
-    def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
+    def __init__(self, sig, sr=44100, label="",
+                 channels=1, cn=None, dtype="float32"):
         """__init__ method
 
         Parameters
@@ -77,7 +78,7 @@ class Asig:
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
         self.label = label
-        self.dtype = "float32"
+        self.dtype = dtype
         if isinstance(sig, str):
             self._load_audio_file(sig)
         elif isinstance(sig, int):  # sample length
@@ -142,7 +143,7 @@ class Asig:
         ----------
         fname : str
             Path to file."""
-        self.sig, self.sr = audio_from_file(fname)
+        self.sig, self.sr = audio_from_file(fname, dtype=self.dtype)
         if self.label == "":
             self.label = fname
 

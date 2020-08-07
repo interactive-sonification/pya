@@ -8,7 +8,7 @@ import decimal
 import math
 
 
-class _error(Exception):    
+class _error(Exception):
     pass
 
 
@@ -107,7 +107,9 @@ def audio_from_file(path, dtype=np.float32):
         s_end = np.inf
         n = 0
         for frame in input_file:
-            frame = buf_to_float(frame, dtype=dtype)
+            print(frame)
+            if dtype == np.float32 or dtype == np.float64:
+                frame = buf_to_float(frame, dtype=dtype)
             n_prev = n
             n = n + len(frame)
             if n_prev <= s_start <= n:

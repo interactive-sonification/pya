@@ -5,7 +5,7 @@ import sunau
 import audioop
 import struct
 import sys
-import subprocess 
+import subprocess
 import re
 import time
 import os
