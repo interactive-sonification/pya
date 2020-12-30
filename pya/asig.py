@@ -1,26 +1,19 @@
 import numbers
 from warnings import warn
-import logging
 from itertools import compress
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate
 import scipy.signal
-from scipy.fftpack import fft, fftfreq, ifft
 from scipy.io import wavfile
 from . import Aserver
 import pya.aspec
-import pya.astft 
+import pya.astft
 import pya.amfcc
-# from . import Astft
-# from . import Amfcc
-from .helper import ampdb, dbamp, cpsmidi, midicps, linlin, buf_to_float
+from .helper import ampdb, dbamp, linlin
 from .helper import spectrum, audio_from_file, padding
 from .helper import basicplot
-from copy import copy, deepcopy
-
-_LOGGER = logging.getLogger(__name__)
-_LOGGER.addHandler(logging.NullHandler())
+from .helper import _LOGGER
 
 
 class Asig:
@@ -42,10 +35,13 @@ class Asig:
     cn : list of str, None
         cn short for channel names is a list of string of size channels,
         to give each channel a unique name.
-        channel names can be used to subset signal channels in a more readible way,
-        e.g. asig[:, ['left', 'front']] subsets the left and front channels of the signal.
+        channel names can be used to subset signal channels in
+        a more readible way,
+        e.g. asig[:, ['left', 'front']] subsets the left and
+        front channels of the signal.
     mix_mode : str or None
-        used to extend numpy __setitem__() operation to frequent audio manipulations such as
+        used to extend numpy __setitem__() operation to
+        frequent audio manipulations such as
         mixing, extending, boundary, replacing.
         Current Asig supports the mix_modes:
         bound, extend, overwrite.  mix_mode should not be
@@ -134,8 +130,9 @@ class Asig:
                 )
 
     def _load_audio_file(self, fname):
-        """Load audio file, and set self.sig to the signal and self.sr to the sampling rate.
-        Currently support two types of audio loader: 1) Standard library for .wav, .aiff,
+        """Load audio file, and set self.sig to the signal
+        and self.sr to the sampling rate. Currently support two types
+        of audio loader: 1) Standard library for .wav, .aiff,
         and ffmpeg for other such as .mp3.
 
         Parameters
@@ -146,7 +143,6 @@ class Asig:
         if self.label == "":
             self.label = fname
 
-    # Asig.py
     def save_wavfile(self, fname="asig.wav", dtype="float32"):
         """Save signal as .wav file, return self.
 
@@ -169,7 +165,6 @@ class Asig:
         return self
 
     def _set_col_names(self):
-        # Currently, every newly returned asig has a cn argument that is the same as self.
         if self.cn is None:
             self.cn = [str(i) for i in range(self.channels)]
         else:
@@ -181,11 +176,16 @@ class Asig:
     def __getitem__(self, index):
         """ Accessing array elements through slicing.
             * int, get signal row asig[4];
-            * slice, range and step slicing asig[4:40:2]  # from 4 to 40 every 2 samples;
-            * list, subset rows, asig[[2, 4, 6]]  # pick out index 2, 4, 6 as a new asig
-            * tuple, row and column specific slicing, asig[4:40, 3:5]  # from 4 to 40, channel 3 and 4
-            * Time slicing (unit in seconds) using dict asig[{1:2.5}, :] creates indexing of 1s to 2.5s.
-            * Channel name slicing: asig['l'] returns channel 'l' as a new mono asig. asig[['front', 'rear']], etc...
+            * slice, range and step slicing asig[4:40:2]
+                # from 4 to 40 every 2 samples;
+            * list, subset rows, asig[[2, 4, 6]]
+                # pick out index 2, 4, 6 as a new asig
+            * tuple, row and column specific slicing, asig[4:40, 3:5]
+                # from 4 to 40, channel 3 and 4
+            * Time slicing (unit in seconds) using dict asig[{1:2.5}, :]
+                creates indexing of 1s to 2.5s.
+            * Channel name slicing: asig['l'] returns channel 'l' as
+                a new mono asig. asig[['front', 'rear']], etc...
             * bool, subset channels: asig[:, [True, False]]
 
 
@@ -205,9 +205,11 @@ class Asig:
             cindex = index[1] if len(index) > 1 else None
         elif isinstance(index, str):
             _LOGGER.debug(" getitem: index is string")
-            # ToDo: decide whether to solve differently, e.g. only via ._[str] or via a .attribute(str) fn
+            # ToDo: decide whether to solve differently,
+            # e.g. only via ._[str] or via a .attribute(str) fn
             return self._[index]
-        else:  # if only slice, list, dict, int or float given for row selection
+        else:
+            # if only slice, list, dict, int or float given for row selection
             rindex = index
             cindex = None
 
@@ -288,7 +290,8 @@ class Asig:
 
         # Squeezing shouldn't be performed here.
         # this is because: a[:10, 0] and a[:10,[True, False]] return
-        # (10,) and (10, 1) respectively. Which should be dealt with individually.
+        # (10,) and (10, 1) respectively.
+        # Which should be dealt with individually.
         if sig.ndim == 2 and sig.shape[1] == 1:
             # Hot fix this to be consistent with bool slciing
             if not isinstance(cindex[0], bool):
@@ -303,30 +306,30 @@ class Asig:
         a.mix_mode = self.mix_mode
         return a
 
-    # new setitem implementation (TH): in analogy to new __getitem__ and with mix modes
-    # work in progress
-
     @property
     def x(self):
-        """Extend mode: this mode allows destination sig size in assignment to be extended through setitem"""
+        """Extend mode: this mode allows destination
+        sig size in assignment to be extended through setitem"""
         # Set setitem mode to extend
         self.mix_mode = "extend"
         return self
 
-    extend = x  # better readable synonym
+    extend = x
 
     @property
     def b(self):
-        """Bound mode: this mode allows to truncate a source signal in assignment to a limited destination in setitem."""
+        """Bound mode: this mode allows to truncate a source signal
+        in assignment to a limited destination in setitem."""
         # Set setitem mode to bound
         self.mix_mode = "bound"
         return self
 
-    bound = b  # better readable synonym
+    bound = b
 
     @property
     def o(self):
-        """Overwrite mode: this mode cuts and replaces target selection by source signal on assignment via setitem"""
+        """Overwrite mode: this mode cuts and replaces target
+        selection by source signal on assignment via setitem"""
         self.mix_mode = "overwrite"
         return self
 
@@ -335,24 +338,31 @@ class Asig:
     def __setitem__(self, index, value):
         """setitem: asig[index] = value. This allows all the methods from getitem:
             * numpy style slicing
-            * string/string_list slicing for subsetting channels based on channel name self.cn
+            * string/string_list for subsetting based on channel name
             * time slicing (unit seconds) via dict.
             * bool slicing to filter out specific channels.
-        In addition, there are 4 possible modes: (referring to asig as 'dest', and value as 'src'
-            1. standard pythonic way that the src und dest dimensions need to match
+        In addition, there are 4 possible modes:
+        (referring to asig as 'dest', and value as 'src'
+            1. standard pythonic way that the src and
+            dest dimensions need to match
                 asig[...] = value
             2. bound mode where src is copied up to the bounds of dest
                 asig.b[...] = value
-            3. extend mode where dest is dynamically extended to make space for src
+            3. extend mode where dest is dynamically
+            extended to make space for src
                 asig.x[...] = value
-            4. overwrite mode where selected dest subset is replaced by specified src regardless the length.
+            4. overwrite mode where selected dest subset is
+            replaced by specified src regardless the length.
                 asig.o[...] = value
 
         row index:
-            * list: e.g. [1,2,3,4,5,6,7,8] or [True, ..., False] (modes b and x possible)
+            * list: e.g. [1,2,3,4,5,6] or [True, ..., False]
+                (modes b and x possible)
             * int:  e.g. 0  (i.e. a single sample, so no need for extra modes)
             * slice: e.g. 100:5000:2  (can be used with all modes)
-            * dict: e.g. {0.5: 2.5}   (modes o, b possible, x only if step==1, or if step==None and stop=None)
+            * dict: e.g. {0.5: 2.5}
+                (modes o, b possible, x only if step==1,
+                or if step==None and stop=None)
 
         Parameters
         ----------
@@ -376,20 +386,18 @@ class Asig:
         if isinstance(index, tuple):
             rindex = index[0]
             cindex = index[1] if len(index) > 1 else None
-        else:  # if only slice, list, dict, int or float given for row selection
+        else:
             rindex = index
             cindex = None
 
-        # parse row index rindex into ridx
-        # sr = self.sr  # unused default case for conversion if not changed by special case
-        # e.g. a[[4,5,7,8,9]], or a[[True, False, True...]]
         if isinstance(rindex, (slice, int)):
             ridx = rindex
-        elif isinstance(rindex, dict):  # time slicing
+        elif isinstance(rindex, dict):
+            # time slicing
             for key, val in rindex.items():
                 try:
                     start = int(key * self.sr)
-                except TypeError:  # if it is None
+                except TypeError:
                     start = None
                 try:
                     stop = int(val * self.sr)
@@ -431,7 +439,8 @@ class Asig:
             _LOGGER.debug("value is asig")
             src = value.sig
 
-        elif isinstance(value, np.ndarray):  # numpy array if not Asig, default: sr fits
+        elif isinstance(value, np.ndarray):
+            # numpy array if not Asig, default: sr fits
             _LOGGER.debug("value is ndarray")
             src = value
 
@@ -478,17 +487,17 @@ class Asig:
             _LOGGER.debug("setitem extend mode")
             if isinstance(ridx, list):
                 _LOGGER.error(
-                    "Asig.setitem Error: extend mode not available for row index list"
+                    "Extend mode not available for row index list"
                 )
                 return self
             if isinstance(ridx, slice):
                 if ridx.step not in [1, None]:
                     raise AttributeError(
-                        "Asig.setitem Error: extend mode only available for step-1 slices"
+                        "Extend mode only available for step-1 slices"
                     )
                 if ridx.stop is not None and ridx.stop < self.samples:
                     raise AttributeError(
-                        "Extend mode is meant for extending array beyond the end. The current slice does not stop at the end of array."
+                        "The current slice does not stop at the end of array."
                     )
             dshape = self.sig[final_index].shape  # d for destination
             # ToDo: howto compute dn faster from ridx shape(self.sig) alone?
@@ -534,7 +543,7 @@ class Asig:
             )  # Stop index of the rdix
             end = start_idx + src.shape[0]
             # Create a new signal
-            # New row is: original samples + (new_signal_sample - the range to be replace)
+            # New row is: original samples + (new_signal_sample - the range to replace)
             sig = np.ndarray(
                 shape=(
                     self.sig.shape[0] + src.shape[0] - (stop_idx - start_idx),
@@ -571,7 +580,8 @@ class Asig:
             Asig with resampled signal.
         """
         times = np.arange(self.samples) / self.sr
-        tsel = (np.arange(np.floor(self.samples / self.sr * target_sr / rate)) * rate / target_sr)
+        tsel = (np.arange(np.floor(self.samples / self.sr *
+                                   target_sr / rate)) * rate / target_sr)
         if self.channels == 1:
             interp_fn = scipy.interpolate.interp1d(
                 times,
@@ -582,10 +592,12 @@ class Asig:
                 fill_value=self.sig[-1],
             )
             return Asig(
-                interp_fn(tsel), target_sr, label=self.label + "_resampled", cn=self.cn
+                interp_fn(tsel), target_sr,
+                label=self.label + "_resampled", cn=self.cn
             )
         else:
-            new_sig = np.ndarray(shape=(int(self.samples / self.sr * target_sr / rate), self.channels))
+            new_sig = np.ndarray(
+                shape=(int(self.samples / self.sr * target_sr / rate), self.channels))
             for i in range(self.channels):
                 interp_fn = scipy.interpolate.interp1d(
                     times,
@@ -705,7 +717,7 @@ class Asig:
         Parameters
         ----------
         blend : list or None
-            Usage: For mono signal, blend=(g1, g2), the mono channel will be broadcated to left, right with g1, g2 gains.
+            Usage: For mono, blend=(g1, g2), the  channel will be broadcated to left, right with g1, g2 gains.
             For stereo signal, blend=(g1, g2), each channel is gain adjusted by g1, g2.
             For multichannel: blend = [[list of gains for left channel], [list of gains for right channel]]
             Default value = None, resulting in equal distribution to left and right channel
@@ -1039,7 +1051,8 @@ class Asig:
 
     def __truediv__(self, other):
         """Magic method for division. You can either divide a scalar or an Asig object.
-        Use division with caution, audio signal is common to reach 0 or near, avoid zero division or extremely large result.
+        Use division with caution, audio signal is common to reach 0 or near,
+        avoid zero division or extremely large result.
 
         If dividing an Asig, you don't always need to have same size arrays as audio signals
         may different in length. If mix_mode is set to 'bound' the size is fixed to respect self.
