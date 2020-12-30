@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1 (December 2020)
+* Add logging helper function.
+* Make sure pya runs on Python3.8
+
+
 ## 0.4.1 (July 2020)
 * Fix bug of extend mode result in a change of dtype (from the default f32 to f64). Now it is fixed at f32.
 * Add convolve() method. A convolution method (default to fft). Now you can apply reverb, do autocorrelation to the signal.
