@@ -1,5 +1,6 @@
 import numbers
 from warnings import warn
+import logging
 from itertools import compress
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,7 +14,10 @@ import pya.amfcc
 from .helper import ampdb, dbamp, linlin
 from .helper import spectrum, audio_from_file, padding
 from .helper import basicplot
-from .helper import _LOGGER
+
+
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.addHandler(logging.NullHandler())
 
 
 class Asig:

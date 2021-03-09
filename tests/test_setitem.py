@@ -107,7 +107,7 @@ class TestSetitem(TestCase):
         self.assertTrue(np.array_equal(self.azeros[[0, 1, 2]].sig, self.aones[[0, 1, 2]].sig))
 
     def test_asig_index(self):
-        self.azeros[self.aones.sig.astype(np.bool)] = self.aones.sig
+        self.azeros[self.aones.sig.astype(bool)] = self.aones.sig
         self.assertTrue(np.array_equal(np.ones(self.sr), self.azeros.sig))
 
     def test_invalid_slicing_type(self):

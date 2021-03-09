@@ -1,8 +1,12 @@
 import copy
 import time
+import logging
 import numpy as np
 from warnings import warn
-from .helper import _LOGGER
+
+
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.addHandler(logging.NullHandler())
 
 
 class Aserver:

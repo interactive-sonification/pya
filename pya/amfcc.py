@@ -6,6 +6,10 @@ from .helper import basicplot
 from scipy.signal import get_window
 from scipy.fftpack import dct
 import pya.asig
+import logging
+
+# _LOGGER = logging.getLogger(__name__)
+# _LOGGER.addHandler(logging.NullHandler())
 
 
 class Amfcc:
