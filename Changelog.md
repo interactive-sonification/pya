@@ -1,9 +1,9 @@
 # Changelog
 
-## 0.4.1 (December 2020)
+## 0.4.3 (March 2021)
 * Add logging helper function.
-* Make sure pya runs on Python3.8
-
+* Make sure `pya` runs on Python3.8
+* Bugfix #43: Handle `None` as a return value of `get_server_info` in `pya.helper.backend.determine_backend` (thanks @paulvickers)
 
 ## 0.4.1 (July 2020)
 * Fix bug of extend mode result in a change of dtype (from the default f32 to f64). Now it is fixed at f32.

@@ -1,8 +1,13 @@
 from __future__ import absolute_import
+import logging
 import numpy as np
 from scipy.signal import stft, istft
 import pya.asig
 from .helper import basicplot
+
+
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.addHandler(logging.NullHandler())
 
 
 # TODO, check with multichannel
