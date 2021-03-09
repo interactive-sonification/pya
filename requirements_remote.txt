@@ -1,2 +1,3 @@
 notebook
 sanic
+ipywidgets
