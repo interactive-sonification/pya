@@ -12,10 +12,10 @@ class TestCodeFormat(unittest.TestCase):
         # E722 bare except
         style = pycodestyle.StyleGuide(quiet=False,
                                        ignore=['E501', 'E731', 'W291', 'W504',
-                                           'W391', 'W292', 'E722', 'E402'])
+                                               'W391', 'W292', 'E722', 'E402'])
         # style.input_dir('../../pya')
         style.input_dir('./pya')
-        # style.input_dir('tests')
+        style.input_dir('./tests')
         result = style.check_files()
         self.assertEqual(0, result.total_errors,
                          "Found code style errors (and warnings).")

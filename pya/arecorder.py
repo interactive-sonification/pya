@@ -1,5 +1,6 @@
 # Arecorder class
 import time
+import logging
 import numbers
 from warnings import warn
 import numpy as np
@@ -7,7 +8,10 @@ import pyaudio
 from . import Asig
 from . import Aserver
 from .helper import dbamp
-from .helper import _LOGGER
+
+
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.addHandler(logging.NullHandler())
 
 
 class Arecorder(Aserver):

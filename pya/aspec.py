@@ -1,8 +1,12 @@
+import logging
 import numpy as np
 import scipy.interpolate
 import pya.asig
 from .helper import basicplot
-from .helper import _LOGGER
+
+
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.addHandler(logging.NullHandler())
 
 
 class Aspec:
