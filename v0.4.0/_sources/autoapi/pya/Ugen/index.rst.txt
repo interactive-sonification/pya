@@ -30,14 +30,14 @@ Functions
    if both set, raise an AttributeError. Only use one of the two.
 
 
-.. py:class:: Ugen
+.. class:: Ugen
+
 
    Bases: :class:`pya.Asig.Asig`
 
    Unit Generator for to create Asig with predefined signal
 
    .. method:: sine(self, freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='sine')
-
 
       Generate Sine signal Asig object.
 
@@ -64,7 +64,6 @@ Functions
 
    .. method:: cos(self, freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='cosine')
 
-
       Generate Cosine signal Asig object.
 
       :param freq: signal frequency (Default value = 440)
@@ -89,7 +88,6 @@ Functions
 
 
    .. method:: square(self, freq=440, amp=1.0, dur=None, n_rows=None, duty=0.5, sr=44100, sample_shift=0.5, channels=1, cn=None, label='square')
-
 
       Generate square wave signal Asig object.
 
@@ -118,7 +116,6 @@ Functions
 
    .. method:: sawtooth(self, freq=440, amp=1.0, dur=None, n_rows=None, width=1.0, sr=44100, channels=1, cn=None, label='sawtooth')
 
-
       Generate sawtooth wave signal Asig object.
 
       :param freq: signal frequency (Default value = 440)
@@ -145,7 +142,6 @@ Functions
 
 
    .. method:: noise(self, type='white', amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='noise')
-
 
       Generate noise signal Asig object.
 

@@ -1,23 +1,32 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pya.helper &mdash; pya  documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -29,11 +38,6 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -62,11 +66,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.1/" selected="selected">v0.4.1</option>
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.1/" selected="selected">v0.4.1</option>
 
   <option value="/pya/v0.4.0/" >v0.4.0</option>
 
@@ -93,6 +99,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -107,77 +114,29 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
 <li><a class="reference internal" href="#pya.helper.audio_read">audio_read</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper._error">_error</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.linlin">linlin</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.midicps">midicps</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.cpsmidi">cpsmidi</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.dbamp">dbamp</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.ampdb">ampdb</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.spectrum">spectrum</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.normalize">normalize</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.audio_from_file">audio_from_file</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.buf_to_float">buf_to_float</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.device_info">device_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.find_device">find_device</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.padding">padding</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.is_pow2">is_pow2</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.next_pow2">next_pow2</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.round_half_up">round_half_up</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.rolling_window">rolling_window</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.signal_to_frame">signal_to_frame</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.magspec">magspec</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.powspec">powspec</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.hz2mel">hz2mel</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.mel2hz">mel2hz</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.basicplot">basicplot</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.gridplot">gridplot</a></li>
 </ul>
 </li>
@@ -190,6 +149,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -224,18 +184,20 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper</span></code></li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/autoapi/pya/helper/index.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -338,7 +300,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.mel2hz" title="pya.helper.mel2hz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mel2hz</span></code></a>(mel)</p></td>
 <td><p>Convert a value in Hertz to Mels</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.basicplot" title="pya.helper.basicplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">basicplot</span></code></a>(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.basicplot" title="pya.helper.basicplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">basicplot</span></code></a>(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ=’plot’, cmap=’inferno’, xlim=None, ylim=None, xlabel=’’, ylabel=’’, show_bar=False, **kwargs)</p></td>
 <td><p>Basic version of the plot for pya, this can be directly used</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.gridplot" title="pya.helper.gridplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gridplot</span></code></a>(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None)</p></td>
@@ -699,20 +661,25 @@ This is the ratio of the width relative to the plot.
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
+        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -720,7 +687,6 @@ This is the ratio of the width relative to the plot.
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

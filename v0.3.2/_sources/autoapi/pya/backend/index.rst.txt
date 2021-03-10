@@ -37,7 +37,8 @@ Functions
    pya.backend.determine_backend
 
 
-.. py:class:: DummyBackend(dummy_devices=None)
+.. class:: DummyBackend(dummy_devices=None)
+
 
    Bases: :class:`pya.backend.base.BackendBase`
 
@@ -62,33 +63,27 @@ Functions
    .. method:: get_device_count(self)
 
 
-
    .. method:: get_device_info_by_index(self, idx)
-
 
 
    .. method:: get_default_input_device_info(self)
 
 
-
    .. method:: get_default_output_device_info(self)
-
 
 
    .. method:: open(self, *args, input_flag, output_flag, rate, frames_per_buffer, channels, stream_callback=None, **kwargs)
 
 
-
    .. method:: process_buffer(self, buffer)
-
 
 
    .. method:: terminate(self)
 
 
 
+.. class:: PyAudioBackend(format=pyaudio.paFloat32)
 
-.. py:class:: PyAudioBackend(format=pyaudio.paFloat32)
 
    Bases: :class:`pya.backend.base.BackendBase`
 
@@ -108,29 +103,22 @@ Functions
    .. method:: get_device_count(self)
 
 
-
    .. method:: get_device_info_by_index(self, idx)
-
 
 
    .. method:: get_default_input_device_info(self)
 
 
-
    .. method:: get_default_output_device_info(self)
-
 
 
    .. method:: open(self, rate, channels, input_flag, output_flag, frames_per_buffer, input_device_index=None, output_device_index=None, start=True, input_host_api_specific_stream_info=None, output_host_api_specific_stream_info=None, stream_callback=None)
 
 
-
    .. method:: process_buffer(self, buffer)
 
 
-
    .. method:: terminate(self)
-
 
 
 

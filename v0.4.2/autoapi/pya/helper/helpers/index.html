@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pya.helper.helpers &mdash; pya  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+
+<a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> pya
+
+
+
+</a>
+
+
+
+
+
+<div class="version">
+version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
+
+  <option value="/pya/v0.4.2/" selected="selected">v0.4.2</option>
+
+  <option value="/pya/master/" >master</option>
+
+  <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
+
+  <option value="/pya/v0.4.0/" >v0.4.0</option>
+
+  <option value="/pya/v0.3.3/" >v0.3.3</option>
+
+  <option value="/pya/v0.3.2/" >v0.3.2</option>
+
+<select>
+</div>
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.helpers</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#pya.helper.helpers._error">_error</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.linlin">linlin</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.midicps">midicps</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.cpsmidi">cpsmidi</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.dbamp">dbamp</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.ampdb">ampdb</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.spectrum">spectrum</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.normalize">normalize</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.audio_from_file">audio_from_file</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.buf_to_float">buf_to_float</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.device_info">device_info</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.find_device">find_device</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.padding">padding</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.is_pow2">is_pow2</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.next_pow2">next_pow2</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.round_half_up">round_half_up</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.rolling_window">rolling_window</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.signal_to_frame">signal_to_frame</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.magspec">magspec</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.powspec">powspec</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.hz2mel">hz2mel</a></li>
+<li><a class="reference internal" href="#pya.helper.helpers.mel2hz">mel2hz</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">pya</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.helpers</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../../../_sources/autoapi/pya/helper/helpers/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pya.helper.helpers">
+<span id="pya-helper-helpers"></span><h1><a class="reference internal" href="#module-pya.helper.helpers" title="pya.helper.helpers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.helpers</span></code></a><a class="headerlink" href="#module-pya.helper.helpers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.linlin" title="pya.helper.helpers.linlin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linlin</span></code></a>(x, smi, sma, dmi, dma)</p></td>
+<td><p>Linear mapping</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.helpers.midicps" title="pya.helper.helpers.midicps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">midicps</span></code></a>(m)</p></td>
+<td><p>Convert midi number into cycle per second</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.cpsmidi" title="pya.helper.helpers.cpsmidi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cpsmidi</span></code></a>(c)</p></td>
+<td><p>Convert cycle per second into midi number</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.helpers.dbamp" title="pya.helper.helpers.dbamp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dbamp</span></code></a>(db)</p></td>
+<td><p>Convert db to amplitude</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.ampdb" title="pya.helper.helpers.ampdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ampdb</span></code></a>(amp)</p></td>
+<td><p>Convert amplitude to db</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.helpers.spectrum" title="pya.helper.helpers.spectrum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spectrum</span></code></a>(sig, samples, channels, sr)</p></td>
+<td><p>Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.normalize" title="pya.helper.helpers.normalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize</span></code></a>(d)</p></td>
+<td><p>Return the normalized input array</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.helpers.audio_from_file" title="pya.helper.helpers.audio_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">audio_from_file</span></code></a>(path, dtype=np.float32)</p></td>
+<td><p>Load an audio buffer using audioread.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.buf_to_float" title="pya.helper.helpers.buf_to_float"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buf_to_float</span></code></a>(x, n_bytes=2, dtype=np.float32)</p></td>
+<td><p>Convert an integer buffer to floating point values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.helpers.device_info" title="pya.helper.helpers.device_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_info</span></code></a>()</p></td>
+<td><p>Return a formatted string about available audio devices and their info</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.find_device" title="pya.helper.helpers.find_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_device</span></code></a>(min_input=0, min_output=0)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.helpers.padding" title="pya.helper.helpers.padding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">padding</span></code></a>(x, width, tail=True, constant_values=0)</p></td>
+<td><p>Pad signal with certain width, support 1-3D tensors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.is_pow2" title="pya.helper.helpers.is_pow2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_pow2</span></code></a>(val)</p></td>
+<td><p>Check if input is a power of 2 return a bool result.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.helpers.next_pow2" title="pya.helper.helpers.next_pow2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next_pow2</span></code></a>(x)</p></td>
+<td><p>Find the closest pow of 2 that is great or equal or x,</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.round_half_up" title="pya.helper.helpers.round_half_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_half_up</span></code></a>(number)</p></td>
+<td><p>Round up if &gt;= .5</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.helpers.rolling_window" title="pya.helper.helpers.rolling_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_window</span></code></a>(a, window, step=1)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.signal_to_frame" title="pya.helper.helpers.signal_to_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">signal_to_frame</span></code></a>(sig, n_per_frame, frame_step, window=None, stride_trick=True)</p></td>
+<td><p>Frame a signal into overlapping frames.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.helpers.magspec" title="pya.helper.helpers.magspec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">magspec</span></code></a>(frames, NFFT)</p></td>
+<td><p>Compute the magnitude spectrum of each frame in frames.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.powspec" title="pya.helper.helpers.powspec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">powspec</span></code></a>(frames, NFFT)</p></td>
+<td><p>Compute the power spectrum of each frame in frames,</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.helpers.hz2mel" title="pya.helper.helpers.hz2mel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hz2mel</span></code></a>(hz)</p></td>
+<td><p>Convert a value in Hertz to Mels</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.mel2hz" title="pya.helper.helpers.mel2hz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mel2hz</span></code></a>(mel)</p></td>
+<td><p>Convert a value in Hertz to Mels</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py exception">
+<dt id="pya.helper.helpers._error">
+<em class="property">exception </em><code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">_error</code><a class="headerlink" href="#pya.helper.helpers._error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Common base class for all non-exit exceptions.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.linlin">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">linlin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">smi</span></em>, <em class="sig-param"><span class="n">sma</span></em>, <em class="sig-param"><span class="n">dmi</span></em>, <em class="sig-param"><span class="n">dma</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.linlin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear mapping</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – input value</p></li>
+<li><p><strong>smi</strong> (<em>float</em>) – input range’s minimum</p></li>
+<li><p><strong>sma</strong> (<em>float</em>) – input range’s maximum</p></li>
+<li><p><strong>dmi</strong> (<em>float</em>) – input range’s minimum</p></li>
+<li><p><strong>dma</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – mapped output</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.midicps">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">midicps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.midicps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert midi number into cycle per second</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.cpsmidi">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">cpsmidi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.cpsmidi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert cycle per second into midi number</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.dbamp">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">dbamp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.dbamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert db to amplitude</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.ampdb">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">ampdb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">amp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.ampdb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert amplitude to db</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.spectrum">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">spectrum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sig</span></em>, <em class="sig-param"><span class="n">samples</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">sr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sig</strong> (<em>numpy.ndarray</em>) – signal array</p></li>
+<li><p><strong>samples</strong> (<em>int</em>) – total amount of samples</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – signal channels</p></li>
+<li><p><strong>sr</strong> (<em>int</em>) – sampling rate</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>frq</strong> (<em>numpy.ndarray</em>) – frequencies</p></li>
+<li><p><strong>Y</strong> (<em>numpy.ndarray</em>) – FFT of the signal.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.normalize">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the normalized input array</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.audio_from_file">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">audio_from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">np.float32</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.audio_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load an audio buffer using audioread.
+This loads one block at a time, and then concatenates the results.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.buf_to_float">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">buf_to_float</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">n_bytes</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">np.float32</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.buf_to_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an integer buffer to floating point values.
+This is primarily useful when loading integer-valued wav data
+into numpy arrays.
+.. seealso:: <a class="reference internal" href="#pya.helper.helpers.buf_to_float" title="pya.helper.helpers.buf_to_float"><code class="xref py py-func docutils literal notranslate"><span class="pre">buf_to_float()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em><em> [</em><em>dtype=int</em><em>]</em>) – The integer-valued data buffer</p></li>
+<li><p><strong>n_bytes</strong> (<em>int</em><em> [</em><em>1</em><em>, </em><em>2</em><em>, </em><em>4</em><em>]</em>) – The number of bytes per sample in <cite>x</cite></p></li>
+<li><p><strong>dtype</strong> (<em>numeric type</em>) – The target output type (default: 32-bit float)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>x_float</strong> – The input data buffer cast to floating point</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray [dtype=float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.device_info">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">device_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.device_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a formatted string about available audio devices and their info</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.find_device">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">find_device</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_input</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">min_output</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.find_device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.padding">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">padding</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">width</span></em>, <em class="sig-param"><span class="n">tail</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">constant_values</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.padding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pad signal with certain width, support 1-3D tensors.
+Use it to add silence to a signal
+TODO: CHECK pad array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – A numpy array</p></li>
+<li><p><strong>width</strong> (<em>int</em>) – The amount of padding.</p></li>
+<li><p><strong>tail</strong> (<em>bool</em>) – If true pad to the tail, else pad to the start.</p></li>
+<li><p><strong>constant_values</strong> (<em>int</em><em> or </em><em>float</em><em> or </em><em>None</em>) – The value to be padded, add None will pad nan to the array</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – Padded array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.is_pow2">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">is_pow2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.is_pow2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if input is a power of 2 return a bool result.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.next_pow2">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">next_pow2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.next_pow2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the closest pow of 2 that is great or equal or x,
+based on shift_bit_length</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>int</em>) – A positive number</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – The cloest  integer that is greater or equal to input x.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.round_half_up">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">round_half_up</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">number</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.round_half_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Round up if &gt;= .5</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.rolling_window">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">rolling_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">window</span></em>, <em class="sig-param"><span class="n">step</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.rolling_window" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.signal_to_frame">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">signal_to_frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sig</span></em>, <em class="sig-param"><span class="n">n_per_frame</span></em>, <em class="sig-param"><span class="n">frame_step</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stride_trick</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.signal_to_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Frame a signal into overlapping frames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sig</strong> (<em>numpy.ndarray</em>) – The audio signal</p></li>
+<li><p><strong>n_per_frame</strong> (<em>int</em>) – Number of samples each frame</p></li>
+<li><p><strong>frame_step</strong> (<em>int</em>) – Number of samples after the start of the previous frame that the next frame should begin.</p></li>
+<li><p><strong>window</strong> (<em>numpy.ndarray</em><em> or </em><em>None</em>) – A window array, e.g,</p></li>
+<li><p><strong>stride_trick</strong> (<em>bool</em>) – Use stride trick to compute the rolling window and window multiplication faster</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – an array of frames.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.magspec">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">magspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frames</span></em>, <em class="sig-param"><span class="n">NFFT</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.magspec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the magnitude spectrum of each frame in frames.
+If frames is an NxD matrix, output will be Nx(NFFT/2+1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frames</strong> (<em>numpy.ndarray</em>) – The framed array, each row is a frame, can be just a single frame.</p></li>
+<li><p><strong>NFFT</strong> (<em>int</em>) – FFT length. If NFFT &gt; frame_len, the frames are zero_padded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – If frames is an NxD matrix, output will be Nx(NFFT/2+1).
+Each row will be the magnitude spectrum of the corresponding frame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.powspec">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">powspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frames</span></em>, <em class="sig-param"><span class="n">NFFT</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.powspec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the power spectrum of each frame in frames,
+first comeputer the magnitude spectrum</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frames</strong> (<em>numpy.ndarray</em>) – Framed signal, can be just a single frame.</p></li>
+<li><p><strong>NFFT</strong> (<em>int</em>) – The FFT length to use. If NFFT &gt; frame_len, the frames are zero-padded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – Power spectrum of the framed signal.
+Each row has the size of NFFT / 2 + 1 due to rfft.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.hz2mel">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">hz2mel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hz</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.hz2mel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a value in Hertz to Mels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hz</strong> (<em>number of array</em>) – value in Hz, can be an array</p></li>
+<li><p><strong>Returns</strong> – </p></li>
+<li><p><strong>--------</strong> – </p></li>
+<li><p><strong>_</strong> (<em>number of array</em>) – value in Mels, same type as the input.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.helpers.mel2hz">
+<code class="sig-prename descclassname">pya.helper.helpers.</code><code class="sig-name descname">mel2hz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mel</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.mel2hz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a value in Hertz to Mels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hz</strong> (<em>number of array</em>) – value in Hz, can be an array</p></li>
+<li><p><strong>Returns</strong> – </p></li>
+<li><p><strong>--------</strong> – </p></li>
+<li><p><strong>_</strong> (<em>number of array</em>) – value in Mels, same type as the input.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

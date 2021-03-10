@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pya &mdash; pya  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+
+<a href="#" class="icon icon-home" alt="Documentation Home"> pya
+
+
+
+</a>
+
+
+
+
+
+<div class="version">
+version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
+
+  <option value="/pya/v0.4.2/" selected="selected">v0.4.2</option>
+
+  <option value="/pya/master/" >master</option>
+
+  <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
+
+  <option value="/pya/v0.4.0/" >v0.4.0</option>
+
+  <option value="/pya/v0.3.3/" >v0.3.3</option>
+
+  <option value="/pya/v0.3.2/" >v0.3.2</option>
+
+<select>
+</div>
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">pya</a><ul>
+<li><a class="reference internal" href="#what-is-pya">What is pya?</a></li>
+<li><a class="reference internal" href="#authors-and-contributors">Authors and Contributors</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#a-simple-example">A simple example</a><ul>
+<li><a class="reference internal" href="#startup">Startup:</a></li>
+<li><a class="reference internal" href="#create-an-asig-signal">Create an Asig signal:</a></li>
+<li><a class="reference internal" href="#play-signals">Play signals</a></li>
+<li><a class="reference internal" href="#plotting-signals">Plotting signals</a></li>
+<li><a class="reference internal" href="#selection-of-subsets">Selection of subsets</a></li>
+<li><a class="reference internal" href="#method-chaining">Method chaining</a></li>
+<li><a class="reference internal" href="#learning-more">Learning more</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contributing">Contributing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">pya</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>pya</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="toctree-wrapper compound">
+</div>
+<a class="reference external image-reference" href="https://pypi.org/project/pya"><img alt="PyPI" src="https://img.shields.io/pypi/v/pya.svg" /></a>
+<a class="reference external image-reference" href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/interactive-sonification/pya.svg" /></a>
+<div class="section" id="pya">
+<h1>pya<a class="headerlink" href="#pya" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-is-pya">
+<h2>What is pya?<a class="headerlink" href="#what-is-pya" title="Permalink to this headline">¶</a></h2>
+<p>pya is a package to support creation and manipulation of audio signals with Python.
+It uses numpy arrays to store and compute audio signals.</p>
+<ul class="simple">
+<li><p>Documentation: see examples/pya-examples.ipynb for a quick tutorial and <a class="reference external" href="https://interactive-sonification.github.io/pya/index.html">Documentation</a></p></li>
+<li><p>Source code: <a class="reference external" href="https://github.com/interactive-sonification/pya">https://github.com/interactive-sonification/pya</a></p></li>
+</ul>
+<p>It provides:</p>
+<ul class="simple">
+<li><p>Asig - a versatile audio signal class</p>
+<ul>
+<li><p>Ugen - a subclass of Asig, which offers unit generators
+such as sine, square, swatooth, noise</p></li>
+</ul>
+</li>
+<li><p>Aserver - an audio server class for queuing and playing Asigs</p></li>
+<li><p>Arecorder - an audio recorder class</p></li>
+<li><p>Aspec - an audio spectrum class, using rfft as real-valued signals are always implied</p></li>
+<li><p>Astft - an audio STFT (short-term Fourier transform) class</p></li>
+<li><p>A number of helper functions, e.g. device_info()</p></li>
+</ul>
+<p>pya can be used for</p>
+<ul class="simple">
+<li><p>multi-channel audio processing</p></li>
+<li><p>auditory display and sonification</p></li>
+<li><p>sound synthesis experiment</p></li>
+<li><p>audio applications in general such as games or GUI-enhancements</p></li>
+<li><p>signal analysis and plotting</p></li>
+</ul>
+<p>At this time pya is more suitable for offline rendering than realtime.</p>
+</div>
+<div class="section" id="authors-and-contributors">
+<h2>Authors and Contributors<a class="headerlink" href="#authors-and-contributors" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Thomas Hermann, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (author and maintainer)</p></li>
+<li><p>Jiajun Yang, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (co-author)</p></li>
+<li><p>Alexander Neumann, Neurocognitions and Action - Biomechanics, Bielefeld University</p></li>
+<li><p>Contributors will be acknowledged here, contributions are welcome.</p></li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<!-- **Disclaimer**: We are currently making sure that pya can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .` --><p><strong>Note</strong>: pya can be installed using <strong>pip</strong>. But pya uses PyAudio for audio playback and record, and PyAudio 0.2.11 has yet to fully support Python 3.7. So using pip install with Python 3.7 may encounter issues such as portaudio. Solutions are:</p>
+<ol class="arabic">
+<li><p>Anaconda can install non-python packages, so that the easiest way (if applicable) would be to</p>
+<blockquote>
+<div><p>conda install pyaudio</p>
+</div></blockquote>
+</li>
+<li><p>For Mac users, you can <code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">portaudio</span></code> beforehand.</p></li>
+<li><p>For Linux users, try <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">portaudio19-dev</span></code> or equivalent to your distro.</p></li>
+<li><p>For Windows users, you can install PyAudio wheel at:
+<a class="reference external" href="https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio">https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio</a></p></li>
+</ol>
+<p>Then pya can be installed using pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pya</span>
+</pre></div>
+</div>
+<p>See pyaudio installation <a class="reference external" href="http://people.csail.mit.edu/hubert/pyaudio/#downloads">http://people.csail.mit.edu/hubert/pyaudio/#downloads</a></p>
+</div>
+<div class="section" id="a-simple-example">
+<h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="startup">
+<h3>Startup:<a class="headerlink" href="#startup" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">Aserver</span><span class="p">(</span><span class="n">bs</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+<span class="n">Aserver</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">s</span>  <span class="c1"># to set as default server</span>
+<span class="n">s</span><span class="o">.</span><span class="n">boot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-an-asig-signal">
+<h3>Create an Asig signal:<a class="headerlink" href="#create-an-asig-signal" title="Permalink to this headline">¶</a></h3>
+<p>A 1s / 440 Hz sine tone at sampling rate 44100 as channel name ‘left’:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">signal_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">440</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">44100</span><span class="p">))</span>
+<span class="n">atone</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="n">signal_array</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1s sine tone&#39;</span><span class="p">,</span> <span class="n">cn</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Other ways of creating an Asig object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asig_int</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="mi">44100</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">)</span>  <span class="c1"># zero array with 44100 samples</span>
+<span class="n">asig_float</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="mf">2.</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">)</span>  <span class="c1"># float argument, 2 seconds of zero array</span>
+<span class="n">asig_str</span> <span class="o">=</span> <span class="n">Asig</span><span class="p">(</span><span class="s1">&#39;./song.wav&#39;</span><span class="p">)</span>  <span class="c1"># load audio file</span>
+<span class="n">asig_ugen</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mi">440</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">dur</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># using Ugen class to create common waveforms</span>
+</pre></div>
+</div>
+<p>Audio files are also possible using the file path. <code class="docutils literal notranslate"><span class="pre">WAV</span></code> should work without issues. <code class="docutils literal notranslate"><span class="pre">MP3</span></code> is supported but may raise error if <a class="reference external" href="https://ffmpeg.org/">FFmpeg</a>.</p>
+<p>If you use Anacodna, installation is quite easy:</p>
+<p><code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">conda-forge</span> <span class="pre">ffmpeg</span></code></p>
+<p>Otherwise:</p>
+<ul class="simple">
+<li><p>Mac or Linux with brew</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">ffmpeg</span></code></p></li>
+</ul>
+</li>
+<li><p>On Linux</p>
+<ul>
+<li><p>Install FFmpeg via apt-get: <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">ffmpeg</span></code></p></li>
+</ul>
+</li>
+<li><p>On Windows</p>
+<ul>
+<li><p>Download the latest distribution from <a class="reference external" href="https://ffmpeg.zeranoe.com/builds/">https://ffmpeg.zeranoe.com/builds/</a></p></li>
+<li><p>Unzip the folder, preferably to <code class="docutils literal notranslate"><span class="pre">C:\</span></code></p></li>
+<li><p>Append the FFmpeg binary folder (e.g. <code class="docutils literal notranslate"><span class="pre">C:\ffmpeg\bin</span></code>) to the PATH system variable (<a class="reference external" href="https://www.java.com/en/download/help/path.xml">How do I set or change the PATH system variable?</a>)
+### Key attributes</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">atone.sig</span></code>  –&gt; The numpy array containing the signal is</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">atone.sr</span></code>  –&gt; the sampling rate</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">atone.cn</span></code> –&gt; the list of custom defined channel names</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">atone.label</span></code> –&gt; a custom set identifier string</p></li>
+</ul>
+</div>
+<div class="section" id="play-signals">
+<h3>Play signals<a class="headerlink" href="#play-signals" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>play() uses Aserver.default if server is not specified</p>
+</div>
+<div class="section" id="plotting-signals">
+<h3>Plotting signals<a class="headerlink" href="#plotting-signals" title="Permalink to this headline">¶</a></h3>
+<p>to plot the first 1000 samples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="p">[:</span><span class="mi">1000</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>to plot the magnitude and phase spectrum:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="o">.</span><span class="n">plot_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>to plot the spectrum via the Aspec class</p>
+<blockquote>
+<div><p>atone.to_spec().plot()</p>
+</div></blockquote>
+<p>to plot the spectrogram via the Astft class</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="o">.</span><span class="n">to_stft</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ampdb</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="selection-of-subsets">
+<h3>Selection of subsets<a class="headerlink" href="#selection-of-subsets" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Asigs support multi-channel audio (as columns of the signal array)</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">a1[:100,</span> <span class="pre">:3]</span></code> would select the first 100 samples and the first 3 channels,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">a1[{1.2:2},</span> <span class="pre">['left']]</span></code> would select the channel named ‘left’ using a time slice from 1</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="method-chaining">
+<h3>Method chaining<a class="headerlink" href="#method-chaining" title="Permalink to this headline">¶</a></h3>
+<p>Asig methods usually return an Asig, so methods can be chained, e.g</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="p">[{</span><span class="mi">0</span><span class="p">:</span><span class="mf">1.5</span><span class="p">}]</span><span class="o">.</span><span class="n">fade_in</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">fade_out</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span><span class="o">.</span><span class="n">gain</span><span class="p">(</span><span class="n">db</span><span class="o">=-</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="learning-more">
+<h3>Learning more<a class="headerlink" href="#learning-more" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Please check the examples/pya-examples.ipynb for more examples and details.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Please get in touch with us if you wish to contribute. We are happy to be involved in the discussion of new features and to receive pull requests.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="autoapi/pya/index.html"><span class="doc">API Reference</span></a></p></li>
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

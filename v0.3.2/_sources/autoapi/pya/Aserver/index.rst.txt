@@ -21,7 +21,8 @@ Classes
 
    
 
-.. py:class:: Aserver(sr=44100, bs=None, device=None, channels=2, backend=None, **kwargs)
+.. class:: Aserver(sr=44100, bs=None, device=None, channels=2, backend=None, **kwargs)
+
 
    Pya audio server
    Based on pyaudio, works as a FIFO style audio stream pipeline,
@@ -47,31 +48,25 @@ Classes
       :staticmethod:
 
 
-
    .. method:: shutdown_default_server()
       :staticmethod:
-
 
 
    .. method:: device(self)
       :property:
 
 
-
    .. method:: __repr__(self)
-
 
       Return repr(self).
 
 
    .. method:: get_devices(self, verbose=False)
 
-
       Return (and optionally print) available input and output device
 
 
    .. method:: set_device(self, idx, reboot=True)
-
 
       Set audio device
 
@@ -83,24 +78,20 @@ Classes
 
    .. method:: boot(self)
 
-
       boot Aserver = start stream, setting its callback to this callback.
 
 
    .. method:: quit(self)
-
 
       Aserver quit server: stop stream and terminate pa
 
 
    .. method:: play(self, asig, onset=0, out=0, **kwargs)
 
-
       Dispatch asigs or arrays for given onset.
 
 
    .. method:: _play_callback(self, in_data, frame_count, time_info, flag)
-
 
       callback function, called from pastream thread when data needed.
 
@@ -108,9 +99,7 @@ Classes
    .. method:: stop(self)
 
 
-
    .. method:: __del__(self)
-
 
 
 

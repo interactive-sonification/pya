@@ -75,7 +75,8 @@ Functions
    pya.shutdown
 
 
-.. py:class:: Asig(sig, sr=44100, label='', channels=1, cn=None)
+.. class:: Asig(sig, sr=44100, label='', channels=1, cn=None)
+
 
    Audio signal class. Asig enables manipulation of audio signals in the style of numpy and more.
    Asig offer functions for plotting (via matplotlib) and playing audio (using the pya.Aserver class)
@@ -140,13 +141,11 @@ Functions
    .. method:: channels(self)
       :property:
 
-
       Channel property
 
 
    .. method:: samples(self)
       :property:
-
 
       Return the length of signal in samples
 
@@ -154,12 +153,10 @@ Functions
    .. method:: cn(self)
       :property:
 
-
       Channel names getter
 
 
    .. method:: _load_audio_file(self, fname)
-
 
       Load audio file, and set self.sig to the signal and self.sr to the sampling rate.
       Currently support two types of audio loader: 1) Standard library for .wav, .aiff,
@@ -170,7 +167,6 @@ Functions
 
 
    .. method:: save_wavfile(self, fname='asig.wav', dtype='float32')
-
 
       Save signal as .wav file, return self.
 
@@ -183,9 +179,7 @@ Functions
    .. method:: _set_col_names(self)
 
 
-
    .. method:: __getitem__(self, index)
-
 
       Accessing array elements through slicing.
           * int, get signal row asig[4];
@@ -207,13 +201,11 @@ Functions
    .. method:: x(self)
       :property:
 
-
       Extend mode: this mode allows destination sig size in assignment to be extended through setitem
 
 
    .. method:: b(self)
       :property:
-
 
       Bound mode: this mode allows to truncate a source signal in assignment to a limited destination in setitem.
 
@@ -221,12 +213,10 @@ Functions
    .. method:: o(self)
       :property:
 
-
       Overwrite mode: this mode cuts and replaces target selection by source signal on assignment via setitem
 
 
    .. method:: __setitem__(self, index, value)
-
 
       setitem: asig[index] = value. This allows all the methods from getitem:
           * numpy style slicing
@@ -254,12 +244,11 @@ Functions
       :param value: value to set
       :type value: Asig or numpy.ndarray or list
 
-      :returns: **_** -- Updated asig
+      :returns: **\_** -- Updated asig
       :rtype: Asig
 
 
    .. method:: resample(self, target_sr=44100, rate=1, kind='linear')
-
 
       Resample signal based on interpolation, can process multichannel signals.
 
@@ -270,12 +259,11 @@ Functions
       :param kind: Type of interpolation (Default value = 'linear')
       :type kind: str
 
-      :returns: **_** -- Asig with resampled signal.
+      :returns: **\_** -- Asig with resampled signal.
       :rtype: Asig
 
 
    .. method:: play(self, rate=1, **kwargs)
-
 
       Play Asig audio via Aserver, using Aserver.default (if existing)
       kwargs are propagated to Aserver:play(onset=0, out=0)
@@ -287,12 +275,11 @@ Functions
                              Set which server to play. e.g. s = Aserver(); s.boot(); asig.play(server=s)
       :type \*\*kwargs: str
 
-      :returns: **_** -- return self
+      :returns: **\_** -- return self
       :rtype: Asig
 
 
    .. method:: shift_channel(self, shift=0)
-
 
       Shift signal to other channels. This is particular useful for assigning a mono signal to a specific channel.
           * shift = 0: does nothing as the same signal is being routed to the same position
@@ -302,12 +289,11 @@ Functions
       :param shift: shift channel amount (Default value = 0)
       :type shift: int
 
-      :returns: **_** -- Rerouted asig
+      :returns: **\_** -- Rerouted asig
       :rtype: Asig
 
 
    .. method:: mono(self, blend=None)
-
 
       Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)
 
@@ -315,12 +301,11 @@ Functions
                     Do nothing if signal is already mono, raise warning (Default value = None)
       :type blend: list
 
-      :returns: **_** -- A mono Asig object
+      :returns: **\_** -- A mono Asig object
       :rtype: Asig
 
 
    .. method:: stereo(self, blend=None)
-
 
       Blend all channels of the signal to stereo. Applicable for any single-/ or multi-channel Asig.
 
@@ -336,12 +321,11 @@ Functions
           mixes channel 'c1' to left, 'c2' to center and 'c3' to right channel
           of a new stereo asig. Note that for equal loudness left**2+right**2=1 should be used
 
-      :returns: **_** -- A stereo Asig object
+      :returns: **\_** -- A stereo Asig object
       :rtype: Asig
 
 
    .. method:: rewire(self, dic)
-
 
       Rewire channels to flexibly allow weighted channel permutations.
 
@@ -354,12 +338,11 @@ Functions
       {(0, 1): 0.2, (5, 0): 0.4}: rewire channel 0 to 1 with gain 0.2, and 5 to 1 with gain 2
       leaving other channels unmodified
 
-      :returns: **_** -- Asig with rewired channels..
+      :returns: **\_** -- Asig with rewired channels..
       :rtype: Asig
 
 
    .. method:: pan2(self, pan=0.0)
-
 
       Stereo panning of asig to a stereo output.
       Panning is based on constant power panning, see pan below
@@ -371,23 +354,21 @@ Functions
       :param pan: panning between -1. (left) to 1. (right)  (Default value = 0.)
       :type pan: float
 
-      :returns: **_** -- Asig
+      :returns: **\_** -- Asig
       :rtype: Asig
 
 
    .. method:: remove_DC(self)
 
-
       remove DC offset
 
       :param none:
 
-      :returns: **_** -- channelwise DC-free Asig.
+      :returns: **\_** -- channelwise DC-free Asig.
       :rtype: Asig
 
 
    .. method:: norm(self, norm=1, in_db=False, dcflag=False)
-
 
       Normalize signal
 
@@ -398,12 +379,11 @@ Functions
       :param dcflag: If true, remove DC offset (Default value = False)
       :type dcflag: bool
 
-      :returns: **_** -- normalized Asig.
+      :returns: **\_** -- normalized Asig.
       :rtype: Asig
 
 
    .. method:: gain(self, amp=None, db=None)
-
 
       Apply gain in amplitude or dB, only use one or the other arguments. Argument can be either a scalar
       or a list (to apply individual gain to each channel). The method returns a new asig with gain applied.
@@ -413,24 +393,22 @@ Functions
       :param db: Decibel (Default value = None)
       :type db: float or int or None
 
-      :returns: **_** -- Gain adjusted Asig.
+      :returns: **\_** -- Gain adjusted Asig.
       :rtype: Asig
 
 
    .. method:: rms(self, axis=0)
-
 
       Return signal's RMS
 
       :param axis: Axis to perform np.mean() on (Default value = 0)
       :type axis: int
 
-      :returns: **_** -- RMS value
+      :returns: **\_** -- RMS value
       :rtype: float
 
 
    .. method:: plot(self, fn=None, offset=0, scale=1, xlim=None, ylim=None, **kwargs)
-
 
       Display signal graph
 
@@ -446,36 +424,31 @@ Functions
       :type ylim: tuple or list
       :param \*\*kwargs: keyword arguments for matplotlib.pyplot.plot()
 
-      :returns: **_** -- self, you can use plt.show() to display the plot.
+      :returns: **\_** -- self, you can use plt.show() to display the plot.
       :rtype: Asig
 
 
    .. method:: get_duration(self)
-
 
       Return the duration in second.
 
 
    .. method:: get_times(self)
 
-
       Get time stamps for left-edge of sample-and-hold-signal
 
 
    .. method:: __eq__(self, other)
-
 
       Check if two asig objects have the same signal. But does not care about sr and others
 
 
    .. method:: __repr__(self)
 
-
       Report key attributes
 
 
    .. method:: __mul__(self, other)
-
 
       Magic method for multiplying. You can either multiply a scalar or an Asig object. If muliplying an Asig,
       you don't always need to have same size arrays as audio signals may different in length. If mix_mode
@@ -486,9 +459,7 @@ Functions
    .. method:: __rmul__(self, other)
 
 
-
    .. method:: __truediv__(self, other)
-
 
       Magic method for division. You can either divide a scalar or an Asig object.
       Use division with caution, audio signal is common to reach 0 or near, avoid zero division or extremely large result.
@@ -501,9 +472,7 @@ Functions
    .. method:: __rtruediv__(self, other)
 
 
-
    .. method:: __add__(self, other)
-
 
       Magic method for adding. You can either add a scalar or an Asig object. If adding an Asig,
       you don't always need to have same size arrays as audio signals may different in length. If mix_mode
@@ -514,9 +483,7 @@ Functions
    .. method:: __radd__(self, other)
 
 
-
    .. method:: __sub__(self, other)
-
 
       Magic method for subtraction. You can either minus a scalar or an Asig object. If subtracting an Asig,
       you don't always need to have same size arrays as audio signals may different in length. If mix_mode
@@ -527,9 +494,7 @@ Functions
    .. method:: __rsub__(self, other)
 
 
-
    .. method:: find_events(self, step_dur=0.001, sil_thr=-20, evt_min_dur=0, sil_min_dur=0.1, sil_pad=[0.001, 0.1])
-
 
       Locate meaningful 'events' in the signal and create event list. Onset detection.
 
@@ -546,12 +511,11 @@ Functions
       :type sil_pad: list
       :param 0.1]:
 
-      :returns: **_** -- This method returns self. But the list of events can be accessed through self._['events']
+      :returns: **\_** -- This method returns self. But the list of events can be accessed through self._['events']
       :rtype: Asig
 
 
    .. method:: select_event(self, index=None, onset=None)
-
 
       This method can be called after find_event (aka onset detection).
 
@@ -560,16 +524,14 @@ Functions
       :param onset: Onset of the event (Default value = None)
       :type onset: int or None
 
-      :returns: **_** -- self
+      :returns: **\_** -- self
       :rtype: Asig
 
 
    .. method:: plot_events(self)
 
 
-
    .. method:: fade_in(self, dur=0.1, curve=1)
-
 
       Fade in the signal at the beginning
 
@@ -578,12 +540,11 @@ Functions
       :param curve: Curvature of the fader, power of the linspace function. (Default value = 1)
       :type curve: float
 
-      :returns: **_** -- Asig, new asig with the fade in signal
+      :returns: **\_** -- Asig, new asig with the fade in signal
       :rtype: Asig
 
 
    .. method:: fade_out(self, dur=0.1, curve=1)
-
 
       Fade out the signal at the end
 
@@ -592,12 +553,11 @@ Functions
       :param curve: Curvature of the fader, power of the linspace function. (Default value = 1)
       :type curve: float
 
-      :returns: **_** -- Asig, new asig with the fade out signal
+      :returns: **\_** -- Asig, new asig with the fade out signal
       :rtype: Asig
 
 
    .. method:: iirfilter(self, cutoff_freqs, btype='bandpass', ftype='butter', order=4, filter='lfilter', rp=None, rs=None)
-
 
       iirfilter based on scipy.signal.iirfilter
 
@@ -617,13 +577,12 @@ Functions
       :param rs: For Chebyshev and elliptic filters, provides the minimum attenuation in the stop band. (dB) (Default value = None)
       :type rs: float
 
-      :returns: **_** -- new Asig with the filter applied. also you can access b, a coefficients by doing self._['b']
+      :returns: **\_** -- new Asig with the filter applied. also you can access b, a coefficients by doing self._['b']
                 and self._['a']
       :rtype: Asig
 
 
    .. method:: plot_freqz(self, worN, **kwargs)
-
 
       Plot the frequency response of a digital filter. Perform scipy.signal.freqz then plot the response.
 
@@ -633,7 +592,6 @@ Functions
 
 
    .. method:: envelope(self, amps, ts=None, curve=1, kind='linear')
-
 
       Create an envelop and multiply by the signal.
 
@@ -646,12 +604,11 @@ Functions
       :param kind: The type of interpolation (Default value = 'linear')
       :type kind: str
 
-      :returns: **_** -- Returns a new asig with the enveloped applied to its signal array
+      :returns: **\_** -- Returns a new asig with the enveloped applied to its signal array
       :rtype: Asig
 
 
    .. method:: adsr(self, att=0, dec=0.1, sus=0.7, rel=0.1, curve=1, kind='linear')
-
 
       Create and applied a ADSR evelope to signal.
 
@@ -668,12 +625,11 @@ Functions
       :param kind: The type of interpolation (Default value = 'linear')
       :type kind: str
 
-      :returns: **_** -- returns a new asig with the enveloped applied to its signal array
+      :returns: **\_** -- returns a new asig with the enveloped applied to its signal array
       :rtype: Asig
 
 
    .. method:: window(self, win='triang', **kwargs)
-
 
       Apply windowing to self.sig
 
@@ -681,12 +637,11 @@ Functions
       :type win: str
       :param \*\*kwargs: keyword arguments for scipy.signal.get_window()
 
-      :returns: **_** -- new asig with window applied.
+      :returns: **\_** -- new asig with window applied.
       :rtype: Asig
 
 
    .. method:: window_op(self, nperseg=64, stride=32, win=None, fn='rms', pad='mirror')
-
 
       TODO add docstring
 
@@ -698,7 +653,6 @@ Functions
 
 
    .. method:: overlap_add(self, nperseg=64, stride_in=32, stride_out=32, jitter_in=None, jitter_out=None, win=None, pad='mirror')
-
 
       TODO
 
@@ -713,19 +667,16 @@ Functions
 
    .. method:: to_spec(self)
 
-
       Return Aspec object which is the rfft of the signal.
 
 
    .. method:: to_stft(self, **kwargs)
-
 
       Return Astft object which is the stft of the signal. Keyword arguments are the arguments for
       scipy.signal.stft().
 
 
    .. method:: plot_spectrum(self, offset=0, scale=1.0, xlim=None, **kwargs)
-
 
       Plot spectrum of the signal
 
@@ -738,24 +689,21 @@ Functions
       :type xlim: tuple
       :param \*\*kwargs: keywords arguments for matplotlib.pyplot.plot()
 
-      :returns: **_** -- self
+      :returns: **\_** -- self
       :rtype: Asig
 
 
    .. method:: spectrogram(self, *argv, **kvarg)
-
 
       Perform sicpy.signal.spectrogram and returns: frequencies, array of times, spectrogram
 
 
    .. method:: get_size(self)
 
-
       Return signal array shape and duration in seconds.
 
 
    .. method:: append(self, asig, amp=1)
-
 
       Apppend an asig with another. Conditions: the appended asig should have the same channels. If
       appended asig has a different sampling rate, resample it to match the orginal.
@@ -765,12 +713,11 @@ Functions
       :param amp: aplitude (Default value = 1)
       :type amp: float or int
 
-      :returns: **_** -- Appended Asig object
+      :returns: **\_** -- Appended Asig object
       :rtype: Asig
 
 
    .. method:: add(self, sig, pos=None, amp=1, onset=None)
-
 
       Add a signal
 
@@ -784,24 +731,23 @@ Functions
                     given a value to this will overwrite pos (Default value = None)
       :type onset: float or None
 
-      :returns: **_** -- Asig with the added signal.
+      :returns: **\_** -- Asig with the added signal.
       :rtype: Asig
 
 
    .. method:: custom(self, func, **kwargs)
 
-
       custom function method. TODO add example
 
 
 
-.. py:class:: Astft(x, sr=None, label=None, window='hann', nperseg=256, noverlap=None, nfft=None, detrend=False, return_onesided=True, boundary='zeros', padded=True, axis=-1, cn=None)
+.. class:: Astft(x, sr=None, label=None, window='hann', nperseg=256, noverlap=None, nfft=None, detrend=False, return_onesided=True, boundary='zeros', padded=True, axis=-1, cn=None)
+
 
    Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
    attribute cn being the list of channel names, and label being the name of the Asig
 
    .. method:: to_sig(self, **kwargs)
-
 
       Create signal from stft, i.e. perform istft, kwargs overwrite Astft values for istft
 
@@ -811,12 +757,11 @@ Functions
                          also convert 'sr' to 'fs' since scipy uses 'fs' as sampling frequency.
       :type \*\*kwargs: str
 
-      :returns: **_** -- Asig
+      :returns: **\_** -- Asig
       :rtype: Asig
 
 
    .. method:: plot(self, fn=lambda x: x, ch=None, ax=None, xlim=None, ylim=None, **kwargs)
-
 
       Plot spectrogram
 
@@ -832,29 +777,27 @@ Functions
       :type ylim: tuple or list
       :param \*\*kwargs: keyward arguments of matplotlib's pcolormesh
 
-      :returns: **_** -- self
+      :returns: **\_** -- self
       :rtype: Asig
 
 
    .. method:: __repr__(self)
 
-
       Return repr(self).
 
 
 
-.. py:class:: Aspec(x, sr=44100, label=None, cn=None)
+.. class:: Aspec(x, sr=44100, label=None, cn=None)
+
 
    Audio spectrum class using rfft
 
    .. method:: to_sig(self)
 
-
       Convert Aspec into Asig
 
 
    .. method:: weight(self, weights, freqs=None, curve=1, kind='linear')
-
 
       TODO
 
@@ -866,7 +809,6 @@ Functions
 
    .. method:: plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs)
 
-
       Plot spectrum
 
       :param fn: function for processing the rfft spectrum. (Default value = np.abs)
@@ -877,18 +819,18 @@ Functions
       :type ylim: tuple or list or None
       :param \*\*kwargs: Keyword arguments for matplotlib.pyplot.plot()
 
-      :returns: **_** -- self
+      :returns: **\_** -- self
       :rtype: Asig
 
 
    .. method:: __repr__(self)
 
-
       Return repr(self).
 
 
 
-.. py:class:: Aserver(sr=44100, bs=None, device=None, channels=2, backend=None, **kwargs)
+.. class:: Aserver(sr=44100, bs=None, device=None, channels=2, backend=None, **kwargs)
+
 
    Pya audio server
    Based on pyaudio, works as a FIFO style audio stream pipeline,
@@ -914,31 +856,25 @@ Functions
       :staticmethod:
 
 
-
    .. method:: shutdown_default_server()
       :staticmethod:
-
 
 
    .. method:: device(self)
       :property:
 
 
-
    .. method:: __repr__(self)
-
 
       Return repr(self).
 
 
    .. method:: get_devices(self, verbose=False)
 
-
       Return (and optionally print) available input and output device
 
 
    .. method:: set_device(self, idx, reboot=True)
-
 
       Set audio device
 
@@ -950,24 +886,20 @@ Functions
 
    .. method:: boot(self)
 
-
       boot Aserver = start stream, setting its callback to this callback.
 
 
    .. method:: quit(self)
-
 
       Aserver quit server: stop stream and terminate pa
 
 
    .. method:: play(self, asig, onset=0, out=0, **kwargs)
 
-
       Dispatch asigs or arrays for given onset.
 
 
    .. method:: _play_callback(self, in_data, frame_count, time_info, flag)
-
 
       callback function, called from pastream thread when data needed.
 
@@ -975,13 +907,12 @@ Functions
    .. method:: stop(self)
 
 
-
    .. method:: __del__(self)
 
 
 
+.. class:: Arecorder(sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs)
 
-.. py:class:: Arecorder(sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs)
 
    Bases: :class:`pya.Aserver`
 
@@ -1004,9 +935,7 @@ Functions
       :property:
 
 
-
    .. method:: set_tracks(self, tracks, gains)
-
 
       Define the number of track to be recorded and their gains.
 
@@ -1019,52 +948,45 @@ Functions
    .. method:: reset(self)
 
 
-
    .. method:: boot(self)
-
 
       boot recorder
 
 
    .. method:: _recorder_callback(self, in_data, frame_count, time_info, flag)
 
-
       Callback function during streaming.
 
 
    .. method:: record(self)
-
 
       Activate recording
 
 
    .. method:: pause(self)
 
-
       Pause the recording, but the record_buffer remains
 
 
    .. method:: stop(self)
-
 
       Stop recording, then stores the data from record_buffer into recordings
 
 
    .. method:: __repr__(self)
 
-
       Return repr(self).
 
 
 
-.. py:class:: Ugen
+.. class:: Ugen
+
 
    Bases: :class:`pya.Asig.Asig`
 
    Unit Generator for to create Asig with predefined signal
 
    .. method:: sine(self, freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='sine')
-
 
       Generate Sine signal Asig object.
 
@@ -1091,7 +1013,6 @@ Functions
 
    .. method:: cos(self, freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='cosine')
 
-
       Generate Cosine signal Asig object.
 
       :param freq: signal frequency (Default value = 440)
@@ -1116,7 +1037,6 @@ Functions
 
 
    .. method:: square(self, freq=440, amp=1.0, dur=None, n_rows=None, duty=0.5, sr=44100, sample_shift=0.5, channels=1, cn=None, label='square')
-
 
       Generate square wave signal Asig object.
 
@@ -1145,7 +1065,6 @@ Functions
 
    .. method:: sawtooth(self, freq=440, amp=1.0, dur=None, n_rows=None, width=1.0, sr=44100, channels=1, cn=None, label='sawtooth')
 
-
       Generate sawtooth wave signal Asig object.
 
       :param freq: signal frequency (Default value = 440)
@@ -1172,7 +1091,6 @@ Functions
 
 
    .. method:: noise(self, type='white', amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='noise')
-
 
       Generate noise signal Asig object.
 
@@ -1232,7 +1150,7 @@ Functions
    :type dmi: float
    :param dma:
 
-   :returns: **_** -- mapped output
+   :returns: **\_** -- mapped output
    :rtype: float
 
 
@@ -1295,7 +1213,8 @@ Functions
 .. function:: find_device(min_input=0, min_output=0)
 
 
-.. py:class:: DummyBackend(dummy_devices=None)
+.. class:: DummyBackend(dummy_devices=None)
+
 
    Bases: :class:`pya.backend.base.BackendBase`
 
@@ -1320,33 +1239,27 @@ Functions
    .. method:: get_device_count(self)
 
 
-
    .. method:: get_device_info_by_index(self, idx)
-
 
 
    .. method:: get_default_input_device_info(self)
 
 
-
    .. method:: get_default_output_device_info(self)
-
 
 
    .. method:: open(self, *args, input_flag, output_flag, rate, frames_per_buffer, channels, stream_callback=None, **kwargs)
 
 
-
    .. method:: process_buffer(self, buffer)
-
 
 
    .. method:: terminate(self)
 
 
 
+.. class:: PyAudioBackend(format=pyaudio.paFloat32)
 
-.. py:class:: PyAudioBackend(format=pyaudio.paFloat32)
 
    Bases: :class:`pya.backend.base.BackendBase`
 
@@ -1366,29 +1279,22 @@ Functions
    .. method:: get_device_count(self)
 
 
-
    .. method:: get_device_info_by_index(self, idx)
-
 
 
    .. method:: get_default_input_device_info(self)
 
 
-
    .. method:: get_default_output_device_info(self)
-
 
 
    .. method:: open(self, rate, channels, input_flag, output_flag, frames_per_buffer, input_device_index=None, output_device_index=None, start=True, input_host_api_specific_stream_info=None, output_host_api_specific_stream_info=None, stream_callback=None)
 
 
-
    .. method:: process_buffer(self, buffer)
 
 
-
    .. method:: terminate(self)
-
 
 
 

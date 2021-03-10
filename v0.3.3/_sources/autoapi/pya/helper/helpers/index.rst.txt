@@ -27,7 +27,8 @@ Functions
    pya.helper.helpers.find_device
 
 
-.. py:exception:: _error
+.. exception:: _error
+
 
    Bases: :class:`Exception`
 
@@ -48,7 +49,7 @@ Functions
    :type dmi: float
    :param dma:
 
-   :returns: **_** -- mapped output
+   :returns: **\_** -- mapped output
    :rtype: float
 
 

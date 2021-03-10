@@ -1,23 +1,32 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pya.backend &mdash; pya  documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -29,11 +38,6 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -62,11 +66,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.1/" >v0.4.1</option>
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/master/" selected="selected">master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
 
   <option value="/pya/v0.4.0/" >v0.4.0</option>
 
@@ -93,6 +99,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -109,70 +116,30 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#functions">Functions</a><ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend">DummyBackend</a><ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend.dtype">dtype</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend.range">range</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend.bs">bs</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend.get_device_count">get_device_count</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend.get_device_info_by_index">get_device_info_by_index</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend.get_default_input_device_info">get_default_input_device_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend.get_default_output_device_info">get_default_output_device_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend.open">open</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend.process_buffer">process_buffer</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.DummyBackend.terminate">terminate</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.PyAudioBackend">PyAudioBackend</a><ul>
 <li><a class="reference internal" href="#pya.backend.PyAudioBackend._boot_delay">_boot_delay</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.PyAudioBackend.bs">bs</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_device_count">get_device_count</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_device_info_by_index">get_device_info_by_index</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_default_input_device_info">get_default_input_device_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_default_output_device_info">get_default_output_device_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.PyAudioBackend.open">open</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.PyAudioBackend.process_buffer">process_buffer</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.PyAudioBackend.terminate">terminate</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend._LOGGER">_LOGGER</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.backend.determine_backend">determine_backend</a></li>
 </ul>
 </li>
@@ -185,6 +152,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -219,18 +187,20 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend</span></code></li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/autoapi/pya/backend/index.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -267,10 +237,10 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pya.backend.DummyBackend" title="pya.backend.DummyBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DummyBackend</span></code></a>(dummy_devices=None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.backend.DummyBackend" title="pya.backend.DummyBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DummyBackend</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pya.backend.PyAudioBackend" title="pya.backend.PyAudioBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PyAudioBackend</span></code></a>(format=pyaudio.paFloat32)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.backend.PyAudioBackend" title="pya.backend.PyAudioBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PyAudioBackend</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
 </tr>
 </tbody>
@@ -332,7 +302,7 @@ inheritance.</p>
 
 <dl class="py method">
 <dt id="pya.backend.DummyBackend.open">
-<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">input_flag</span></em>, <em class="sig-param"><span class="n">output_flag</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">frames_per_buffer</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">stream_callback</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.open" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">input_flag</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_flag</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">frames_per_buffer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stream_callback</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.open" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -419,20 +389,25 @@ inheritance.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
+        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -440,7 +415,6 @@ inheritance.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

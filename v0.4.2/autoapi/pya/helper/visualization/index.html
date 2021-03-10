@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pya.helper.visualization &mdash; pya  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+
+<a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> pya
+
+
+
+</a>
+
+
+
+
+
+<div class="version">
+version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
+
+  <option value="/pya/v0.4.2/" selected="selected">v0.4.2</option>
+
+  <option value="/pya/master/" >master</option>
+
+  <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
+
+  <option value="/pya/v0.4.0/" >v0.4.0</option>
+
+  <option value="/pya/v0.3.3/" >v0.3.3</option>
+
+  <option value="/pya/v0.3.2/" >v0.3.2</option>
+
+<select>
+</div>
+
+
+
+
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.visualization</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#pya.helper.visualization.basicplot">basicplot</a></li>
+<li><a class="reference internal" href="#pya.helper.visualization.gridplot">gridplot</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">pya</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.visualization</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../../../_sources/autoapi/pya/helper/visualization/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pya.helper.visualization">
+<span id="pya-helper-visualization"></span><h1><a class="reference internal" href="#module-pya.helper.visualization" title="pya.helper.visualization"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.visualization</span></code></a><a class="headerlink" href="#module-pya.helper.visualization" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.visualization.basicplot" title="pya.helper.visualization.basicplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">basicplot</span></code></a>(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ=’plot’, cmap=’inferno’, xlim=None, ylim=None, xlabel=’’, ylabel=’’, show_bar=False, **kwargs)</p></td>
+<td><p>Basic version of the plot for pya, this can be directly used</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.visualization.gridplot" title="pya.helper.visualization.gridplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gridplot</span></code></a>(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None)</p></td>
+<td><p>Create a grid plot of pya objects which have plot() methods,</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt id="pya.helper.visualization.basicplot">
+<code class="sig-prename descclassname">pya.helper.visualization.</code><code class="sig-name descname">basicplot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">ticks</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">scale</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">typ</span><span class="o">=</span><span class="default_value">'plot'</span></em>, <em class="sig-param"><span class="n">cmap</span><span class="o">=</span><span class="default_value">'inferno'</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">show_bar</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.visualization.basicplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic version of the plot for pya, this can be directly used
+by Asig. Aspec/Astft/Amfcc will have different extra setting
+and type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>numpy.ndarray</em>) – data array</p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – number of channels</p></li>
+<li><p><strong>axis</strong> (<em>matplotlib.axes</em><em>, </em><em>optional</em>) – Plot image on the matplotlib axis if it was given.
+Default is None, which use plt.gca()</p></li>
+<li><p><strong>typ</strong> (<em>str</em><em>, </em><em>optional</em>) – Plot type.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pya.helper.visualization.gridplot">
+<code class="sig-prename descclassname">pya.helper.visualization.</code><code class="sig-name descname">gridplot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pya_objects</span></em>, <em class="sig-param"><span class="n">colwrap</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cbar_ratio</span><span class="o">=</span><span class="default_value">0.04</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.visualization.gridplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a grid plot of pya objects which have plot() methods,
+i.e. Asig, Aspec, Astft, Amfcc.
+It takes a list of pya_objects and plot each object into a grid.
+You can mix different types of plots
+together.</p>
+<p class="rubric">Examples</p>
+<p># plot all 4 different pya objects in 1 column,
+amfcc and astft use pcolormesh so colorbar will
+# be displayed as well
+gridplot([asig, amfcc, aspec, astft], colwrap=2,</p>
+<blockquote>
+<div><p>cbar_ratio=0.08, figsize=[10, 10]);</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pya_objects</strong> (<em>iterable object</em>) – A list of pya objects with the plot() method.</p></li>
+<li><p><strong>colwrap</strong> (<em>int</em><em>, </em><em>optional</em>) – Wrap column at position.
+Can be considered as the column size. Default is 1, meaning 1 column.</p></li>
+<li><p><strong>cbar_ratio</strong> (<em>float</em><em>, </em><em>optional</em>) – For each column create another column reserved for the colorbar.
+This is the ratio of the width relative to the plot.
+0.04 means 4% of the width of the data plot.</p></li>
+<li><p><strong>figsize</strong> (<em>tuple</em><em>, </em><em>optional</em>) – width, height of the entire image in inches. Default size is (6.4, 4.8)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fig</strong> – The plt.figure() object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>plt.figure()</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

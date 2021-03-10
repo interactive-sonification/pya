@@ -1,23 +1,32 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pya.helper.codec &mdash; pya  documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -29,11 +38,6 @@
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -62,11 +66,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.1/" >v0.4.1</option>
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
 
   <option value="/pya/v0.4.0/" >v0.4.0</option>
 
@@ -93,6 +99,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -107,119 +114,49 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
 <li><a class="reference internal" href="#pya.helper.codec.COMMANDS">COMMANDS</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.PROC_FLAGS">PROC_FLAGS</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.TARGET_WIDTH">TARGET_WIDTH</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.SUPPORTED_WIDTHS">SUPPORTED_WIDTHS</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.DecodeError">DecodeError</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.NoBackendError">NoBackendError</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.UnsupportedError">UnsupportedError</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.BitWidthError">BitWidthError</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.FFmpegError">FFmpegError</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.CommunicationError">CommunicationError</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.NotInstalledError">NotInstalledError</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.ReadTimeoutError">ReadTimeoutError</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.byteswap">byteswap</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile">RawAudioFile</a><ul>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile._check">_check</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.close">close</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.channels">channels</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.samplerate">samplerate</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.duration">duration</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.read_data">read_data</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.__enter__">__enter__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.__exit__">__exit__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.__iter__">__iter__</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.QueueReaderThread">QueueReaderThread</a><ul>
 <li><a class="reference internal" href="#pya.helper.codec.QueueReaderThread.run">run</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.popen_multiple">popen_multiple</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.ffmpeg_available">ffmpeg_available</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.windows_error_mode_lock">windows_error_mode_lock</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile">FFmpegAudioFile</a><ul>
 <li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.read_data">read_data</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile._get_info">_get_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile._parse_info">_parse_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.close">close</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.__del__">__del__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.__iter__">__iter__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.__enter__">__enter__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.__exit__">__exit__</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.available_backends">available_backends</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.helper.codec.audio_read">audio_read</a></li>
 </ul>
 </li>
@@ -232,6 +169,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -266,18 +204,20 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.codec</span></code></li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../../_sources/autoapi/pya/helper/codec/index.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -303,13 +243,13 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.RawAudioFile" title="pya.helper.codec.RawAudioFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RawAudioFile</span></code></a>(filename)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.RawAudioFile" title="pya.helper.codec.RawAudioFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RawAudioFile</span></code></a></p></td>
 <td><p>An AIFF, WAV, or Au file that can be read by the Python standard</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.QueueReaderThread" title="pya.helper.codec.QueueReaderThread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QueueReaderThread</span></code></a>(fh, blocksize=1024, discard=False)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.QueueReaderThread" title="pya.helper.codec.QueueReaderThread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QueueReaderThread</span></code></a></p></td>
 <td><p>A thread that consumes data from a filehandle and sends the data</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.FFmpegAudioFile" title="pya.helper.codec.FFmpegAudioFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFmpegAudioFile</span></code></a>(filename, block_size=4096)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.FFmpegAudioFile" title="pya.helper.codec.FFmpegAudioFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFmpegAudioFile</span></code></a></p></td>
 <td><p>An audio file decoded by the ffmpeg command-line utility.</p></td>
 </tr>
 </tbody>
@@ -600,20 +540,25 @@ parameter fields on this object.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
+        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -621,7 +566,6 @@ parameter fields on this object.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

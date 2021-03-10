@@ -17,7 +17,7 @@ Classes
 
 
 
-.. py:class:: BackendBase
+.. class:: BackendBase
 
    Bases: :class:`abc.ABC`
 
@@ -28,30 +28,24 @@ Classes
       :abstractmethod:
 
 
-
    .. method:: get_device_info_by_index(self)
       :abstractmethod:
-
 
 
    .. method:: get_default_output_device_info(self)
       :abstractmethod:
 
 
-
    .. method:: get_default_input_device_info(self)
       :abstractmethod:
-
 
 
    .. method:: open(self, *args, **kwargs)
       :abstractmethod:
 
 
-
    .. method:: terminate(self)
       :abstractmethod:
-
 
 
    .. method:: process_buffer(self, *args, **kwargs)
@@ -59,8 +53,7 @@ Classes
 
 
 
-
-.. py:class:: StreamBase
+.. class:: StreamBase
 
    Bases: :class:`abc.ABC`
 
@@ -71,20 +64,16 @@ Classes
       :abstractmethod:
 
 
-
    .. method:: start_stream(self)
       :abstractmethod:
-
 
 
    .. method:: stop_stream(self)
       :abstractmethod:
 
 
-
    .. method:: close(self)
       :abstractmethod:
-
 
 
 

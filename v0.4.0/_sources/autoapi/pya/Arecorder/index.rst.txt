@@ -21,7 +21,8 @@ Classes
 
    
 
-.. py:class:: Arecorder(sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs)
+.. class:: Arecorder(sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs)
+
 
    Bases: :class:`pya.Aserver`
 
@@ -44,9 +45,7 @@ Classes
       :property:
 
 
-
    .. method:: set_tracks(self, tracks, gains)
-
 
       Define the number of track to be recorded and their gains.
 
@@ -59,39 +58,32 @@ Classes
    .. method:: reset(self)
 
 
-
    .. method:: boot(self)
-
 
       boot recorder
 
 
    .. method:: _recorder_callback(self, in_data, frame_count, time_info, flag)
 
-
       Callback function during streaming.
 
 
    .. method:: record(self)
-
 
       Activate recording
 
 
    .. method:: pause(self)
 
-
       Pause the recording, but the record_buffer remains
 
 
    .. method:: stop(self)
 
-
       Stop recording, then stores the data from record_buffer into recordings
 
 
    .. method:: __repr__(self)
-
 
       Return repr(self).
 

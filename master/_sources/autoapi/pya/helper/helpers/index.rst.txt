@@ -36,7 +36,8 @@ Functions
    pya.helper.helpers.mel2hz
 
 
-.. py:exception:: _error
+.. exception:: _error
+
 
    Bases: :class:`Exception`
 
@@ -57,7 +58,7 @@ Functions
    :type dmi: float
    :param dma:
 
-   :returns: **_** -- mapped output
+   :returns: **\_** -- mapped output
    :rtype: float
 
 
@@ -151,7 +152,7 @@ Functions
    :param constant_values: The value to be padded, add None will pad nan to the array
    :type constant_values: int or float or None
 
-   :returns: **_** -- Padded array
+   :returns: **\_** -- Padded array
    :rtype: np.ndarray
 
 
@@ -168,7 +169,7 @@ Functions
    :param x: A positive number
    :type x: int
 
-   :returns: **_** -- The cloest  integer that is greater or equal to input x.
+   :returns: **\_** -- The cloest  integer that is greater or equal to input x.
    :rtype: int
 
 
@@ -195,7 +196,7 @@ Functions
    :param stride_trick: Use stride trick to compute the rolling window and window multiplication faster
    :type stride_trick: bool
 
-   :returns: **_** -- an array of frames.
+   :returns: **\_** -- an array of frames.
    :rtype: numpy.ndarray
 
 
@@ -209,7 +210,7 @@ Functions
    :param NFFT: FFT length. If NFFT > frame_len, the frames are zero_padded.
    :type NFFT: int
 
-   :returns: **_** -- If frames is an NxD matrix, output will be Nx(NFFT/2+1).
+   :returns: **\_** -- If frames is an NxD matrix, output will be Nx(NFFT/2+1).
              Each row will be the magnitude spectrum of the corresponding frame.
    :rtype: numpy.ndarray
 
@@ -224,7 +225,7 @@ Functions
    :param NFFT: The FFT length to use. If NFFT > frame_len, the frames are zero-padded.
    :type NFFT: int
 
-   :returns: **_** -- Power spectrum of the framed signal.
+   :returns: **\_** -- Power spectrum of the framed signal.
              Each row has the size of NFFT / 2 + 1 due to rfft.
    :rtype: numpy array
 
@@ -237,8 +238,8 @@ Functions
    :type hz: number of array
    :param Returns:
    :param --------:
-   :param _: value in Mels, same type as the input.
-   :type _: number of array
+   :param \_: value in Mels, same type as the input.
+   :type \_: number of array
 
 
 .. function:: mel2hz(mel)
@@ -249,7 +250,7 @@ Functions
    :type hz: number of array
    :param Returns:
    :param --------:
-   :param _: value in Mels, same type as the input.
-   :type _: number of array
+   :param \_: value in Mels, same type as the input.
+   :type \_: number of array
 
 

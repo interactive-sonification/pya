@@ -1,23 +1,32 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pya &mdash; pya  documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -29,11 +38,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -62,11 +66,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.1/" >v0.4.1</option>
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
 
   <option value="/pya/v0.4.0/" >v0.4.0</option>
 
@@ -93,6 +99,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -110,421 +117,159 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#functions">Functions</a><ul>
 <li><a class="reference internal" href="#pya.Asig">Asig</a><ul>
 <li><a class="reference internal" href="#pya.Asig.sig">sig</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.sr">sr</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.label">label</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.channels">channels</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.cn">cn</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.mix_mode">mix_mode</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.extend">extend</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.bound">bound</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.overwrite">overwrite</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#id0">channels</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.samples">samples</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#id1">cn</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig._load_audio_file">_load_audio_file</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.save_wavfile">save_wavfile</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig._set_col_names">_set_col_names</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__getitem__">__getitem__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.x">x</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.b">b</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.o">o</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__setitem__">__setitem__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.resample">resample</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.play">play</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.shift_channel">shift_channel</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.mono">mono</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.stereo">stereo</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.rewire">rewire</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.pan2">pan2</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.remove_DC">remove_DC</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.norm">norm</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.gain">gain</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.rms">rms</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.plot">plot</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.get_duration">get_duration</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.get_times">get_times</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__eq__">__eq__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__repr__">__repr__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__mul__">__mul__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__rmul__">__rmul__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__truediv__">__truediv__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__rtruediv__">__rtruediv__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__add__">__add__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__radd__">__radd__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__sub__">__sub__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.__rsub__">__rsub__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.find_events">find_events</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.select_event">select_event</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.plot_events">plot_events</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.fade_in">fade_in</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.fade_out">fade_out</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.iirfilter">iirfilter</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.plot_freqz">plot_freqz</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.envelope">envelope</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.adsr">adsr</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.window">window</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.window_op">window_op</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.overlap_add">overlap_add</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.to_spec">to_spec</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.to_stft">to_stft</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.plot_spectrum">plot_spectrum</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.spectrogram">spectrogram</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.get_size">get_size</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.append">append</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.add">add</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Asig.custom">custom</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Astft">Astft</a><ul>
 <li><a class="reference internal" href="#pya.Astft.to_sig">to_sig</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Astft.plot">plot</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Astft.__repr__">__repr__</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aspec">Aspec</a><ul>
 <li><a class="reference internal" href="#pya.Aspec.to_sig">to_sig</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aspec.weight">weight</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aspec.plot">plot</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aspec.__repr__">__repr__</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver">Aserver</a><ul>
 <li><a class="reference internal" href="#pya.Aserver.default">default</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.startup_default_server">startup_default_server</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.shutdown_default_server">shutdown_default_server</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.device">device</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.__repr__">__repr__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.get_devices">get_devices</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.set_device">set_device</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.boot">boot</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.quit">quit</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.play">play</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver._play_callback">_play_callback</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.stop">stop</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Aserver.__del__">__del__</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Arecorder">Arecorder</a><ul>
 <li><a class="reference internal" href="#pya.Arecorder.device">device</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Arecorder.set_tracks">set_tracks</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Arecorder.reset">reset</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Arecorder.boot">boot</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Arecorder._recorder_callback">_recorder_callback</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Arecorder.record">record</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Arecorder.pause">pause</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Arecorder.stop">stop</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Arecorder.__repr__">__repr__</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Ugen">Ugen</a><ul>
 <li><a class="reference internal" href="#pya.Ugen.sine">sine</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Ugen.cos">cos</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Ugen.square">square</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Ugen.sawtooth">sawtooth</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.Ugen.noise">noise</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.ampdb">ampdb</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.dbamp">dbamp</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.cpsmidi">cpsmidi</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.midicps">midicps</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.linlin">linlin</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.clip">clip</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.audio_from_file">audio_from_file</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.buf_to_float">buf_to_float</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.spectrum">spectrum</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.normalize">normalize</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.device_info">device_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.find_device">find_device</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.DummyBackend">DummyBackend</a><ul>
 <li><a class="reference internal" href="#pya.DummyBackend.dtype">dtype</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.DummyBackend.range">range</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.DummyBackend.bs">bs</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.DummyBackend.get_device_count">get_device_count</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.DummyBackend.get_device_info_by_index">get_device_info_by_index</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.DummyBackend.get_default_input_device_info">get_default_input_device_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.DummyBackend.get_default_output_device_info">get_default_output_device_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.DummyBackend.open">open</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.DummyBackend.process_buffer">process_buffer</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.DummyBackend.terminate">terminate</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.PyAudioBackend">PyAudioBackend</a><ul>
 <li><a class="reference internal" href="#pya.PyAudioBackend._boot_delay">_boot_delay</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.PyAudioBackend.bs">bs</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.PyAudioBackend.get_device_count">get_device_count</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.PyAudioBackend.get_device_info_by_index">get_device_info_by_index</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.PyAudioBackend.get_default_input_device_info">get_default_input_device_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.PyAudioBackend.get_default_output_device_info">get_default_output_device_info</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.PyAudioBackend.open">open</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.PyAudioBackend.process_buffer">process_buffer</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.PyAudioBackend.terminate">terminate</a></li>
 </ul>
 </li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.determine_backend">determine_backend</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.startup">startup</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.shutdown">shutdown</a></li>
 </ul>
 </li>
@@ -537,6 +282,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -571,18 +317,20 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya</span></code></li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/autoapi/pya/index.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -598,9 +346,8 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
             
   <div class="section" id="module-pya">
 <span id="pya"></span><h1><a class="reference internal" href="../../pya.html#module-pya" title="pya"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya</span></code></a><a class="headerlink" href="#module-pya" title="Permalink to this headline">¶</a></h1>
-<p><p>Collection of classes and functions for processing audio signals
+<p>Collection of classes and functions for processing audio signals
 in python and jupyter notebooks, for synthesis, effects, analysis and plotting.</p>
-</p>
 <div class="section" id="subpackages">
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -644,28 +391,28 @@ in python and jupyter notebooks, for synthesis, effects, analysis and plotting.<
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../pya.html#module-pya.Asig" title="pya.Asig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Asig</span></code></a>(sig, sr=44100, label='', channels=1, cn=None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../pya.html#module-pya.Asig" title="pya.Asig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Asig</span></code></a></p></td>
 <td><p>Audio signal class. Asig enables manipulation of audio signals in the style of numpy and more.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../pya.html#module-pya.Astft" title="pya.Astft"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Astft</span></code></a>(x, sr=None, label=None, window='hann', nperseg=256, noverlap=None, nfft=None, detrend=False, return_onesided=True, boundary='zeros', padded=True, axis=-1, cn=None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../../pya.html#module-pya.Astft" title="pya.Astft"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Astft</span></code></a></p></td>
 <td><p>Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../pya.html#module-pya.Aspec" title="pya.Aspec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Aspec</span></code></a>(x, sr=44100, label=None, cn=None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../pya.html#module-pya.Aspec" title="pya.Aspec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Aspec</span></code></a></p></td>
 <td><p>Audio spectrum class using rfft</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../pya.html#module-pya.Aserver" title="pya.Aserver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Aserver</span></code></a>(sr=44100, bs=None, device=None, channels=2, backend=None, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../../pya.html#module-pya.Aserver" title="pya.Aserver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Aserver</span></code></a></p></td>
 <td><p>Pya audio server</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../pya.html#module-pya.Arecorder" title="pya.Arecorder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Arecorder</span></code></a>(sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../pya.html#module-pya.Arecorder" title="pya.Arecorder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Arecorder</span></code></a></p></td>
 <td><p>pya audio recorder</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../pya.html#module-pya.Ugen" title="pya.Ugen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ugen</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../../pya.html#module-pya.Ugen" title="pya.Ugen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ugen</span></code></a></p></td>
 <td><p>Unit Generator for to create Asig with predefined signal</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pya.DummyBackend" title="pya.DummyBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DummyBackend</span></code></a>(dummy_devices=None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.DummyBackend" title="pya.DummyBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DummyBackend</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pya.PyAudioBackend" title="pya.PyAudioBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PyAudioBackend</span></code></a>(format=pyaudio.paFloat32)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.PyAudioBackend" title="pya.PyAudioBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PyAudioBackend</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
 </tr>
 </tbody>
@@ -694,7 +441,7 @@ in python and jupyter notebooks, for synthesis, effects, analysis and plotting.<
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.linlin" title="pya.linlin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linlin</span></code></a>(x, smi, sma, dmi, dma)</p></td>
 <td><p>Linear mapping</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pya.clip" title="pya.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>(value, minimum=-float('inf'), maximum=float('inf'))</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.clip" title="pya.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>(value, minimum=-float(‘inf’), maximum=float(‘inf’))</p></td>
 <td><p>Signal hard clipping</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.audio_from_file" title="pya.audio_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">audio_from_file</span></code></a>(path, dtype=np.float32)</p></td>
@@ -2240,7 +1987,7 @@ inheritance.</p>
 
 <dl class="py method">
 <dt id="pya.DummyBackend.open">
-<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">input_flag</span></em>, <em class="sig-param"><span class="n">output_flag</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">frames_per_buffer</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">stream_callback</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.DummyBackend.open" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">input_flag</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_flag</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">frames_per_buffer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stream_callback</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.DummyBackend.open" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -2332,20 +2079,25 @@ inheritance.</p>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
+        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -2353,7 +2105,6 @@ inheritance.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

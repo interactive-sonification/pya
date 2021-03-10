@@ -1,23 +1,32 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pya.asig &mdash; pya  documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -29,11 +38,6 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -62,11 +66,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.1/" selected="selected">v0.4.1</option>
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.1/" selected="selected">v0.4.1</option>
 
   <option value="/pya/v0.4.0/" >v0.4.0</option>
 
@@ -93,6 +99,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -106,210 +113,74 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a><ul>
 <li><a class="reference internal" href="#pya.asig._LOGGER">_LOGGER</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig">Asig</a><ul>
 <li><a class="reference internal" href="#pya.asig.Asig.sig">sig</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.sr">sr</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.label">label</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.channels">channels</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.cn">cn</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.mix_mode">mix_mode</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.extend">extend</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.bound">bound</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.overwrite">overwrite</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#id0">channels</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.samples">samples</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#id1">cn</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig._load_audio_file">_load_audio_file</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.save_wavfile">save_wavfile</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig._set_col_names">_set_col_names</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__getitem__">__getitem__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.x">x</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.b">b</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.o">o</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__setitem__">__setitem__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.resample">resample</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.play">play</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.shift_channel">shift_channel</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.mono">mono</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.stereo">stereo</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.rewire">rewire</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.pan2">pan2</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.remove_DC">remove_DC</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.norm">norm</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.gain">gain</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.rms">rms</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.plot">plot</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.get_duration">get_duration</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.get_times">get_times</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__eq__">__eq__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__repr__">__repr__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__mul__">__mul__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__rmul__">__rmul__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__truediv__">__truediv__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__rtruediv__">__rtruediv__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__add__">__add__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__radd__">__radd__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__sub__">__sub__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__rsub__">__rsub__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.find_events">find_events</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.select_event">select_event</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.plot_events">plot_events</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.fade_in">fade_in</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.fade_out">fade_out</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.iirfilter">iirfilter</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.plot_freqz">plot_freqz</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.envelope">envelope</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.adsr">adsr</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.window">window</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.window_op">window_op</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.overlap_add">overlap_add</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.to_spec">to_spec</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.to_stft">to_stft</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.to_mfcc">to_mfcc</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.plot_spectrum">plot_spectrum</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.spectrogram">spectrogram</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.get_size">get_size</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.append">append</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.add">add</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.flatten">flatten</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.pad">pad</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.custom">custom</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.convolve">convolve</a></li>
 </ul>
 </li>
@@ -324,6 +195,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -358,18 +230,20 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.asig</span></code></li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/autoapi/pya/asig/index.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -395,7 +269,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pya.asig.Asig" title="pya.asig.Asig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Asig</span></code></a>(sig, sr=44100, label='', channels=1, cn=None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.asig.Asig" title="pya.asig.Asig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Asig</span></code></a></p></td>
 <td><p>Audio signal class.</p></td>
 </tr>
 </tbody>
@@ -1414,20 +1288,25 @@ If “none” or other unrecognized name, no normalization is applied.</p></li>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
+        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -1435,7 +1314,6 @@ If “none” or other unrecognized name, no normalization is applied.</p></li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

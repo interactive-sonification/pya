@@ -50,7 +50,8 @@ Functions
 
    
 
-.. py:exception:: DecodeError
+.. exception:: DecodeError
+
 
    Bases: :class:`Exception`
 
@@ -58,7 +59,8 @@ Functions
    package.
 
 
-.. py:exception:: NoBackendError
+.. exception:: NoBackendError
+
 
    Bases: :class:`pya.helper.codec.DecodeError`
 
@@ -66,21 +68,24 @@ Functions
    are available or each available backend failed to decode the file.
 
 
-.. py:exception:: UnsupportedError
+.. exception:: UnsupportedError
+
 
    Bases: :class:`pya.helper.codec.DecodeError`
 
    File is not an AIFF, WAV, or Au file.
 
 
-.. py:exception:: BitWidthError
+.. exception:: BitWidthError
+
 
    Bases: :class:`pya.helper.codec.DecodeError`
 
    The file uses an unsupported bit width.
 
 
-.. py:exception:: FFmpegError
+.. exception:: FFmpegError
+
 
    Bases: :class:`pya.helper.codec.DecodeError`
 
@@ -88,21 +93,24 @@ Functions
    package.
 
 
-.. py:exception:: CommunicationError
+.. exception:: CommunicationError
+
 
    Bases: :class:`pya.helper.codec.FFmpegError`
 
    Raised when the output of FFmpeg is not parseable.
 
 
-.. py:exception:: NotInstalledError
+.. exception:: NotInstalledError
+
 
    Bases: :class:`pya.helper.codec.FFmpegError`
 
    Could not find the ffmpeg binary.
 
 
-.. py:exception:: ReadTimeoutError
+.. exception:: ReadTimeoutError
+
 
    Bases: :class:`pya.helper.codec.FFmpegError`
 
@@ -116,7 +124,8 @@ Functions
    than it should be.
 
 
-.. py:class:: RawAudioFile(filename)
+.. class:: RawAudioFile(filename)
+
 
    Bases: :class:`object`
 
@@ -125,13 +134,11 @@ Functions
 
    .. method:: _check(self)
 
-
       Check that the files' parameters allow us to decode it and
       raise an error otherwise.
 
 
    .. method:: close(self)
-
 
       Close the underlying file.
 
@@ -139,13 +146,11 @@ Functions
    .. method:: channels(self)
       :property:
 
-
       Number of audio channels.
 
 
    .. method:: samplerate(self)
       :property:
-
 
       Sample rate in Hz.
 
@@ -153,12 +158,10 @@ Functions
    .. method:: duration(self)
       :property:
 
-
       Length of the audio in seconds (a float).
 
 
    .. method:: read_data(self, block_samples=1024)
-
 
       Generates blocks of PCM data found in the file.
 
@@ -166,17 +169,15 @@ Functions
    .. method:: __enter__(self)
 
 
-
    .. method:: __exit__(self, exc_type, exc_val, exc_tb)
-
 
 
    .. method:: __iter__(self)
 
 
 
+.. class:: QueueReaderThread(fh, blocksize=1024, discard=False)
 
-.. py:class:: QueueReaderThread(fh, blocksize=1024, discard=False)
 
    Bases: :class:`threading.Thread`
 
@@ -184,7 +185,6 @@ Functions
    over a Queue.
 
    .. method:: run(self)
-
 
       Method representing the thread's activity.
 
@@ -215,7 +215,8 @@ Functions
 
    
 
-.. py:class:: FFmpegAudioFile(filename, block_size=4096)
+.. class:: FFmpegAudioFile(filename, block_size=4096)
+
 
    Bases: :class:`object`
 
@@ -223,12 +224,10 @@ Functions
 
    .. method:: read_data(self, timeout=10.0)
 
-
       Read blocks of raw PCM data from the file.
 
 
    .. method:: _get_info(self)
-
 
       Reads the tool's output from its stderr stream, extracts the
       relevant information, and parses it.
@@ -236,13 +235,11 @@ Functions
 
    .. method:: _parse_info(self, s)
 
-
       Given relevant data from the ffmpeg output, set audio
       parameter fields on this object.
 
 
    .. method:: close(self)
-
 
       Close the ffmpeg process used to perform the decoding.
 
@@ -250,17 +247,13 @@ Functions
    .. method:: __del__(self)
 
 
-
    .. method:: __iter__(self)
-
 
 
    .. method:: __enter__(self)
 
 
-
    .. method:: __exit__(self, exc_type, exc_val, exc_tb)
-
 
 
 

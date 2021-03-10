@@ -17,7 +17,8 @@ Classes
 
 
 
-.. py:class:: DummyBackend(dummy_devices=None)
+.. class:: DummyBackend(dummy_devices=None)
+
 
    Bases: :class:`pya.backend.base.BackendBase`
 
@@ -42,33 +43,27 @@ Classes
    .. method:: get_device_count(self)
 
 
-
    .. method:: get_device_info_by_index(self, idx)
-
 
 
    .. method:: get_default_input_device_info(self)
 
 
-
    .. method:: get_default_output_device_info(self)
-
 
 
    .. method:: open(self, *args, input_flag, output_flag, rate, frames_per_buffer, channels, stream_callback=None, **kwargs)
 
 
-
    .. method:: process_buffer(self, buffer)
-
 
 
    .. method:: terminate(self)
 
 
 
+.. class:: DummyStream(input_flag, output_flag, frames_per_buffer, rate, channels, stream_callback)
 
-.. py:class:: DummyStream(input_flag, output_flag, frames_per_buffer, rate, channels, stream_callback)
 
    Bases: :class:`pya.backend.base.StreamBase`
 
@@ -78,25 +73,19 @@ Classes
    .. method:: stop_stream(self)
 
 
-
    .. method:: close(self)
-
 
 
    .. method:: _generate_data(self)
 
 
-
    .. method:: _process_data(self)
-
 
 
    .. method:: start_stream(self)
 
 
-
    .. method:: is_active(self)
-
 
 
 

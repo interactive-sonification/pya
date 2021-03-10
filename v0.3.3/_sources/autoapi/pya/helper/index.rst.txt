@@ -72,7 +72,7 @@ Functions
    :type dmi: float
    :param dma:
 
-   :returns: **_** -- mapped output
+   :returns: **\_** -- mapped output
    :rtype: float
 
 

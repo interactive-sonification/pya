@@ -21,18 +21,17 @@ Classes
 
    
 
-.. py:class:: Aspec(x, sr=44100, label=None, cn=None)
+.. class:: Aspec(x, sr=44100, label=None, cn=None)
+
 
    Audio spectrum class using rfft
 
    .. method:: to_sig(self)
 
-
       Convert Aspec into Asig
 
 
    .. method:: weight(self, weights, freqs=None, curve=1, kind='linear')
-
 
       TODO
 
@@ -44,7 +43,6 @@ Classes
 
    .. method:: plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs)
 
-
       Plot spectrum
 
       :param fn: function for processing the rfft spectrum. (Default value = np.abs)
@@ -55,12 +53,11 @@ Classes
       :type ylim: tuple or list or None
       :param \*\*kwargs: Keyword arguments for matplotlib.pyplot.plot()
 
-      :returns: **_** -- self
+      :returns: **\_** -- self
       :rtype: Asig
 
 
    .. method:: __repr__(self)
-
 
       Return repr(self).
 

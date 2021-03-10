@@ -1,23 +1,32 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>modules &mdash; pya  documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,11 +38,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -62,11 +66,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.1/" >v0.4.1</option>
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
 
   <option value="/pya/v0.4.0/" selected="selected">v0.4.0</option>
 
@@ -93,6 +99,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -108,6 +115,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -142,18 +150,20 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>modules</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -198,7 +208,111 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li class="toctree-l2"><a class="reference internal" href="pya.html#module-pya.Astft">pya.Astft module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pya.html#module-pya.Ugen">pya.Ugen module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pya.html#module-pya.version">pya.version module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pya.html#module-pya">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.html#module-pya">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pya.html#pya.Arecorder.Arecorder">Arecorder</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Arecorder.Arecorder.boot">boot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Arecorder.Arecorder.device">device</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Arecorder.Arecorder.pause">pause</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Arecorder.Arecorder.record">record</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Arecorder.Arecorder.reset">reset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Arecorder.Arecorder.set_tracks">set_tracks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Arecorder.Arecorder.stop">stop</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pya.html#pya.Aserver.Aserver">Aserver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aserver.Aserver.boot">boot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aserver.Aserver.default">default</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aserver.Aserver.device">device</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aserver.Aserver.get_devices">get_devices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aserver.Aserver.play">play</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aserver.Aserver.quit">quit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aserver.Aserver.set_device">set_device</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aserver.Aserver.shutdown_default_server">shutdown_default_server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aserver.Aserver.startup_default_server">startup_default_server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aserver.Aserver.stop">stop</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pya.html#pya.Asig.Asig">Asig</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.sig">sig</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.sr">sr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.label">label</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.channels">channels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.cn">cn</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.mix_mode">mix_mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.add">add</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.adsr">adsr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.append">append</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.b">b</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.bound">bound</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#id0">channels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#id1">cn</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.custom">custom</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.envelope">envelope</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.extend">extend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.fade_in">fade_in</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.fade_out">fade_out</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.find_events">find_events</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.flatten">flatten</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.gain">gain</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.get_duration">get_duration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.get_size">get_size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.get_times">get_times</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.iirfilter">iirfilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.mono">mono</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.norm">norm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.o">o</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.overlap_add">overlap_add</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.overwrite">overwrite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.pad">pad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.pan2">pan2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.play">play</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.plot">plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.plot_events">plot_events</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.plot_freqz">plot_freqz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.plot_spectrum">plot_spectrum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.remove_DC">remove_DC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.resample">resample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.rewire">rewire</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.rms">rms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.samples">samples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.save_wavfile">save_wavfile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.select_event">select_event</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.shift_channel">shift_channel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.spectrogram">spectrogram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.stereo">stereo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.to_mfcc">to_mfcc</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.to_spec">to_spec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.to_stft">to_stft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.window">window</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.window_op">window_op</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Asig.Asig.x">x</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pya.html#pya.Aspec.Aspec">Aspec</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aspec.Aspec.get_duration">get_duration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aspec.Aspec.plot">plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aspec.Aspec.to_sig">to_sig</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Aspec.Aspec.weight">weight</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pya.html#pya.Astft.Astft">Astft</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Astft.Astft.plot">plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Astft.Astft.to_sig">to_sig</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pya.html#pya.Ugen.Ugen">Ugen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Ugen.Ugen.cos">cos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Ugen.Ugen.noise">noise</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Ugen.Ugen.sawtooth">sawtooth</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Ugen.Ugen.sine">sine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pya.html#pya.Ugen.Ugen.square">square</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pya.html#pya.Ugen.get_num_of_rows">get_num_of_rows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pya.html#pya.shutdown">shutdown</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pya.html#pya.startup">startup</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -210,20 +324,25 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
+        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -231,7 +350,6 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

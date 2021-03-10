@@ -1,23 +1,32 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pya.asig &mdash; pya  documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -29,11 +38,6 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -62,11 +66,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.1/" >v0.4.1</option>
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/master/" selected="selected">master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.1/" >v0.4.1</option>
 
   <option value="/pya/v0.4.0/" >v0.4.0</option>
 
@@ -93,6 +99,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -106,211 +113,76 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a><ul>
 <li><a class="reference internal" href="#pya.asig._LOGGER">_LOGGER</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig">Asig</a><ul>
 <li><a class="reference internal" href="#pya.asig.Asig.sig">sig</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.sr">sr</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.label">label</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.channels">channels</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.cn">cn</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.mix_mode">mix_mode</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.extend">extend</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.bound">bound</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.overwrite">overwrite</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#id0">channels</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.samples">samples</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#id1">cn</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig._load_audio_file">_load_audio_file</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.save_wavfile">save_wavfile</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig._set_col_names">_set_col_names</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__getitem__">__getitem__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.x">x</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.b">b</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.o">o</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__setitem__">__setitem__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.resample">resample</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.play">play</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.shift_channel">shift_channel</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.mono">mono</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.stereo">stereo</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.rewire">rewire</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.pan2">pan2</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.remove_DC">remove_DC</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.norm">norm</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.gain">gain</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.rms">rms</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.plot">plot</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.get_duration">get_duration</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.get_times">get_times</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__eq__">__eq__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__repr__">__repr__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__mul__">__mul__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__rmul__">__rmul__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__truediv__">__truediv__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__rtruediv__">__rtruediv__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__add__">__add__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__radd__">__radd__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__sub__">__sub__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.__rsub__">__rsub__</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.find_events">find_events</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.select_event">select_event</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.plot_events">plot_events</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.fade_in">fade_in</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.fade_out">fade_out</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.iirfilter">iirfilter</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.plot_freqz">plot_freqz</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.envelope">envelope</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.adsr">adsr</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.window">window</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.window_op">window_op</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.overlap_add">overlap_add</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.to_spec">to_spec</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.to_stft">to_stft</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.to_mfcc">to_mfcc</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.plot_spectrum">plot_spectrum</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.spectrogram">spectrogram</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.get_size">get_size</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.append">append</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.add">add</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.flatten">flatten</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.pad">pad</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.custom">custom</a></li>
-</ul>
-<ul>
 <li><a class="reference internal" href="#pya.asig.Asig.convolve">convolve</a></li>
+<li><a class="reference internal" href="#pya.asig.Asig.apply">apply</a></li>
 </ul>
 </li>
 </ul>
@@ -324,6 +196,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -358,18 +231,20 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.asig</span></code></li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../../_sources/autoapi/pya/asig/index.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -395,7 +270,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pya.asig.Asig" title="pya.asig.Asig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Asig</span></code></a>(sig, sr=44100, label='', channels=1, cn=None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.asig.Asig" title="pya.asig.Asig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Asig</span></code></a></p></td>
 <td><p>Audio signal class.</p></td>
 </tr>
 </tbody>
@@ -461,8 +336,10 @@ Asig offer functions for plotting (via matplotlib) and playing audio
 <code class="sig-name descname">cn</code><a class="headerlink" href="#pya.asig.Asig.cn" title="Permalink to this definition">¶</a></dt>
 <dd><p>cn short for channel names is a list of string of size channels,
 to give each channel a unique name.
-channel names can be used to subset signal channels in a more readible way,
-e.g. asig[:, [‘left’, ‘front’]] subsets the left and front channels of the signal.</p>
+channel names can be used to subset signal channels in
+a more readible way,
+e.g. asig[:, [‘left’, ‘front’]] subsets the left and
+front channels of the signal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>list of str, None</p>
@@ -473,7 +350,8 @@ e.g. asig[:, [‘left’, ‘front’]] subsets the left and front channels of t
 <dl class="py attribute">
 <dt id="pya.asig.Asig.mix_mode">
 <code class="sig-name descname">mix_mode</code><a class="headerlink" href="#pya.asig.Asig.mix_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>used to extend numpy __setitem__() operation to frequent audio manipulations such as
+<dd><p>used to extend numpy __setitem__() operation to
+frequent audio manipulations such as
 mixing, extending, boundary, replacing.
 Current Asig supports the mix_modes:
 bound, extend, overwrite.  mix_mode should not be
@@ -522,8 +400,9 @@ the .bound, .extend and .overwrite properties.</p>
 <dl class="py method">
 <dt id="pya.asig.Asig._load_audio_file">
 <code class="sig-name descname">_load_audio_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.asig.Asig._load_audio_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load audio file, and set self.sig to the signal and self.sr to the sampling rate.
-Currently support two types of audio loader: 1) Standard library for .wav, .aiff,
+<dd><p>Load audio file, and set self.sig to the signal
+and self.sr to the sampling rate. Currently support two types
+of audio loader: 1) Standard library for .wav, .aiff,
 and ffmpeg for other such as .mp3.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -557,11 +436,31 @@ and ffmpeg for other such as .mp3.</p>
 <dd><dl class="simple">
 <dt>Accessing array elements through slicing.</dt><dd><ul class="simple">
 <li><p>int, get signal row asig[4];</p></li>
-<li><p>slice, range and step slicing asig[4:40:2]  # from 4 to 40 every 2 samples;</p></li>
-<li><p>list, subset rows, asig[[2, 4, 6]]  # pick out index 2, 4, 6 as a new asig</p></li>
-<li><p>tuple, row and column specific slicing, asig[4:40, 3:5]  # from 4 to 40, channel 3 and 4</p></li>
-<li><p>Time slicing (unit in seconds) using dict asig[{1:2.5}, :] creates indexing of 1s to 2.5s.</p></li>
-<li><p>Channel name slicing: asig[‘l’] returns channel ‘l’ as a new mono asig. asig[[‘front’, ‘rear’]], etc…</p></li>
+<li><dl class="simple">
+<dt>slice, range and step slicing asig[4:40:2]</dt><dd><p># from 4 to 40 every 2 samples;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>list, subset rows, asig[[2, 4, 6]]</dt><dd><p># pick out index 2, 4, 6 as a new asig</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>tuple, row and column specific slicing, asig[4:40, 3:5]</dt><dd><p># from 4 to 40, channel 3 and 4</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Time slicing (unit in seconds) using dict asig[{1:2.5}, :]</dt><dd><p>creates indexing of 1s to 2.5s.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Channel name slicing: asig[‘l’] returns channel ‘l’ as</dt><dd><p>a new mono asig. asig[[‘front’, ‘rear’]], etc…</p>
+</dd>
+</dl>
+</li>
 <li><p>bool, subset channels: asig[:, [True, False]]</p></li>
 </ul>
 </dd>
@@ -582,19 +481,22 @@ and ffmpeg for other such as .mp3.</p>
 <dl class="py method">
 <dt id="pya.asig.Asig.x">
 <em class="property">property </em><code class="sig-name descname">x</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.asig.Asig.x" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extend mode: this mode allows destination sig size in assignment to be extended through setitem</p>
+<dd><p>Extend mode: this mode allows destination
+sig size in assignment to be extended through setitem</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pya.asig.Asig.b">
 <em class="property">property </em><code class="sig-name descname">b</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.asig.Asig.b" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bound mode: this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
+<dd><p>Bound mode: this mode allows to truncate a source signal
+in assignment to a limited destination in setitem.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pya.asig.Asig.o">
 <em class="property">property </em><code class="sig-name descname">o</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.asig.Asig.o" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overwrite mode: this mode cuts and replaces target selection by source signal on assignment via setitem</p>
+<dd><p>Overwrite mode: this mode cuts and replaces target
+selection by source signal on assignment via setitem</p>
 </dd></dl>
 
 <dl class="py method">
@@ -603,39 +505,53 @@ and ffmpeg for other such as .mp3.</p>
 <dd><dl class="simple">
 <dt>setitem: asig[index] = value. This allows all the methods from getitem:</dt><dd><ul class="simple">
 <li><p>numpy style slicing</p></li>
-<li><p>string/string_list slicing for subsetting channels based on channel name self.cn</p></li>
+<li><p>string/string_list for subsetting based on channel name</p></li>
 <li><p>time slicing (unit seconds) via dict.</p></li>
 <li><p>bool slicing to filter out specific channels.</p></li>
 </ul>
 </dd>
-<dt>In addition, there are 4 possible modes: (referring to asig as ‘dest’, and value as ‘src’</dt><dd><ol class="arabic simple">
-<li><dl class="simple">
-<dt>standard pythonic way that the src und dest dimensions need to match</dt><dd><p>asig[…] = value</p>
-</dd>
 </dl>
-</li>
+<p>In addition, there are 4 possible modes:
+(referring to asig as ‘dest’, and value as ‘src’</p>
+<blockquote>
+<div><p>1. standard pythonic way that the src and
+dest dimensions need to match</p>
+<blockquote>
+<div><p>asig[…] = value</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
 <li><dl class="simple">
 <dt>bound mode where src is copied up to the bounds of dest</dt><dd><p>asig.b[…] = value</p>
 </dd>
 </dl>
 </li>
-<li><dl class="simple">
-<dt>extend mode where dest is dynamically extended to make space for src</dt><dd><p>asig.x[…] = value</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>overwrite mode where selected dest subset is replaced by specified src regardless the length.</dt><dd><p>asig.o[…] = value</p>
-</dd>
-</dl>
-</li>
 </ol>
-</dd>
+<p>3. extend mode where dest is dynamically
+extended to make space for src</p>
+<blockquote>
+<div><p>asig.x[…] = value</p>
+</div></blockquote>
+<p>4. overwrite mode where selected dest subset is
+replaced by specified src regardless the length.</p>
+<blockquote>
+<div><p>asig.o[…] = value</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="simple">
 <dt>row index:</dt><dd><ul class="simple">
-<li><p>list: e.g. [1,2,3,4,5,6,7,8] or [True, …, False] (modes b and x possible)</p></li>
+<li><dl class="simple">
+<dt>list: e.g. [1,2,3,4,5,6] or [True, …, False]</dt><dd><p>(modes b and x possible)</p>
+</dd>
+</dl>
+</li>
 <li><p>int:  e.g. 0  (i.e. a single sample, so no need for extra modes)</p></li>
 <li><p>slice: e.g. 100:5000:2  (can be used with all modes)</p></li>
-<li><p>dict: e.g. {0.5: 2.5}   (modes o, b possible, x only if step==1, or if step==None and stop=None)</p></li>
+<li><dl class="simple">
+<dt>dict: e.g. {0.5: 2.5}</dt><dd><p>(modes o, b possible, x only if step==1,
+or if step==None and stop=None)</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
@@ -749,7 +665,7 @@ Do nothing if signal is already mono, raise warning (Default value = None)</p>
 <dd><p>Blend all channels of the signal to stereo. Applicable for any single-/ or multi-channel Asig.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>blend</strong> (<em>list</em><em> or </em><em>None</em>) – Usage: For mono signal, blend=(g1, g2), the mono channel will be broadcated to left, right with g1, g2 gains.
+<dd class="field-odd"><p><strong>blend</strong> (<em>list</em><em> or </em><em>None</em>) – Usage: For mono, blend=(g1, g2), the  channel will be broadcated to left, right with g1, g2 gains.
 For stereo signal, blend=(g1, g2), each channel is gain adjusted by g1, g2.
 For multichannel: blend = [[list of gains for left channel], [list of gains for right channel]]
 Default value = None, resulting in equal distribution to left and right channel</p>
@@ -958,7 +874,8 @@ bigger array is.</p>
 <dt id="pya.asig.Asig.__truediv__">
 <code class="sig-name descname">__truediv__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.asig.Asig.__truediv__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Magic method for division. You can either divide a scalar or an Asig object.
-Use division with caution, audio signal is common to reach 0 or near, avoid zero division or extremely large result.</p>
+Use division with caution, audio signal is common to reach 0 or near,
+avoid zero division or extremely large result.</p>
 <p>If dividing an Asig, you don’t always need to have same size arrays as audio signals
 may different in length. If mix_mode is set to ‘bound’ the size is fixed to respect self.
 If not, the result will respect to whichever the bigger array is.</p>
@@ -1403,6 +1320,23 @@ If “none” or other unrecognized name, no normalization is applied.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="pya.asig.Asig.apply">
+<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">fn</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.asig.Asig.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>apply a fn samplewise for distortion or waveshaping a signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fn</strong> (<em>scalar function</em>) – function to be used for wave shaping.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_</strong> – A new asig with samplewise applied fn.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pya.asig.Asig" title="pya.asig.Asig">Asig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -1414,20 +1348,25 @@ If “none” or other unrecognized name, no normalization is applied.</p></li>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann
+        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -1435,7 +1374,6 @@ If “none” or other unrecognized name, no normalization is applied.</p></li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
