@@ -3,15 +3,13 @@ from warnings import warn
 from .helper import next_pow2, signal_to_frame, round_half_up, magspec
 from .helper import mel2hz, hz2mel, is_pow2
 from .helper import basicplot
-import logging
 from scipy.signal import get_window
 from scipy.fftpack import dct
 import pya.asig
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
+import logging
 
-_LOGGER = logging.getLogger(__name__)
-_LOGGER.addHandler(logging.NullHandler())
+# _LOGGER = logging.getLogger(__name__)
+# _LOGGER.addHandler(logging.NullHandler())
 
 
 class Amfcc:
@@ -345,8 +343,6 @@ class Amfcc:
                            ax=ax, typ='mfcc', show_bar=show_bar,
                            xlabel='time', xlim=xlim, ylim=ylim, **kwargs)
         self.im = im
-        # ax = plt.gca() or ax
-        # self.im = ax.pcolormesh(self.cepstra.T, cmap=plt.get_cmap(cmap))
         xticks = np.linspace(0, self.nframes, nxlabel, dtype=int)
         ax.set_xticks(xticks)
         # ax.set_("MFCC Coefficient")

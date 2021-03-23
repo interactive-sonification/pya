@@ -1,7 +1,6 @@
 import logging
 import numpy as np
 import scipy.interpolate
-import matplotlib.pyplot as plt
 import pya.asig
 from .helper import basicplot
 
@@ -33,7 +32,7 @@ class Aspec:
             self.channels = x.channels
             self.cn = cn or x.cn
         elif type(x) == list or type(x) == np.ndarray:
-            # TODO. This is in the assumption x is spec. which is wrong. We define x to be the audio signals instead. 
+            # TODO. This is in the assumption x is spec. which is wrong. We define x to be the audio signals instead.
             self.rfftspec = np.array(x)
             self.sr = sr
             self.samples = (len(x) - 1) * 2

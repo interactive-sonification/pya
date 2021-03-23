@@ -1,7 +1,7 @@
 # Arecorder class
 import time
-import numbers
 import logging
+import numbers
 from warnings import warn
 import numpy as np
 import pyaudio

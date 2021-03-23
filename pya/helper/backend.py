@@ -22,8 +22,8 @@ def get_server_info():
 
 def determine_backend(force_webaudio=False, port=8765):
     import os
-    hostname = get_server_info()['hostname']
-    if hostname in ['localhost', '127.0.0.1'] and not force_webaudio:
+    server_info = get_server_info()
+    if server_info is None or (server_info['hostname'] in ['localhost', '127.0.0.1'] and not force_webaudio):
         return None  # use default local backend
     from ..backend.Jupyter import JupyterBackend
     if os.environ.get('BINDER_SERVICE_HOST'):

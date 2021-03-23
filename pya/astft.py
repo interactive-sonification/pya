@@ -1,13 +1,9 @@
 from __future__ import absolute_import
-import numbers
-from warnings import warn
 import logging
-import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import stft, istft
 import pya.asig
 from .helper import basicplot
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 _LOGGER = logging.getLogger(__name__)
