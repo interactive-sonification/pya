@@ -1,0 +1,46 @@
+name: Pya
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  unit-test:
+    runs-on: ${{ matrix.os  }}
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest"]
+        python-version: [3.6, 3.7, 3.8]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install portaudio Ubuntu
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash -l {0}
+      run: sudo apt-get install portaudio19-dev
+    - name: Install portaudio MacOS
+      if: matrix.os == 'macos-latest'
+      shell: bash -l {0}
+      run: brew install portaudio
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment: test-env
+        environment-file: ci/test-environment.yml
+        python-version: ${{ matrix.python-version }}
+        auto-activate-base: false
+    - name: Set up depen
+      shell: bash -l {0}
+      run: |
+        conda init bash
+        conda activate test-env
+        conda install ffmpeg coverage python-coveralls --file=requirements.txt --file=requirements_remote.txt --file=requirements_test.txt
+    - name: Run tests
+      shell: bash -l {0}
+      run: |
+        conda activate test-env
+        pytest --cov pya/
