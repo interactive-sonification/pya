@@ -1,19 +1,18 @@
-import numbers
-from warnings import warn
-import logging
 from itertools import compress
+import numbers
+import logging
+from warnings import warn
+
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate
 import scipy.signal
 from scipy.io import wavfile
-from . import Aserver
+
 import pya.aspec
 import pya.astft
 import pya.amfcc
-from .helper import ampdb, dbamp, linlin
-from .helper import spectrum, audio_from_file, padding
-from .helper import basicplot
+from .helper import ampdb, dbamp, linlin, spectrum, audio_from_file, padding, basicplot
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -614,35 +613,29 @@ class Asig:
                 new_sig[:, i] = interp_fn(tsel)
             return Asig(new_sig, target_sr, label=self.label + "_resampled", cn=self.cn)
 
-    def play(self, rate=1, **kwargs):
+    def play(self, server, rate=1, block=False):
         """Play Asig audio via Aserver, using Aserver.default (if existing)
         kwargs are propagated to Aserver:play(onset=0, out=0)
 
         Parameters
         ----------
+        server : Aserver
+            Set which server to play. e.g. s = Aserver(); s.boot(); asig.play(server=s)
         rate : float
             Playback rate (Default value = 1)
-        **kwargs : str
-            'server' : Aserver
-                Set which server to play. e.g. s = Aserver(); s.boot(); asig.play(server=s)
+        block : bool
+            Whether to block callback till finish.
 
         Returns
         -------
         _ : Asig
             return self
         """
-        if "server" in kwargs.keys():
-            s = kwargs["server"]
-        else:
-            s = Aserver.default
-        if not isinstance(s, Aserver):
-            warn("Asig.play: no default server running, nor server arg specified.")
-            return self
-        if rate == 1 and self.sr == s.sr:
+        if rate == 1 and self.sr == server.sr:
             asig = self
         else:
-            asig = self.resample(s.sr, rate)
-        s.play(asig, **kwargs)
+            asig = self.resample(server.sr, rate)
+        server.play(asig, block=block)
         return self
 
     def shift_channel(self, shift=0):
