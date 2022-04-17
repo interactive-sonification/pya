@@ -191,7 +191,7 @@ class Aserver:
             _LOGGER.info("No stream found...")
         self.stream = None
 
-    def play(self, asig, onset=0, out=0, **kwargs):
+    def play(self, asig, onset=0, out=0, block=False):
         """Dispatch asigs or arrays for given onset."""
         self._stop = False
 
@@ -222,7 +222,7 @@ class Aserver:
         self.srv_asigs.insert(idx, asig)
         self.srv_curpos.insert(idx, 0)
         self.srv_outs.insert(idx, out)
-        if 'block' in kwargs and kwargs['block']:
+        if block:
             if onset > 0:  # here really omset and not rt_onset!
                 _LOGGER.warning("blocking inactive with play(onset>0)")
             else:
