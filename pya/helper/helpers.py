@@ -1,14 +1,25 @@
 # Collection of small helper functions
-import numpy as np
-import pyaudio
-from scipy.fftpack import fft
-from .codec import audio_read
-import logging
 import decimal
+import logging
 import math
+from warnings import warn
+
+_LOGGER = logging.getLogger(__name__)
+_LOGGER.addHandler(logging.NullHandler())
+
+import numpy as np
+from scipy.fftpack import fft
+try:
+    import pyaudio
+    _IS_PYAUDIO_INSTALLED = True
+except (ModuleNotFoundError, ImportError):
+    logging.warning("pyaudio is not installed, certain methods are not functional")
+    _IS_PYAUDIO_INSTALLED = False
+
+from .codec import audio_read
 
 
-class _error(Exception):    
+class _error(Exception):
     pass
 
 
@@ -54,8 +65,7 @@ def ampdb(amp):
     """Convert amplitude to db"""
     return 20 * np.log10(amp)
 
-
-def spectrum(sig, samples, channels, sr):
+def spectrum(sig, samples, channels, sr): 
     """Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.
 
     Parameters
@@ -156,28 +166,36 @@ def buf_to_float(x, n_bytes=2, dtype=np.float32):
 
 def device_info():
     """Return a formatted string about available audio devices and their info"""
-    pa = pyaudio.PyAudio()
-    line1 = (f"idx {'Device Name':25}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
-    devs = [pa.get_device_info_by_index(i) for i in range(pa.get_device_count())]
-    lines = [line1]
-    for i, d in enumerate(devs):
-        p1 = f"{i:<4g}{d['name'].strip():24}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}"
-        p2 = f" {int(d['defaultSampleRate'])} "
-        p3 = f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}"
-        p4 = f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}"
-        lines.append(p1 + p2 + p3 + p4)
-    print(*lines, sep='\n')
-    return devs
+    if _IS_PYAUDIO_INSTALLED:
+        pa = pyaudio.PyAudio()
+        line1 = (f"idx {'Device Name':25}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
+        devs = [pa.get_device_info_by_index(i) for i in range(pa.get_device_count())]
+        lines = [line1]
+        for i, d in enumerate(devs):
+            p1 = f"{i:<4g}{d['name'].strip():24}{d['maxInputChannels']:4}{d['maxOutputChannels']:4}"
+            p2 = f" {int(d['defaultSampleRate'])} "
+            p3 = f"{d['defaultLowInputLatency']*1000:6.2g} {d['defaultHighInputLatency']*1000:6.0f}"
+            p4 = f"{d['defaultLowOutputLatency']*1000:6.2g} {d['defaultHighOutputLatency']*1000:6.0f}"
+            lines.append(p1 + p2 + p3 + p4)
+        print(*lines, sep='\n')
+        return devs
+    else:
+        logging.warning("pyaudio is not installed, return None")
+        return None
 
 
 def find_device(min_input=0, min_output=0):
-    pa = pyaudio.PyAudio()
-    res = []
-    for idx in range(pa.get_device_count()):
-        dev = pa.get_device_info_by_index(idx)
-        if dev['maxInputChannels'] >= min_input and dev['maxOutputChannels'] >= min_output:
-            res.append(dev)
-    return res
+    if _IS_PYAUDIO_INSTALLED:
+        pa = pyaudio.PyAudio()
+        res = []
+        for idx in range(pa.get_device_count()):
+            dev = pa.get_device_info_by_index(idx)
+            if dev['maxInputChannels'] >= min_input and dev['maxOutputChannels'] >= min_output:
+                res.append(dev)
+        return res
+    else:
+        logging.warning("pyaudio is not installed, return None")
+        return None
 
 
 def padding(x, width, tail=True, constant_values=0):
