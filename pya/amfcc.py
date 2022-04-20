@@ -5,7 +5,7 @@ from .helper import mel2hz, hz2mel, is_pow2
 from .helper import basicplot
 from scipy.signal import get_window
 from scipy.fftpack import dct
-import pya.asig
+from pya import Asig
 import logging
 
 # _LOGGER = logging.getLogger(__name__)
@@ -110,7 +110,7 @@ class Amfcc:
         # First prepare for parameters
         # x represent the audio signal, which can be Asig object or np.array.
         self.im = None
-        if type(x) == pya.asig.Asig:
+        if isinstance(x, Asig):
             self.sr = x.sr
             self.x = x.sig
             self.label = ''.join([x.label, "_mfccs"])
