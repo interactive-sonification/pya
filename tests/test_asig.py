@@ -191,14 +191,14 @@ class TestAsig(TestCase):
     def test_windowing(self):
         asig = Asig(np.ones(10), sr=2)
         asig_windowed = asig.window_op(nperseg=2, stride=1,
-                                       win='hanning', fn='rms', pad='mirror')
+                                       win='hann', fn='rms', pad='mirror')
         self.assertTrue(np.allclose([1., 0.70710677, 0.70710677, 0.70710677,
                                     0.70710677, 0.70710677, 0.70710677,
                                     0.70710677, 0.70710677, 1.],
                                     asig_windowed.sig))
 
         asig2ch = Asig(np.ones((10, 2)), sr=2)
-        asig2ch.window_op(nperseg=2, stride=1, win='hanning', fn='rms', pad='mirror')
+        asig2ch.window_op(nperseg=2, stride=1, win='hann', fn='rms', pad='mirror')
         a = [1., 0.70710677, 0.70710677, 0.70710677,
              0.70710677, 0.70710677, 0.70710677,
              0.70710677, 0.70710677, 1.]

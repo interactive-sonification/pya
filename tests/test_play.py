@@ -93,5 +93,5 @@ class MockAudioTest(TestCase):
                 s = Aserver(channels=6)
                 s.boot()
                 assert mock_audio.open.call_count == 2
-                self.assertEqual(mock_audio.open.call_args_list[1][1]["channels"], 4)
+                self.assertEqual(mock_audio.open.call_args_list[1][1]["channels"], 6)
 
