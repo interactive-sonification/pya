@@ -278,10 +278,10 @@ class Aserver:
                 dellist.append(i)  # store for deletion
         # clean up lists
         for i in dellist[::-1]:  # traverse backwards!
-            del(self.srv_asigs[i])
-            del(self.srv_onsets[i])
-            del(self.srv_curpos[i])
-            del(self.srv_outs[i])
+            del self.srv_asigs[i]
+            del self.srv_onsets[i]
+            del self.srv_curpos[i]
+            del self.srv_outs[i]
         return self.backend.process_buffer(data * (self.backend.range * self.gain))
 
     def stop(self):
