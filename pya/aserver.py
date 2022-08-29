@@ -48,7 +48,7 @@ class Aserver:
         else:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    def __init__(self, sr=44100, bs=None, device=None,
+    def __init__(self, sr=44100, bs=512, device=None,
                  channels=2, backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
@@ -59,6 +59,9 @@ class Aserver:
             Sampling rate (Default value = 44100)
         bs : int
             block size or buffer size (Default value = 256)
+        device : int
+            The device index based on pya.device_info(), default is None which will set 
+            the default device from PyAudio
         channels : int
             number of channel (Default value = 2)
         kwargs : backend parameter
@@ -76,24 +79,17 @@ class Aserver:
             self.backend = PyAudioBackend(**kwargs)
         else:
             self.backend = backend
-        self.bs = bs if bs is not None else self.backend.bs
         self.channels = channels
         # Get audio devices to input_device and output_device
         self.input_devices = []
         self.output_devices = []
         for i in range(self.backend.get_device_count()):
-            if self.backend.get_device_info_by_index(i)['maxInputChannels'] > 0:
+            if int(self.backend.get_device_info_by_index(i)['maxInputChannels']) > 0:
                 self.input_devices.append(self.backend.get_device_info_by_index(i))
-            if self.backend.get_device_info_by_index(i)['maxOutputChannels'] > 0:
+            if int(self.backend.get_device_info_by_index(i)['maxOutputChannels']) > 0:
                 self.output_devices.append(self.backend.get_device_info_by_index(i))
 
-        self._device = 1
-        self.device = device
-
-        # self.device_dict = self.backend.get_device_info_by_index(self.device)
-        # # self.max_out_chn is not that useful: there can be multiple devices having the same mu
-        # self.max_out_chn = self.device_dict['maxOutputChannels']
-        # self.max_in_chn = self.device_dict['maxInputChannels']
+        self._device = device or self.backend.get_default_output_device_info()['index']
 
         self.gain = 1.0
         self.srv_onsets = []
@@ -110,14 +106,24 @@ class Aserver:
                                      dtype=self.backend.dtype)
 
     @property
+    def device_dict(self):
+        return self.backend.get_device_info_by_index(self._device)
+
+    @property
+    def max_out_chn(self):
+        return int(self.device_dict['maxOutputChannels'])
+
+    @property
+    def max_in_chn(self):
+        return int(self.device_dict['maxInputChannels'])
+
+    @property
     def device(self):
         return self._device
 
     @device.setter
     def device(self, val):
         self._device = val if val is not None else self.backend.get_default_output_device_info()['index']
-        self.device_dict = self.backend.get_device_info_by_index(self._device)
-        self.max_out_chn = self.device_dict['maxOutputChannels']
         if self.max_out_chn < self.channels:
             warn(f"Aserver: warning: {self.channels}>{self.max_out_chn} channels requested - truncated.")
             self.channels = self.max_out_chn
@@ -151,7 +157,7 @@ class Aserver:
         reboot : bool
             If true the server will reboot. (Default value = True)
         """
-        self.device = idx
+        self._device = idx
         if reboot:
             try:
                 self.quit()
