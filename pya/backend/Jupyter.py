@@ -65,7 +65,7 @@ class JupyterStream(StreamBase):
         self.server = None
         self._is_active = False
 
-        app = Sanic(__name__)
+        app = Sanic(__name__.replace('.', '_'))
 
         async def bridge(request, ws):
             while True:
