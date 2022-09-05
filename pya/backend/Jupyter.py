@@ -61,7 +61,6 @@ class JupyterStream(StreamBase):
         self.rate = rate
         self.channels = channels
         self.stream_callback = stream_callback
-        self.thread = None
         self.server = None
         self._is_active = False
 
