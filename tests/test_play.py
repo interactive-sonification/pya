@@ -4,6 +4,8 @@ from pya import *
 import numpy as np
 import pyaudio
 import warnings
+import pytest
+
 
 # check if we have an output device
 has_output = False
@@ -35,20 +37,14 @@ class TestPlayBase(TestCase):
         self.sig2ch = np.repeat(self.sig, 2).reshape((44100, 2))
         self.astereo = Asig(self.sig2ch, sr=44100, label="stereo", cn=['l', 'r'])
 
-    def test_play(self):
+    @pytest.mark.xfail(reason="Test may get affect with PortAudio bug or potential unsuitable audio device.")
+    def test_play_and_stop(self):
         ser = Aserver(backend=self.backend)
         ser.boot()
         self.asine.play(server=ser)
         time.sleep(2)
         ser.stop()
         ser.quit()
-
-    def test_stop(self):
-        s = Aserver(backend=self.backend)
-        s.boot()
-        self.asine.play(server=s)
-        s.stop()
-        s.quit()
 
     def test_gain(self):
         result = (self.asine * 0.2).sig
