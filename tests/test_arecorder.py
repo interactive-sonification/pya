@@ -1,7 +1,8 @@
 # Test arecorder class.
 import time
 from pya import Arecorder, Aserver, find_device
-from unittest import TestCase, skipUnless, mock, skip
+from unittest import TestCase, skipUnless, mock, skip, expectedFailure
+import pytest
 import pyaudio
 import time
 
@@ -79,7 +80,7 @@ class TestArecorderBase(TestCase):
     __test__ = False
     backend = None
 
-    @skipUnless(has_input, "PyAudio found no input device.")
+    @pytest.mark.xfail(reason="Test may get affect with PortAudio bug or potential unsuitable audio device.")
     def test_arecorder(self):
         ar = Arecorder(channels=1, backend=self.backend).boot()
         self.assertEqual(ar.sr, 44100)
@@ -96,7 +97,7 @@ class TestArecorderBase(TestCase):
         ar.recordings.clear()
         ar.quit()
 
-    @skip("This needs rework. As the test itself doesn't make sense when using virtual device that share input/output such as BlackHole.")
+    @pytest.mark.xfail(reason="Test may get affect with PortAudio bug or potential unsuitable audio device.")
     def test_combined_inout(self):
         # test if two streams can be opened on the same device
         # can only be tested when a device with in- and output capabilities is available
