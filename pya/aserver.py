@@ -104,6 +104,7 @@ class Aserver:
         self._stop = True
         self.empty_buffer = np.zeros((self.bs, self.channels),
                                      dtype=self.backend.dtype)
+        self._is_active = False
 
     @property
     def device_dict(self):
@@ -121,6 +122,10 @@ class Aserver:
     def device(self):
         return self._device
 
+    @property
+    def is_active(self) -> bool:
+        return self._is_active
+
     @device.setter
     def device(self, val):
         self._device = val if val is not None else self.backend.get_default_output_device_info()['index']
@@ -130,10 +135,8 @@ class Aserver:
 
     def __repr__(self):
         state = False
-        if self.stream:
-            state = self.stream.is_active()
         msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs},
-         Stream Active: {state}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
+         Stream Active: {self._is_active}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
 
     def get_devices(self, verbose=False):
@@ -181,6 +184,7 @@ class Aserver:
                                         frames_per_buffer=self.bs,
                                         output_device_index=self.device,
                                         stream_callback=self._play_callback)
+        self._is_active = self.stream.is_active()
         _LOGGER.info("Server Booted")
         return self
 
@@ -196,6 +200,7 @@ class Aserver:
         except AttributeError:
             _LOGGER.info("No stream found...")
         self.stream = None
+        self._is_active = False
 
     def play(self, asig, onset=0, out=0, **kwargs):
         """Dispatch asigs or arrays for given onset."""
@@ -287,5 +292,18 @@ class Aserver:
     def stop(self):
         self._stop = True
 
-    def __del__(self):
+    def _terminate_backend(self):
         self.backend.terminate()
+
+    def __enter__(self):
+        return self.boot()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._is_active:
+            self.quit()
+        self._terminate_backend()
+
+    def __del__(self):
+        if self._is_active:
+            self.quit()
+        self._terminate_backend()
