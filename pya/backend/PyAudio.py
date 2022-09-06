@@ -50,4 +50,6 @@ class PyAudioBackend(BackendBase):
         return buffer, pyaudio.paContinue
 
     def terminate(self):
-        self.pa.terminate()
+        if self.pa:
+            self.pa.terminate()
+            self.pa = None
