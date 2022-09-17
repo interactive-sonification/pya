@@ -105,11 +105,6 @@ class Asig:
             return 1
 
     @property
-    def samples(self):
-        """Return the length of signal in samples"""
-        return np.shape(self.sig)[0]
-
-    @property
     def cn(self):
         """Channel names getter"""
         return self._cn
@@ -132,6 +127,20 @@ class Asig:
                     "list size doesn't match channel numbers {}".format(
                         self.channels)
                 )
+
+    @property
+    def samples(self) -> int:
+        """
+        Return the length of signal in samples
+        """
+        return np.shape(self.sig)[0]
+
+    @property
+    def dur(self) -> float:
+        """
+        Return the duration in seconds
+        """
+        return self.samples / self.sr
 
     def _load_audio_file(self, fname):
         """Load audio file, and set self.sig to the signal
