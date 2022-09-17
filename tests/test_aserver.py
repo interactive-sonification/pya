@@ -39,6 +39,34 @@ class TestAserver(TestCase):
         self.assertAlmostEqual(np.max(sample), 1, places=2)
         s.quit()
 
+    def test_play_in_context_manager(self):
+        with Aserver(backend=self.backend) as s:
+            self.asine.play(server=s)
+            time.sleep(0.5)
+            sample = s.stream.samples_out[0]
+            self.assertEqual(sample.shape[0], s.bs)
+            self.assertEqual(sample.shape[1], s.channels)
+            self.assertAlmostEqual(np.max(sample), 1, places=2)
+
+    def test_none_blocking_play(self):
+        t0 = time.time()
+        with Aserver(backend=self.backend) as s:
+            self.asine.play(server=s)
+            self.asine.play(server=s)
+            self.asine.play(server=s)
+        dur = time.time() - t0
+        self.assertLess(dur, self.asine.dur)
+
+    def test_blocking_play(self):
+        t0 = time.time()
+        with Aserver(backend=self.backend) as s:
+            self.asine.play(server=s, block=True)
+            self.asine.play(server=s, block=True)
+            self.asine.play(server=s, block=True)
+        dur = time.time() - t0
+        # plus a few hundred ms of aserver boot and stop time
+        self.assertAlmostEqual(dur, self.asine.dur * 3, places=0)
+
     def test_repr(self):
         s = Aserver(backend=self.backend)
         s.boot()

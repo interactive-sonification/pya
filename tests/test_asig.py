@@ -39,6 +39,9 @@ class TestAsig(TestCase):
                                                    (self.asine.samples - 1) / self.asine.sr,
                                                    self.asine.samples), self.asine.get_times()))
 
+    def test_dur_property(self):
+        self.assertEqual(self.asine.dur, 1.)
+
     def test_fader(self):
         result = self.asine.fade_in(dur=0.2)
         self.assertIsInstance(result, Asig)
