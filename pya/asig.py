@@ -614,7 +614,7 @@ class Asig:
                 new_sig[:, i] = interp_fn(tsel)
             return Asig(new_sig, target_sr, label=self.label + "_resampled", cn=self.cn)
 
-    def play(self, rate=1, **kwargs):
+    def play(self, rate=1, server=None, onset=0, channel=0, block=False):
         """Play Asig audio via Aserver, using Aserver.default (if existing)
         kwargs are propagated to Aserver:play(onset=0, out=0)
 
@@ -631,10 +631,7 @@ class Asig:
         _ : Asig
             return self
         """
-        if "server" in kwargs.keys():
-            s = kwargs["server"]
-        else:
-            s = Aserver.default
+        s = server or Aserver.default
         if not isinstance(s, Aserver):
             warn("Asig.play: no default server running, nor server arg specified.")
             return self
@@ -642,7 +639,7 @@ class Asig:
             asig = self
         else:
             asig = self.resample(s.sr, rate)
-        s.play(asig, **kwargs)
+        s.play(asig, server=s, onset=onset, out=channel, block=block)
         return self
 
     def shift_channel(self, shift=0):
