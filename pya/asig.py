@@ -674,7 +674,10 @@ class Asig:
                 "Shift by %d, new signal has %d channels", shift, new_sig.shape[1]
             )
             if self.channels == 1:
-                new_sig[:, shift] = self.sig
+                if self.sig.shape[1] == 1:
+                    new_sig[:, shift] = self.sig.flatten()
+                else:
+                    new_sig[:, shift] = self.sig
             elif shift > 0:
                 new_sig[:, shift: (shift + self.channels)] = self.sig
             elif shift < 0:
