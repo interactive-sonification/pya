@@ -67,7 +67,7 @@ class Ugen(Asig):
         Asig
         """
         length = get_num_of_rows(dur, n_rows, sr)
-        sig = amp * np.sin(2 * np.pi * freq * np.linspace(0, length / sr, length))
+        sig = amp * np.sin(2 * np.pi * freq * np.linspace(0, length / sr, length, endpoint=False))
         if channels > 1:
             sig = np.repeat(sig, channels)
             sig = sig.reshape((length, channels))
@@ -101,7 +101,7 @@ class Ugen(Asig):
         Asig
         """
         length = get_num_of_rows(dur, n_rows, sr)
-        sig = amp * np.cos(2 * np.pi * freq * np.linspace(0, length / sr, length))
+        sig = amp * np.cos(2 * np.pi * freq * np.linspace(0, length / sr, length, endpoint=False))
         if channels > 1:
             sig = np.repeat(sig, channels)
             sig = sig.reshape((length, channels))
