@@ -289,18 +289,15 @@ class Aserver:
     def stop(self):
         self._stop = True
 
-    def _terminate_backend(self):
-        self.backend.terminate()
-
     def __enter__(self):
         return self.boot()
 
     def __exit__(self, exc_type, exc_value, traceback):
         if self.is_active:
             self.quit()
-        self._terminate_backend()
+        self.backend.terminate()
 
     def __del__(self):
         if self.is_active:
             self.quit()
-        self._terminate_backend()
+        self.backend.terminate()
