@@ -76,7 +76,10 @@ class Asig:
             cn : list or None
                 A list of channel names, size should match the channels.
         """
-        self.sr = sr
+        if isinstance(sr, int):
+            self.sr = sr
+        else:
+            raise AttributeError("sr needs to be int.")
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
         self.label = label
