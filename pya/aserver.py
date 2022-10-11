@@ -104,7 +104,6 @@ class Aserver:
         self._stop = True
         self.empty_buffer = np.zeros((self.bs, self.channels),
                                      dtype=self.backend.dtype)
-        self._is_active = False
 
     @property
     def device_dict(self):
@@ -124,7 +123,7 @@ class Aserver:
 
     @property
     def is_active(self) -> bool:
-        return self._is_active
+        return self.stream.is_active() if self.stream is not None else False
 
     @device.setter
     def device(self, val):
@@ -136,7 +135,7 @@ class Aserver:
     def __repr__(self):
         state = False
         msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs},
-         Stream Active: {self._is_active}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
+         Stream Active: {self.is_active}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
 
     def get_devices(self, verbose=False):
@@ -173,7 +172,7 @@ class Aserver:
 
     def boot(self):
         """boot Aserver = start stream, setting its callback to this callback."""
-        if self.stream is not None and self.stream.is_active():
+        if self.is_active:
             _LOGGER.info("Aserver already running...")
             return -1
         self.boot_time = time.time()
@@ -184,13 +183,12 @@ class Aserver:
                                         frames_per_buffer=self.bs,
                                         output_device_index=self.device,
                                         stream_callback=self._play_callback)
-        self._is_active = self.stream.is_active()
         _LOGGER.info("Server Booted")
         return self
 
     def quit(self):
         """Aserver quit server: stop stream and terminate pa"""
-        if self.stream is None or not self.stream.is_active():
+        if self.is_active:
             _LOGGER.info("Stream not active")
             return -1
         try:
@@ -200,7 +198,6 @@ class Aserver:
         except AttributeError:
             _LOGGER.info("No stream found...")
         self.stream = None
-        self._is_active = False
 
     def play(self, asig, onset=0, out=0, **kwargs):
         """Dispatch asigs or arrays for given onset."""
@@ -299,11 +296,11 @@ class Aserver:
         return self.boot()
 
     def __exit__(self, exc_type, exc_value, traceback):
-        if self._is_active:
+        if self.is_active:
             self.quit()
         self._terminate_backend()
 
     def __del__(self):
-        if self._is_active:
+        if self.is_active:
             self.quit()
         self._terminate_backend()
