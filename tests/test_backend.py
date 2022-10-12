@@ -1,3 +1,4 @@
+from .helpers import wait
 from .test_play import TestPlayBase
 from .test_arecorder import TestArecorderBase
 from pya.backend import DummyBackend
@@ -29,7 +30,7 @@ class TestJupyterBackendPlay(TestCase):
     def test_boot(self):
         b = JupyterBackend()
         s = b.open(channels=2, rate=44100)
-        time.sleep(0.2)
-        self.assertTrue(s.loop.is_running())
+        is_running = wait(s.loop.is_running, seconds=10)
+        self.assertTrue(is_running)
         s.close()
         self.assertFalse(s.thread.is_alive())
