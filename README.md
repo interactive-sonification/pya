@@ -22,7 +22,7 @@ It provides:
 
   * Asig - a versatile audio signal class 
       * Ugen - a subclass of Asig, which offers unit generators 
-        such as sine, square, swatooth, noise
+        such as sine, square, sawtooth, noise
   * Aserver - an audio server class for queuing and playing Asigs
   * Arecorder - an audio recorder class
   * Aspec - an audio spectrum class, using rfft as real-valued signals are always implied
@@ -95,7 +95,7 @@ Other ways of creating an Asig object:
 
 Audio files are also possible using the file path. `WAV` should work without issues. `MP3` is supported but may raise error if [FFmpeg](https://ffmpeg.org/).
 
-If you use Anacodna, installation is quite easy:
+If you use Anaconda, installation is quite easy:
 
 `conda install -c conda-forge ffmpeg`
 
