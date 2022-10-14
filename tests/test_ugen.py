@@ -4,7 +4,6 @@ import numpy as np
 
 
 class TestUgen(TestCase):
-
     def setUp(self):
         pass
 
@@ -12,21 +11,25 @@ class TestUgen(TestCase):
         pass
 
     def test_sine(self):
-        sine = Ugen().sine(freq=44100/16, amp=0.5, dur=0.001, sr=44100 // 2, channels=2)
+        sine = Ugen().sine(
+            freq=44100 / 16, amp=0.5, dur=0.001, sr=44100 // 2, channels=2
+        )
         self.assertEqual(44100 // 2, sine.sr)
         self.assertEqual(0.5, np.max(sine.sig))
         self.assertEqual((22, 2), sine.sig.shape)
-        sine = Ugen().sine(freq=44100/16, amp=0.5, n_rows=400, sr=44100 // 2, channels=2)
+        sine = Ugen().sine(
+            freq=44100 / 16, amp=0.5, n_rows=400, sr=44100 // 2, channels=2
+        )
         self.assertEqual(44100 // 2, sine.sr)
         self.assertEqual(0.5, np.max(sine.sig))
         self.assertEqual((400, 2), sine.sig.shape)
 
     def test_cos(self):
-        cos = Ugen().cos(freq=44100/16, amp=0.5, dur=0.001, sr=44100 // 2, channels=2)
+        cos = Ugen().cos(freq=44100 / 16, amp=0.5, dur=0.001, sr=44100 // 2, channels=2)
         self.assertEqual(44100 // 2, cos.sr)
         self.assertEqual(0.5, np.max(cos.sig))
         self.assertEqual((22, 2), cos.sig.shape)
-        cos = Ugen().cos(freq=44100/16, amp=0.5, n_rows=44, sr=44100 // 2, channels=2)
+        cos = Ugen().cos(freq=44100 / 16, amp=0.5, n_rows=44, sr=44100 // 2, channels=2)
         self.assertEqual(44100 // 2, cos.sr)
         self.assertEqual(0.5, np.max(cos.sig))
         self.assertEqual((44, 2), cos.sig.shape)
@@ -44,15 +47,17 @@ class TestUgen(TestCase):
         self.assertEqual((44100 // 2, 2), saw.sig.shape)
 
     def test_noise(self):
-        white = Ugen().noise(type="white", amp=0.2, dur=1.0, sr=1000, cn=['white'], label='white_noise')
+        white = Ugen().noise(
+            type="white", amp=0.2, dur=1.0, sr=1000, cn=["white"], label="white_noise"
+        )
         pink = Ugen().noise(type="pink")
         self.assertEqual(white.sr, 1000)
-        self.assertEqual(white.cn, ['white'])
-        self.assertEqual(white.label, 'white_noise')
+        self.assertEqual(white.cn, ["white"])
+        self.assertEqual(white.label, "white_noise")
         white_2ch = Ugen().noise(type="pink", channels=2)
         self.assertEqual(white_2ch.channels, 2)
 
     def test_dur_n_rows_exception(self):
-        # An exception should be raised if both dur and n_rows are define. 
+        # An exception should be raised if both dur and n_rows are define.
         with self.assertRaises(AttributeError):
-            asig = Ugen().sine(dur=1., n_rows=400)
+            asig = Ugen().sine(dur=1.0, n_rows=400)
