@@ -97,10 +97,10 @@ class Aserver:
         self.srv_curpos = []  # start of next frame to deliver
         self.srv_outs = []  # output channel offset for that asig
         self.stream = None
-        self.boot_time = None  # time.time() when stream starts
-        self.block_cnt = None  # nr. of callback invocations
+        self.boot_time = 0  # time.time() when stream starts
+        self.block_cnt = 0  # nr. of callback invocations
         self.block_duration = self.bs / self.sr  # nominal time increment per callback
-        self.block_time = None  # estimated time stamp for current block
+        self.block_time = 0  # estimated time stamp for current block
         self._stop = True
         self.empty_buffer = np.zeros((self.bs, self.channels),
                                      dtype=self.backend.dtype)
@@ -123,7 +123,7 @@ class Aserver:
 
     @property
     def is_active(self) -> bool:
-        return self.stream.is_active() if self.stream is not None else False
+        return self.stream is not None and self.stream.is_active()
 
     @device.setter
     def device(self, val):
@@ -188,16 +188,18 @@ class Aserver:
 
     def quit(self):
         """Aserver quit server: stop stream and terminate pa"""
-        if self.stream is None or not self.is_active:
+        if not self.is_active:
             _LOGGER.info("Stream not active")
             return -1
         try:
-            self.stream.stop_stream()
-            self.stream.close()
-            _LOGGER.info("Aserver stopped.")
+            if self.stream:
+                self.stream.stop_stream()
+                self.stream.close()
+                _LOGGER.info("Aserver stopped.")
         except AttributeError:
             _LOGGER.info("No stream found...")
         self.stream = None
+        return 0
 
     def play(self, asig, onset=0, out=0, **kwargs):
         """Dispatch asigs or arrays for given onset."""
