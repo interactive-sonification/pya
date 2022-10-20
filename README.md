@@ -73,25 +73,31 @@ See pyaudio installation http://people.csail.mit.edu/hubert/pyaudio/#downloads
 
 ### Startup:
 
-    from pya import *
-    s = Aserver(bs=1024)
-    Aserver.default = s  # to set as default server
-    s.boot()   
+```Python
+import pya
+s = pya.Aserver(bs=1024)
+pya.Aserver.default = s  # to set as default server
+s.boot()
+```
 
 ### Create an Asig signal:
 
 A 1s / 440 Hz sine tone at sampling rate 44100 as channel name 'left':
 
-    import numpy as np
-    signal_array = np.sin(2 * np.pi * 440 * np.linspace(0, 1, 44100))
-    atone = Asig(signal_array, sr=44100, label='1s sine tone', cn=['left'])
+```Python
+import numpy as np
+signal_array = np.sin(2 * np.pi * 440 * np.linspace(0, 1, 44100))
+atone = pya.Asig(signal_array, sr=44100, label='1s sine tone', cn=['left'])
+```
 
 Other ways of creating an Asig object:
 
-    asig_int = Asig(44100, sr=44100)  # zero array with 44100 samples
-    asig_float = Asig(2., sr=44100)  # float argument, 2 seconds of zero array
-    asig_str = Asig('./song.wav')  # load audio file
-    asig_ugen = Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen class to create common waveforms
+```Python
+asig_int = pya.Asig(44100, sr=44100)  # zero array with 44100 samples
+asig_float = pya.Asig(2., sr=44100)  # float argument, 2 seconds of zero array
+asig_str = pya.Asig('./song.wav')  # load audio file
+asig_ugen = pya.Ugen().square(freq=440, sr=44100, dur=2., amp=0.5)  # using Ugen class to create common waveforms
+```
 
 Audio files are also possible using the file path. `WAV` should work without issues. `MP3` is supported but may raise error if [FFmpeg](https://ffmpeg.org/).
 
@@ -120,6 +126,24 @@ Otherwise:
     atone.play(server=s)  
 
 play() uses Aserver.default if server is not specified
+
+Instead of specifying a long standing server. You can also use `Aserver` as a context:
+
+```Python
+with pya.Aserver(sr=48000, bs=256, channels=2) as aserver:
+    atone.play(server=aserver)  # Or do: aserver.play(atone)
+```
+
+The benefit of this is that it will handle server bootup and shutdown for you. But notice that server up/down introduces extra latency.
+
+### Play signal on a specific device
+
+```Python
+from pya import find_device
+devices = find_device() # This will return a dictionary of all devices, with their index, name, channels.
+s = pya.Aserver(sr=48000, bs=256, device=devices['name_of_your_device']['index'])
+```
+
 
 ### Plotting signals
 
