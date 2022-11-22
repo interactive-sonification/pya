@@ -2,13 +2,8 @@ name: Pya
 
 on:
   push:
-    branches:
-      - master
-      - develop
   pull_request:
-    branches:
-      - master
-      - develop
+    types: [opened]
 
 jobs:
   unit-test:
