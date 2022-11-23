@@ -1,56 +1,33 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>pya.backend.Dummy &mdash; pya  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
-    
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
 
 <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> pya
@@ -66,11 +43,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.2/" selected="selected">v0.4.2</option>
+  <option value="/pya/v0.5.0/" >v0.5.0</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.2/" selected="selected">v0.4.2</option>
 
   <option value="/pya/v0.4.1/" >v0.4.1</option>
 
@@ -97,21 +76,34 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </div>
 
 
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.Dummy</span></code></a><ul>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a><ul>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend"><code class="docutils literal notranslate"><span class="pre">DummyBackend</span></code></a><ul>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.dtype"><code class="docutils literal notranslate"><span class="pre">DummyBackend.dtype</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.range"><code class="docutils literal notranslate"><span class="pre">DummyBackend.range</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.bs"><code class="docutils literal notranslate"><span class="pre">DummyBackend.bs</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.get_device_count"><code class="docutils literal notranslate"><span class="pre">DummyBackend.get_device_count()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.get_device_info_by_index"><code class="docutils literal notranslate"><span class="pre">DummyBackend.get_device_info_by_index()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.get_default_input_device_info"><code class="docutils literal notranslate"><span class="pre">DummyBackend.get_default_input_device_info()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.get_default_output_device_info"><code class="docutils literal notranslate"><span class="pre">DummyBackend.get_default_output_device_info()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.open"><code class="docutils literal notranslate"><span class="pre">DummyBackend.open()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.process_buffer"><code class="docutils literal notranslate"><span class="pre">DummyBackend.process_buffer()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.terminate"><code class="docutils literal notranslate"><span class="pre">DummyBackend.terminate()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyStream"><code class="docutils literal notranslate"><span class="pre">DummyStream</span></code></a><ul>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyStream.stop_stream"><code class="docutils literal notranslate"><span class="pre">DummyStream.stop_stream()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyStream.close"><code class="docutils literal notranslate"><span class="pre">DummyStream.close()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyStream._generate_data"><code class="docutils literal notranslate"><span class="pre">DummyStream._generate_data()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyStream._process_data"><code class="docutils literal notranslate"><span class="pre">DummyStream._process_data()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyStream.start_stream"><code class="docutils literal notranslate"><span class="pre">DummyStream.start_stream()</span></code></a></li>
+<li><a class="reference internal" href="#pya.backend.Dummy.DummyStream.is_active"><code class="docutils literal notranslate"><span class="pre">DummyStream.is_active()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend">DummyBackend</a><ul>
 <li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.dtype">dtype</a></li>
 <li><a class="reference internal" href="#pya.backend.Dummy.DummyBackend.range">range</a></li>
@@ -142,78 +134,37 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </li>
 </ul>
 </div>
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../../index.html">pya</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.Dummy</span></code></li>
-    
-    
+      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.Dummy</span></code></li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../../../../_sources/autoapi/pya/backend/Dummy/index.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="module-pya.backend.Dummy">
-<span id="pya-backend-dummy"></span><h1><a class="reference internal" href="#module-pya.backend.Dummy" title="pya.backend.Dummy"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.Dummy</span></code></a><a class="headerlink" href="#module-pya.backend.Dummy" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
-<table class="longtable docutils align-default">
+             
+  <section id="module-pya.backend.Dummy">
+<span id="pya-backend-dummy"></span><h1><a class="reference internal" href="#module-pya.backend.Dummy" title="pya.backend.Dummy"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.Dummy</span></code></a><a class="headerlink" href="#module-pya.backend.Dummy" title="Permalink to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -228,147 +179,131 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </tbody>
 </table>
 <dl class="py class">
-<dt id="pya.backend.Dummy.DummyBackend">
-<em class="property">class </em><code class="sig-prename descclassname">pya.backend.Dummy.</code><code class="sig-name descname">DummyBackend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dummy_devices</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../base/index.html#pya.backend.base.BackendBase" title="pya.backend.base.BackendBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.backend.base.BackendBase</span></code></a></p>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.backend.Dummy.</span></span><span class="sig-name descname"><span class="pre">DummyBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dummy_devices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#pya.backend.base.BackendBase" title="pya.backend.base.BackendBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pya.backend.base.BackendBase</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py attribute">
-<dt id="pya.backend.Dummy.DummyBackend.dtype">
-<code class="sig-name descname">dtype</code><em class="property"> = float32</em><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.dtype" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">float32</span></em><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.dtype" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.backend.Dummy.DummyBackend.range">
-<code class="sig-name descname">range</code><em class="property"> = 1</em><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.range" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend.range">
+<span class="sig-name descname"><span class="pre">range</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.range" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.backend.Dummy.DummyBackend.bs">
-<code class="sig-name descname">bs</code><em class="property"> = 256</em><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.bs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend.bs">
+<span class="sig-name descname"><span class="pre">bs</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">256</span></em><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.bs" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyBackend.get_device_count">
-<code class="sig-name descname">get_device_count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.get_device_count" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend.get_device_count">
+<span class="sig-name descname"><span class="pre">get_device_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.get_device_count" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyBackend.get_device_info_by_index">
-<code class="sig-name descname">get_device_info_by_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">idx</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.get_device_info_by_index" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend.get_device_info_by_index">
+<span class="sig-name descname"><span class="pre">get_device_info_by_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.get_device_info_by_index" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyBackend.get_default_input_device_info">
-<code class="sig-name descname">get_default_input_device_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.get_default_input_device_info" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend.get_default_input_device_info">
+<span class="sig-name descname"><span class="pre">get_default_input_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.get_default_input_device_info" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyBackend.get_default_output_device_info">
-<code class="sig-name descname">get_default_output_device_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.get_default_output_device_info" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend.get_default_output_device_info">
+<span class="sig-name descname"><span class="pre">get_default_output_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.get_default_output_device_info" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyBackend.open">
-<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">input_flag</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_flag</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rate</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">frames_per_buffer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stream_callback</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.open" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend.open">
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_per_buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.open" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyBackend.process_buffer">
-<code class="sig-name descname">process_buffer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">buffer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.process_buffer" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend.process_buffer">
+<span class="sig-name descname"><span class="pre">process_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.process_buffer" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyBackend.terminate">
-<code class="sig-name descname">terminate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.terminate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyBackend.terminate">
+<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyBackend.terminate" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="pya.backend.Dummy.DummyStream">
-<em class="property">class </em><code class="sig-prename descclassname">pya.backend.Dummy.</code><code class="sig-name descname">DummyStream</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_flag</span></em>, <em class="sig-param"><span class="n">output_flag</span></em>, <em class="sig-param"><span class="n">frames_per_buffer</span></em>, <em class="sig-param"><span class="n">rate</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">stream_callback</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../base/index.html#pya.backend.base.StreamBase" title="pya.backend.base.StreamBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.backend.base.StreamBase</span></code></a></p>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyStream">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.backend.Dummy.</span></span><span class="sig-name descname"><span class="pre">DummyStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_per_buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base/index.html#pya.backend.base.StreamBase" title="pya.backend.base.StreamBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pya.backend.base.StreamBase</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyStream.stop_stream">
-<code class="sig-name descname">stop_stream</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream.stop_stream" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyStream.stop_stream">
+<span class="sig-name descname"><span class="pre">stop_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream.stop_stream" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyStream.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream.close" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyStream.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream.close" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyStream._generate_data">
-<code class="sig-name descname">_generate_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream._generate_data" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyStream._generate_data">
+<span class="sig-name descname"><span class="pre">_generate_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream._generate_data" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyStream._process_data">
-<code class="sig-name descname">_process_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream._process_data" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyStream._process_data">
+<span class="sig-name descname"><span class="pre">_process_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream._process_data" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyStream.start_stream">
-<code class="sig-name descname">start_stream</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream.start_stream" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyStream.start_stream">
+<span class="sig-name descname"><span class="pre">start_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream.start_stream" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.backend.Dummy.DummyStream.is_active">
-<code class="sig-name descname">is_active</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream.is_active" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.backend.Dummy.DummyStream.is_active">
+<span class="sig-name descname"><span class="pre">is_active</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.Dummy.DummyStream.is_active" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
-
-    </p>
+    <p>&#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

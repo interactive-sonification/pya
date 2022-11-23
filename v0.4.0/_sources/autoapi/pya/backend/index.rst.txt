@@ -1,5 +1,5 @@
-:mod:`pya.backend`
-==================
+:py:mod:`pya.backend`
+=====================
 
 .. py:module:: pya.backend
 
@@ -37,91 +37,90 @@ Functions
    pya.backend.determine_backend
 
 
-.. class:: DummyBackend(dummy_devices=None)
 
+.. py:class:: DummyBackend(dummy_devices=None)
 
-   Bases: :class:`pya.backend.base.BackendBase`
+   Bases: :py:obj:`pya.backend.base.BackendBase`
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. attribute:: dtype
+   .. py:attribute:: dtype
       :annotation: = float32
 
       
 
-   .. attribute:: range
+   .. py:attribute:: range
       :annotation: = 1
 
       
 
-   .. attribute:: bs
+   .. py:attribute:: bs
       :annotation: = 256
 
       
 
-   .. method:: get_device_count(self)
+   .. py:method:: get_device_count()
 
 
-   .. method:: get_device_info_by_index(self, idx)
+   .. py:method:: get_device_info_by_index(idx)
 
 
-   .. method:: get_default_input_device_info(self)
+   .. py:method:: get_default_input_device_info()
 
 
-   .. method:: get_default_output_device_info(self)
+   .. py:method:: get_default_output_device_info()
 
 
-   .. method:: open(self, *args, input_flag, output_flag, rate, frames_per_buffer, channels, stream_callback=None, **kwargs)
+   .. py:method:: open(*args, input_flag, output_flag, rate, frames_per_buffer, channels, stream_callback=None, **kwargs)
 
 
-   .. method:: process_buffer(self, buffer)
+   .. py:method:: process_buffer(buffer)
 
 
-   .. method:: terminate(self)
+   .. py:method:: terminate()
 
 
 
-.. class:: PyAudioBackend(format=pyaudio.paFloat32)
+.. py:class:: PyAudioBackend(format=pyaudio.paFloat32)
 
-
-   Bases: :class:`pya.backend.base.BackendBase`
+   Bases: :py:obj:`pya.backend.base.BackendBase`
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
-   .. attribute:: _boot_delay
+   .. py:attribute:: _boot_delay
       :annotation: = 0.5
 
       
 
-   .. attribute:: bs
+   .. py:attribute:: bs
       :annotation: = 512
 
       
 
-   .. method:: get_device_count(self)
+   .. py:method:: get_device_count()
 
 
-   .. method:: get_device_info_by_index(self, idx)
+   .. py:method:: get_device_info_by_index(idx)
 
 
-   .. method:: get_default_input_device_info(self)
+   .. py:method:: get_default_input_device_info()
 
 
-   .. method:: get_default_output_device_info(self)
+   .. py:method:: get_default_output_device_info()
 
 
-   .. method:: open(self, rate, channels, input_flag, output_flag, frames_per_buffer, input_device_index=None, output_device_index=None, start=True, input_host_api_specific_stream_info=None, output_host_api_specific_stream_info=None, stream_callback=None)
+   .. py:method:: open(rate, channels, input_flag, output_flag, frames_per_buffer, input_device_index=None, output_device_index=None, start=True, input_host_api_specific_stream_info=None, output_host_api_specific_stream_info=None, stream_callback=None)
 
 
-   .. method:: process_buffer(self, buffer)
+   .. py:method:: process_buffer(buffer)
 
 
-   .. method:: terminate(self)
+   .. py:method:: terminate()
 
 
 
-.. function:: determine_backend(force_webaudio=False, port=8765)
+.. py:function:: determine_backend(force_webaudio=False, port=8765)
 
 

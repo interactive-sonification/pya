@@ -1,5 +1,5 @@
-:mod:`pya.helper`
-=================
+:py:mod:`pya.helper`
+====================
 
 .. py:module:: pya.helper
 
@@ -51,18 +51,18 @@ Functions
    pya.helper.gridplot
 
 
-.. function:: audio_read(fp)
+
+.. py:function:: audio_read(fp)
 
 
-.. exception:: _error
+.. py:exception:: _error
 
-
-   Bases: :class:`Exception`
+   Bases: :py:obj:`Exception`
 
    Common base class for all non-exit exceptions.
 
 
-.. function:: linlin(x, smi, sma, dmi, dma)
+.. py:function:: linlin(x, smi, sma, dmi, dma)
 
    Linear mapping
 
@@ -76,31 +76,31 @@ Functions
    :type dmi: float
    :param dma:
 
-   :returns: **\_** -- mapped output
+   :returns: **_** -- mapped output
    :rtype: float
 
 
-.. function:: midicps(m)
+.. py:function:: midicps(m)
 
    Convert midi number into cycle per second
 
 
-.. function:: cpsmidi(c)
+.. py:function:: cpsmidi(c)
 
    Convert cycle per second into midi number
 
 
-.. function:: dbamp(db)
+.. py:function:: dbamp(db)
 
    Convert db to amplitude
 
 
-.. function:: ampdb(amp)
+.. py:function:: ampdb(amp)
 
    Convert amplitude to db
 
 
-.. function:: spectrum(sig, samples, channels, sr)
+.. py:function:: spectrum(sig, samples, channels, sr)
 
    Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.
 
@@ -117,23 +117,23 @@ Functions
              * **Y** (*numpy.ndarray*) -- FFT of the signal.
 
 
-.. function:: normalize(d)
+.. py:function:: normalize(d)
 
    Return the normalized input array
 
 
-.. function:: audio_from_file(path, dtype=np.float32)
+.. py:function:: audio_from_file(path, dtype=np.float32)
 
    Load an audio buffer using audioread.
    This loads one block at a time, and then concatenates the results.
 
 
-.. function:: buf_to_float(x, n_bytes=2, dtype=np.float32)
+.. py:function:: buf_to_float(x, n_bytes=2, dtype=np.float32)
 
    Convert an integer buffer to floating point values.
    This is primarily useful when loading integer-valued wav data
    into numpy arrays.
-   .. seealso:: :func:`buf_to_float`
+   .. seealso:: :obj:`buf_to_float`
 
    :param x: The integer-valued data buffer
    :type x: np.ndarray [dtype=int]
@@ -146,15 +146,15 @@ Functions
    :rtype: np.ndarray [dtype=float]
 
 
-.. function:: device_info()
+.. py:function:: device_info()
 
    Return a formatted string about available audio devices and their info
 
 
-.. function:: find_device(min_input=0, min_output=0)
+.. py:function:: find_device(min_input=0, min_output=0)
 
 
-.. function:: padding(x, width, tail=True, constant_values=0)
+.. py:function:: padding(x, width, tail=True, constant_values=0)
 
    Pad signal with certain width, support 1-3D tensors.
    Use it to add silence to a signal
@@ -170,16 +170,16 @@ Functions
    :param constant_values: The value to be padded, add None will pad nan to the array
    :type constant_values: int or float or None
 
-   :returns: **\_** -- Padded array
+   :returns: **_** -- Padded array
    :rtype: np.ndarray
 
 
-.. function:: is_pow2(val)
+.. py:function:: is_pow2(val)
 
    Check if input is a power of 2 return a bool result.
 
 
-.. function:: next_pow2(x)
+.. py:function:: next_pow2(x)
 
    Find the closest pow of 2 that is great or equal or x,
    based on shift_bit_length
@@ -187,19 +187,19 @@ Functions
    :param x: A positive number
    :type x: int
 
-   :returns: **\_** -- The cloest  integer that is greater or equal to input x.
+   :returns: **_** -- The cloest  integer that is greater or equal to input x.
    :rtype: int
 
 
-.. function:: round_half_up(number)
+.. py:function:: round_half_up(number)
 
    Round up if >= .5
 
 
-.. function:: rolling_window(a, window, step=1)
+.. py:function:: rolling_window(a, window, step=1)
 
 
-.. function:: signal_to_frame(sig, n_per_frame, frame_step, window=None, stride_trick=True)
+.. py:function:: signal_to_frame(sig, n_per_frame, frame_step, window=None, stride_trick=True)
 
    Frame a signal into overlapping frames.
 
@@ -214,11 +214,11 @@ Functions
    :param stride_trick: Use stride trick to compute the rolling window and window multiplication faster
    :type stride_trick: bool
 
-   :returns: **\_** -- an array of frames.
+   :returns: **_** -- an array of frames.
    :rtype: numpy.ndarray
 
 
-.. function:: magspec(frames, NFFT)
+.. py:function:: magspec(frames, NFFT)
 
    Compute the magnitude spectrum of each frame in frames.
    If frames is an NxD matrix, output will be Nx(NFFT/2+1).
@@ -228,12 +228,12 @@ Functions
    :param NFFT: FFT length. If NFFT > frame_len, the frames are zero_padded.
    :type NFFT: int
 
-   :returns: **\_** -- If frames is an NxD matrix, output will be Nx(NFFT/2+1).
+   :returns: **_** -- If frames is an NxD matrix, output will be Nx(NFFT/2+1).
              Each row will be the magnitude spectrum of the corresponding frame.
    :rtype: numpy.ndarray
 
 
-.. function:: powspec(frames, NFFT)
+.. py:function:: powspec(frames, NFFT)
 
    Compute the power spectrum of each frame in frames,
    first comeputer the magnitude spectrum
@@ -243,12 +243,12 @@ Functions
    :param NFFT: The FFT length to use. If NFFT > frame_len, the frames are zero-padded.
    :type NFFT: int
 
-   :returns: **\_** -- Power spectrum of the framed signal.
+   :returns: **_** -- Power spectrum of the framed signal.
              Each row has the size of NFFT / 2 + 1 due to rfft.
    :rtype: numpy array
 
 
-.. function:: hz2mel(hz)
+.. py:function:: hz2mel(hz)
 
    Convert a value in Hertz to Mels
 
@@ -256,11 +256,11 @@ Functions
    :type hz: number of array
    :param Returns:
    :param --------:
-   :param \_: value in Mels, same type as the input.
-   :type \_: number of array
+   :param _: value in Mels, same type as the input.
+   :type _: number of array
 
 
-.. function:: mel2hz(mel)
+.. py:function:: mel2hz(mel)
 
    Convert a value in Hertz to Mels
 
@@ -268,11 +268,11 @@ Functions
    :type hz: number of array
    :param Returns:
    :param --------:
-   :param \_: value in Mels, same type as the input.
-   :type \_: number of array
+   :param _: value in Mels, same type as the input.
+   :type _: number of array
 
 
-.. function:: basicplot(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)
+.. py:function:: basicplot(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)
 
    Basic version of the plot for pya, this can be directly used
    by Asig. Aspec/Astft/Amfcc will have different extra setting
@@ -289,7 +289,7 @@ Functions
    :type typ: str, optional
 
 
-.. function:: gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None)
+.. py:function:: gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None)
 
    Create a grid plot of pya objects which have plot() methods,
    i.e. Asig, Aspec, Astft, Amfcc.

@@ -1,56 +1,33 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>pya package &mdash; pya  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
 
 <a href="index.html" class="icon icon-home" alt="Documentation Home"> pya
@@ -66,11 +43,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.2/" >v0.4.2</option>
+  <option value="/pya/v0.5.0/" >v0.5.0</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/v0.4.1/" selected="selected">v0.4.1</option>
 
@@ -97,652 +76,127 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </div>
 
 
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">pya package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-pya.Arecorder">pya.Arecorder module</a><ul>
-<li><a class="reference internal" href="#examples">Examples:</a><ul>
-<li><a class="reference internal" href="#pya.Arecorder.device">device</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-pya.Aserver">pya.Aserver module</a><ul>
-<li><a class="reference internal" href="#id1">Examples:</a><ul>
-<li><a class="reference internal" href="#pya.Aserver.device">device</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-pya.Asig">pya.Asig module</a></li>
-<li><a class="reference internal" href="#module-pya.Aspec">pya.Aspec module</a></li>
-<li><a class="reference internal" href="#module-pya.Astft">pya.Astft module</a></li>
-<li><a class="reference internal" href="#module-pya.Ugen">pya.Ugen module</a></li>
-<li><a class="reference internal" href="#module-pya.version">pya.version module</a></li>
-<li><a class="reference internal" href="#module-pya">Module contents</a><ul>
-<li><a class="reference internal" href="#pya.Asig.sig">sig</a></li>
-<li><a class="reference internal" href="#pya.Asig.sr">sr</a></li>
-<li><a class="reference internal" href="#pya.Asig.label">label</a></li>
-<li><a class="reference internal" href="#pya.Asig.channels">channels</a></li>
-<li><a class="reference internal" href="#pya.Asig.cn">cn</a></li>
-<li><a class="reference internal" href="#pya.Asig.mix_mode">mix_mode</a></li>
-<li><a class="reference internal" href="#pya.Asig.b">b</a></li>
-<li><a class="reference internal" href="#pya.Asig.bound">bound</a></li>
-<li><a class="reference internal" href="#id0">channels</a></li>
-<li><a class="reference internal" href="#id2">cn</a></li>
-<li><a class="reference internal" href="#pya.Asig.extend">extend</a></li>
-<li><a class="reference internal" href="#pya.Asig.o">o</a></li>
-<li><a class="reference internal" href="#pya.Asig.overwrite">overwrite</a></li>
-<li><a class="reference internal" href="#pya.Asig.samples">samples</a></li>
-<li><a class="reference internal" href="#pya.Asig.x">x</a></li>
-<li><a class="reference internal" href="#pya.Ugen.b">b</a></li>
-<li><a class="reference internal" href="#pya.Ugen.bound">bound</a></li>
-<li><a class="reference internal" href="#pya.Ugen.channels">channels</a></li>
-<li><a class="reference internal" href="#pya.Ugen.cn">cn</a></li>
-<li><a class="reference internal" href="#pya.Ugen.extend">extend</a></li>
-<li><a class="reference internal" href="#pya.Ugen.o">o</a></li>
-<li><a class="reference internal" href="#pya.Ugen.overwrite">overwrite</a></li>
-<li><a class="reference internal" href="#pya.Ugen.samples">samples</a></li>
-<li><a class="reference internal" href="#pya.Ugen.x">x</a></li>
-<li><a class="reference internal" href="#pya.shutdown">shutdown</a></li>
-<li><a class="reference internal" href="#pya.startup">startup</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#pya-arecorder-module">pya.Arecorder module</a></li>
+<li><a class="reference internal" href="#pya-aserver-module">pya.Aserver module</a></li>
+<li><a class="reference internal" href="#pya-asig-module">pya.Asig module</a></li>
+<li><a class="reference internal" href="#pya-aspec-module">pya.Aspec module</a></li>
+<li><a class="reference internal" href="#pya-astft-module">pya.Astft module</a></li>
+<li><a class="reference internal" href="#pya-ugen-module">pya.Ugen module</a></li>
+<li><a class="reference internal" href="#pya-version-module">pya.version module</a></li>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">pya</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li>pya package</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">pya package</li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/pya.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="pya-package">
-<h1>pya package<a class="headerlink" href="#pya-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+             
+  <section id="pya-package">
+<h1>pya package<a class="headerlink" href="#pya-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pya.backend.html">pya.backend package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pya.backend.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#module-pya.backend.Dummy">pya.backend.Dummy module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#module-pya.backend.PyAudio">pya.backend.PyAudio module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#module-pya.backend.base">pya.backend.base module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#module-pya.backend">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend">DummyBackend</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend.bs">bs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend.dtype">dtype</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend.get_default_input_device_info">get_default_input_device_info</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend.get_default_output_device_info">get_default_output_device_info</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend.get_device_count">get_device_count</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend.get_device_info_by_index">get_device_info_by_index</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend.open">open</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend.process_buffer">process_buffer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend.range">range</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyBackend.terminate">terminate</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyStream">DummyStream</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyStream.close">close</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyStream.is_active">is_active</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyStream.start_stream">start_stream</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.Dummy.DummyStream.stop_stream">stop_stream</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pya.backend.html#pya.backend.PyAudio.PyAudioBackend">PyAudioBackend</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.PyAudio.PyAudioBackend.bs">bs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.PyAudio.PyAudioBackend.get_default_input_device_info">get_default_input_device_info</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.PyAudio.PyAudioBackend.get_default_output_device_info">get_default_output_device_info</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.PyAudio.PyAudioBackend.get_device_count">get_device_count</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.PyAudio.PyAudioBackend.get_device_info_by_index">get_device_info_by_index</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.PyAudio.PyAudioBackend.open">open</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.PyAudio.PyAudioBackend.process_buffer">process_buffer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.PyAudio.PyAudioBackend.terminate">terminate</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pya.backend.html#pya.backend.base.BackendBase">BackendBase</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.BackendBase.get_default_input_device_info">get_default_input_device_info</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.BackendBase.get_default_output_device_info">get_default_output_device_info</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.BackendBase.get_device_count">get_device_count</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.BackendBase.get_device_info_by_index">get_device_info_by_index</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.BackendBase.open">open</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.BackendBase.process_buffer">process_buffer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.BackendBase.terminate">terminate</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pya.backend.html#pya.backend.base.StreamBase">StreamBase</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.StreamBase.close">close</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.StreamBase.is_active">is_active</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.StreamBase.start_stream">start_stream</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.backend.html#pya.backend.base.StreamBase.stop_stream">stop_stream</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#pya-backend-dummy-module">pya.backend.Dummy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#pya-backend-pyaudio-module">pya.backend.PyAudio module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#pya-backend-base-module">pya.backend.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.backend.html#module-contents">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pya.helper.html">pya.helper package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pya.helper.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pya.helper.html#module-pya.helper.codec">pya.helper.codec module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pya.helper.html#module-pya.helper.helpers">pya.helper.helpers module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pya.helper.html#module-pya.helper">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.BitWidthError">BitWidthError</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.CommunicationError">CommunicationError</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.DecodeError">DecodeError</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.FFmpegAudioFile">FFmpegAudioFile</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pya.helper.html#pya.helper.codec.FFmpegAudioFile.close">close</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.helper.html#pya.helper.codec.FFmpegAudioFile.read_data">read_data</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.FFmpegError">FFmpegError</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.NoBackendError">NoBackendError</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.NotInstalledError">NotInstalledError</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.QueueReaderThread">QueueReaderThread</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pya.helper.html#pya.helper.codec.QueueReaderThread.run">run</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.RawAudioFile">RawAudioFile</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pya.helper.html#pya.helper.codec.RawAudioFile.channels">channels</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.helper.html#pya.helper.codec.RawAudioFile.close">close</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.helper.html#pya.helper.codec.RawAudioFile.duration">duration</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.helper.html#pya.helper.codec.RawAudioFile.read_data">read_data</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pya.helper.html#pya.helper.codec.RawAudioFile.samplerate">samplerate</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.ReadTimeoutError">ReadTimeoutError</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.UnsupportedError">UnsupportedError</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.audio_read">audio_read</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.available_backends">available_backends</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.byteswap">byteswap</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.ffmpeg_available">ffmpeg_available</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.codec.popen_multiple">popen_multiple</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.ampdb">ampdb</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.audio_from_file">audio_from_file</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.buf_to_float">buf_to_float</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.cpsmidi">cpsmidi</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.dbamp">dbamp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.device_info">device_info</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.find_device">find_device</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.hz2mel">hz2mel</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.is_pow2">is_pow2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.linlin">linlin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.magspec">magspec</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.mel2hz">mel2hz</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.midicps">midicps</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.next_pow2">next_pow2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.normalize">normalize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.padding">padding</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.powspec">powspec</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.rolling_window">rolling_window</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.round_half_up">round_half_up</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.signal_to_frame">signal_to_frame</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pya.helper.html#pya.helper.helpers.spectrum">spectrum</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="pya.helper.html#pya-helper-codec-module">pya.helper.codec module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.helper.html#pya-helper-helpers-module">pya.helper.helpers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pya.helper.html#module-contents">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-pya.Arecorder">
-<span id="pya-arecorder-module"></span><h2>pya.Arecorder module<a class="headerlink" href="#module-pya.Arecorder" title="Permalink to this headline">¶</a></h2>
-<p>pya audio recorder Based on pyaudio, uses callbacks to save audio data
-for pyaudio signals into ASigs</p>
-<div class="section" id="examples">
-<h3>Examples:<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="n">Arecorder</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span> <span class="o">=</span> <span class="n">Arecorder</span><span class="p">()</span><span class="o">.</span><span class="n">boot</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span><span class="o">.</span><span class="n">record</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ar</span><span class="o">.</span><span class="n">recordings</span><span class="p">)</span>  
-<span class="go">[Asig(&#39;&#39;): ... x ... @ 44100Hz = ...</span>
-</pre></div>
-</div>
-<dl class="py attribute">
-<dt id="pya.Arecorder.device">
-<code class="sig-prename descclassname">pya.Arecorder.</code><code class="sig-name descname">device</code><a class="headerlink" href="#pya.Arecorder.device" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-</div>
-<div class="section" id="module-pya.Aserver">
-<span id="pya-aserver-module"></span><h2>pya.Aserver module<a class="headerlink" href="#module-pya.Aserver" title="Permalink to this headline">¶</a></h2>
-<p>Pya audio server
-Based on pyaudio, works as a FIFO style audio stream pipeline,
-allowing Asig.play() to send audio segement into the stream.</p>
-<div class="section" id="id1">
-<h3>Examples:<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span> <span class="o">=</span> <span class="n">Aserver</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span><span class="o">.</span><span class="n">boot</span><span class="p">()</span>
-<span class="go">AServer: sr: 44100, blocksize: ...,</span>
-<span class="go">         Stream Active: True, Device: ...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">asine</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">sine</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">asine</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">ser</span><span class="p">)</span>
-<span class="go">Asig(&#39;sine&#39;): 1 x 44100 @ 44100Hz = 1.000s cn=[&#39;0&#39;]</span>
-</pre></div>
-</div>
-<dl class="py attribute">
-<dt id="pya.Aserver.device">
-<code class="sig-prename descclassname">pya.Aserver.</code><code class="sig-name descname">device</code><a class="headerlink" href="#pya.Aserver.device" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-</div>
-<div class="section" id="module-pya.Asig">
-<span id="pya-asig-module"></span><h2>pya.Asig module<a class="headerlink" href="#module-pya.Asig" title="Permalink to this headline">¶</a></h2>
-<p>Audio signal class.
-Asig enables manipulation of audio signals in the style of numpy and more.
-Asig offer functions for plotting (via matplotlib) and playing audio
-(using the pya.Aserver class)</p>
-<dl class="py attribute">
-<dt id="pya.Asig.sig">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">sig</code><a class="headerlink" href="#pya.Asig.sig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Array for the audio signal. Can be mono or multichannel.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>numpy.array</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.sr">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">sr</code><a class="headerlink" href="#pya.Asig.sr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sampling rate</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.label">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">label</code><a class="headerlink" href="#pya.Asig.label" title="Permalink to this definition">¶</a></dt>
-<dd><p>A string label to give the object a unique identifier.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.channels">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">channels</code><a class="headerlink" href="#pya.Asig.channels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of channels</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.cn">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">cn</code><a class="headerlink" href="#pya.Asig.cn" title="Permalink to this definition">¶</a></dt>
-<dd><p>cn short for channel names is a list of string of size channels,
-to give each channel a unique name.
-channel names can be used to subset signal channels in a more readible way,
-e.g. asig[:, [‘left’, ‘front’]] subsets the left and front channels of the signal.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>list of str, None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.mix_mode">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">mix_mode</code><a class="headerlink" href="#pya.Asig.mix_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>used to extend numpy __setitem__() operation to frequent audio manipulations such as
-mixing, extending, boundary, replacing.
-Current Asig supports the mix_modes:
-bound, extend, overwrite.  mix_mode should not be
-set directly but is set temporarilty when using
-the .bound, .extend and .overwrite properties.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>str or None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.b">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">b</code><a class="headerlink" href="#pya.Asig.b" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Bound mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.bound">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">bound</code><a class="headerlink" href="#pya.Asig.bound" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Bound mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="id0">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">channels</code><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the number of channels</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="id2">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">cn</code><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Channel names getter</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.extend">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">extend</code><a class="headerlink" href="#pya.Asig.extend" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode allows destination sig size in assignment to be extended through setitem</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Extend mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.o">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">o</code><a class="headerlink" href="#pya.Asig.o" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode cuts and replaces target selection by source signal on assignment via setitem</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Overwrite mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.overwrite">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">overwrite</code><a class="headerlink" href="#pya.Asig.overwrite" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode cuts and replaces target selection by source signal on assignment via setitem</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Overwrite mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.samples">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">samples</code><a class="headerlink" href="#pya.Asig.samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the length of signal in samples</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Asig.x">
-<code class="sig-prename descclassname">pya.Asig.</code><code class="sig-name descname">x</code><a class="headerlink" href="#pya.Asig.x" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode allows destination sig size in assignment to be extended through setitem</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Extend mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="module-pya.Aspec">
-<span id="pya-aspec-module"></span><h2>pya.Aspec module<a class="headerlink" href="#module-pya.Aspec" title="Permalink to this headline">¶</a></h2>
-<p>Audio spectrum class using rfft</p>
-</div>
-<div class="section" id="module-pya.Astft">
-<span id="pya-astft-module"></span><h2>pya.Astft module<a class="headerlink" href="#module-pya.Astft" title="Permalink to this headline">¶</a></h2>
-<p>Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
-attribute cn being the list of channel names, and label being the name of the Asig</p>
-</div>
-<div class="section" id="module-pya.Ugen">
-<span id="pya-ugen-module"></span><h2>pya.Ugen module<a class="headerlink" href="#module-pya.Ugen" title="Permalink to this headline">¶</a></h2>
-<p>Unit Generator for to create Asig with predefined signal</p>
-<dl class="simple">
-<dt>Currently avaiable:</dt><dd><p>sine, cos, square, sawtooth, noise</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<p>Create common waveform in Asig.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="n">Ugen</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a sine wave of 440Hz at 44100Hz sr for 2 seconds. Same for cos()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sine</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">sine</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mi">440</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">dur</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;sine&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a square wave of 25Hz, 2000 samples at 100 sr, stereo.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sq</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">n_rows</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cn</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Make a white noise, another option is &#39;pink&#39;, at 44100Hz for 1second.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">noi</span> <span class="o">=</span> <span class="n">Ugen</span><span class="p">()</span><span class="o">.</span><span class="n">noise</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="py attribute">
-<dt id="pya.Ugen.b">
-<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">b</code><a class="headerlink" href="#pya.Ugen.b" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Bound mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Ugen.bound">
-<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">bound</code><a class="headerlink" href="#pya.Ugen.bound" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode allows to truncate a source signal in assignment to a limited destination in setitem.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Bound mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Ugen.channels">
-<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">channels</code><a class="headerlink" href="#pya.Ugen.channels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the number of channels</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Ugen.cn">
-<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">cn</code><a class="headerlink" href="#pya.Ugen.cn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Channel names getter</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Ugen.extend">
-<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">extend</code><a class="headerlink" href="#pya.Ugen.extend" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode allows destination sig size in assignment to be extended through setitem</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Extend mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Ugen.o">
-<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">o</code><a class="headerlink" href="#pya.Ugen.o" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode cuts and replaces target selection by source signal on assignment via setitem</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Overwrite mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Ugen.overwrite">
-<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">overwrite</code><a class="headerlink" href="#pya.Ugen.overwrite" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode cuts and replaces target selection by source signal on assignment via setitem</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Overwrite mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Ugen.samples">
-<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">samples</code><a class="headerlink" href="#pya.Ugen.samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the length of signal in samples</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pya.Ugen.x">
-<code class="sig-prename descclassname">pya.Ugen.</code><code class="sig-name descname">x</code><a class="headerlink" href="#pya.Ugen.x" title="Permalink to this definition">¶</a></dt>
-<dd><p>this mode allows destination sig size in assignment to be extended through setitem</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Extend mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="module-pya.version">
-<span id="pya-version-module"></span><h2>pya.version module<a class="headerlink" href="#module-pya.version" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-pya">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pya" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="pya.shutdown">
-<code class="sig-prename descclassname">pya.</code><code class="sig-name descname">shutdown</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.shutdown" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="pya.startup">
-<code class="sig-prename descclassname">pya.</code><code class="sig-name descname">startup</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.startup" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="pya-arecorder-module">
+<h2>pya.Arecorder module<a class="headerlink" href="#pya-arecorder-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="pya-aserver-module">
+<h2>pya.Aserver module<a class="headerlink" href="#pya-aserver-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="pya-asig-module">
+<h2>pya.Asig module<a class="headerlink" href="#pya-asig-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="pya-aspec-module">
+<h2>pya.Aspec module<a class="headerlink" href="#pya-aspec-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="pya-astft-module">
+<h2>pya.Astft module<a class="headerlink" href="#pya-astft-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="pya-ugen-module">
+<h2>pya.Ugen module<a class="headerlink" href="#pya-ugen-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="pya-version-module">
+<h2>pya.version module<a class="headerlink" href="#pya-version-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+</section>
+</section>
 
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
-
-    </p>
+    <p>&#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

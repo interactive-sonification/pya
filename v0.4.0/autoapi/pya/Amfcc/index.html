@@ -1,56 +1,33 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>pya.Amfcc &mdash; pya  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-
-    
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
 
 <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pya
@@ -66,11 +43,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.2/" >v0.4.2</option>
+  <option value="/pya/v0.5.0/" >v0.5.0</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/v0.4.1/" >v0.4.1</option>
 
@@ -97,21 +76,40 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </div>
 
 
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Amfcc</span></code></a><ul>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#pya.Amfcc._LOGGER"><code class="docutils literal notranslate"><span class="pre">_LOGGER</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc"><code class="docutils literal notranslate"><span class="pre">Amfcc</span></code></a><ul>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.x"><code class="docutils literal notranslate"><span class="pre">Amfcc.x</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.sr"><code class="docutils literal notranslate"><span class="pre">Amfcc.sr</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.duration"><code class="docutils literal notranslate"><span class="pre">Amfcc.duration</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.label"><code class="docutils literal notranslate"><span class="pre">Amfcc.label</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.n_per_frame"><code class="docutils literal notranslate"><span class="pre">Amfcc.n_per_frame</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.hopsize"><code class="docutils literal notranslate"><span class="pre">Amfcc.hopsize</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.nfft"><code class="docutils literal notranslate"><span class="pre">Amfcc.nfft</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.window"><code class="docutils literal notranslate"><span class="pre">Amfcc.window</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.nfilters"><code class="docutils literal notranslate"><span class="pre">Amfcc.nfilters</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.ncep"><code class="docutils literal notranslate"><span class="pre">Amfcc.ncep</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.cepliter"><code class="docutils literal notranslate"><span class="pre">Amfcc.cepliter</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.frames"><code class="docutils literal notranslate"><span class="pre">Amfcc.frames</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.frame_energy"><code class="docutils literal notranslate"><span class="pre">Amfcc.frame_energy</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.filter_banks"><code class="docutils literal notranslate"><span class="pre">Amfcc.filter_banks</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.cepstra"><code class="docutils literal notranslate"><span class="pre">Amfcc.cepstra</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.nframes"><code class="docutils literal notranslate"><span class="pre">Amfcc.nframes</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.timestamp"><code class="docutils literal notranslate"><span class="pre">Amfcc.timestamp</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.features"><code class="docutils literal notranslate"><span class="pre">Amfcc.features</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.__repr__"><code class="docutils literal notranslate"><span class="pre">Amfcc.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.preemphasis"><code class="docutils literal notranslate"><span class="pre">Amfcc.preemphasis()</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.mel_filterbanks"><code class="docutils literal notranslate"><span class="pre">Amfcc.mel_filterbanks()</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.lifter"><code class="docutils literal notranslate"><span class="pre">Amfcc.lifter()</span></code></a></li>
+<li><a class="reference internal" href="#pya.Amfcc.Amfcc.plot"><code class="docutils literal notranslate"><span class="pre">Amfcc.plot()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#pya.Amfcc._LOGGER">_LOGGER</a></li>
 <li><a class="reference internal" href="#pya.Amfcc.Amfcc">Amfcc</a><ul>
 <li><a class="reference internal" href="#pya.Amfcc.Amfcc.x">x</a></li>
@@ -147,78 +145,37 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </li>
 </ul>
 </div>
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">pya</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Amfcc</span></code></li>
-    
-    
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Amfcc</span></code></li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../../../_sources/autoapi/pya/Amfcc/index.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="module-pya.Amfcc">
-<span id="pya-amfcc"></span><h1><a class="reference internal" href="../index.html#pya.Amfcc" title="pya.Amfcc"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Amfcc</span></code></a><a class="headerlink" href="#module-pya.Amfcc" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
-<table class="longtable docutils align-default">
+             
+  <section id="module-pya.Amfcc">
+<span id="pya-amfcc"></span><h1><a class="reference internal" href="../index.html#pya.Amfcc" title="pya.Amfcc"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Amfcc</span></code></a><a class="headerlink" href="#module-pya.Amfcc" title="Permalink to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -229,14 +186,28 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </tr>
 </tbody>
 </table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.Amfcc._LOGGER" title="pya.Amfcc._LOGGER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_LOGGER</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
 <dl class="py data">
-<dt id="pya.Amfcc._LOGGER">
-<code class="sig-prename descclassname">pya.Amfcc.</code><code class="sig-name descname">_LOGGER</code><a class="headerlink" href="#pya.Amfcc._LOGGER" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc._LOGGER">
+<span class="sig-prename descclassname"><span class="pre">pya.Amfcc.</span></span><span class="sig-name descname"><span class="pre">_LOGGER</span></span><a class="headerlink" href="#pya.Amfcc._LOGGER" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
-<dt id="pya.Amfcc.Amfcc">
-<em class="property">class </em><code class="sig-prename descclassname">pya.Amfcc.</code><code class="sig-name descname">Amfcc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">sr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">n_per_frame</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hopsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nfft</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">'hann'</span></em>, <em class="sig-param"><span class="n">nfilters</span><span class="o">=</span><span class="default_value">26</span></em>, <em class="sig-param"><span class="n">ncep</span><span class="o">=</span><span class="default_value">13</span></em>, <em class="sig-param"><span class="n">ceplifter</span><span class="o">=</span><span class="default_value">22</span></em>, <em class="sig-param"><span class="n">preemph</span><span class="o">=</span><span class="default_value">0.95</span></em>, <em class="sig-param"><span class="n">append_energy</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.Amfcc.</span></span><span class="sig-name descname"><span class="pre">Amfcc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_per_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hopsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hann'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfilters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">26</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">13</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ceplifter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preemph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append_energy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc" title="Permalink to this definition"></a></dt>
 <dd><p>Mel filtered Fourier spectrum (MFCC) class,
 this class is inspired by jameslyons/python_speech_features,
 <a class="reference external" href="https://github.com/jameslyons/python_speech_features">https://github.com/jameslyons/python_speech_features</a>
@@ -254,20 +225,20 @@ in each filter.
 * Take the logarithm of all filterbank energies.</p>
 </div></blockquote>
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.x">
-<code class="sig-name descname">x</code><a class="headerlink" href="#pya.Amfcc.Amfcc.x" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.x">
+<span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.x" title="Permalink to this definition"></a></dt>
 <dd><p>x can be two forms, the most commonly used is an Asig object.
 Such as directly acquired from an Asig object via Asig.to_stft().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="../../../pya.html#pya.Asig.Asig" title="pya.Asig.Asig">Asig</a> or numpy.ndarray</p>
+<dd class="field-odd"><p><a class="reference internal" href="../index.html#pya.Asig" title="pya.Asig">Asig</a> or numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.sr">
-<code class="sig-name descname">sr</code><a class="headerlink" href="#pya.Amfcc.Amfcc.sr" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.sr">
+<span class="sig-name descname"><span class="pre">sr</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.sr" title="Permalink to this definition"></a></dt>
 <dd><p>sampling rate, this is only necessary if x is not Asig.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -277,8 +248,8 @@ Such as directly acquired from an Asig object via Asig.to_stft().</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.duration">
-<code class="sig-name descname">duration</code><a class="headerlink" href="#pya.Amfcc.Amfcc.duration" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.duration">
+<span class="sig-name descname"><span class="pre">duration</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.duration" title="Permalink to this definition"></a></dt>
 <dd><p>Duration of the signal in second,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -288,8 +259,8 @@ Such as directly acquired from an Asig object via Asig.to_stft().</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.label">
-<code class="sig-name descname">label</code><a class="headerlink" href="#pya.Amfcc.Amfcc.label" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.label" title="Permalink to this definition"></a></dt>
 <dd><p>A string label as an identifier.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -299,8 +270,8 @@ Such as directly acquired from an Asig object via Asig.to_stft().</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.n_per_frame">
-<code class="sig-name descname">n_per_frame</code><a class="headerlink" href="#pya.Amfcc.Amfcc.n_per_frame" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.n_per_frame">
+<span class="sig-name descname"><span class="pre">n_per_frame</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.n_per_frame" title="Permalink to this definition"></a></dt>
 <dd><p>Number of samples per frame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -310,8 +281,8 @@ Such as directly acquired from an Asig object via Asig.to_stft().</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.hopsize">
-<code class="sig-name descname">hopsize</code><a class="headerlink" href="#pya.Amfcc.Amfcc.hopsize" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.hopsize">
+<span class="sig-name descname"><span class="pre">hopsize</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.hopsize" title="Permalink to this definition"></a></dt>
 <dd><p>Number of samples of each successive frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -321,8 +292,8 @@ Such as directly acquired from an Asig object via Asig.to_stft().</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.nfft">
-<code class="sig-name descname">nfft</code><a class="headerlink" href="#pya.Amfcc.Amfcc.nfft" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.nfft">
+<span class="sig-name descname"><span class="pre">nfft</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.nfft" title="Permalink to this definition"></a></dt>
 <dd><p>FFT size, default to be next power of 2 integer of n_per_frame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -332,8 +303,8 @@ Such as directly acquired from an Asig object via Asig.to_stft().</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.window">
-<code class="sig-name descname">window</code><a class="headerlink" href="#pya.Amfcc.Amfcc.window" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.window">
+<span class="sig-name descname"><span class="pre">window</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.window" title="Permalink to this definition"></a></dt>
 <dd><p>Type of the window function (Default value=’hann’),
 use scipy.signal.get_window to return a numpy array.
 If None, no windowing will be applied.</p>
@@ -345,8 +316,8 @@ If None, no windowing will be applied.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.nfilters">
-<code class="sig-name descname">nfilters</code><a class="headerlink" href="#pya.Amfcc.Amfcc.nfilters" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.nfilters">
+<span class="sig-name descname"><span class="pre">nfilters</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.nfilters" title="Permalink to this definition"></a></dt>
 <dd><p>The number of mel filters. Default is 26</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -356,8 +327,8 @@ If None, no windowing will be applied.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.ncep">
-<code class="sig-name descname">ncep</code><a class="headerlink" href="#pya.Amfcc.Amfcc.ncep" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.ncep">
+<span class="sig-name descname"><span class="pre">ncep</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.ncep" title="Permalink to this definition"></a></dt>
 <dd><p>Number of cepstrum. Default is 13</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -367,8 +338,8 @@ If None, no windowing will be applied.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.cepliter">
-<code class="sig-name descname">cepliter</code><a class="headerlink" href="#pya.Amfcc.Amfcc.cepliter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.cepliter">
+<span class="sig-name descname"><span class="pre">cepliter</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.cepliter" title="Permalink to this definition"></a></dt>
 <dd><p>Lifter’s cepstral coefficient. Default is 22</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -378,8 +349,8 @@ If None, no windowing will be applied.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.frames">
-<code class="sig-name descname">frames</code><a class="headerlink" href="#pya.Amfcc.Amfcc.frames" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.frames">
+<span class="sig-name descname"><span class="pre">frames</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.frames" title="Permalink to this definition"></a></dt>
 <dd><p>The original signal being reshape into frame based on
 n_per_frame and hopsize.</p>
 <dl class="field-list simple">
@@ -390,8 +361,8 @@ n_per_frame and hopsize.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.frame_energy">
-<code class="sig-name descname">frame_energy</code><a class="headerlink" href="#pya.Amfcc.Amfcc.frame_energy" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.frame_energy">
+<span class="sig-name descname"><span class="pre">frame_energy</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.frame_energy" title="Permalink to this definition"></a></dt>
 <dd><p>Total power spectrum energy of each frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -401,8 +372,8 @@ n_per_frame and hopsize.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.filter_banks">
-<code class="sig-name descname">filter_banks</code><a class="headerlink" href="#pya.Amfcc.Amfcc.filter_banks" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.filter_banks">
+<span class="sig-name descname"><span class="pre">filter_banks</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.filter_banks" title="Permalink to this definition"></a></dt>
 <dd><p>An array of mel filters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -412,8 +383,8 @@ n_per_frame and hopsize.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pya.Amfcc.Amfcc.cepstra">
-<code class="sig-name descname">cepstra</code><a class="headerlink" href="#pya.Amfcc.Amfcc.cepstra" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.cepstra">
+<span class="sig-name descname"><span class="pre">cepstra</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.cepstra" title="Permalink to this definition"></a></dt>
 <dd><p>An array of the MFCC coeffcient, size: nframes x ncep</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -422,31 +393,31 @@ n_per_frame and hopsize.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pya.Amfcc.Amfcc.nframes">
-<em class="property">property </em><code class="sig-name descname">nframes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.nframes" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.nframes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nframes</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.nframes" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt id="pya.Amfcc.Amfcc.timestamp">
-<em class="property">property </em><code class="sig-name descname">timestamp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.timestamp" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.timestamp">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamp</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.timestamp" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt id="pya.Amfcc.Amfcc.features">
-<em class="property">property </em><code class="sig-name descname">features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.features" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.features">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">features</span></span><a class="headerlink" href="#pya.Amfcc.Amfcc.features" title="Permalink to this definition"></a></dt>
 <dd><p>The features refer to the cepstra</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.Amfcc.Amfcc.__repr__">
-<code class="sig-name descname">__repr__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.__repr__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.__repr__" title="Permalink to this definition"></a></dt>
 <dd><p>Return repr(self).</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.Amfcc.Amfcc.preemphasis">
-<em class="property">static </em><code class="sig-name descname">preemphasis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">coeff</span><span class="o">=</span><span class="default_value">0.97</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.preemphasis" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.preemphasis">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">preemphasis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.97</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.preemphasis" title="Permalink to this definition"></a></dt>
 <dd><p>Pre-emphasis filter to whiten the spectrum.
 Pre-emphasis is a way of compensating for the
 rapid decaying spectrum of speech.
@@ -469,8 +440,8 @@ and the slower response to change.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.Amfcc.Amfcc.mel_filterbanks">
-<em class="property">static </em><code class="sig-name descname">mel_filterbanks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr</span></em>, <em class="sig-param"><span class="n">nfilters</span><span class="o">=</span><span class="default_value">26</span></em>, <em class="sig-param"><span class="n">nfft</span><span class="o">=</span><span class="default_value">512</span></em>, <em class="sig-param"><span class="n">lowfreq</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">highfreq</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.mel_filterbanks" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.mel_filterbanks">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mel_filterbanks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfilters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">26</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowfreq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highfreq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.mel_filterbanks" title="Permalink to this definition"></a></dt>
 <dd><p>Compute a Mel-filterbank. The filters are stored in the rows,
 the columns correspond to fft bins. The filters are returned as
 an array of size nfilt * (nfft/2 + 1)</p>
@@ -495,8 +466,8 @@ containing filterbank. Each row holds 1 filter.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.Amfcc.Amfcc.lifter">
-<em class="property">static </em><code class="sig-name descname">lifter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cepstra</span></em>, <em class="sig-param"><span class="n">L</span><span class="o">=</span><span class="default_value">22</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.lifter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.lifter">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lifter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cepstra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.lifter" title="Permalink to this definition"></a></dt>
 <dd><p>Apply a cepstral lifter the the matrix of cepstra.
 This has the effect of increasing the magnitude of
 the high frequency DCT coeffs.</p>
@@ -527,8 +498,8 @@ less discriminative for speech contents.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.Amfcc.Amfcc.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cmap</span><span class="o">=</span><span class="default_value">'inferno'</span></em>, <em class="sig-param"><span class="n">show_bar</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">scale</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x_as_time</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">nxlabel</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.plot" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.Amfcc.Amfcc.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inferno'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_bar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_as_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nxlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Amfcc.Amfcc.plot" title="Permalink to this definition"></a></dt>
 <dd><p>Plot Amfcc.features via matshow, x is frames/time, y is the MFCCs</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -545,52 +516,36 @@ less discriminative for speech contents.</p></li>
 
 </dd></dl>
 
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
-
-    </p>
+    <p>&#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

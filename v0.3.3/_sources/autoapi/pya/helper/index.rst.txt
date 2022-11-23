@@ -1,5 +1,5 @@
-:mod:`pya.helper`
-=================
+:py:mod:`pya.helper`
+====================
 
 .. py:module:: pya.helper
 
@@ -38,27 +38,28 @@ Functions
    pya.helper.find_device
 
 
-.. function:: ampdb(amp)
+
+.. py:function:: ampdb(amp)
 
    Convert amplitude to db
 
 
-.. function:: dbamp(db)
+.. py:function:: dbamp(db)
 
    Convert db to amplitude
 
 
-.. function:: cpsmidi(c)
+.. py:function:: cpsmidi(c)
 
    Convert cycle per second into midi number
 
 
-.. function:: midicps(m)
+.. py:function:: midicps(m)
 
    Convert midi number into cycle per second
 
 
-.. function:: linlin(x, smi, sma, dmi, dma)
+.. py:function:: linlin(x, smi, sma, dmi, dma)
 
    Linear mapping
 
@@ -72,21 +73,21 @@ Functions
    :type dmi: float
    :param dma:
 
-   :returns: **\_** -- mapped output
+   :returns: **_** -- mapped output
    :rtype: float
 
 
-.. function:: clip(value, minimum=-float('inf'), maximum=float('inf'))
+.. py:function:: clip(value, minimum=-float('inf'), maximum=float('inf'))
 
    Signal hard clipping
 
 
-.. function:: buf_to_float(x, n_bytes=2, dtype=np.float32)
+.. py:function:: buf_to_float(x, n_bytes=2, dtype=np.float32)
 
    Convert an integer buffer to floating point values.
    This is primarily useful when loading integer-valued wav data
    into numpy arrays.
-   .. seealso:: :func:`buf_to_float`
+   .. seealso:: :obj:`buf_to_float`
 
    :param x: The integer-valued data buffer
    :type x: np.ndarray [dtype=int]
@@ -99,7 +100,7 @@ Functions
    :rtype: np.ndarray [dtype=float]
 
 
-.. function:: spectrum(sig, samples, channels, sr)
+.. py:function:: spectrum(sig, samples, channels, sr)
 
    Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.
 
@@ -116,22 +117,22 @@ Functions
              * **Y** (*numpy.ndarray*) -- FFT of the signal.
 
 
-.. function:: audio_from_file(path, dtype=np.float32)
+.. py:function:: audio_from_file(path, dtype=np.float32)
 
    Load an audio buffer using audioread.
    This loads one block at a time, and then concatenates the results.
 
 
-.. function:: normalize(d)
+.. py:function:: normalize(d)
 
    Return the normalized input array
 
 
-.. function:: device_info()
+.. py:function:: device_info()
 
    Return a formatted string about available audio devices and their info
 
 
-.. function:: find_device(min_input=0, min_output=0)
+.. py:function:: find_device(min_input=0, min_output=0)
 
 

@@ -1,5 +1,5 @@
-:mod:`pya.astft`
-================
+:py:mod:`pya.astft`
+===================
 
 .. py:module:: pya.astft
 
@@ -16,18 +16,26 @@ Classes
 
 
 
-.. data:: _LOGGER
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   pya.astft._LOGGER
+
+
+.. py:data:: _LOGGER
    
 
    
 
-.. class:: Astft(x, sr=None, label=None, window='hann', nperseg=256, noverlap=None, nfft=None, detrend=False, return_onesided=True, boundary='zeros', padded=True, cn=None)
-
+.. py:class:: Astft(x, sr=None, label=None, window='hann', nperseg=256, noverlap=None, nfft=None, detrend=False, return_onesided=True, boundary='zeros', padded=True, cn=None)
 
    Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
    attribute cn being the list of channel names, and label being the name of the Asig
 
-   .. method:: to_sig(self, **kwargs)
+   .. py:method:: to_sig(**kwargs)
 
       Create signal from stft, i.e. perform istft,
       kwargs overwrite Astft values for istft
@@ -39,11 +47,11 @@ Classes
                          also convert 'sr' to 'fs' since scipy uses 'fs' as sampling frequency.
       :type \*\*kwargs: str
 
-      :returns: **\_** -- Asig
+      :returns: **_** -- Asig
       :rtype: Asig
 
 
-   .. method:: plot(self, fn=lambda x: x, ax=None, offset=0, scale=1.0, xlim=None, ylim=None, show_bar=True, **kwargs)
+   .. py:method:: plot(fn=lambda x: x, ax=None, offset=0, scale=1.0, xlim=None, ylim=None, show_bar=True, **kwargs)
 
       Plot spectrogram
 
@@ -59,11 +67,11 @@ Classes
       :type ylim: tuple or list
       :param \*\*kwargs: keyward arguments of matplotlib's pcolormesh
 
-      :returns: **\_** -- self
+      :returns: **_** -- self
       :rtype: Asig
 
 
-   .. method:: __repr__(self)
+   .. py:method:: __repr__()
 
       Return repr(self).
 

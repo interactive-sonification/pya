@@ -1,5 +1,5 @@
-:mod:`pya.Aspec`
-================
+:py:mod:`pya.Aspec`
+===================
 
 .. py:module:: pya.Aspec
 
@@ -16,22 +16,30 @@ Classes
 
 
 
-.. data:: _LOGGER
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   pya.Aspec._LOGGER
+
+
+.. py:data:: _LOGGER
    
 
    
 
-.. class:: Aspec(x, sr=44100, label=None, cn=None)
-
+.. py:class:: Aspec(x, sr=44100, label=None, cn=None)
 
    Audio spectrum class using rfft
 
-   .. method:: to_sig(self)
+   .. py:method:: to_sig()
 
       Convert Aspec into Asig
 
 
-   .. method:: weight(self, weights, freqs=None, curve=1, kind='linear')
+   .. py:method:: weight(weights, freqs=None, curve=1, kind='linear')
 
       TODO
 
@@ -41,7 +49,7 @@ Classes
       :param kind: (Default value = 'linear')
 
 
-   .. method:: plot(self, fn=np.abs, xlim=None, ylim=None, **kwargs)
+   .. py:method:: plot(fn=np.abs, xlim=None, ylim=None, **kwargs)
 
       Plot spectrum
 
@@ -53,11 +61,11 @@ Classes
       :type ylim: tuple or list or None
       :param \*\*kwargs: Keyword arguments for matplotlib.pyplot.plot()
 
-      :returns: **\_** -- self
+      :returns: **_** -- self
       :rtype: Asig
 
 
-   .. method:: __repr__(self)
+   .. py:method:: __repr__()
 
       Return repr(self).
 

@@ -1,56 +1,33 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>pya.helper &mdash; pya  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-
-    
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
 
 <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pya
@@ -66,11 +43,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.2/" >v0.4.2</option>
+  <option value="/pya/v0.5.0/" >v0.5.0</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/v0.4.1/" >v0.4.1</option>
 
@@ -97,22 +76,25 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </div>
 
 
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper</span></code></a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#pya.helper.ampdb"><code class="docutils literal notranslate"><span class="pre">ampdb()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.dbamp"><code class="docutils literal notranslate"><span class="pre">dbamp()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.cpsmidi"><code class="docutils literal notranslate"><span class="pre">cpsmidi()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.midicps"><code class="docutils literal notranslate"><span class="pre">midicps()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.linlin"><code class="docutils literal notranslate"><span class="pre">linlin()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.clip"><code class="docutils literal notranslate"><span class="pre">clip()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.buf_to_float"><code class="docutils literal notranslate"><span class="pre">buf_to_float()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.spectrum"><code class="docutils literal notranslate"><span class="pre">spectrum()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.audio_from_file"><code class="docutils literal notranslate"><span class="pre">audio_from_file()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.normalize"><code class="docutils literal notranslate"><span class="pre">normalize()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.device_info"><code class="docutils literal notranslate"><span class="pre">device_info()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.find_device"><code class="docutils literal notranslate"><span class="pre">find_device()</span></code></a></li>
 <li><a class="reference internal" href="#pya.helper.ampdb">ampdb</a></li>
 <li><a class="reference internal" href="#pya.helper.dbamp">dbamp</a></li>
 <li><a class="reference internal" href="#pya.helper.cpsmidi">cpsmidi</a></li>
@@ -133,75 +115,34 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </li>
 </ul>
 </div>
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">pya</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper</span></code></li>
-    
-    
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper</span></code></li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../../../_sources/autoapi/pya/helper/index.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="module-pya.helper">
-<span id="pya-helper"></span><h1><a class="reference internal" href="../../../pya.helper.html#module-pya.helper" title="pya.helper"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper</span></code></a><a class="headerlink" href="#module-pya.helper" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+             
+  <section id="module-pya.helper">
+<span id="pya-helper"></span><h1><a class="reference internal" href="#module-pya.helper" title="pya.helper"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper</span></code></a><a class="headerlink" href="#module-pya.helper" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="backend/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.backend</span></code></a></li>
@@ -209,12 +150,12 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li class="toctree-l1"><a class="reference internal" href="helpers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.helpers</span></code></a></li>
 </ul>
 </div>
-</div>
-<div class="section" id="package-contents">
-<h2>Package Contents<a class="headerlink" href="#package-contents" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
-<table class="longtable docutils align-default">
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Permalink to this heading"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -235,16 +176,16 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.linlin" title="pya.helper.linlin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linlin</span></code></a>(x, smi, sma, dmi, dma)</p></td>
 <td><p>Linear mapping</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.clip" title="pya.helper.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>(value, minimum=-float(‘inf’), maximum=float(‘inf’))</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.clip" title="pya.helper.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>(value[, minimum, maximum])</p></td>
 <td><p>Signal hard clipping</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.buf_to_float" title="pya.helper.buf_to_float"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buf_to_float</span></code></a>(x, n_bytes=2, dtype=np.float32)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.buf_to_float" title="pya.helper.buf_to_float"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buf_to_float</span></code></a>(x[, n_bytes, dtype])</p></td>
 <td><p>Convert an integer buffer to floating point values.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.spectrum" title="pya.helper.spectrum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spectrum</span></code></a>(sig, samples, channels, sr)</p></td>
 <td><p>Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.audio_from_file" title="pya.helper.audio_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">audio_from_file</span></code></a>(path, dtype=np.float32)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.audio_from_file" title="pya.helper.audio_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">audio_from_file</span></code></a>(path[, dtype])</p></td>
 <td><p>Load an audio buffer using audioread.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.normalize" title="pya.helper.normalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize</span></code></a>(d)</p></td>
@@ -253,38 +194,38 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.device_info" title="pya.helper.device_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_info</span></code></a>()</p></td>
 <td><p>Return a formatted string about available audio devices and their info</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.find_device" title="pya.helper.find_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_device</span></code></a>(min_input=0, min_output=0)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.find_device" title="pya.helper.find_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_device</span></code></a>([min_input, min_output])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
-<dt id="pya.helper.ampdb">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">ampdb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">amp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.ampdb" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.ampdb">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">ampdb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.ampdb" title="Permalink to this definition"></a></dt>
 <dd><p>Convert amplitude to db</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.dbamp">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">dbamp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.dbamp" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.dbamp">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">dbamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.dbamp" title="Permalink to this definition"></a></dt>
 <dd><p>Convert db to amplitude</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.cpsmidi">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">cpsmidi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.cpsmidi" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.cpsmidi">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">cpsmidi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.cpsmidi" title="Permalink to this definition"></a></dt>
 <dd><p>Convert cycle per second into midi number</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.midicps">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">midicps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.midicps" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.midicps">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">midicps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.midicps" title="Permalink to this definition"></a></dt>
 <dd><p>Convert midi number into cycle per second</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.linlin">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">linlin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">smi</span></em>, <em class="sig-param"><span class="n">sma</span></em>, <em class="sig-param"><span class="n">dmi</span></em>, <em class="sig-param"><span class="n">dma</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.linlin" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.linlin">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">linlin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.linlin" title="Permalink to this definition"></a></dt>
 <dd><p>Linear mapping</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -306,18 +247,18 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.clip">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">clip</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">minimum</span><span class="o">=</span><span class="default_value">- float('inf')</span></em>, <em class="sig-param"><span class="n">maximum</span><span class="o">=</span><span class="default_value">float('inf')</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.clip" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.clip">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">clip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-float('inf')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">float('inf')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.clip" title="Permalink to this definition"></a></dt>
 <dd><p>Signal hard clipping</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.buf_to_float">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">buf_to_float</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">n_bytes</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">np.float32</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.buf_to_float" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.buf_to_float">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">buf_to_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bytes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.buf_to_float" title="Permalink to this definition"></a></dt>
 <dd><p>Convert an integer buffer to floating point values.
 This is primarily useful when loading integer-valued wav data
 into numpy arrays.
-.. seealso:: <a class="reference internal" href="#pya.helper.buf_to_float" title="pya.helper.buf_to_float"><code class="xref py py-func docutils literal notranslate"><span class="pre">buf_to_float()</span></code></a></p>
+.. seealso:: <a class="reference internal" href="#pya.helper.buf_to_float" title="pya.helper.buf_to_float"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buf_to_float</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -336,8 +277,8 @@ into numpy arrays.
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.spectrum">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">spectrum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sig</span></em>, <em class="sig-param"><span class="n">samples</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">sr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.spectrum" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.spectrum">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.spectrum" title="Permalink to this definition"></a></dt>
 <dd><p>Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -359,75 +300,59 @@ into numpy arrays.
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.audio_from_file">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">audio_from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">np.float32</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.audio_from_file" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.audio_from_file">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">audio_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.audio_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Load an audio buffer using audioread.
 This loads one block at a time, and then concatenates the results.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.normalize">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.normalize" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.normalize">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.normalize" title="Permalink to this definition"></a></dt>
 <dd><p>Return the normalized input array</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.device_info">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">device_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.device_info" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.device_info">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.device_info" title="Permalink to this definition"></a></dt>
 <dd><p>Return a formatted string about available audio devices and their info</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.find_device">
-<code class="sig-prename descclassname">pya.helper.</code><code class="sig-name descname">find_device</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_input</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">min_output</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.find_device" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.find_device">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.</span></span><span class="sig-name descname"><span class="pre">find_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.find_device" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
-
-    </p>
+    <p>&#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

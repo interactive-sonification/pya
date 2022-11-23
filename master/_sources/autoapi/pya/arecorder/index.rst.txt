@@ -1,5 +1,5 @@
-:mod:`pya.arecorder`
-====================
+:py:mod:`pya.arecorder`
+=======================
 
 .. py:module:: pya.arecorder
 
@@ -16,15 +16,23 @@ Classes
 
 
 
-.. data:: _LOGGER
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   pya.arecorder._LOGGER
+
+
+.. py:data:: _LOGGER
    
 
    
 
-.. class:: Arecorder(sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs)
+.. py:class:: Arecorder(sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs)
 
-
-   Bases: :class:`pya.Aserver`
+   Bases: :py:obj:`pya.Aserver`
 
    pya audio recorder Based on pyaudio, uses callbacks to save audio data
    for pyaudio signals into ASigs
@@ -40,11 +48,7 @@ Classes
    >>> print(ar.recordings)  # doctest:+ELLIPSIS
    [Asig(''): ... x ... @ 44100Hz = ...
 
-   .. method:: device(self)
-      :property:
-
-
-   .. method:: set_tracks(self, tracks, gains)
+   .. py:method:: set_tracks(tracks, gains)
 
       Define the number of track to be recorded and their gains.
 
@@ -54,35 +58,35 @@ Classes
       :type gains: list of numpy.ndarray
 
 
-   .. method:: reset(self)
+   .. py:method:: reset()
 
 
-   .. method:: boot(self)
+   .. py:method:: boot()
 
       boot recorder
 
 
-   .. method:: _recorder_callback(self, in_data, frame_count, time_info, flag)
+   .. py:method:: _recorder_callback(in_data, frame_count, time_info, flag)
 
       Callback function during streaming.
 
 
-   .. method:: record(self)
+   .. py:method:: record()
 
       Activate recording
 
 
-   .. method:: pause(self)
+   .. py:method:: pause()
 
       Pause the recording, but the record_buffer remains
 
 
-   .. method:: stop(self)
+   .. py:method:: stop()
 
       Stop recording, then stores the data from record_buffer into recordings
 
 
-   .. method:: __repr__(self)
+   .. py:method:: __repr__()
 
       Return repr(self).
 

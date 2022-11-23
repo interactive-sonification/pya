@@ -1,5 +1,5 @@
-:mod:`pya.helper.backend`
-=========================
+:py:mod:`pya.helper.backend`
+============================
 
 .. py:module:: pya.helper.backend
 
@@ -17,9 +17,10 @@ Functions
    pya.helper.backend.determine_backend
 
 
-.. function:: get_server_info()
+
+.. py:function:: get_server_info()
 
 
-.. function:: determine_backend(force_webaudio=False, port=8765)
+.. py:function:: determine_backend(force_webaudio=False, port=8765)
 
 

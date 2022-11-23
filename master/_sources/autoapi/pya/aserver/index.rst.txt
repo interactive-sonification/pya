@@ -1,5 +1,5 @@
-:mod:`pya.aserver`
-==================
+:py:mod:`pya.aserver`
+=====================
 
 .. py:module:: pya.aserver
 
@@ -16,13 +16,21 @@ Classes
 
 
 
-.. data:: _LOGGER
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   pya.aserver._LOGGER
+
+
+.. py:data:: _LOGGER
    
 
    
 
-.. class:: Aserver(sr=44100, bs=None, device=None, channels=2, backend=None, **kwargs)
-
+.. py:class:: Aserver(sr=44100, bs=512, device=None, channels=2, backend=None, **kwargs)
 
    Pya audio server
    Based on pyaudio, works as a FIFO style audio stream pipeline,
@@ -39,34 +47,46 @@ Classes
    >>> asine.play(server=ser)
    Asig('sine'): 1 x 44100 @ 44100Hz = 1.000s cn=['0']
 
-   .. attribute:: default
+   .. py:property:: device_dict
+
+
+   .. py:property:: max_out_chn
+
+
+   .. py:property:: max_in_chn
+
+
+   .. py:property:: device
+
+
+   .. py:property:: is_active
+      :type: bool
+
+
+   .. py:attribute:: default
       
 
       
 
-   .. method:: startup_default_server(**kwargs)
+   .. py:method:: startup_default_server(**kwargs)
       :staticmethod:
 
 
-   .. method:: shutdown_default_server()
+   .. py:method:: shutdown_default_server()
       :staticmethod:
 
 
-   .. method:: device(self)
-      :property:
-
-
-   .. method:: __repr__(self)
+   .. py:method:: __repr__()
 
       Return repr(self).
 
 
-   .. method:: get_devices(self, verbose=False)
+   .. py:method:: get_devices(verbose=False)
 
       Return (and optionally print) available input and output device
 
 
-   .. method:: set_device(self, idx, reboot=True)
+   .. py:method:: set_device(idx, reboot=True)
 
       Set audio device
 
@@ -76,30 +96,36 @@ Classes
       :type reboot: bool
 
 
-   .. method:: boot(self)
+   .. py:method:: boot()
 
       boot Aserver = start stream, setting its callback to this callback.
 
 
-   .. method:: quit(self)
+   .. py:method:: quit()
 
       Aserver quit server: stop stream and terminate pa
 
 
-   .. method:: play(self, asig, onset=0, out=0, **kwargs)
+   .. py:method:: play(asig, onset=0, out=0, **kwargs)
 
       Dispatch asigs or arrays for given onset.
 
 
-   .. method:: _play_callback(self, in_data, frame_count, time_info, flag)
+   .. py:method:: _play_callback(in_data, frame_count, time_info, flag)
 
       callback function, called from pastream thread when data needed.
 
 
-   .. method:: stop(self)
+   .. py:method:: stop()
 
 
-   .. method:: __del__(self)
+   .. py:method:: __enter__()
+
+
+   .. py:method:: __exit__(exc_type, exc_value, traceback)
+
+
+   .. py:method:: __del__()
 
 
 

@@ -1,5 +1,5 @@
-:mod:`pya.ugen`
-===============
+:py:mod:`pya.ugen`
+==================
 
 .. py:module:: pya.ugen
 
@@ -24,16 +24,16 @@ Functions
    pya.ugen.get_num_of_rows
 
 
-.. function:: get_num_of_rows(dur, n_rows, sr)
+
+.. py:function:: get_num_of_rows(dur, n_rows, sr)
 
    Return total number of samples. If dur is set, return dur*sr, if num_samples is set, return num_samples,
    if both set, raise an AttributeError. Only use one of the two.
 
 
-.. class:: Ugen
+.. py:class:: Ugen
 
-
-   Bases: :class:`pya.Asig`
+   Bases: :py:obj:`pya.Asig`
 
    Unit Generator for to create Asig with predefined signal
 
@@ -52,7 +52,7 @@ Functions
    >>> # Make a white noise, another option is 'pink', at 44100Hz for 1second.
    >>> noi = Ugen().noise(type='white')
 
-   .. method:: sine(self, freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='sine')
+   .. py:method:: sine(freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='sine')
 
       Generate Sine signal Asig object.
 
@@ -73,11 +73,10 @@ Functions
       :param label: identifier of the object (Default value = "sine")
       :type label: string
 
-      :returns:
       :rtype: Asig
 
 
-   .. method:: cos(self, freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='cosine')
+   .. py:method:: cos(freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='cosine')
 
       Generate Cosine signal Asig object.
 
@@ -98,11 +97,10 @@ Functions
       :param label: identifier of the object (Default value = "cosine")
       :type label: string
 
-      :returns:
       :rtype: Asig
 
 
-   .. method:: square(self, freq=440, amp=1.0, dur=None, n_rows=None, duty=0.5, sr=44100, sample_shift=0.5, channels=1, cn=None, label='square')
+   .. py:method:: square(freq=440, amp=1.0, dur=None, n_rows=None, duty=0.5, sr=44100, sample_shift=0.5, channels=1, cn=None, label='square')
 
       Generate square wave signal Asig object.
 
@@ -125,11 +123,10 @@ Functions
       :param label: identifier of the object (Default value = "square")
       :type label: string
 
-      :returns:
       :rtype: Asig
 
 
-   .. method:: sawtooth(self, freq=440, amp=1.0, dur=None, n_rows=None, width=1.0, sr=44100, channels=1, cn=None, label='sawtooth')
+   .. py:method:: sawtooth(freq=440, amp=1.0, dur=None, n_rows=None, width=1.0, sr=44100, channels=1, cn=None, label='sawtooth')
 
       Generate sawtooth wave signal Asig object.
 
@@ -152,11 +149,10 @@ Functions
       :param label: identifier of the object (Default value = "sawtooth")
       :type label: string
 
-      :returns:
       :rtype: Asig
 
 
-   .. method:: noise(self, type='white', amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='noise')
+   .. py:method:: noise(type='white', amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='noise')
 
       Generate noise signal Asig object.
 
@@ -177,7 +173,6 @@ Functions
       :param label: identifier of the object (Default value = "square")
       :type label: string
 
-      :returns:
       :rtype: Asig
 
 

@@ -1,5 +1,5 @@
-:mod:`pya.helper.visualization`
-===============================
+:py:mod:`pya.helper.visualization`
+==================================
 
 .. py:module:: pya.helper.visualization
 
@@ -17,7 +17,8 @@ Functions
    pya.helper.visualization.gridplot
 
 
-.. function:: basicplot(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)
+
+.. py:function:: basicplot(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)
 
    Basic version of the plot for pya, this can be directly used
    by Asig. Aspec/Astft/Amfcc will have different extra setting
@@ -34,7 +35,7 @@ Functions
    :type typ: str, optional
 
 
-.. function:: gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None)
+.. py:function:: gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None)
 
    Create a grid plot of pya objects which have plot() methods,
    i.e. Asig, Aspec, Astft, Amfcc.

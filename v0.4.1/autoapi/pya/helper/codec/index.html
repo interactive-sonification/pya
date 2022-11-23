@@ -1,56 +1,33 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>pya.helper.codec &mdash; pya  documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
-    
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
 
 <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> pya
@@ -66,11 +43,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.4.2/" >v0.4.2</option>
+  <option value="/pya/v0.5.0/" >v0.5.0</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.4.2/" >v0.4.2</option>
 
   <option value="/pya/v0.4.1/" selected="selected">v0.4.1</option>
 
@@ -97,22 +76,59 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </div>
 
 
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.codec</span></code></a><ul>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#pya.helper.codec.COMMANDS"><code class="docutils literal notranslate"><span class="pre">COMMANDS</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.PROC_FLAGS"><code class="docutils literal notranslate"><span class="pre">PROC_FLAGS</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.TARGET_WIDTH"><code class="docutils literal notranslate"><span class="pre">TARGET_WIDTH</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.SUPPORTED_WIDTHS"><code class="docutils literal notranslate"><span class="pre">SUPPORTED_WIDTHS</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.DecodeError"><code class="docutils literal notranslate"><span class="pre">DecodeError</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.NoBackendError"><code class="docutils literal notranslate"><span class="pre">NoBackendError</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.UnsupportedError"><code class="docutils literal notranslate"><span class="pre">UnsupportedError</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.BitWidthError"><code class="docutils literal notranslate"><span class="pre">BitWidthError</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.FFmpegError"><code class="docutils literal notranslate"><span class="pre">FFmpegError</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.CommunicationError"><code class="docutils literal notranslate"><span class="pre">CommunicationError</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.NotInstalledError"><code class="docutils literal notranslate"><span class="pre">NotInstalledError</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.ReadTimeoutError"><code class="docutils literal notranslate"><span class="pre">ReadTimeoutError</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.byteswap"><code class="docutils literal notranslate"><span class="pre">byteswap()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile"><code class="docutils literal notranslate"><span class="pre">RawAudioFile</span></code></a><ul>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.channels"><code class="docutils literal notranslate"><span class="pre">RawAudioFile.channels</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.samplerate"><code class="docutils literal notranslate"><span class="pre">RawAudioFile.samplerate</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.duration"><code class="docutils literal notranslate"><span class="pre">RawAudioFile.duration</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile._check"><code class="docutils literal notranslate"><span class="pre">RawAudioFile._check()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.close"><code class="docutils literal notranslate"><span class="pre">RawAudioFile.close()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.read_data"><code class="docutils literal notranslate"><span class="pre">RawAudioFile.read_data()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.__enter__"><code class="docutils literal notranslate"><span class="pre">RawAudioFile.__enter__()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.__exit__"><code class="docutils literal notranslate"><span class="pre">RawAudioFile.__exit__()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.__iter__"><code class="docutils literal notranslate"><span class="pre">RawAudioFile.__iter__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pya.helper.codec.QueueReaderThread"><code class="docutils literal notranslate"><span class="pre">QueueReaderThread</span></code></a><ul>
+<li><a class="reference internal" href="#pya.helper.codec.QueueReaderThread.run"><code class="docutils literal notranslate"><span class="pre">QueueReaderThread.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pya.helper.codec.popen_multiple"><code class="docutils literal notranslate"><span class="pre">popen_multiple()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.ffmpeg_available"><code class="docutils literal notranslate"><span class="pre">ffmpeg_available()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.windows_error_mode_lock"><code class="docutils literal notranslate"><span class="pre">windows_error_mode_lock</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile"><code class="docutils literal notranslate"><span class="pre">FFmpegAudioFile</span></code></a><ul>
+<li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.read_data"><code class="docutils literal notranslate"><span class="pre">FFmpegAudioFile.read_data()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile._get_info"><code class="docutils literal notranslate"><span class="pre">FFmpegAudioFile._get_info()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile._parse_info"><code class="docutils literal notranslate"><span class="pre">FFmpegAudioFile._parse_info()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.close"><code class="docutils literal notranslate"><span class="pre">FFmpegAudioFile.close()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.__del__"><code class="docutils literal notranslate"><span class="pre">FFmpegAudioFile.__del__()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.__iter__"><code class="docutils literal notranslate"><span class="pre">FFmpegAudioFile.__iter__()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.__enter__"><code class="docutils literal notranslate"><span class="pre">FFmpegAudioFile.__enter__()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile.__exit__"><code class="docutils literal notranslate"><span class="pre">FFmpegAudioFile.__exit__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pya.helper.codec.available_backends"><code class="docutils literal notranslate"><span class="pre">available_backends()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.codec.audio_read"><code class="docutils literal notranslate"><span class="pre">audio_read()</span></code></a></li>
 <li><a class="reference internal" href="#pya.helper.codec.COMMANDS">COMMANDS</a></li>
 <li><a class="reference internal" href="#pya.helper.codec.PROC_FLAGS">PROC_FLAGS</a></li>
 <li><a class="reference internal" href="#pya.helper.codec.TARGET_WIDTH">TARGET_WIDTH</a></li>
@@ -127,11 +143,11 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.helper.codec.ReadTimeoutError">ReadTimeoutError</a></li>
 <li><a class="reference internal" href="#pya.helper.codec.byteswap">byteswap</a></li>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile">RawAudioFile</a><ul>
-<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile._check">_check</a></li>
-<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.close">close</a></li>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.channels">channels</a></li>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.samplerate">samplerate</a></li>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.duration">duration</a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile._check">_check</a></li>
+<li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.close">close</a></li>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.read_data">read_data</a></li>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.__enter__">__enter__</a></li>
 <li><a class="reference internal" href="#pya.helper.codec.RawAudioFile.__exit__">__exit__</a></li>
@@ -166,276 +182,261 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </li>
 </ul>
 </div>
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../../index.html">pya</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.codec</span></code></li>
-    
-    
+      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.codec</span></code></li>
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../../../../_sources/autoapi/pya/helper/codec/index.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="module-pya.helper.codec">
-<span id="pya-helper-codec"></span><h1><a class="reference internal" href="../../../../pya.helper.html#module-pya.helper.codec" title="pya.helper.codec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.codec</span></code></a><a class="headerlink" href="#module-pya.helper.codec" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
-<table class="longtable docutils align-default">
+             
+  <section id="module-pya.helper.codec">
+<span id="pya-helper-codec"></span><h1><a class="reference internal" href="#module-pya.helper.codec" title="pya.helper.codec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.codec</span></code></a><a class="headerlink" href="#module-pya.helper.codec" title="Permalink to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.RawAudioFile" title="pya.helper.codec.RawAudioFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RawAudioFile</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.codec.RawAudioFile" title="pya.helper.codec.RawAudioFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RawAudioFile</span></code></a></p></td>
 <td><p>An AIFF, WAV, or Au file that can be read by the Python standard</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.QueueReaderThread" title="pya.helper.codec.QueueReaderThread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QueueReaderThread</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.codec.QueueReaderThread" title="pya.helper.codec.QueueReaderThread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QueueReaderThread</span></code></a></p></td>
 <td><p>A thread that consumes data from a filehandle and sends the data</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.FFmpegAudioFile" title="pya.helper.codec.FFmpegAudioFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFmpegAudioFile</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.codec.FFmpegAudioFile" title="pya.helper.codec.FFmpegAudioFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFmpegAudioFile</span></code></a></p></td>
 <td><p>An audio file decoded by the ffmpeg command-line utility.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
-<table class="longtable docutils align-default">
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.byteswap" title="pya.helper.codec.byteswap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">byteswap</span></code></a>(s)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.codec.byteswap" title="pya.helper.codec.byteswap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">byteswap</span></code></a>(s)</p></td>
 <td><p>Swaps the endianness of the bytesting s, which must be an array</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.popen_multiple" title="pya.helper.codec.popen_multiple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popen_multiple</span></code></a>(commands, command_args, *args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.codec.popen_multiple" title="pya.helper.codec.popen_multiple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popen_multiple</span></code></a>(commands, command_args, *args, **kwargs)</p></td>
 <td><p>Like <cite>subprocess.Popen</cite>, but can try multiple commands in case</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.ffmpeg_available" title="pya.helper.codec.ffmpeg_available"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ffmpeg_available</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.codec.ffmpeg_available" title="pya.helper.codec.ffmpeg_available"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ffmpeg_available</span></code></a>()</p></td>
 <td><p>Detect whether the FFmpeg backend can be used on this system.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.available_backends" title="pya.helper.codec.available_backends"><code class="xref py py-obj docutils literal notranslate"><span class="pre">available_backends</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.codec.available_backends" title="pya.helper.codec.available_backends"><code class="xref py py-obj docutils literal notranslate"><span class="pre">available_backends</span></code></a>()</p></td>
 <td><p>Returns a list of backends that are available on this system.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.audio_read" title="pya.helper.codec.audio_read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">audio_read</span></code></a>(fp)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.codec.audio_read" title="pya.helper.codec.audio_read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">audio_read</span></code></a>(fp)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.codec.COMMANDS" title="pya.helper.codec.COMMANDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">COMMANDS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.codec.PROC_FLAGS" title="pya.helper.codec.PROC_FLAGS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PROC_FLAGS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.codec.TARGET_WIDTH" title="pya.helper.codec.TARGET_WIDTH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TARGET_WIDTH</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.codec.SUPPORTED_WIDTHS" title="pya.helper.codec.SUPPORTED_WIDTHS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SUPPORTED_WIDTHS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.codec.windows_error_mode_lock" title="pya.helper.codec.windows_error_mode_lock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">windows_error_mode_lock</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py data">
-<dt id="pya.helper.codec.COMMANDS">
-<code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">COMMANDS</code><em class="property"> = ['ffmpeg', 'avconv']</em><a class="headerlink" href="#pya.helper.codec.COMMANDS" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.COMMANDS">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">COMMANDS</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">['ffmpeg',</span> <span class="pre">'avconv']</span></em><a class="headerlink" href="#pya.helper.codec.COMMANDS" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
-<dt id="pya.helper.codec.PROC_FLAGS">
-<code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">PROC_FLAGS</code><em class="property"> = 134217728</em><a class="headerlink" href="#pya.helper.codec.PROC_FLAGS" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.PROC_FLAGS">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">PROC_FLAGS</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">134217728</span></em><a class="headerlink" href="#pya.helper.codec.PROC_FLAGS" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
-<dt id="pya.helper.codec.TARGET_WIDTH">
-<code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">TARGET_WIDTH</code><em class="property"> = 2</em><a class="headerlink" href="#pya.helper.codec.TARGET_WIDTH" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.TARGET_WIDTH">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">TARGET_WIDTH</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#pya.helper.codec.TARGET_WIDTH" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
-<dt id="pya.helper.codec.SUPPORTED_WIDTHS">
-<code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">SUPPORTED_WIDTHS</code><em class="property"> = [1, 2, 3, 4]</em><a class="headerlink" href="#pya.helper.codec.SUPPORTED_WIDTHS" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.SUPPORTED_WIDTHS">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">SUPPORTED_WIDTHS</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4]</span></em><a class="headerlink" href="#pya.helper.codec.SUPPORTED_WIDTHS" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py exception">
-<dt id="pya.helper.codec.DecodeError">
-<em class="property">exception </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">DecodeError</code><a class="headerlink" href="#pya.helper.codec.DecodeError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<dt class="sig sig-object py" id="pya.helper.codec.DecodeError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">DecodeError</span></span><a class="headerlink" href="#pya.helper.codec.DecodeError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>The base exception class for all decoding errors raised by this
 package.</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt id="pya.helper.codec.NoBackendError">
-<em class="property">exception </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">NoBackendError</code><a class="headerlink" href="#pya.helper.codec.NoBackendError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.DecodeError" title="pya.helper.codec.DecodeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.helper.codec.DecodeError</span></code></a></p>
+<dt class="sig sig-object py" id="pya.helper.codec.NoBackendError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">NoBackendError</span></span><a class="headerlink" href="#pya.helper.codec.NoBackendError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pya.helper.codec.DecodeError" title="pya.helper.codec.DecodeError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DecodeError</span></code></a></p>
 <p>The file could not be decoded by any backend. Either no backends
 are available or each available backend failed to decode the file.</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt id="pya.helper.codec.UnsupportedError">
-<em class="property">exception </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">UnsupportedError</code><a class="headerlink" href="#pya.helper.codec.UnsupportedError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.DecodeError" title="pya.helper.codec.DecodeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.helper.codec.DecodeError</span></code></a></p>
+<dt class="sig sig-object py" id="pya.helper.codec.UnsupportedError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">UnsupportedError</span></span><a class="headerlink" href="#pya.helper.codec.UnsupportedError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pya.helper.codec.DecodeError" title="pya.helper.codec.DecodeError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DecodeError</span></code></a></p>
 <p>File is not an AIFF, WAV, or Au file.</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt id="pya.helper.codec.BitWidthError">
-<em class="property">exception </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">BitWidthError</code><a class="headerlink" href="#pya.helper.codec.BitWidthError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.DecodeError" title="pya.helper.codec.DecodeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.helper.codec.DecodeError</span></code></a></p>
+<dt class="sig sig-object py" id="pya.helper.codec.BitWidthError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">BitWidthError</span></span><a class="headerlink" href="#pya.helper.codec.BitWidthError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pya.helper.codec.DecodeError" title="pya.helper.codec.DecodeError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DecodeError</span></code></a></p>
 <p>The file uses an unsupported bit width.</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt id="pya.helper.codec.FFmpegError">
-<em class="property">exception </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">FFmpegError</code><a class="headerlink" href="#pya.helper.codec.FFmpegError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.DecodeError" title="pya.helper.codec.DecodeError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.helper.codec.DecodeError</span></code></a></p>
+<dt class="sig sig-object py" id="pya.helper.codec.FFmpegError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">FFmpegError</span></span><a class="headerlink" href="#pya.helper.codec.FFmpegError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pya.helper.codec.DecodeError" title="pya.helper.codec.DecodeError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DecodeError</span></code></a></p>
 <p>The base exception class for all decoding errors raised by this
 package.</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt id="pya.helper.codec.CommunicationError">
-<em class="property">exception </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">CommunicationError</code><a class="headerlink" href="#pya.helper.codec.CommunicationError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.FFmpegError" title="pya.helper.codec.FFmpegError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.helper.codec.FFmpegError</span></code></a></p>
+<dt class="sig sig-object py" id="pya.helper.codec.CommunicationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">CommunicationError</span></span><a class="headerlink" href="#pya.helper.codec.CommunicationError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pya.helper.codec.FFmpegError" title="pya.helper.codec.FFmpegError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFmpegError</span></code></a></p>
 <p>Raised when the output of FFmpeg is not parseable.</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt id="pya.helper.codec.NotInstalledError">
-<em class="property">exception </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">NotInstalledError</code><a class="headerlink" href="#pya.helper.codec.NotInstalledError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.FFmpegError" title="pya.helper.codec.FFmpegError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.helper.codec.FFmpegError</span></code></a></p>
+<dt class="sig sig-object py" id="pya.helper.codec.NotInstalledError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">NotInstalledError</span></span><a class="headerlink" href="#pya.helper.codec.NotInstalledError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pya.helper.codec.FFmpegError" title="pya.helper.codec.FFmpegError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFmpegError</span></code></a></p>
 <p>Could not find the ffmpeg binary.</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt id="pya.helper.codec.ReadTimeoutError">
-<em class="property">exception </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">ReadTimeoutError</code><a class="headerlink" href="#pya.helper.codec.ReadTimeoutError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../../../../pya.helper.html#pya.helper.codec.FFmpegError" title="pya.helper.codec.FFmpegError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pya.helper.codec.FFmpegError</span></code></a></p>
+<dt class="sig sig-object py" id="pya.helper.codec.ReadTimeoutError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">ReadTimeoutError</span></span><a class="headerlink" href="#pya.helper.codec.ReadTimeoutError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pya.helper.codec.FFmpegError" title="pya.helper.codec.FFmpegError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFmpegError</span></code></a></p>
 <p>Reading from the ffmpeg command-line tool timed out.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.codec.byteswap">
-<code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">byteswap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.byteswap" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.byteswap">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">byteswap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.byteswap" title="Permalink to this definition"></a></dt>
 <dd><p>Swaps the endianness of the bytesting s, which must be an array
 of shorts (16-bit signed integers). This is probably less efficient
 than it should be.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="pya.helper.codec.RawAudioFile">
-<em class="property">class </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">RawAudioFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dt class="sig sig-object py" id="pya.helper.codec.RawAudioFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">RawAudioFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>An AIFF, WAV, or Au file that can be read by the Python standard
 library modules <code class="docutils literal notranslate"><span class="pre">wave</span></code>, <code class="docutils literal notranslate"><span class="pre">aifc</span></code>, and <code class="docutils literal notranslate"><span class="pre">sunau</span></code>.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pya.helper.codec.RawAudioFile.channels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channels</span></span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.channels" title="Permalink to this definition"></a></dt>
+<dd><p>Number of audio channels.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pya.helper.codec.RawAudioFile.samplerate">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samplerate</span></span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.samplerate" title="Permalink to this definition"></a></dt>
+<dd><p>Sample rate in Hz.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pya.helper.codec.RawAudioFile.duration">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">duration</span></span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.duration" title="Permalink to this definition"></a></dt>
+<dd><p>Length of the audio in seconds (a float).</p>
+</dd></dl>
+
 <dl class="py method">
-<dt id="pya.helper.codec.RawAudioFile._check">
-<code class="sig-name descname">_check</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile._check" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.RawAudioFile._check">
+<span class="sig-name descname"><span class="pre">_check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile._check" title="Permalink to this definition"></a></dt>
 <dd><p>Check that the files’ parameters allow us to decode it and
 raise an error otherwise.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.RawAudioFile.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.close" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.RawAudioFile.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.close" title="Permalink to this definition"></a></dt>
 <dd><p>Close the underlying file.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.RawAudioFile.channels">
-<em class="property">property </em><code class="sig-name descname">channels</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.channels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of audio channels.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pya.helper.codec.RawAudioFile.samplerate">
-<em class="property">property </em><code class="sig-name descname">samplerate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.samplerate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sample rate in Hz.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pya.helper.codec.RawAudioFile.duration">
-<em class="property">property </em><code class="sig-name descname">duration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.duration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Length of the audio in seconds (a float).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pya.helper.codec.RawAudioFile.read_data">
-<code class="sig-name descname">read_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">block_samples</span><span class="o">=</span><span class="default_value">1024</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.read_data" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.RawAudioFile.read_data">
+<span class="sig-name descname"><span class="pre">read_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.read_data" title="Permalink to this definition"></a></dt>
 <dd><p>Generates blocks of PCM data found in the file.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.RawAudioFile.__enter__">
-<code class="sig-name descname">__enter__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.__enter__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.RawAudioFile.__enter__">
+<span class="sig-name descname"><span class="pre">__enter__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.__enter__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.RawAudioFile.__exit__">
-<code class="sig-name descname">__exit__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">exc_type</span></em>, <em class="sig-param"><span class="n">exc_val</span></em>, <em class="sig-param"><span class="n">exc_tb</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.__exit__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.RawAudioFile.__exit__">
+<span class="sig-name descname"><span class="pre">__exit__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_tb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.__exit__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.RawAudioFile.__iter__">
-<code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.__iter__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.RawAudioFile.__iter__">
+<span class="sig-name descname"><span class="pre">__iter__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.RawAudioFile.__iter__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="pya.helper.codec.QueueReaderThread">
-<em class="property">class </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">QueueReaderThread</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fh</span></em>, <em class="sig-param"><span class="n">blocksize</span><span class="o">=</span><span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">discard</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.QueueReaderThread" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
+<dt class="sig sig-object py" id="pya.helper.codec.QueueReaderThread">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">QueueReaderThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.QueueReaderThread" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
 <p>A thread that consumes data from a filehandle and sends the data
 over a Queue.</p>
 <dl class="py method">
-<dt id="pya.helper.codec.QueueReaderThread.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.QueueReaderThread.run" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.QueueReaderThread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.QueueReaderThread.run" title="Permalink to this definition"></a></dt>
 <dd><p>Method representing the thread’s activity.</p>
 <p>You may override this method in a subclass. The standard run() method
 invokes the callable object passed to the object’s constructor as the
@@ -446,8 +447,8 @@ from the args and kwargs arguments, respectively.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.codec.popen_multiple">
-<code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">popen_multiple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commands</span></em>, <em class="sig-param"><span class="n">command_args</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.popen_multiple" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.popen_multiple">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">popen_multiple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">command_args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.popen_multiple" title="Permalink to this definition"></a></dt>
 <dd><p>Like <cite>subprocess.Popen</cite>, but can try multiple commands in case
 some are not available.
 <cite>commands</cite> is an iterable of command names and <cite>command_args</cite> are
@@ -457,126 +458,110 @@ other positional and keyword arguments are passed through.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.codec.ffmpeg_available">
-<code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">ffmpeg_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.ffmpeg_available" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.ffmpeg_available">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">ffmpeg_available</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.ffmpeg_available" title="Permalink to this definition"></a></dt>
 <dd><p>Detect whether the FFmpeg backend can be used on this system.</p>
 </dd></dl>
 
 <dl class="py data">
-<dt id="pya.helper.codec.windows_error_mode_lock">
-<code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">windows_error_mode_lock</code><a class="headerlink" href="#pya.helper.codec.windows_error_mode_lock" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.windows_error_mode_lock">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">windows_error_mode_lock</span></span><a class="headerlink" href="#pya.helper.codec.windows_error_mode_lock" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
-<dt id="pya.helper.codec.FFmpegAudioFile">
-<em class="property">class </em><code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">FFmpegAudioFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">block_size</span><span class="o">=</span><span class="default_value">4096</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dt class="sig sig-object py" id="pya.helper.codec.FFmpegAudioFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">FFmpegAudioFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4096</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>An audio file decoded by the ffmpeg command-line utility.</p>
 <dl class="py method">
-<dt id="pya.helper.codec.FFmpegAudioFile.read_data">
-<code class="sig-name descname">read_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">10.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.read_data" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.FFmpegAudioFile.read_data">
+<span class="sig-name descname"><span class="pre">read_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.read_data" title="Permalink to this definition"></a></dt>
 <dd><p>Read blocks of raw PCM data from the file.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.FFmpegAudioFile._get_info">
-<code class="sig-name descname">_get_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile._get_info" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.FFmpegAudioFile._get_info">
+<span class="sig-name descname"><span class="pre">_get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile._get_info" title="Permalink to this definition"></a></dt>
 <dd><p>Reads the tool’s output from its stderr stream, extracts the
 relevant information, and parses it.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.FFmpegAudioFile._parse_info">
-<code class="sig-name descname">_parse_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile._parse_info" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.FFmpegAudioFile._parse_info">
+<span class="sig-name descname"><span class="pre">_parse_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile._parse_info" title="Permalink to this definition"></a></dt>
 <dd><p>Given relevant data from the ffmpeg output, set audio
 parameter fields on this object.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.FFmpegAudioFile.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.close" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.FFmpegAudioFile.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.close" title="Permalink to this definition"></a></dt>
 <dd><p>Close the ffmpeg process used to perform the decoding.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.FFmpegAudioFile.__del__">
-<code class="sig-name descname">__del__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.__del__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.FFmpegAudioFile.__del__">
+<span class="sig-name descname"><span class="pre">__del__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.__del__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.FFmpegAudioFile.__iter__">
-<code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.__iter__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.FFmpegAudioFile.__iter__">
+<span class="sig-name descname"><span class="pre">__iter__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.__iter__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.FFmpegAudioFile.__enter__">
-<code class="sig-name descname">__enter__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.__enter__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.FFmpegAudioFile.__enter__">
+<span class="sig-name descname"><span class="pre">__enter__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.__enter__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pya.helper.codec.FFmpegAudioFile.__exit__">
-<code class="sig-name descname">__exit__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">exc_type</span></em>, <em class="sig-param"><span class="n">exc_val</span></em>, <em class="sig-param"><span class="n">exc_tb</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.__exit__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.FFmpegAudioFile.__exit__">
+<span class="sig-name descname"><span class="pre">__exit__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_tb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.FFmpegAudioFile.__exit__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.codec.available_backends">
-<code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">available_backends</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.available_backends" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.available_backends">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">available_backends</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.available_backends" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a list of backends that are available on this system.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pya.helper.codec.audio_read">
-<code class="sig-prename descclassname">pya.helper.codec.</code><code class="sig-name descname">audio_read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.audio_read" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pya.helper.codec.audio_read">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.codec.</span></span><span class="sig-name descname"><span class="pre">audio_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.codec.audio_read" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.
-
-    </p>
+    <p>&#169; Copyright 2020, Thomas Hermann, Jiajun Yang, Alexander Neumann.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
