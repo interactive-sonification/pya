@@ -2,12 +2,13 @@ from .base import BackendBase, StreamBase
 
 import asyncio
 import threading
+from functools import partial
 from IPython.display import Javascript, HTML, display
 
 try:
-    from sanic import Sanic
+    import websockets
 except ImportError:
-    Sanic = None
+    websockets = None
 
 
 class JupyterBackend(BackendBase):
@@ -17,8 +18,8 @@ class JupyterBackend(BackendBase):
     bs = 4096  # streaming introduces lack which has to be covered by the buffer
 
     def __init__(self, port=8765, proxy_suffix=None):
-        if not Sanic:
-            raise Exception("JupyterBackend requires 'sanic' but it could not be imported. "
+        if not websockets:
+            raise Exception("JupyterBackend requires 'websockets' but it could not be imported. "
                             "Did you miss installing optional 'remote' requirements?")
 
         self.dummy_devices = [dict(maxInputChannels=0, maxOutputChannels=2, index=0, name="JupyterBackend")]
@@ -64,22 +65,26 @@ class JupyterStream(StreamBase):
         self.server = None
         self._is_active = False
 
-        app = Sanic(__name__.replace('.', '_'))
-
-        async def bridge(request, ws):
-            while True:
-                _ = await ws.recv()
+        async def bridge(websocket):
+            async for _ in websocket:
                 buffer = self.stream_callback(None, None, None, None)
-                await ws.send(buffer.reshape(-1, 1, order='F').tobytes())
+                # print(buffer)
+                await websocket.send(buffer.reshape(-1, 1, order='F').tobytes())
 
-        def loop_in_thread(loop, coro):
-            loop.run_until_complete(coro)
-            loop.run_forever()
+        async def ws_runner():
+            async with websockets.serve(bridge, "0.0.0.0", 8765):
+                await asyncio.Future()
 
-        app.add_websocket_route(bridge, '/')
-        coro = app.create_server(host="0.0.0.0", port=8765, debug=False, access_log=False, return_asyncio_server=True)
+        def loop_thread(loop):
+            # since ws_runner will block forever it will raise a runtime excepion
+            # when we kill the event loop.
+            try:
+                loop.run_until_complete(ws_runner())
+            except RuntimeError:
+                pass
+
         self.loop = asyncio.new_event_loop()
-        self.thread = threading.Thread(target=loop_in_thread, args=(self.loop, coro))
+        self.thread = threading.Thread(target=loop_thread, args=(self.loop,))
         # self.thread.daemon = True  # allow program to shutdown even if the thread is alive
 
         url_suffix = f':{port}' if proxy_suffix is None else proxy_suffix
