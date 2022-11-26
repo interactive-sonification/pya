@@ -78,7 +78,7 @@ class Aserver:
             self.backend = PyAudioBackend(**kwargs)
         else:
             self.backend = backend
-        self.bs = bs if bs is not None else self.backend.bs
+        self.bs = bs or self.backend.bs
         self.channels = channels
         # Get audio devices to input_device and output_device
         self.input_devices = []
