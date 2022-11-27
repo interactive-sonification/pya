@@ -48,7 +48,7 @@ class Aserver:
         else:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    def __init__(self, sr=44100, bs=512, device=None,
+    def __init__(self, sr=44100, bs=None, device=None,
                  channels=2, backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
@@ -58,7 +58,7 @@ class Aserver:
         sr : int
             Sampling rate (Default value = 44100)
         bs : int
-            block size or buffer size (Default value = 256)
+            Override block size or buffer size set by chosen backend
         device : int
             The device index based on pya.device_info(), default is None which will set 
             the default device from PyAudio
