@@ -40,29 +40,42 @@ At this time pya is more suitable for offline rendering than realtime.
 
 ## Authors and Contributors
 
-* Thomas Hermann, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (author and maintainer)
-* Jiajun Yang, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (co-author)
-* Alexander Neumann, Neurocognitions and Action - Biomechanics, Bielefeld University
+* [Thomas](https://github.com/thomas-hermann) (author, maintainer)
+* [Jiajun](https://github.com/wiccy46) (co-author, maintainer)
+* [Alexander](https://github.com/aleneum) (maintainer)
 * Contributors will be acknowledged here, contributions are welcome.
 
 ## Installation
 
-<!-- **Disclaimer**: We are currently making sure that pya can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .` -->
+`pya` requires `portaudio` to play and record audio. 
 
-**Note**: pya can be installed using **pip**. But pya uses PyAudio for audio playback and record, and PyAudio 0.2.11 has yet to fully support Python 3.7. So using pip install with Python 3.7 may encounter issues such as portaudio. Solutions are:
+1. Disclaimer: As of December 2022, the latest `pyaudio==0.2.12` is not fully available on Conda Forge. This means 
+this methods is currently not suitable, as it will install 0.2.11 instead. This will work on older version of Pya (< 0.5.1). 
 
-1. Anaconda can install non-python packages, so that the easiest way (if applicable) would be to 
+Anaconda can install non-python packages, so that the easiest way (if applicable) would be to 
 
     conda install pyaudio
 
-2. For Mac users, you can `brew install portaudio` beforehand. 
+
+2. For Mac users, `brew install portaudio`.
+  - For Apple ARM Chip, do the following instead: [Installation on ARM chip](https://stackoverflow.com/a/73166852/4930109)
+      - `brew install portaudio`
+      - `brew --prefix poraudio`
+      - Create .pydistutils.cfg in your home directory, `~/.pydistutils.cfg`, add:
+
+```
+[build_ext]
+include_dirs=<PATH FROM STEP 3>/include/
+library_dirs=<PATH FROM STEP 3>/lib/
+```
+      - `pip install -r requirements.txt`
 
 3. For Linux users, try `sudo apt-get install portaudio19-dev` or equivalent to your distro.
 
 4. For Windows users, you can install PyAudio wheel at:
 https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
 
-Then pya can be installed using pip:
+Then pya can be installed using pip (or just use the requirements.txt):
 
     pip install pya
 
@@ -140,8 +153,9 @@ The benefit of this is that it will handle server bootup and shutdown for you. B
 
 ```Python
 from pya import find_device
+from pya import Aserver
 devices = find_device() # This will return a dictionary of all devices, with their index, name, channels.
-s = pya.Aserver(sr=48000, bs=256, device=devices['name_of_your_device']['index'])
+s = Aserver(sr=48000, bs=256, device=devices['name_of_your_device']['index'])
 ```
 
 
@@ -167,6 +181,24 @@ to plot the spectrogram via the Astft class
 * Asigs support multi-channel audio (as columns of the signal array)
   * `a1[:100, :3]` would select the first 100 samples and the first 3 channels, 
   * `a1[{1.2:2}, ['left']]` would select the channel named 'left' using a time slice from 1
+
+### Recording from Device
+
+`Arecorder` allows recording from input device 
+
+```Python
+import time
+
+from pya import find_device
+from pya import Arecorder
+devices = find_device()  # Find the index of the input device
+arecorder = Arecorder(device=some_index, sr=48000, bs=512)  # Or not set device to let pya find the default device 
+arecorder.boot()
+arecorder.record()
+time.sleep(2)  # Recording is non-blocking
+arecorder.stop()
+last_recording = arecorder.recordings[-1]  # Each time a recorder stop, a new recording is appended to recordings
+```
 
 ### Method chaining
 Asig methods usually return an Asig, so methods can be chained, e.g
