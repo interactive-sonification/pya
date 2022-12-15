@@ -48,8 +48,8 @@ class Aserver:
         else:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    def __init__(self, sr=44100, bs=512, device=None,
-                 channels=2, backend=None, **kwargs):
+    def __init__(self, sr=44100, bs=None, device=None,
+                 channels=None, backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
 
@@ -79,7 +79,6 @@ class Aserver:
         else:
             self.backend = backend
         self.bs = bs or self.backend.bs
-        self.channels = channels
         # Get audio devices to input_device and output_device
         self.input_devices = []
         self.output_devices = []
@@ -90,6 +89,7 @@ class Aserver:
                 self.output_devices.append(self.backend.get_device_info_by_index(i))
 
         self._device = device or self.backend.get_default_output_device_info()['index']
+        self.channels = channels or self.backend.get_device_info_by_index(self.device)['maxOutputChannels']
 
         self.gain = 1.0
         self.srv_onsets = []
