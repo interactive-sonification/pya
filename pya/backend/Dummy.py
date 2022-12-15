@@ -10,9 +10,8 @@ class DummyBackend(BackendBase):
     range = 1
     bs = 256
 
-    def __init__(self, dummy_devices=None):
-        if dummy_devices is None:
-            self.dummy_devices = [dict(maxInputChannels=10, maxOutputChannels=10, index=0, name="DummyDevice")]
+    def __init__(self):
+        self.dummy_devices = [dict(maxInputChannels=10, maxOutputChannels=10, index=0, name="DummyDevice")]
 
     def get_device_count(self):
         return len(self.dummy_devices)
@@ -27,6 +26,9 @@ class DummyBackend(BackendBase):
         return self.dummy_devices[0]
 
     def open(self, *args, input_flag, output_flag, rate, frames_per_buffer, channels, stream_callback=None, **kwargs):
+        checker = 'maxInputChannels' if input_flag else 'maxOutputChannels'
+        if channels > self.dummy_devices[0][checker]:
+            raise OSError("[Errno -9998] Invalid number of channels")
         stream = DummyStream(input_flag=input_flag, output_flag=output_flag, 
                              rate=rate, frames_per_buffer=frames_per_buffer, channels=channels,
                              stream_callback=stream_callback)
