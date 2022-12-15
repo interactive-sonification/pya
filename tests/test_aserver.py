@@ -1,4 +1,4 @@
-from unittest import TestCase, skipUnless, mock
+from unittest import TestCase
 from pya import *
 import numpy as np
 import time
@@ -10,6 +10,7 @@ class TestAserver(TestCase):
         self.backend = DummyBackend()
         self.sig = np.sin(2 * np.pi * 440 * np.linspace(0, 1, 44100))
         self.asine = Asig(self.sig, sr=44100, label="test_sine")
+        self.max_channels = self.backend.dummy_devices[0]['maxOutputChannels']
 
     def test_default_server(self):
         Aserver.startup_default_server(backend=self.backend, bs=512, channels=4)
@@ -25,6 +26,27 @@ class TestAserver(TestCase):
         self.assertAlmostEqual(np.max(sample), 1, places=2)
         Aserver.shutdown_default_server()
         self.assertIsNone(s.stream)
+
+    def test_custom_channels(self):
+        """Server should boot with a valid channel"""
+        for ch in [1, 5, 7, 10]:
+            s = Aserver(device=0, channels=ch, backend=self.backend)
+            s.boot()
+            self.assertTrue(s.is_active)
+            s.stop()
+            s.quit()
+            self.assertFalse(s.is_active)
+
+    def test_invalid_channels(self):
+        """Raise an exception if booting with channels greater than max channels of the device. Dummy has 10"""
+        ch = 100
+        s = Aserver(device=0, channels=ch, backend=self.backend)
+        with self.assertRaises(OSError):
+            s.boot()
+
+    def test_default_channels(self):
+        s = Aserver(device=0, backend=self.backend)
+        self.assertEqual(s.channels, self.max_channels)
 
     def test_play_float(self):
         s = Aserver(backend=self.backend)
