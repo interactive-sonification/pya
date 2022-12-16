@@ -1,5 +1,13 @@
 # Changelog
 
+
+## 0.5.0 (Oct 2022)
+* Make Aserver a context that can wrap play inside. This context will handle boot() and quit() automatically.
+* Move OSX/Linux CI to Github Action from TravisCI.
+* Bump numpy dependency, numpy.linspace usage is updated.
+* Make Asig.play() arguments explicit. 
+* Asig.dur property that returns the duration in seconds of the signal
+
 ## 0.4.3 (March 2021)
 * Add logging helper function.
 * Make sure `pya` runs on Python3.8

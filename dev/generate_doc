@@ -10,8 +10,8 @@ from os.path import exists, dirname, basename
 
 SILENCE = "> /dev/null 2>&1"
 
-# this requires m2r, sphinx (<3.0 due to m2r) and sphinx_rtd_theme
-# you usually want to run:  
+# run pip install -r requirements_doc.txt to install dependencies
+# you usually want to run:
 #   python dev/generate_doc --doctree --publish --clean --no-show
 
 def generate():
@@ -88,7 +88,9 @@ def generate_tree(out_folder, publish=False, branches=['master', 'develop'], tag
             os.system(f'cp {template_folder}/../conf.py {template_folder}/../index.rst {doctree_root}/docs')
 
         # PYTHONDONTWRITEBYTECODE=1 prevents __pycache__ files which we don't need when code runs only once.
-        res = os.system(f'PYTHONDONTWRITEBYTECODE=1 sphinx-build -b html -D version={d} -A versions={",".join(doclist)} {doctree_root}/docs {build_folder}/{d}' + SILENCE)
+        call = f'PYTHONDONTWRITEBYTECODE=1 sphinx-build -b html -D version={d} -A versions={",".join(doclist)} {doctree_root}/docs {build_folder}/{d}' + SILENCE
+        print(call)
+        res = os.system(call)
         if res != 0:
             raise RuntimeError(f'Could not generate documentation for {d}. Sphinx returned status code {res}!')
 

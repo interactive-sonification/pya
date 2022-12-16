@@ -63,9 +63,10 @@ class TestAserver(TestCase):
             self.asine.play(server=s, block=True)
             self.asine.play(server=s, block=True)
             self.asine.play(server=s, block=True)
-        dur = time.time() - t0
+        delta = time.time() - t0 - self.asine.dur * 3
         # plus a few hundred ms of aserver boot and stop time
-        self.assertAlmostEqual(dur, self.asine.dur * 3, places=0)
+        is_dur_reasonable = delta > 0 and delta < 1.0
+        self.assertTrue(is_dur_reasonable)
 
     def test_repr(self):
         s = Aserver(backend=self.backend)

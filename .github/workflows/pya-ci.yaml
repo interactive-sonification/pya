@@ -16,9 +16,9 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install portaudio Ubuntu
       if: matrix.os == 'ubuntu-latest'
       shell: bash -l {0}
@@ -38,7 +38,9 @@ jobs:
       run: |
         conda init bash
         conda activate test-env
-        conda install ffmpeg coverage python-coveralls --file=requirements.txt --file=requirements_remote.txt --file=requirements_test.txt
+        conda install ffmpeg coverage python-coveralls --file=requirements_remote.txt --file=requirements_test.txt
+        # pyaudio is not yet available on conda
+        pip install -r requirements.txt
     - name: Run tests
       shell: bash -l {0}
       run: |

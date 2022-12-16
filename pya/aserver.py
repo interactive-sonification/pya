@@ -58,7 +58,7 @@ class Aserver:
         sr : int
             Sampling rate (Default value = 44100)
         bs : int
-            block size or buffer size (Default value = 256)
+            Override block size or buffer size set by chosen backend
         device : int
             The device index based on pya.device_info(), default is None which will set 
             the default device from PyAudio
@@ -73,12 +73,12 @@ class Aserver:
         """
         # TODO check if channels is overwritten by the device.
         self.sr = sr
-        self.bs = bs
         if backend is None:
             from .backend.PyAudio import PyAudioBackend
             self.backend = PyAudioBackend(**kwargs)
         else:
             self.backend = backend
+        self.bs = bs or self.backend.bs
         self.channels = channels
         # Get audio devices to input_device and output_device
         self.input_devices = []
@@ -97,14 +97,26 @@ class Aserver:
         self.srv_curpos = []  # start of next frame to deliver
         self.srv_outs = []  # output channel offset for that asig
         self.stream = None
-        self.boot_time = None  # time.time() when stream starts
-        self.block_cnt = None  # nr. of callback invocations
+        self.boot_time = 0  # time.time() when stream starts
+        self.block_cnt = 0  # nr. of callback invocations
         self.block_duration = self.bs / self.sr  # nominal time increment per callback
-        self.block_time = None  # estimated time stamp for current block
+        self.block_time = 0  # estimated time stamp for current block
         self._stop = True
         self.empty_buffer = np.zeros((self.bs, self.channels),
                                      dtype=self.backend.dtype)
         self._is_active = False
+
+    @property
+    def device_dict(self):
+        return self.backend.get_device_info_by_index(self._device)
+
+    @property
+    def max_out_chn(self):
+        return int(self.device_dict['maxOutputChannels'])
+
+    @property
+    def max_in_chn(self):
+        return int(self.device_dict['maxInputChannels'])
 
     @property
     def device_dict(self):
@@ -124,7 +136,7 @@ class Aserver:
 
     @property
     def is_active(self) -> bool:
-        return self._is_active
+        return self.stream is not None and self.stream.is_active()
 
     @device.setter
     def device(self, val):
@@ -136,7 +148,7 @@ class Aserver:
     def __repr__(self):
         state = False
         msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs},
-         Stream Active: {self._is_active}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
+         Stream Active: {self.is_active}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
 
     def get_devices(self, verbose=False):
@@ -173,7 +185,7 @@ class Aserver:
 
     def boot(self):
         """boot Aserver = start stream, setting its callback to this callback."""
-        if self.stream is not None and self.stream.is_active():
+        if self.is_active:
             _LOGGER.info("Aserver already running...")
             return -1
         self.boot_time = time.time()
@@ -190,17 +202,18 @@ class Aserver:
 
     def quit(self):
         """Aserver quit server: stop stream and terminate pa"""
-        if self.stream is None or not self.stream.is_active():
+        if not self.is_active:
             _LOGGER.info("Stream not active")
             return -1
         try:
-            self.stream.stop_stream()
-            self.stream.close()
-            _LOGGER.info("Aserver stopped.")
+            if self.stream:
+                self.stream.stop_stream()
+                self.stream.close()
+                _LOGGER.info("Aserver stopped.")
         except AttributeError:
             _LOGGER.info("No stream found...")
         self.stream = None
-        self._is_active = False
+        return 0
 
     def play(self, asig, onset=0, out=0, **kwargs):
         """Dispatch asigs or arrays for given onset."""
@@ -292,7 +305,15 @@ class Aserver:
     def stop(self):
         self._stop = True
 
-    def _terminate_backend(self):
+    def __enter__(self):
+        return self.boot()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.quit()
+        self.backend.terminate()
+
+    def __del__(self):
+        self.quit()
         self.backend.terminate()
 
     def __enter__(self):

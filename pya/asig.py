@@ -60,7 +60,10 @@ class Asig:
         ----------
             sig: numpy.array or int or float or str
                 numpy.array for audio signal,
-                str for filepath, int create x samples of silence,
+                str for filepath. Currently support two types
+                of audio loader: 1) Standard library for .wav, .aiff,
+                and ffmpeg for other such as .mp3.
+                int create x samples of silence,
                 float creates x seconds of seconds.
             sr : int
                 Sampling rate
@@ -73,13 +76,18 @@ class Asig:
             cn : list or None
                 A list of channel names, size should match the channels.
         """
-        self.sr = sr
+        if isinstance(sr, int):
+            self.sr = sr
+        else:
+            raise AttributeError("sr needs to be int.")
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
         self.label = label
         self.dtype = "float32"
         if isinstance(sig, str):
-            self._load_audio_file(sig)
+            self.sig, self.sr = audio_from_file(sig)
+            if self.label == "":
+                self.label = sig
         elif isinstance(sig, int):  # sample length
             if channels == 1:
                 self.sig = np.zeros(sig).astype(self.dtype)
@@ -141,20 +149,6 @@ class Asig:
         Return the duration in seconds
         """
         return self.samples / self.sr
-
-    def _load_audio_file(self, fname):
-        """Load audio file, and set self.sig to the signal
-        and self.sr to the sampling rate. Currently support two types
-        of audio loader: 1) Standard library for .wav, .aiff,
-        and ffmpeg for other such as .mp3.
-
-        Parameters
-        ----------
-        fname : str
-            Path to file."""
-        self.sig, self.sr = audio_from_file(fname)
-        if self.label == "":
-            self.label = fname
 
     def save_wavfile(self, fname="asig.wav", dtype="float32"):
         """Save signal as .wav file, return self.
