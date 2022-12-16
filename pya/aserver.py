@@ -318,13 +318,3 @@ class Aserver:
 
     def __enter__(self):
         return self.boot()
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        if self._is_active:
-            self.quit()
-        self._terminate_backend()
-
-    def __del__(self):
-        if self._is_active:
-            self.quit()
-        self._terminate_backend()

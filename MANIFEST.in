@@ -27,3 +27,4 @@ recursive-include tests *.py
 recursive-include pya *.py
 recursive-include dev *.md
 recursive-include dev *.py 
+recursive-include ci *.yml
