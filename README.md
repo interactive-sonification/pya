@@ -49,38 +49,58 @@ At this time pya is more suitable for offline rendering than realtime.
 
 `pya` requires `portaudio` to play and record audio. 
 
-1. Disclaimer: As of December 2022, the latest `pyaudio==0.2.12` is not fully available on Conda Forge. This means 
-this methods is currently not suitable, as it will install 0.2.11 instead. This will work on older version of Pya (< 0.5.1). 
+### Using Conda
 
-Anaconda can install non-python packages, so that the easiest way (if applicable) would be to 
+Pyaudio can be installed via [conda](https://docs.conda.io):
 
-    conda install pyaudio
+```
+conda install pyaudio
+```
+
+Disclaimer: Python 3.10+ requires PyAudio 0.2.12 which is not available on Conda as of December 2022. [Conda-forge](https://conda-forge.org/) provides a version only for Linux at the moment. Users of Python 3.10 should for now use other installation options.
+
+### Using Homebrew and PIP (MacOS only)
 
 
-2. For Mac users, `brew install portaudio`.
-  - For Apple ARM Chip, do the following instead: [Installation on ARM chip](https://stackoverflow.com/a/73166852/4930109)
-      - `brew install portaudio`
-      - `brew --prefix poraudio`
-      - Create .pydistutils.cfg in your home directory, `~/.pydistutils.cfg`, add:
+```
+brew install portaudio
+```
+
+For Apple ARM Chip, do the following instead: [Installation on ARM chip](https://stackoverflow.com/a/73166852/4930109)
+  - `brew install portaudio`
+  - `brew --prefix poraudio`
+  - Create .pydistutils.cfg in your home directory, `~/.pydistutils.cfg`, add:
 
 ```
 [build_ext]
 include_dirs=<PATH FROM STEP 3>/include/
 library_dirs=<PATH FROM STEP 3>/lib/
 ```
-      - `pip install -r requirements.txt`
 
-3. For Linux users, try `sudo apt-get install portaudio19-dev` or equivalent to your distro.
+Then use pip:
 
-4. For Windows users, you can install PyAudio wheel at:
-https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
+```
+pip install pya
+```
 
-Then pya can be installed using pip (or just use the requirements.txt):
+### Using PIP (Linux)
 
-    pip install pya
+Try `sudo apt-get install portaudio19-dev` or equivalent to your distro, then 
 
+```
+pip isntall pya
+```
 
-See pyaudio installation http://people.csail.mit.edu/hubert/pyaudio/#downloads
+### Using PIP (Windows)
+
+[PyPI](https://pypi.org/) provides [PyAudio wheels](https://pypi.org/project/PyAudio/#files) for Windows including portaudio:
+
+```
+pip install pyaudio
+```
+
+should be sufficient.
+
 
 ## A simple example
 
