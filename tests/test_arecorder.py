@@ -1,12 +1,9 @@
 # Test arecorder class.
-import random
 import time
 from pya import Arecorder, Aserver, find_device
-from unittest import TestCase, skipUnless, mock, skip, expectedFailure
+from unittest import TestCase, mock
 import pytest
 import pyaudio
-
-from pya.backend.Dummy import DummyBackend
 
 # check if we have an output device
 has_input = False
