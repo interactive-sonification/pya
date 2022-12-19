@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.1 (Dec 2022)
+* Now support Python3.10
+* Fix bug when channels of not set then the channels is decided by the default device instead of the actual device
 
 ## 0.5.0 (Oct 2022)
 * Make Aserver a context that can wrap play inside. This context will handle boot() and quit() automatically.
