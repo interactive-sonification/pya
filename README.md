@@ -47,7 +47,7 @@ At this time pya is more suitable for offline rendering than realtime.
 
 ## Installation
 
-`pya` requires `portaudio` to play and record audio. 
+`pya` requires `portaudio` and its Python wrapper `PyAudio` to play and record audio. 
 
 ### Using Conda
 
@@ -66,22 +66,35 @@ Disclaimer: Python 3.10+ requires PyAudio 0.2.12 which is not available on Conda
 brew install portaudio
 ```
 
-For Apple ARM Chip, do the following instead: [Installation on ARM chip](https://stackoverflow.com/a/73166852/4930109)
-  - `brew install portaudio`
-  - `brew --prefix poraudio`
-  - Create .pydistutils.cfg in your home directory, `~/.pydistutils.cfg`, add:
-
-```
-[build_ext]
-include_dirs=<PATH FROM STEP 3>/include/
-library_dirs=<PATH FROM STEP 3>/lib/
-```
-
-Then use pip:
+Then  
 
 ```
 pip install pya
 ```
+
+For Apple ARM Chip, if you failed to install the PyAudio dependency, you can follow this guide: [Installation on ARM chip](https://stackoverflow.com/a/73166852/4930109)
+  - Option 1: Create .pydistutils.cfg in your home directory, `~/.pydistutils.cfg`, add:
+
+    ```
+    echo "[build_ext]
+    include_dirs=$(brew --prefix portaudio)/include/
+    library_dirs=$(brew --prefix portaudio)/lib/" > ~/.pydistutils.cfg
+    ```
+    Use pip:
+
+    ```
+    pip install pya
+    ```
+
+    You can remove the `.pydistutils.cfg` file after installation.
+
+- Option 2: Use `CFLAGS`: 
+
+    ```
+    CFLAGS="-I/opt/homebrew/include -L/opt/homebrew/lib" pip install pya
+    ```
+
+
 
 ### Using PIP (Linux)
 
