@@ -80,6 +80,7 @@ def generate_tree(out_folder, publish=False, branches=['master', 'develop'], tag
         res = os.system(f'git -C {doctree_root} checkout {target} -f' + SILENCE)
         if res != 0:
             raise RuntimeError(f'Could not checkout {d}. Git returned status code {res}!')
+        os.system(f'cp {template_folder}/../conf.py {doctree_root}/docs/')
         if template_folder:
             os.system(f'cp {template_folder}/* {doctree_root}/docs/_templates')
 
