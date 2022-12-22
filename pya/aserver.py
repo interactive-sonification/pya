@@ -48,8 +48,8 @@ class Aserver:
         else:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    def __init__(self, sr=44100, bs=512, device=None,
-                 channels=2, backend=None, **kwargs):
+    def __init__(self, sr=44100, bs=None, device=None,
+                 channels=None, backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
 
@@ -58,7 +58,7 @@ class Aserver:
         sr : int
             Sampling rate (Default value = 44100)
         bs : int
-            block size or buffer size (Default value = 256)
+            Override block size or buffer size set by chosen backend
         device : int
             The device index based on pya.device_info(), default is None which will set 
             the default device from PyAudio
@@ -73,13 +73,12 @@ class Aserver:
         """
         # TODO check if channels is overwritten by the device.
         self.sr = sr
-        self.bs = bs
         if backend is None:
             from .backend.PyAudio import PyAudioBackend
             self.backend = PyAudioBackend(**kwargs)
         else:
             self.backend = backend
-        self.channels = channels
+        self.bs = bs or self.backend.bs
         # Get audio devices to input_device and output_device
         self.input_devices = []
         self.output_devices = []
@@ -90,6 +89,7 @@ class Aserver:
                 self.output_devices.append(self.backend.get_device_info_by_index(i))
 
         self._device = device or self.backend.get_default_output_device_info()['index']
+        self.channels = channels or self.backend.get_device_info_by_index(self.device)['maxOutputChannels']
 
         self.gain = 1.0
         self.srv_onsets = []
@@ -104,6 +104,19 @@ class Aserver:
         self._stop = True
         self.empty_buffer = np.zeros((self.bs, self.channels),
                                      dtype=self.backend.dtype)
+        self._is_active = False
+
+    @property
+    def device_dict(self):
+        return self.backend.get_device_info_by_index(self._device)
+
+    @property
+    def max_out_chn(self):
+        return int(self.device_dict['maxOutputChannels'])
+
+    @property
+    def max_in_chn(self):
+        return int(self.device_dict['maxInputChannels'])
 
     @property
     def device_dict(self):
@@ -183,6 +196,7 @@ class Aserver:
                                         frames_per_buffer=self.bs,
                                         output_device_index=self.device,
                                         stream_callback=self._play_callback)
+        self._is_active = self.stream.is_active()
         _LOGGER.info("Server Booted")
         return self
 
@@ -301,3 +315,6 @@ class Aserver:
     def __del__(self):
         self.quit()
         self.backend.terminate()
+
+    def __enter__(self):
+        return self.boot()

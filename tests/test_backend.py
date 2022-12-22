@@ -1,9 +1,9 @@
 from .helpers import wait
 from .test_play import TestPlayBase
 from .test_arecorder import TestArecorderBase
+from pya import Arecorder
 from pya.backend import DummyBackend
 from unittest import TestCase, skipUnless
-import time
 
 try:
     from pya.backend import JupyterBackend

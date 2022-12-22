@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.1 (Dec 2022)
+* Now support Python3.10
+* Bugfix #67: When the channels argument of Aserver and Arecorder has not been set it was determined by the default device instead of the actual device.
 
 ## 0.5.0 (Oct 2022)
 * Make Aserver a context that can wrap play inside. This context will handle boot() and quit() automatically.

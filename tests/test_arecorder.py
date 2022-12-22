@@ -1,10 +1,9 @@
 # Test arecorder class.
 import time
 from pya import Arecorder, Aserver, find_device
-from unittest import TestCase, skipUnless, mock, skip, expectedFailure
+from unittest import TestCase, mock
 import pytest
 import pyaudio
-import time
 
 # check if we have an output device
 has_input = False
@@ -76,13 +75,20 @@ class MockRecorder(mock.MagicMock):
 
 
 class TestArecorderBase(TestCase):
-
     __test__ = False
     backend = None
+    max_inputs = backend.dummy_devices[0]['maxInputChannels'] if backend else 0
 
-    @pytest.mark.xfail(reason="Test may get affect with PortAudio bug or potential unsuitable audio device.")
+    @pytest.mark.xfail(reason="Test may get affected by PortAudio bug or potential unsuitable audio device.")
+    def test_boot(self):
+        ar = Arecorder(backend=self.backend).boot()
+        self.assertTrue(ar.is_active)
+        ar.quit()
+        self.assertFalse(ar.is_active)
+
+    @pytest.mark.xfail(reason="Test may get affected by PortAudio bug or potential unsuitable audio device.")
     def test_arecorder(self):
-        ar = Arecorder(channels=1, backend=self.backend).boot()
+        ar = Arecorder(channels=1, backend=None).boot()
         self.assertEqual(ar.sr, 44100)
         ar.record()
         time.sleep(1.)
@@ -97,7 +103,7 @@ class TestArecorderBase(TestCase):
         ar.recordings.clear()
         ar.quit()
 
-    @pytest.mark.xfail(reason="Test may get affect with PortAudio bug or potential unsuitable audio device.")
+    @pytest.mark.xfail(reason="Test may get affected by PortAudio bug or potential unsuitable audio device.")
     def test_combined_inout(self):
         # test if two streams can be opened on the same device
         # can only be tested when a device with in- and output capabilities is available
@@ -114,18 +120,45 @@ class TestArecorderBase(TestCase):
             player.boot()
             recorder.boot()  # initialized record and boot sequentially to provoke racing condition
             recorder.record()
-            time.sleep(1.)  # wait and record some samples
+            time.sleep(1.)
             recorder.stop()
             player.quit()
             self.assertEqual(len(recorder.recordings), 1)  # we should have one Asig recorded
-            # check whether a realistic amount of samples has been recorded
-            # we assume that a recording ten times the buffer size is a fair indicator of a working process
-            self.assertGreater(recorder.recordings[0].sig.shape[0], 10 * bs)
+            self.assertGreater(recorder.recordings[0].sig.shape[0], 10 * bs, 
+                               "Recording length is too short, < 10buffers")
             recorder.quit()
+
+    @pytest.mark.xfail(reason="Test may get affected by PortAudio bug or potential unsuitable audio device.")
+    def test_custom_channels(self):
+        s = Arecorder(channels=self.max_inputs, backend=self.backend)
+        s.boot()
+        self.assertTrue(s.is_active)
+        s.quit()
+        self.assertFalse(s.is_active)
+
+    @pytest.mark.xfail(reason="Test may get affected by PortAudio bug or potential unsuitable audio device.")
+    def test_invalid_channels(self):
+        """Raise an exception if booting with channels greater than max channels of the device. Dummy has 10"""
+        if self.backend:
+            s = Arecorder(channels=self.max_inputs + 1, backend=self.backend)
+            with self.assertRaises(OSError):
+                s.boot()
+        else:
+            s = Arecorder(channels=-1, backend=self.backend)
+            with self.assertRaises(ValueError):
+                s.boot()
+
+    @pytest.mark.xfail(reason="Some devices may not have inputs")
+    def test_default_channels(self):
+        if self.backend:
+            s = Arecorder(backend=self.backend)
+            self.assertEqual(s.channels, self.backend.dummy_devices[0]['maxInputChannels'])
+        else:
+            s = Arecorder()
+            self.assertGreater(s.channels, 0, "No input channel found")
 
 
 class TestArecorder(TestArecorderBase):
-
     __test__ = True
 
 

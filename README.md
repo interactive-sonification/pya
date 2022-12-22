@@ -40,34 +40,80 @@ At this time pya is more suitable for offline rendering than realtime.
 
 ## Authors and Contributors
 
-* Thomas Hermann, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (author and maintainer)
-* Jiajun Yang, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (co-author)
-* Alexander Neumann, Neurocognitions and Action - Biomechanics, Bielefeld University
+* [Thomas](https://github.com/thomas-hermann) (author, maintainer)
+* [Jiajun](https://github.com/wiccy46) (co-author, maintainer)
+* [Alexander](https://github.com/aleneum) (maintainer)
 * Contributors will be acknowledged here, contributions are welcome.
 
 ## Installation
 
-<!-- **Disclaimer**: We are currently making sure that pya can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .` -->
+`pya` requires `portaudio` and its Python wrapper `PyAudio` to play and record audio. 
 
-**Note**: pya can be installed using **pip**. But pya uses PyAudio for audio playback and record, and PyAudio 0.2.11 has yet to fully support Python 3.7. So using pip install with Python 3.7 may encounter issues such as portaudio. Solutions are:
+### Using Conda
 
-1. Anaconda can install non-python packages, so that the easiest way (if applicable) would be to 
+Pyaudio can be installed via [conda](https://docs.conda.io):
 
-    conda install pyaudio
+```
+conda install pyaudio
+```
 
-2. For Mac users, you can `brew install portaudio` beforehand. 
+Disclaimer: Python 3.10+ requires PyAudio 0.2.12 which is not available on Conda as of December 2022. [Conda-forge](https://conda-forge.org/) provides a version only for Linux at the moment. Users of Python 3.10 should for now use other installation options.
 
-3. For Linux users, try `sudo apt-get install portaudio19-dev` or equivalent to your distro.
+### Using Homebrew and PIP (MacOS only)
 
-4. For Windows users, you can install PyAudio wheel at:
-https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
 
-Then pya can be installed using pip:
+```
+brew install portaudio
+```
 
+Then  
+
+```
+pip install pya
+```
+
+For Apple ARM Chip, if you failed to install the PyAudio dependency, you can follow this guide: [Installation on ARM chip](https://stackoverflow.com/a/73166852/4930109)
+  - Option 1: Create .pydistutils.cfg in your home directory, `~/.pydistutils.cfg`, add:
+
+    ```
+    echo "[build_ext]
+    include_dirs=$(brew --prefix portaudio)/include/
+    library_dirs=$(brew --prefix portaudio)/lib/" > ~/.pydistutils.cfg
+    ```
+    Use pip:
+
+    ```
     pip install pya
+    ```
+
+    You can remove the `.pydistutils.cfg` file after installation.
+
+- Option 2: Use `CFLAGS`: 
+
+    ```
+    CFLAGS="-I/opt/homebrew/include -L/opt/homebrew/lib" pip install pya
+    ```
 
 
-See pyaudio installation http://people.csail.mit.edu/hubert/pyaudio/#downloads
+
+### Using PIP (Linux)
+
+Try `sudo apt-get install portaudio19-dev` or equivalent to your distro, then 
+
+```
+pip isntall pya
+```
+
+### Using PIP (Windows)
+
+[PyPI](https://pypi.org/) provides [PyAudio wheels](https://pypi.org/project/PyAudio/#files) for Windows including portaudio:
+
+```
+pip install pyaudio
+```
+
+should be sufficient.
+
 
 ## A simple example
 
@@ -140,8 +186,9 @@ The benefit of this is that it will handle server bootup and shutdown for you. B
 
 ```Python
 from pya import find_device
+from pya import Aserver
 devices = find_device() # This will return a dictionary of all devices, with their index, name, channels.
-s = pya.Aserver(sr=48000, bs=256, device=devices['name_of_your_device']['index'])
+s = Aserver(sr=48000, bs=256, device=devices['name_of_your_device']['index'])
 ```
 
 
@@ -167,6 +214,24 @@ to plot the spectrogram via the Astft class
 * Asigs support multi-channel audio (as columns of the signal array)
   * `a1[:100, :3]` would select the first 100 samples and the first 3 channels, 
   * `a1[{1.2:2}, ['left']]` would select the channel named 'left' using a time slice from 1
+
+### Recording from Device
+
+`Arecorder` allows recording from input device 
+
+```Python
+import time
+
+from pya import find_device
+from pya import Arecorder
+devices = find_device()  # Find the index of the input device
+arecorder = Arecorder(device=some_index, sr=48000, bs=512)  # Or not set device to let pya find the default device 
+arecorder.boot()
+arecorder.record()
+time.sleep(2)  # Recording is non-blocking
+arecorder.stop()
+last_recording = arecorder.recordings[-1]  # Each time a recorder stop, a new recording is appended to recordings
+```
 
 ### Method chaining
 Asig methods usually return an Asig, so methods can be chained, e.g
