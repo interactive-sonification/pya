@@ -23,10 +23,10 @@ Attributes
 
 .. autoapisummary::
 
-   pya.backend.Jupyter.Sanic
+   pya.backend.Jupyter.websockets
 
 
-.. py:data:: Sanic
+.. py:data:: websockets
    
 
    

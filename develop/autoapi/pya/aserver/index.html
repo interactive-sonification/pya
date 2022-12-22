@@ -43,21 +43,11 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.0/" >v0.5.0</option>
+  <option value="/pya/v0.5.1/" >v0.5.1</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" selected="selected">develop</option>
-
-  <option value="/pya/v0.4.2/" >v0.4.2</option>
-
-  <option value="/pya/v0.4.1/" >v0.4.1</option>
-
-  <option value="/pya/v0.4.0/" >v0.4.0</option>
-
-  <option value="/pya/v0.3.3/" >v0.3.3</option>
-
-  <option value="/pya/v0.3.2/" >v0.3.2</option>
 
 <select>
 </div>
@@ -88,6 +78,9 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.aserver.Aserver.device_dict"><code class="docutils literal notranslate"><span class="pre">Aserver.device_dict</span></code></a></li>
 <li><a class="reference internal" href="#pya.aserver.Aserver.max_out_chn"><code class="docutils literal notranslate"><span class="pre">Aserver.max_out_chn</span></code></a></li>
 <li><a class="reference internal" href="#pya.aserver.Aserver.max_in_chn"><code class="docutils literal notranslate"><span class="pre">Aserver.max_in_chn</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Aserver.device_dict</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">Aserver.max_out_chn</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">Aserver.max_in_chn</span></code></a></li>
 <li><a class="reference internal" href="#pya.aserver.Aserver.device"><code class="docutils literal notranslate"><span class="pre">Aserver.device</span></code></a></li>
 <li><a class="reference internal" href="#pya.aserver.Aserver.is_active"><code class="docutils literal notranslate"><span class="pre">Aserver.is_active</span></code></a></li>
 <li><a class="reference internal" href="#pya.aserver.Aserver.default"><code class="docutils literal notranslate"><span class="pre">Aserver.default</span></code></a></li>
@@ -104,6 +97,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.aserver.Aserver.__enter__"><code class="docutils literal notranslate"><span class="pre">Aserver.__enter__()</span></code></a></li>
 <li><a class="reference internal" href="#pya.aserver.Aserver.__exit__"><code class="docutils literal notranslate"><span class="pre">Aserver.__exit__()</span></code></a></li>
 <li><a class="reference internal" href="#pya.aserver.Aserver.__del__"><code class="docutils literal notranslate"><span class="pre">Aserver.__del__()</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">Aserver.__enter__()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#pya.aserver._LOGGER">_LOGGER</a></li>
@@ -178,7 +172,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pya.aserver.Aserver">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.aserver.</span></span><span class="sig-name descname"><span class="pre">Aserver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.aserver.</span></span><span class="sig-name descname"><span class="pre">Aserver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver" title="Permalink to this definition"></a></dt>
 <dd><p>Pya audio server
 Based on pyaudio, works as a FIFO style audio stream pipeline,
 allowing Asig.play() to send audio segement into the stream.</p>
@@ -207,6 +201,21 @@ allowing Asig.play() to send audio segement into the stream.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.max_in_chn">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_in_chn</span></span><a class="headerlink" href="#pya.aserver.Aserver.max_in_chn" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device_dict</span></span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_out_chn</span></span><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id2">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_in_chn</span></span><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -302,6 +311,11 @@ allowing Asig.play() to send audio segement into the stream.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.__del__">
 <span class="sig-name descname"><span class="pre">__del__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.__del__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">__enter__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>

@@ -18,7 +18,7 @@ Classes
 
 
 
-.. py:class:: DummyBackend(dummy_devices=None)
+.. py:class:: DummyBackend
 
    Bases: :py:obj:`pya.backend.base.BackendBase`
 

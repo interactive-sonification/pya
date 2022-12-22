@@ -43,21 +43,11 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.0/" >v0.5.0</option>
+  <option value="/pya/v0.5.1/" >v0.5.1</option>
 
   <option value="/pya/master/" selected="selected">master</option>
 
   <option value="/pya/develop/" >develop</option>
-
-  <option value="/pya/v0.4.2/" >v0.4.2</option>
-
-  <option value="/pya/v0.4.1/" >v0.4.1</option>
-
-  <option value="/pya/v0.4.0/" >v0.4.0</option>
-
-  <option value="/pya/v0.3.3/" >v0.3.3</option>
-
-  <option value="/pya/v0.3.2/" >v0.3.2</option>
 
 <select>
 </div>
@@ -90,6 +80,9 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.Aserver.device_dict"><code class="docutils literal notranslate"><span class="pre">Aserver.device_dict</span></code></a></li>
 <li><a class="reference internal" href="#pya.Aserver.max_out_chn"><code class="docutils literal notranslate"><span class="pre">Aserver.max_out_chn</span></code></a></li>
 <li><a class="reference internal" href="#pya.Aserver.max_in_chn"><code class="docutils literal notranslate"><span class="pre">Aserver.max_in_chn</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Aserver.device_dict</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">Aserver.max_out_chn</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">Aserver.max_in_chn</span></code></a></li>
 <li><a class="reference internal" href="#pya.Aserver.device"><code class="docutils literal notranslate"><span class="pre">Aserver.device</span></code></a></li>
 <li><a class="reference internal" href="#pya.Aserver.is_active"><code class="docutils literal notranslate"><span class="pre">Aserver.is_active</span></code></a></li>
 <li><a class="reference internal" href="#pya.Aserver.default"><code class="docutils literal notranslate"><span class="pre">Aserver.default</span></code></a></li>
@@ -106,6 +99,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.Aserver.__enter__"><code class="docutils literal notranslate"><span class="pre">Aserver.__enter__()</span></code></a></li>
 <li><a class="reference internal" href="#pya.Aserver.__exit__"><code class="docutils literal notranslate"><span class="pre">Aserver.__exit__()</span></code></a></li>
 <li><a class="reference internal" href="#pya.Aserver.__del__"><code class="docutils literal notranslate"><span class="pre">Aserver.__del__()</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">Aserver.__enter__()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#pya.Asig"><code class="docutils literal notranslate"><span class="pre">Asig</span></code></a><ul>
@@ -115,8 +109,8 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.Asig.channels"><code class="docutils literal notranslate"><span class="pre">Asig.channels</span></code></a></li>
 <li><a class="reference internal" href="#pya.Asig.cn"><code class="docutils literal notranslate"><span class="pre">Asig.cn</span></code></a></li>
 <li><a class="reference internal" href="#pya.Asig.mix_mode"><code class="docutils literal notranslate"><span class="pre">Asig.mix_mode</span></code></a></li>
-<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Asig.channels</span></code></a></li>
-<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">Asig.cn</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">Asig.channels</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">Asig.cn</span></code></a></li>
 <li><a class="reference internal" href="#pya.Asig.samples"><code class="docutils literal notranslate"><span class="pre">Asig.samples</span></code></a></li>
 <li><a class="reference internal" href="#pya.Asig.dur"><code class="docutils literal notranslate"><span class="pre">Asig.dur</span></code></a></li>
 <li><a class="reference internal" href="#pya.Asig.x"><code class="docutils literal notranslate"><span class="pre">Asig.x</span></code></a></li>
@@ -290,8 +284,8 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.Asig.channels">channels</a></li>
 <li><a class="reference internal" href="#pya.Asig.cn">cn</a></li>
 <li><a class="reference internal" href="#pya.Asig.mix_mode">mix_mode</a></li>
-<li><a class="reference internal" href="#id0">channels</a></li>
-<li><a class="reference internal" href="#id1">cn</a></li>
+<li><a class="reference internal" href="#id4">channels</a></li>
+<li><a class="reference internal" href="#id5">cn</a></li>
 <li><a class="reference internal" href="#pya.Asig.samples">samples</a></li>
 <li><a class="reference internal" href="#pya.Asig.dur">dur</a></li>
 <li><a class="reference internal" href="#pya.Asig.x">x</a></li>
@@ -670,7 +664,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="pya.Aserver">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.</span></span><span class="sig-name descname"><span class="pre">Aserver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.</span></span><span class="sig-name descname"><span class="pre">Aserver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver" title="Permalink to this definition"></a></dt>
 <dd><p>Pya audio server
 Based on pyaudio, works as a FIFO style audio stream pipeline,
 allowing Asig.play() to send audio segement into the stream.</p>
@@ -699,6 +693,21 @@ allowing Asig.play() to send audio segement into the stream.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pya.Aserver.max_in_chn">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_in_chn</span></span><a class="headerlink" href="#pya.Aserver.max_in_chn" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device_dict</span></span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_out_chn</span></span><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id2">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_in_chn</span></span><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -796,6 +805,11 @@ allowing Asig.play() to send audio segement into the stream.</p>
 <span class="sig-name descname"><span class="pre">__del__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aserver.__del__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">__enter__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 </dd></dl>
 
@@ -884,14 +898,14 @@ the .bound, .extend and .overwrite properties.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channels</span></span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="id4">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">channels</span></span><a class="headerlink" href="#id4" title="Permalink to this definition"></a></dt>
 <dd><p>Return the number of channels</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="id1">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cn</span></span><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="id5">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cn</span></span><a class="headerlink" href="#id5" title="Permalink to this definition"></a></dt>
 <dd><p>Channel names getter</p>
 </dd></dl>
 
@@ -2788,7 +2802,7 @@ Each row has the size of NFFT / 2 + 1 due to rfft.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pya.DummyBackend">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.</span></span><span class="sig-name descname"><span class="pre">DummyBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dummy_devices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.DummyBackend" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.</span></span><span class="sig-name descname"><span class="pre">DummyBackend</span></span><a class="headerlink" href="#pya.DummyBackend" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="backend/base/index.html#pya.backend.base.BackendBase" title="pya.backend.base.BackendBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pya.backend.base.BackendBase</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>

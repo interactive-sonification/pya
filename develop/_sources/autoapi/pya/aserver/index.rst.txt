@@ -30,7 +30,7 @@ Attributes
 
    
 
-.. py:class:: Aserver(sr=44100, bs=512, device=None, channels=2, backend=None, **kwargs)
+.. py:class:: Aserver(sr=44100, bs=None, device=None, channels=None, backend=None, **kwargs)
 
    Pya audio server
    Based on pyaudio, works as a FIFO style audio stream pipeline,
@@ -46,6 +46,15 @@ Attributes
    >>> asine = Ugen().sine()
    >>> asine.play(server=ser)
    Asig('sine'): 1 x 44100 @ 44100Hz = 1.000s cn=['0']
+
+   .. py:property:: device_dict
+
+
+   .. py:property:: max_out_chn
+
+
+   .. py:property:: max_in_chn
+
 
    .. py:property:: device_dict
 
@@ -126,6 +135,9 @@ Attributes
 
 
    .. py:method:: __del__()
+
+
+   .. py:method:: __enter__()
 
 
 
