@@ -1,0 +1,58 @@
+:py:mod:`pya.backend.PyAudio`
+=============================
+
+.. py:module:: pya.backend.PyAudio
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   pya.backend.PyAudio.PyAudioBackend
+
+
+
+
+.. py:class:: PyAudioBackend(format=pyaudio.paFloat32)
+
+   Bases: :py:obj:`pya.backend.base.BackendBase`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:attribute:: _boot_delay
+      :annotation: = 0.5
+
+      
+
+   .. py:attribute:: bs
+      :annotation: = 512
+
+      
+
+   .. py:method:: get_device_count()
+
+
+   .. py:method:: get_device_info_by_index(idx)
+
+
+   .. py:method:: get_default_input_device_info()
+
+
+   .. py:method:: get_default_output_device_info()
+
+
+   .. py:method:: open(rate, channels, input_flag, output_flag, frames_per_buffer, input_device_index=None, output_device_index=None, start=True, input_host_api_specific_stream_info=None, output_host_api_specific_stream_info=None, stream_callback=None)
+
+
+   .. py:method:: process_buffer(buffer)
+
+
+   .. py:method:: terminate()
+
+
+

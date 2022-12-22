@@ -1,0 +1,780 @@
+:py:mod:`pya.asig`
+==================
+
+.. py:module:: pya.asig
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   pya.asig.Asig
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   pya.asig._LOGGER
+
+
+.. py:data:: _LOGGER
+   
+
+   
+
+.. py:class:: Asig(sig, sr=44100, label='', channels=1, cn=None)
+
+   Audio signal class.
+   Asig enables manipulation of audio signals in the style of numpy and more.
+   Asig offer functions for plotting (via matplotlib) and playing audio
+   (using the pya.Aserver class)
+
+   .. attribute:: sig
+
+      Array for the audio signal. Can be mono or multichannel.
+
+      :type: numpy.array
+
+   .. attribute:: sr
+
+      Sampling rate
+
+      :type: int
+
+   .. attribute:: label
+
+      A string label to give the object a unique identifier.
+
+      :type: str
+
+   .. attribute:: channels
+
+      Number of channels
+
+      :type: int
+
+   .. attribute:: cn
+
+      cn short for channel names is a list of string of size channels,
+      to give each channel a unique name.
+      channel names can be used to subset signal channels in
+      a more readible way,
+      e.g. asig[:, ['left', 'front']] subsets the left and
+      front channels of the signal.
+
+      :type: list of str, None
+
+   .. attribute:: mix_mode
+
+      used to extend numpy __setitem__() operation to
+      frequent audio manipulations such as
+      mixing, extending, boundary, replacing.
+      Current Asig supports the mix_modes:
+      bound, extend, overwrite.  mix_mode should not be
+      set directly but is set temporarilty when using
+      the .bound, .extend and .overwrite properties.
+
+      :type: str or None
+
+   .. py:property:: channels
+
+      Return the number of channels
+
+   .. py:property:: cn
+
+      Channel names getter
+
+   .. py:property:: samples
+      :type: int
+
+      Return the length of signal in samples
+
+   .. py:property:: dur
+      :type: float
+
+      Return the duration in seconds
+
+   .. py:property:: x
+
+      this mode allows destination
+      sig size in assignment to be extended through setitem
+
+      :type: Extend mode
+
+   .. py:property:: b
+
+      this mode allows to truncate a source signal
+      in assignment to a limited destination in setitem.
+
+      :type: Bound mode
+
+   .. py:property:: o
+
+      this mode cuts and replaces target
+      selection by source signal on assignment via setitem
+
+      :type: Overwrite mode
+
+   .. py:attribute:: extend
+      
+
+      
+
+   .. py:attribute:: bound
+      
+
+      
+
+   .. py:attribute:: overwrite
+      
+
+      
+
+   .. py:method:: save_wavfile(fname='asig.wav', dtype='float32')
+
+      Save signal as .wav file, return self.
+
+      :param fname: name of the file with .wav (Default value = "asig.wav")
+      :type fname: str
+      :param dtype: datatype (Default value = 'float32')
+      :type dtype: str
+
+
+   .. py:method:: _set_col_names()
+
+
+   .. py:method:: __getitem__(index)
+
+      Accessing array elements through slicing.
+          * int, get signal row asig[4];
+          * slice, range and step slicing asig[4:40:2]
+              # from 4 to 40 every 2 samples;
+          * list, subset rows, asig[[2, 4, 6]]
+              # pick out index 2, 4, 6 as a new asig
+          * tuple, row and column specific slicing, asig[4:40, 3:5]
+              # from 4 to 40, channel 3 and 4
+          * Time slicing (unit in seconds) using dict asig[{1:2.5}, :]
+              creates indexing of 1s to 2.5s.
+          * Channel name slicing: asig['l'] returns channel 'l' as
+              a new mono asig. asig[['front', 'rear']], etc...
+          * bool, subset channels: asig[:, [True, False]]
+
+
+      :param index: Slicing argument.
+      :type index: Number or slice or list or tuple or dict
+
+      :returns: **a** -- __getitem__ returns a subset of the self based on the slicing.
+      :rtype: Asig
+
+
+   .. py:method:: __setitem__(index, value)
+
+      setitem: asig[index] = value. This allows all the methods from getitem:
+          * numpy style slicing
+          * string/string_list for subsetting based on channel name
+          * time slicing (unit seconds) via dict.
+          * bool slicing to filter out specific channels.
+      In addition, there are 4 possible modes:
+      (referring to asig as 'dest', and value as 'src'
+          1. standard pythonic way that the src and
+          dest dimensions need to match
+              asig[...] = value
+          2. bound mode where src is copied up to the bounds of dest
+              asig.b[...] = value
+          3. extend mode where dest is dynamically
+          extended to make space for src
+              asig.x[...] = value
+          4. overwrite mode where selected dest subset is
+          replaced by specified src regardless the length.
+              asig.o[...] = value
+
+      row index:
+          * list: e.g. [1,2,3,4,5,6] or [True, ..., False]
+              (modes b and x possible)
+          * int:  e.g. 0  (i.e. a single sample, so no need for extra modes)
+          * slice: e.g. 100:5000:2  (can be used with all modes)
+          * dict: e.g. {0.5: 2.5}
+              (modes o, b possible, x only if step==1,
+              or if step==None and stop=None)
+
+      :param index: Slicing argument.
+      :type index: Number or slice or list or tuple or dict
+      :param value: value to set
+      :type value: Asig or numpy.ndarray or list
+
+      :returns: **_** -- Updated asig
+      :rtype: Asig
+
+
+   .. py:method:: resample(target_sr=44100, rate=1, kind='linear')
+
+      Resample signal based on interpolation, can process multichannel signals.
+
+      :param target_sr: Target sampling rate (Default value = 44100)
+      :type target_sr: int
+      :param rate: Rate to speed up or slow down the audio (Default value = 1)
+      :type rate: float
+      :param kind: Type of interpolation (Default value = 'linear')
+      :type kind: str
+
+      :returns: **_** -- Asig with resampled signal.
+      :rtype: Asig
+
+
+   .. py:method:: play(rate=1, server=None, onset=0, channel=0, block=False)
+
+      Play Asig audio via Aserver, using Aserver.default (if existing)
+      kwargs are propagated to Aserver:play(onset=0, out=0)
+
+      :param rate: Playback rate (Default value = 1)
+      :type rate: float
+      :param \*\*kwargs:
+                         'server' : Aserver
+                             Set which server to play. e.g. s = Aserver(); s.boot(); asig.play(server=s)
+      :type \*\*kwargs: str
+
+      :returns: **_** -- return self
+      :rtype: Asig
+
+
+   .. py:method:: shift_channel(shift=0)
+
+      Shift signal to other channels. This is particular useful for assigning a mono signal to a specific channel.
+          * shift = 0: does nothing as the same signal is being routed to the same position
+          * shift > 0: shift channels of self.sig 'right', i.e. from [0,..channels-1] to channels [shift,shift+1,...]
+          * shift < 0: shift channels of self.sig 'left', i.e. the first shift channels will be discarded.
+
+      :param shift: shift channel amount (Default value = 0)
+      :type shift: int
+
+      :returns: **_** -- Rerouted asig
+      :rtype: Asig
+
+
+   .. py:method:: mono(blend=None)
+
+      Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)
+
+      :param blend: list of gain for each channel as a multiplier.
+                    Do nothing if signal is already mono, raise warning (Default value = None)
+      :type blend: list
+
+      :returns: **_** -- A mono Asig object
+      :rtype: Asig
+
+
+   .. py:method:: stereo(blend=None)
+
+      Blend all channels of the signal to stereo. Applicable for any single-/ or multi-channel Asig.
+
+      :param blend: Usage: For mono, blend=(g1, g2), the  channel will be broadcated to left, right with g1, g2 gains.
+                    For stereo signal, blend=(g1, g2), each channel is gain adjusted by g1, g2.
+                    For multichannel: blend = [[list of gains for left channel], [list of gains for right channel]]
+                    Default value = None, resulting in equal distribution to left and right channel
+      :type blend: list or None
+
+      .. rubric:: Example
+
+      asig[:,['c1','c2','c3']].stereo[[1, 0.707, 0], [0, 0.707, 1]]
+          mixes channel 'c1' to left, 'c2' to center and 'c3' to right channel
+          of a new stereo asig. Note that for equal loudness left**2+right**2=1 should be used
+
+      :returns: **_** -- A stereo Asig object
+      :rtype: Asig
+
+
+   .. py:method:: rewire(dic)
+
+      Rewire channels to flexibly allow weighted channel permutations.
+
+      :param dic: key = tuple of (source channel, destination channel)
+                  value = amplitude gain
+      :type dic: dict
+
+      .. rubric:: Example
+
+      {(0, 1): 0.2, (5, 0): 0.4}: rewire channel 0 to 1 with gain 0.2, and 5 to 1 with gain 2
+      leaving other channels unmodified
+
+      :returns: **_** -- Asig with rewired channels..
+      :rtype: Asig
+
+
+   .. py:method:: pan2(pan=0.0)
+
+      Stereo panning of asig to a stereo output.
+      Panning is based on constant power panning, see pan below
+      Behavior depends on nr of channels self.channels
+      * multi-channel signals (self.channels>2) are cut back to stereo and treated as
+      * stereo signals (self.channels==2) are channelwise attenuated using cos(angle), sin(angle)
+      * mono signals (self.channels==1) result in stereo output asigs.
+
+      :param pan: panning between -1. (left) to 1. (right)  (Default value = 0.)
+      :type pan: float
+
+      :returns: **_** -- Asig
+      :rtype: Asig
+
+
+   .. py:method:: remove_DC()
+
+      remove DC offset
+
+      :param none:
+
+      :returns: **_** -- channelwise DC-free Asig.
+      :rtype: Asig
+
+
+   .. py:method:: norm(norm=1, in_db=False, dcflag=False)
+
+      Normalize signal
+
+      :param norm: normalize threshold (Default value = 1)
+      :type norm: float
+      :param in_db: Normally, norm takes amplitude, if in_db, norm's unit is in dB.
+      :type in_db: bool
+      :param dcflag: If true, remove DC offset (Default value = False)
+      :type dcflag: bool
+
+      :returns: **_** -- normalized Asig.
+      :rtype: Asig
+
+
+   .. py:method:: gain(amp=None, db=None)
+
+      Apply gain in amplitude or dB, only use one or the other arguments. Argument can be either a scalar
+      or a list (to apply individual gain to each channel). The method returns a new asig with gain applied.
+
+      :param amp: Amplitude (Default value = None)
+      :type amp: float or None
+      :param db: Decibel (Default value = None)
+      :type db: float or int or None
+
+      :returns: **_** -- Gain adjusted Asig.
+      :rtype: Asig
+
+
+   .. py:method:: rms(axis=0)
+
+      Return signal's RMS
+
+      :param axis: Axis to perform np.mean() on (Default value = 0)
+      :type axis: int
+
+      :returns: **_** -- RMS value
+      :rtype: float
+
+
+   .. py:method:: plot(fn=None, offset=0, scale=1, x_as_time=True, ax=None, xlim=None, ylim=None, **kwargs)
+
+      Display signal graph
+
+      :param fn: Keyword or function (Default value = None)
+      :type fn: func or None
+      :param offset: Offset each channel to create a stacked view (Default value = 0)
+      :type offset: int or float
+      :param scale: Scale the y value (Default value = 1)
+      :type scale: float
+      :param xlim: x axis range (Default value = None)
+      :type xlim: tuple or list
+      :param ylim: y axis range (Default value = None)
+      :type ylim: tuple or list
+      :param \*\*kwargs: keyword arguments for matplotlib.pyplot.plot()
+
+      :returns: **_** -- self, you can use plt.show() to display the plot.
+      :rtype: Asig
+
+
+   .. py:method:: get_duration()
+
+      Return the duration in second.
+
+
+   .. py:method:: get_times()
+
+      Get time stamps for left-edge of sample-and-hold-signal
+
+
+   .. py:method:: __eq__(other)
+
+      Check if two asig objects have the same signal. But does not care about sr and others
+
+
+   .. py:method:: __repr__()
+
+      Report key attributes
+
+
+   .. py:method:: __mul__(other)
+
+      Magic method for multiplying. You can either multiply a scalar or an Asig object. If muliplying an Asig,
+      you don't always need to have same size arrays as audio signals may different in length. If mix_mode
+      is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
+      bigger array is.
+
+
+   .. py:method:: __rmul__(other)
+
+
+   .. py:method:: __truediv__(other)
+
+      Magic method for division. You can either divide a scalar or an Asig object.
+      Use division with caution, audio signal is common to reach 0 or near,
+      avoid zero division or extremely large result.
+
+      If dividing an Asig, you don't always need to have same size arrays as audio signals
+      may different in length. If mix_mode is set to 'bound' the size is fixed to respect self.
+      If not, the result will respect to whichever the bigger array is.
+
+
+   .. py:method:: __rtruediv__(other)
+
+
+   .. py:method:: __add__(other)
+
+      Magic method for adding. You can either add a scalar or an Asig object. If adding an Asig,
+      you don't always need to have same size arrays as audio signals may different in length. If mix_mode
+      is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
+      bigger array is.
+
+
+   .. py:method:: __radd__(other)
+
+
+   .. py:method:: __sub__(other)
+
+      Magic method for subtraction. You can either minus a scalar or an Asig object. If subtracting an Asig,
+      you don't always need to have same size arrays as audio signals may different in length. If mix_mode
+      is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
+      bigger array is.
+
+
+   .. py:method:: __rsub__(other)
+
+
+   .. py:method:: find_events(step_dur=0.001, sil_thr=-20, evt_min_dur=0, sil_min_dur=0.1, sil_pad=[0.001, 0.1])
+
+      Locate meaningful 'events' in the signal and create event list. Onset detection.
+
+      :param step_dur: duration in seconds of each search step (Default value = 0.001)
+      :type step_dur: float
+      :param sil_thr: silent threshold in dB (Default value = -20)
+      :type sil_thr: int
+      :param evt_min_dur: minimum duration to be counted as an event (Default value = 0)
+      :type evt_min_dur: float
+      :param sil_min_dur: minimum duration to be counted as silent (Default value = 0.1)
+      :type sil_min_dur: float
+      :param sil_pad: this allows you to add a small duration before and after the actual
+                      found event locations to the event ranges. If it is a list, you can set the padding (Default value = [0.001)
+      :type sil_pad: list
+      :param 0.1]:
+
+      :returns: **_** -- This method returns self. But the list of events can be accessed through self._['events']
+      :rtype: Asig
+
+
+   .. py:method:: select_event(index=None, onset=None)
+
+      This method can be called after find_event (aka onset detection).
+
+      :param index: Index of the event (Default value = None)
+      :type index: int or None
+      :param onset: Onset of the event (Default value = None)
+      :type onset: int or None
+
+      :returns: **_** -- self
+      :rtype: Asig
+
+
+   .. py:method:: plot_events()
+
+
+   .. py:method:: fade_in(dur=0.1, curve=1)
+
+      Fade in the signal at the beginning
+
+      :param dur: Duration in seconds to fade in (Default value = 0.1)
+      :type dur: float
+      :param curve: Curvature of the fader, power of the linspace function. (Default value = 1)
+      :type curve: float
+
+      :returns: **_** -- Asig, new asig with the fade in signal
+      :rtype: Asig
+
+
+   .. py:method:: fade_out(dur=0.1, curve=1)
+
+      Fade out the signal at the end
+
+      :param dur: duration in seconds to fade out (Default value = 0.1)
+      :type dur: float
+      :param curve: Curvature of the fader, power of the linspace function. (Default value = 1)
+      :type curve: float
+
+      :returns: **_** -- Asig, new asig with the fade out signal
+      :rtype: Asig
+
+
+   .. py:method:: iirfilter(cutoff_freqs, btype='bandpass', ftype='butter', order=4, filter='lfilter', rp=None, rs=None)
+
+      iirfilter based on scipy.signal.iirfilter
+
+      :param cutoff_freqs: Cutoff frequency or frequencies.
+      :type cutoff_freqs: float or [float, float]
+      :param btype: Filter type (Default value = 'bandpass')
+      :type btype: str
+      :param ftype: Tthe type of IIR filter. e.g. 'butter', 'cheby1', 'cheby2', 'elip', 'bessel' (Default value = 'butter')
+      :type ftype: str
+      :param order: Filter order (Default value = 4)
+      :type order: int
+      :param filter: The scipy.signal method to call when applying the filter coeffs to the signal.
+                     by default it is set to scipy.signal.lfilter (one-dimensional).
+      :type filter: str
+      :param rp: For Chebyshev and elliptic filters, provides the maximum ripple in the passband. (dB) (Default value = None)
+      :type rp: float
+      :param rs: For Chebyshev and elliptic filters, provides the minimum attenuation in the stop band. (dB) (Default value = None)
+      :type rs: float
+
+      :returns: **_** -- new Asig with the filter applied. also you can access b, a coefficients by doing self._['b']
+                and self._['a']
+      :rtype: Asig
+
+
+   .. py:method:: plot_freqz(worN, **kwargs)
+
+      Plot the frequency response of a digital filter. Perform scipy.signal.freqz then plot the response.
+
+      TODO
+      :param worN:
+      :param \*\*kwargs:
+
+
+   .. py:method:: envelope(amps, ts=None, curve=1, kind='linear')
+
+      Create an envelop and multiply by the signal.
+
+      :param amps: Amplitude of each breaking point
+      :type amps: array
+      :param ts: Indices of each breaking point (Default value = None)
+      :type ts: array
+      :param curve: Affecting the curvature of the ramp. (Default value = 1)
+      :type curve: int
+      :param kind: The type of interpolation (Default value = 'linear')
+      :type kind: str
+
+      :returns: **_** -- Returns a new asig with the enveloped applied to its signal array
+      :rtype: Asig
+
+
+   .. py:method:: adsr(att=0, dec=0.1, sus=0.7, rel=0.1, curve=1, kind='linear')
+
+      Create and applied a ADSR evelope to signal.
+
+      :param att: attack (Default value = 0)
+      :type att: float
+      :param dec: decay (Default value = 0.1)
+      :type dec: float
+      :param sus: sustain (Default value = 0.7)
+      :type sus: float
+      :param rel: release. (Default value = 0.1)
+      :type rel: float
+      :param curve: affecting the curvature of the ramp. (Default value = 1)
+      :type curve: int
+      :param kind: The type of interpolation (Default value = 'linear')
+      :type kind: str
+
+      :returns: **_** -- returns a new asig with the enveloped applied to its signal array
+      :rtype: Asig
+
+
+   .. py:method:: window(win='triang', **kwargs)
+
+      Apply windowing to self.sig
+
+      :param win: Type of window check scipy.signal.get_window for avaiable types. (Default value = 'triang')
+      :type win: str
+      :param \*\*kwargs: keyword arguments for scipy.signal.get_window()
+
+      :returns: **_** -- new asig with window applied.
+      :rtype: Asig
+
+
+   .. py:method:: window_op(nperseg=64, stride=32, win=None, fn='rms', pad='mirror')
+
+      TODO add docstring
+
+      :param nperseg: (Default value = 64)
+      :param stride: (Default value = 32)
+      :param win: (Default value = None)
+      :param fn: (Default value = 'rms')
+      :param pad: (Default value = 'mirror')
+
+
+   .. py:method:: overlap_add(nperseg=64, stride_in=32, stride_out=32, jitter_in=None, jitter_out=None, win=None, pad='mirror')
+
+      TODO
+
+      :param nperseg: (Default value = 64)
+      :param stride_in: (Default value = 32)
+      :param stride_out: (Default value = 32)
+      :param jitter_in: (Default value = None)
+      :param jitter_out: (Default value = None)
+      :param win: (Default value = None)
+      :param pad: (Default value = 'mirror')
+
+
+   .. py:method:: to_spec()
+
+      Return Aspec object which is the rfft of the signal.
+
+
+   .. py:method:: to_stft(**kwargs)
+
+      Return Astft object which is the stft of the signal. Keyword arguments are the arguments for
+      scipy.signal.stft().
+
+
+   .. py:method:: to_mfcc(n_per_frame=None, hopsize=None, nfft=None, window='hann', nfilters=26, ncep=13, ceplifter=22, preemph=0.95, append_energy=True)
+
+      Return Amfcc object.
+
+
+   .. py:method:: plot_spectrum(offset=0, scale=1.0, xlim=None, **kwargs)
+
+      Plot spectrum of the signal
+
+      :param offset: If self.sig is multichannels, this will offset each
+                     channels to create a stacked view for better viewing (Default value = 0.)
+      :type offset: float
+      :param scale: scale the y_axis (Default value = 1.)
+      :type scale: float
+      :param xlim: range of x_axis (Default value = None)
+      :type xlim: tuple
+      :param \*\*kwargs: keywords arguments for matplotlib.pyplot.plot()
+
+      :returns: **_** -- self
+      :rtype: Asig
+
+
+   .. py:method:: spectrogram(*argv, **kvarg)
+
+      Perform sicpy.signal.spectrogram and returns: frequencies, array of times, spectrogram
+
+
+
+   .. py:method:: get_size()
+
+      Return signal array shape and duration in seconds.
+
+
+   .. py:method:: append(asig, amp=1)
+
+      Apppend an asig with another. Conditions: the appended asig should have the same channels. If
+      appended asig has a different sampling rate, resample it to match the orginal.
+
+      :param asig: object to append
+      :type asig: Asig
+      :param amp: aplitude (Default value = 1)
+      :type amp: float or int
+
+      :returns: **_** -- Appended Asig object
+      :rtype: Asig
+
+
+   .. py:method:: add(sig, pos=None, amp=1, onset=None)
+
+      Add a signal
+
+      :param sig: Signal to add
+      :type sig: asig
+      :param pos: Postion to add (Default value = None)
+      :type pos: int, None
+      :param amp: Aplitude (Default value = 1)
+      :type amp: float
+      :param onset: Similar to pos but in time rather sample,
+                    given a value to this will overwrite pos (Default value = None)
+      :type onset: float or None
+
+      :returns: **_** -- Asig with the added signal.
+      :rtype: Asig
+
+
+   .. py:method:: flatten()
+
+      Flatten a multidimentional array into a vector using np.ravel()
+
+
+   .. py:method:: pad(width=0, tail=True, constant_values=0, dur=None)
+
+      Pads the signal
+
+      :param width: The number of samples to append to the tail or head of the array.
+      :type width: int
+      :param tail: By default it is True, if trail pad to the end, else pad to the start.
+      :type tail: bool
+      :param constant_values: value to be padded, defaults to 0
+      :type constant_values: float32
+      :param dur: duration to be padded;  if specified, it overrides the parameter width
+      :type dur: float
+
+      :returns: **_** -- Asig of the pad signal.
+      :rtype: Asig
+
+
+   .. py:method:: custom(func, **kwargs)
+
+      custom function method. TODO add example
+
+
+   .. py:method:: convolve(sig, mode='full', method='fft', norm='amp')
+
+      Convolution based on scipy.signal.convolve.
+
+      :param ins: Input signal to convolve with, e.g. impulse response.
+      :type ins: Asig or array_like
+      :param mode: A string indicating the size of the output:
+                   full
+                       The output is the full discrete linear convolution of the inputs. (Default)
+                   valid
+                       The output consists only of those elements that do not rely on the zero-padding.
+                       self.sr or ins must be at least as large as the other in every dimension.
+                   same
+                       The output is the same size as self.sr, centered with respect to the full output.
+      :type mode: str {'full', 'valid', 'same'}, optional
+      :param method: A string indicating which method to use to calculate the convolution
+                     direct
+                         Compute directly from sums, the definition of convolution
+                     fft (default)
+                         The Fourier Transform is used to perform the convolution by calling fftconvolve
+                     auto
+                         Automatically chooses direct or Fourier method based on an estimate of which is faster.
+      :type method: str {'auto', 'direct', 'fft'}, optional
+      :param norm: If "amp" (default value), the result signal will have the same peak as the original signal.
+                   If "none" or other unrecognized name, no normalization is applied.
+      :type norm: str, optional
+
+      :returns: **_** -- A new asig with convlved signal. The size will depends on mode.
+      :rtype: Asig
+
+
+   .. py:method:: apply(fn)
+
+      apply a fn samplewise for distortion or waveshaping a signal.
+
+      :param fn: function to be used for wave shaping.
+      :type fn: scalar function
+
+      :returns: **_** -- A new asig with samplewise applied fn.
+      :rtype: Asig
+
+
+

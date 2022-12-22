@@ -1,0 +1,26 @@
+:py:mod:`pya.helper.backend`
+============================
+
+.. py:module:: pya.helper.backend
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   pya.helper.backend.get_server_info
+   pya.helper.backend.determine_backend
+
+
+
+.. py:function:: get_server_info()
+
+
+.. py:function:: determine_backend(force_webaudio=False, port=8765)
+
+

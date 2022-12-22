@@ -1,0 +1,179 @@
+:py:mod:`pya.ugen`
+==================
+
+.. py:module:: pya.ugen
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   pya.ugen.Ugen
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   pya.ugen.get_num_of_rows
+
+
+
+.. py:function:: get_num_of_rows(dur, n_rows, sr)
+
+   Return total number of samples. If dur is set, return dur*sr, if num_samples is set, return num_samples,
+   if both set, raise an AttributeError. Only use one of the two.
+
+
+.. py:class:: Ugen
+
+   Bases: :py:obj:`pya.Asig`
+
+   Unit Generator for to create Asig with predefined signal
+
+   Currently avaiable:
+       sine, cos, square, sawtooth, noise
+
+   .. rubric:: Examples
+
+   Create common waveform in Asig.
+
+   >>> from pya import Ugen
+   >>> # Create a sine wave of 440Hz at 44100Hz sr for 2 seconds. Same for cos()
+   >>> sine = Ugen().sine(freq=440, amp=0.8, dur=2.,label="sine")
+   >>> # Create a square wave of 25Hz, 2000 samples at 100 sr, stereo.
+   >>> sq = Ugen().square(freq=25, n_rows=2000, sr=100, channels=2, cn=['l', 'r'])
+   >>> # Make a white noise, another option is 'pink', at 44100Hz for 1second.
+   >>> noi = Ugen().noise(type='white')
+
+   .. py:method:: sine(freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='sine')
+
+      Generate Sine signal Asig object.
+
+      :param freq: signal frequency (Default value = 440)
+      :type freq: int, float
+      :param amp: signal amplitude (Default value = 1.0)
+      :type amp: int, float
+      :param dur: duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+      :type dur: float
+      :param num_rows: number of rows (samples). dur and num_rows only use one of the two(Default value = None)
+      :type num_rows: int
+      :param sr: sampling rate (Default value = 44100)
+      :type sr: int
+      :param channels: number of channels (Default value = 1)
+      :type channels: int
+      :param cn: channel names as a list. The size needs to match the number of channels (Default value = None)
+      :type cn: list of string
+      :param label: identifier of the object (Default value = "sine")
+      :type label: string
+
+      :rtype: Asig
+
+
+   .. py:method:: cos(freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='cosine')
+
+      Generate Cosine signal Asig object.
+
+      :param freq: signal frequency (Default value = 440)
+      :type freq: int, float
+      :param amp: signal amplitude (Default value = 1.0)
+      :type amp: int, float
+      :param dur: duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+      :type dur: int, float
+      :param num_rows: number of rows (samples). dur and num_rows only use one of the two(Default value = None)
+      :type num_rows: int
+      :param sr: sampling rate (Default value = 44100)
+      :type sr: int
+      :param channels: number of channels (Default value = 1)
+      :type channels: int
+      :param cn: channel names as a list. The size needs to match the number of channels (Default value = None)
+      :type cn: list of string
+      :param label: identifier of the object (Default value = "cosine")
+      :type label: string
+
+      :rtype: Asig
+
+
+   .. py:method:: square(freq=440, amp=1.0, dur=None, n_rows=None, duty=0.5, sr=44100, sample_shift=0.5, channels=1, cn=None, label='square')
+
+      Generate square wave signal Asig object.
+
+      :param freq: signal frequency (Default value = 440)
+      :type freq: int, float
+      :param amp: signal amplitude (Default value = 1.0)
+      :type amp: int, float
+      :param dur: duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+      :type dur: int, float
+      :param num_rows: number of row (samples). dur and num_rows only use one of the two(Default value = None)
+      :type num_rows: int
+      :param duty: duty cycle (Default value = 0.4)
+      :type duty: float
+      :param sr: sampling rate (Default value = 44100)
+      :type sr: int
+      :param channels: number of channels (Default value = 1)
+      :type channels: int
+      :param cn: channel names as a list. The size needs to match the number of channels (Default value = None)
+      :type cn: list of string
+      :param label: identifier of the object (Default value = "square")
+      :type label: string
+
+      :rtype: Asig
+
+
+   .. py:method:: sawtooth(freq=440, amp=1.0, dur=None, n_rows=None, width=1.0, sr=44100, channels=1, cn=None, label='sawtooth')
+
+      Generate sawtooth wave signal Asig object.
+
+      :param freq: signal frequency (Default value = 440)
+      :type freq: int, float
+      :param amp: signal amplitude (Default value = 1.0)
+      :type amp: int, float
+      :param dur: duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+      :type dur: int, float
+      :param num_rows: number of rows (samples). dur and num_rows only use one of the two(Default value = None)
+      :type num_rows: int
+      :param width: tooth width (Default value = 1.0)
+      :type width: float
+      :param sr: sampling rate (Default value = 44100)
+      :type sr: int
+      :param channels: number of channels (Default value = 1)
+      :type channels: int
+      :param cn: channel names as a list. The size needs to match the number of channels (Default value = None)
+      :type cn: list of string
+      :param label: identifier of the object (Default value = "sawtooth")
+      :type label: string
+
+      :rtype: Asig
+
+
+   .. py:method:: noise(type='white', amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='noise')
+
+      Generate noise signal Asig object.
+
+      :param type: type of noise, currently available: 'white' and 'pink' (Default value = 'white')
+      :type type: string
+      :param amp: signal amplitude (Default value = 1.0)
+      :type amp: int, float
+      :param dur: duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+      :type dur: int, float
+      :param num_rows: number of rows (samples). dur and num_rows only use one of the two(Default value = None)
+      :type num_rows: int
+      :param sr: sampling rate (Default value = 44100)
+      :type sr: int
+      :param channels: number of channels (Default value = 1)
+      :type channels: int
+      :param cn: channel names as a list. The size needs to match the number of channels (Default value = None)
+      :type cn: list of string
+      :param label: identifier of the object (Default value = "square")
+      :type label: string
+
+      :rtype: Asig
+
+
+
