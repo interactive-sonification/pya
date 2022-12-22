@@ -43,11 +43,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.0/" >v0.5.0</option>
+  <option value="/pya/v0.5.1/" >v0.5.1</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.5.0/" >v0.5.0</option>
 
   <option value="/pya/v0.4.2/" >v0.4.2</option>
 
@@ -86,6 +88,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#a-simple-example">A simple example</a><ul>
 <li><a class="reference internal" href="#startup">Startup:</a></li>
 <li><a class="reference internal" href="#create-an-asig-signal">Create an Asig signal:</a></li>
+<li><a class="reference internal" href="#key-attributes">Key attributes</a></li>
 <li><a class="reference internal" href="#play-signals">Play signals</a></li>
 <li><a class="reference internal" href="#plotting-signals">Plotting signals</a></li>
 <li><a class="reference internal" href="#selection-of-subsets">Selection of subsets</a></li>
@@ -175,15 +178,13 @@ such as sine, square, swatooth, noise</p></li>
 <!-- **Disclaimer**: We are currently making sure that pya can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .` --><p><strong>Note</strong>: pya can be installed using <strong>pip</strong>. But pya uses PyAudio for audio playback and record, and PyAudio 0.2.11 has yet to fully support Python 3.7. So using pip install with Python 3.7 may encounter issues such as portaudio. Solutions are:</p>
 <ol class="arabic">
 <li><p>Anaconda can install non-python packages, so that the easiest way (if applicable) would be to</p>
-<blockquote>
-<div><p>conda install pyaudio</p>
-</div></blockquote>
+<p>conda install pyaudio</p>
 </li>
 <li><p>For Mac users, you can <code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">portaudio</span></code> beforehand.</p></li>
 <li><p>For Linux users, try <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">portaudio19-dev</span></code> or equivalent to your distro.</p></li>
-<li><p>For Windows users, you can install PyAudio wheel at:
-<a class="reference external" href="https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio">https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio</a></p></li>
+<li><p>For Windows users, you can install PyAudio wheel at:</p></li>
 </ol>
+<p><a class="reference external" href="https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio">https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio</a></p>
 <p>Then pya can be installed using pip:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pya</span>
 </pre></div>
@@ -232,10 +233,14 @@ such as sine, square, swatooth, noise</p></li>
 <ul>
 <li><p>Download the latest distribution from <a class="reference external" href="https://ffmpeg.zeranoe.com/builds/">https://ffmpeg.zeranoe.com/builds/</a></p></li>
 <li><p>Unzip the folder, preferably to <code class="docutils literal notranslate"><span class="pre">C:\</span></code></p></li>
-<li><p>Append the FFmpeg binary folder (e.g. <code class="docutils literal notranslate"><span class="pre">C:\ffmpeg\bin</span></code>) to the PATH system variable (<a class="reference external" href="https://www.java.com/en/download/help/path.xml">How do I set or change the PATH system variable?</a>)
-### Key attributes</p></li>
+<li><p>Append the FFmpeg binary folder (e.g. <code class="docutils literal notranslate"><span class="pre">C:\ffmpeg\bin</span></code>) to the PATH system variable (<a class="reference external" href="https://www.java.com/en/download/help/path.xml">How do I set or change the PATH system variable?</a>)</p></li>
 </ul>
 </li>
+</ul>
+</section>
+<section id="key-attributes">
+<h3>Key attributes<a class="headerlink" href="#key-attributes" title="Permalink to this heading"></a></h3>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">atone.sig</span></code>  –&gt; The numpy array containing the signal is</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">atone.sr</span></code>  –&gt; the sampling rate</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">atone.cn</span></code> –&gt; the list of custom defined channel names</p></li>
@@ -260,9 +265,7 @@ such as sine, square, swatooth, noise</p></li>
 </pre></div>
 </div>
 <p>to plot the spectrum via the Aspec class</p>
-<blockquote>
-<div><p>atone.to_spec().plot()</p>
-</div></blockquote>
+<p>atone.to_spec().plot()</p>
 <p>to plot the spectrogram via the Astft class</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="o">.</span><span class="n">to_stft</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ampdb</span><span class="p">)</span>
 </pre></div>
