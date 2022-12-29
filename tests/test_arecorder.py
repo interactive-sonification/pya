@@ -80,7 +80,9 @@ class MockRecorder(mock.MagicMock):
 class TestArecorderBase(TestCase):
     __test__ = False
     backend = None
-    max_inputs = backend.dummy_devices[0]['maxInputChannels'] if backend else 0
+
+    def setUp(self):
+        self.max_inputs = self.backend.dummy_devices[0]['maxInputChannels'] if self.backend else 0
 
     @pytest.mark.xfail(reason="Test may get affected by PortAudio bug or potential unsuitable audio device.")
     def test_boot(self):
@@ -155,7 +157,7 @@ class TestArecorderBase(TestCase):
     def test_default_channels(self):
         if self.backend:
             s = Arecorder(backend=self.backend)
-            self.assertEqual(s.channels, self.backend.dummy_devices[0]['maxInputChannels'])
+            self.assertEqual(s.channels, self.max_inputs)
         else:
             s = Arecorder()
             self.assertGreater(s.channels, 0, "No input channel found")
