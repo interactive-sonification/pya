@@ -1,14 +1,10 @@
-from pya import Asig, Ugen
 from unittest import TestCase
+
+from pya import Asig
+from pya import Ugen
 
 
 class TestFindEvents(TestCase):
-
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
 
     def test_events(self):
         # Create a signale with 3 sine waves and 

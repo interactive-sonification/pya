@@ -1,6 +1,9 @@
-from unittest import TestCase, mock
-from pya import Ugen, Astft
+from unittest import mock
+from unittest import TestCase
+
 import numpy as np
+from pya import Astft
+from pya import Ugen
 
 
 class MockPlot(mock.MagicMock):

@@ -1,5 +1,6 @@
-from pya import Asig
 from unittest import TestCase
+
+from pya import Asig
 
 
 class TestLoadFile(TestCase):

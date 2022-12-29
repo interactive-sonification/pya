@@ -1,7 +1,10 @@
-from unittest import TestCase
-from pya import *
-import numpy as np
 import time
+from unittest import TestCase
+
+import numpy as np
+from pya import Asig
+from pya import Aserver
+from pya.backend import DummyBackend
 
 
 class TestAserver(TestCase):

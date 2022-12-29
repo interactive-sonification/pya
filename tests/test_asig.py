@@ -1,9 +1,8 @@
-from unittest import TestCase, mock
-from unittest.mock import patch
-from pya import Asig
-import numpy as np
 from math import inf
-import os
+from unittest import TestCase, mock
+
+import numpy as np
+from pya import Asig
 
 
 class TestAsig(TestCase):

@@ -1,8 +1,10 @@
-# from pya import Amfcc
-from pya import Asig, Ugen, Amfcc
 from unittest import TestCase
-import numpy as np
 import warnings
+
+import numpy as np
+
+from pya import Amfcc
+from pya import Ugen
 
 
 class TestAmfcc(TestCase):

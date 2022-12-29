@@ -1,7 +1,8 @@
 from unittest import TestCase
-from pya import Ugen, Aspec, Asig
 import warnings
-import numpy as np
+
+from pya import Aspec
+from pya import Ugen
 
 
 class TestAspec(TestCase):

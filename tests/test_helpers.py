@@ -1,10 +1,13 @@
 from unittest import TestCase
-from pya import Asig, Ugen
+
+import numpy as np
+import pyaudio
+
+from pya import Asig
+from pya import Ugen
 from pya.helper import spectrum, padding, next_pow2, is_pow2, midicps, cpsmidi
 from pya.helper import signal_to_frame, magspec, powspec, linlin
 from pya.helper import hz2mel, mel2hz
-import numpy as np
-import pyaudio
 
 
 has_input = False

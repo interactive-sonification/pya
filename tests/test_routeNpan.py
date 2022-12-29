@@ -1,9 +1,9 @@
 from unittest import TestCase
 import warnings
+
 import numpy as np
-from pya import *
-# import logging
-# logging.basicConfig(level=logging.DEBUG)
+
+from pya import Asig
 
 
 class TestRoutePan(TestCase):

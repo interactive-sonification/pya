@@ -1,8 +1,8 @@
 from unittest import TestCase
-from pya import *
+
 import numpy as np
-# import logging
-# logging.basicConfig(level=logging.DEBUG)
+
+from pya import Asig
 
 
 class TestSetitem(TestCase):

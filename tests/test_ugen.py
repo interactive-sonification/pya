@@ -1,6 +1,8 @@
 from unittest import TestCase
-from pya import *
+
 import numpy as np
+
+from pya import Ugen
 
 
 class TestUgen(TestCase):

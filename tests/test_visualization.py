@@ -1,5 +1,7 @@
 from unittest import TestCase
-from pya import *
+
+from pya import gridplot
+from pya import Ugen
 
 
 class TestVisualization(TestCase):

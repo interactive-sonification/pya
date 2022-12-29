@@ -1,9 +1,12 @@
 import time
-from unittest import TestCase, skipUnless, mock
-from pya import *
+from unittest import mock
+from unittest import skipUnless
+from unittest import TestCase
+
 import numpy as np
+from pya import Asig
+from pya import Aserver
 import pyaudio
-import warnings
 import pytest
 
 
