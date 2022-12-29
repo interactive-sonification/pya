@@ -1,8 +1,9 @@
 import copy
-import time
 import logging
-import numpy as np
+import time
 from warnings import warn
+
+import numpy as np
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -60,7 +61,7 @@ class Aserver:
         bs : int
             Override block size or buffer size set by chosen backend
         device : int
-            The device index based on pya.device_info(), default is None which will set 
+            The device index based on pya.device_info(), default is None which will set
             the default device from PyAudio
         channels : int
             number of channel (Default value = 2)
@@ -98,7 +99,6 @@ class Aserver:
         self.srv_outs = []  # output channel offset for that asig
         self.stream = None
         self.boot_time = 0  # time.time() when stream starts
-        self.block_cnt = 0  # nr. of callback invocations
         self.block_duration = self.bs / self.sr  # nominal time increment per callback
         self.block_time = 0  # estimated time stamp for current block
         self._stop = True
@@ -190,7 +190,6 @@ class Aserver:
             return -1
         self.boot_time = time.time()
         self.block_time = self.boot_time
-        self.block_cnt = 0
         self.stream = self.backend.open(channels=self.channels, rate=self.sr,
                                         input_flag=False, output_flag=True,
                                         frames_per_buffer=self.bs,
@@ -257,7 +256,6 @@ class Aserver:
         """callback function, called from pastream thread when data needed."""
         tnow = self.block_time
         self.block_time += self.block_duration
-        # self.block_cnt += 1  # TODO this will get very large eventually
         # just curious - not needed but for time stability check
         self.timejitter = time.time() - self.block_time
         if self.timejitter > 3 * self.block_duration:
@@ -315,6 +313,3 @@ class Aserver:
     def __del__(self):
         self.quit()
         self.backend.terminate()
-
-    def __enter__(self):
-        return self.boot()

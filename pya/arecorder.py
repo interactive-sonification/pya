@@ -1,12 +1,14 @@
-# Arecorder class
-import time
+from __future__ import absolute_import
+
 import logging
 import numbers
-from warnings import warn
+import time
+
 import numpy as np
 import pyaudio
-from . import Asig
-from . import Aserver
+
+import pya.aserver
+import pya.asig
 from .helper import dbamp
 
 
@@ -14,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
 
-class Arecorder(Aserver):
+class Arecorder(pya.aserver.Aserver):
     """pya audio recorder Based on pyaudio, uses callbacks to save audio data
     for pyaudio signals into ASigs
 
@@ -31,7 +33,7 @@ class Arecorder(Aserver):
     """
 
     def __init__(self, sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs):
-        super().__init__(sr=sr, bs=bs, device=device, 
+        super().__init__(sr=sr, bs=bs, device=device,
                          backend=backend, **kwargs)
         self.record_buffer = []
         self.recordings = []  # store recorded Asigs, time stamp in label
@@ -110,7 +112,7 @@ class Arecorder(Aserver):
         self._recording = False
         if len(self.record_buffer) > 0:
             sig = np.squeeze(np.vstack(self.record_buffer))
-            self.recordings.append(Asig(sig, self.sr, label=""))
+            self.recordings.append(pya.asig.Asig(sig, self.sr, label=""))
             self.record_buffer = []
         else:
             _LOGGER.info(" Stopped. There is no recording in the record_buffer")

@@ -1,15 +1,15 @@
-#  This file handles opening audio files. 
-import wave
+#  This file handles opening audio files.
 import aifc
-import sunau
 import audioop
-import struct
-import sys
-import subprocess 
-import re
-import time
 import os
+import re
+import struct
+import subprocess
+import sunau
+import sys
 import threading
+import time
+import wave
 from warnings import warn
 try:
     import queue
@@ -85,7 +85,7 @@ class RawAudioFile(object):
     """An AIFF, WAV, or Au file that can be read by the Python standard
     library modules ``wave``, ``aifc``, and ``sunau``."""
     def __init__(self, filename):
-        self._fh = open(filename, 'rb')  
+        self._fh = open(filename, 'rb')
         try:  # aifc format
             self._file = aifc.open(self._fh)
         except aifc.Error:
@@ -106,7 +106,7 @@ class RawAudioFile(object):
             self._check()
             return
 
-        try:  # sunau format. 
+        try:  # sunau format.
             self._file = sunau.open(self._fh)
         except sunau.Error:
             self._fh.seek(0)
@@ -177,7 +177,7 @@ class RawAudioFile(object):
         return self.read_data()
 
 
-# This part is for ffmpeg read. 
+# This part is for ffmpeg read.
 class QueueReaderThread(threading.Thread):
     """A thread that consumes data from a filehandle and sends the data
     over a Queue."""
@@ -255,7 +255,7 @@ class FFmpegAudioFile(object):
         # in case it dies. Passing SEM_NOGPFAULTERRORBOX to SetErrorMode
         # disables this behavior.
         windows = sys.platform.startswith("win")
-        # This is only for windows. 
+        # This is only for windows.
         if windows:
             windows_error_mode_lock.acquire()
             SEM_NOGPFAULTERRORBOX = 0x0002
@@ -452,8 +452,8 @@ def available_backends():
     """Returns a list of backends that are available on this system."""
     # Standard-library WAV and AIFF readers.
     ab = [RawAudioFile]
-    # Audioread also supports other backends such as coreaudio and gst. But 
-    # to simplify, we only use the standard library and ffmpeg. 
+    # Audioread also supports other backends such as coreaudio and gst. But
+    # to simplify, we only use the standard library and ffmpeg.
     try:
         if ffmpeg_available():  # FFmpeg.
             ab.append(FFmpegAudioFile)
@@ -469,4 +469,4 @@ def audio_read(fp):
             return BackendClass(fp)
         except DecodeError:
             pass
-    raise NoBackendError("Couldn't find a suitable backend to load the file. Most likely FFMPEG is not installed. Check github repo for installation guide.")  # If all backends fails 
+    raise NoBackendError("Couldn't find a suitable backend to load the file. Most likely FFMPEG is not installed. Check github repo for installation guide.")  # If all backends fails

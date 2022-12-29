@@ -1,19 +1,29 @@
-import numbers
-from warnings import warn
+from __future__ import absolute_import
+
 import logging
+import numbers
 from itertools import compress
+from typing import Optional
+from typing import Union
+from warnings import warn
+
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate
 import scipy.signal
 from scipy.io import wavfile
-from . import Aserver
+
+import pya.amfcc
+import pya.aserver
 import pya.aspec
 import pya.astft
-import pya.amfcc
-from .helper import ampdb, dbamp, linlin
-from .helper import spectrum, audio_from_file, padding
+from .helper import ampdb
+from .helper import audio_from_file
 from .helper import basicplot
+from .helper import dbamp
+from .helper import linlin
+from .helper import padding
+from .helper import spectrum
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -634,8 +644,8 @@ class Asig:
         _ : Asig
             return self
         """
-        s = server or Aserver.default
-        if not isinstance(s, Aserver):
+        s = server or pya.aserver.Aserver.default
+        if not isinstance(s, pya.aserver.Aserver):
             warn("Asig.play: no default server running, nor server arg specified.")
             return self
         if rate == 1 and self.sr == s.sr:
@@ -958,7 +968,7 @@ class Asig:
             if fn == "db":
 
                 def fn(x):
-                    return np.sign(x) * ampdb((abs(x) * 2 ** 16 + 1))
+                    return np.sign(x) * ampdb(abs(x) * 2 ** 16 + 1)
 
             elif not callable(fn):
                 msg = "Asig.plot: fn is neither keyword nor function"

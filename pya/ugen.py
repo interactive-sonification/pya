@@ -1,6 +1,9 @@
-from . import Asig
+from __future__ import absolute_import
+
 import numpy as np
 from scipy import signal
+
+import pya.asig
 from .helper import normalize
 
 
@@ -18,7 +21,7 @@ def get_num_of_rows(dur, n_rows, sr):
         raise AttributeError("Only use either dur or n_rows to specify the number of rows of the signal.")
 
 
-class Ugen(Asig):
+class Ugen(pya.asig.Asig):
     """Unit Generator for to create Asig with predefined signal
 
     Currently avaiable:
@@ -71,7 +74,7 @@ class Ugen(Asig):
         if channels > 1:
             sig = np.repeat(sig, channels)
             sig = sig.reshape((length, channels))
-        return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
+        return pya.asig.Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
     def cos(self, freq=440, amp=1.0, dur=None, n_rows=None,
             sr=44100, channels=1, cn=None, label="cosine"):
@@ -105,7 +108,7 @@ class Ugen(Asig):
         if channels > 1:
             sig = np.repeat(sig, channels)
             sig = sig.reshape((length, channels))
-        return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
+        return pya.asig.Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
     def square(self, freq=440, amp=1.0, dur=None, n_rows=None,
                duty=0.5, sr=44100, sample_shift=0.5,
@@ -144,7 +147,7 @@ class Ugen(Asig):
         if channels > 1:
             sig = np.repeat(sig, channels)
             sig = sig.reshape((length, channels))
-        return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
+        return pya.asig.Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
     def sawtooth(self, freq=440, amp=1.0, dur=None, n_rows=None,
                  width=1., sr=44100, channels=1, cn=None, label="sawtooth"):
@@ -181,7 +184,7 @@ class Ugen(Asig):
         if channels > 1:
             sig = np.repeat(sig, channels)
             sig = sig.reshape((length, channels))
-        return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
+        return pya.asig.Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
     def noise(self, type="white", amp=1.0, dur=None, n_rows=None,
               sr=44100, channels=1, cn=None, label="noise"):
@@ -233,4 +236,4 @@ class Ugen(Asig):
         if channels > 1:
             sig = np.repeat(sig, channels)
             sig = sig.reshape((length, channels))
-        return Asig(sig, sr=sr, channels=channels, cn=cn, label=label)
+        return pya.asig.Asig(sig, sr=sr, channels=channels, cn=cn, label=label)

@@ -1,15 +1,20 @@
-import numpy as np
-from warnings import warn
-from .helper import next_pow2, signal_to_frame, round_half_up, magspec
-from .helper import mel2hz, hz2mel, is_pow2
-from .helper import basicplot
-from scipy.signal import get_window
-from scipy.fftpack import dct
-import pya.asig
-import logging
+from __future__ import absolute_import
 
-# _LOGGER = logging.getLogger(__name__)
-# _LOGGER.addHandler(logging.NullHandler())
+from warnings import warn
+
+import numpy as np
+from scipy.fftpack import dct
+from scipy.signal import get_window
+
+import pya.asig
+from .helper import basicplot
+from .helper import hz2mel
+from .helper import is_pow2
+from .helper import magspec
+from .helper import mel2hz
+from .helper import next_pow2
+from .helper import round_half_up
+from .helper import signal_to_frame
 
 
 class Amfcc:

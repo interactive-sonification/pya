@@ -1,7 +1,11 @@
 from __future__ import absolute_import
+
 import logging
+
 import numpy as np
-from scipy.signal import stft, istft
+from scipy.signal import istft
+from scipy.signal import stft
+
 import pya.asig
 from .helper import basicplot
 
