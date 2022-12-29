@@ -244,4 +244,7 @@ Asig methods usually return an Asig, so methods can be chained, e.g
 
 ## Contributing 
 * Please get in touch with us if you wish to contribute. We are happy to be involved in the discussion of new features and to receive pull requests.
-
+* Setting up `pre-commit`
+    - In the dev environment, run `pip install pre-commit`
+    - Run `pre-commit install`
+    - For more details please refer to [Usage](https://pre-commit.com/#usage)
