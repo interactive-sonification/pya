@@ -1,18 +1,22 @@
 # Collection of small helper functions
+import decimal
+import logging
+import math
+from typing import Optional
+from typing import Union
+
 import numpy as np
 import pyaudio
 from scipy.fftpack import fft
+
 from .codec import audio_read
-import logging
-import decimal
-import math
 
 
-class _error(Exception):    
+class _error(Exception):
     pass
 
 
-def linlin(x, smi, sma, dmi, dma):
+def linlin(x: float, smi: float, sma: float, dmi: float, dma: float) -> float:
     """Linear mapping
 
     Parameters
@@ -35,27 +39,27 @@ def linlin(x, smi, sma, dmi, dma):
     return (x - smi) / (sma - smi) * (dma - dmi) + dmi
 
 
-def midicps(m):
+def midicps(m: int) -> float:
     """Convert midi number into cycle per second"""
     return 440.0 * 2 ** ((m - 69) / 12.0)
 
 
-def cpsmidi(c):
+def cpsmidi(c: float) -> int:
     """Convert cycle per second into midi number"""
-    return 69 + 12 * np.log2(c / 440.0)
+    return int(69 + 12 * np.log2(c / 440.0))
 
 
-def dbamp(db):
+def dbamp(db: float) -> float:
     """Convert db to amplitude"""
     return 10 ** (db / 20.0)
 
 
-def ampdb(amp):
+def ampdb(amp: float) -> float:
     """Convert amplitude to db"""
     return 20 * np.log10(amp)
 
 
-def spectrum(sig, samples, channels, sr):
+def spectrum(sig: np.ndarray, samples: int, channels: int, sr: int) -> tuple[np.ndarray, np.ndarray]:
     """Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.
 
     Parameters
@@ -87,7 +91,7 @@ def spectrum(sig, samples, channels, sr):
     return frq, Y
 
 
-def normalize(d):
+def normalize(d: np.ndarray) -> np.ndarray:
     """Return the normalized input array"""
     # d is a (n x dimension) np array
     d -= np.min(d, axis=0)
@@ -95,7 +99,7 @@ def normalize(d):
     return d
 
 
-def audio_from_file(path, dtype=np.float32):
+def audio_from_file(path: str, dtype=np.float32) -> tuple[np.ndarray, int]:
     '''Load an audio buffer using audioread.
     This loads one block at a time, and then concatenates the results.
     '''
@@ -104,7 +108,6 @@ def audio_from_file(path, dtype=np.float32):
         sr_native = input_file.samplerate
         n_channels = input_file.channels
         s_start = 0
-        s_end = np.inf
         n = 0
         for frame in input_file:
             frame = buf_to_float(frame, dtype=dtype)
@@ -149,12 +152,12 @@ def buf_to_float(x, n_bytes=2, dtype=np.float32):
     # Invert the scale of the data
     scale = 1. / float(1 << ((8 * n_bytes) - 1))
     # Construct the format string
-    fmt = '<i{:d}'.format(n_bytes)
+    fmt = f'<i{n_bytes:d}'
     # Rescale and format the data buffer
     return scale * np.frombuffer(x, fmt).astype(dtype)
 
 
-def device_info():
+def device_info() -> list:
     """Return a formatted string about available audio devices and their info"""
     pa = pyaudio.PyAudio()
     line1 = (f"idx {'Device Name':25}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
@@ -170,7 +173,7 @@ def device_info():
     return devs
 
 
-def find_device(min_input=0, min_output=0):
+def find_device(min_input: int = 0, min_output: int = 0) -> list:
     pa = pyaudio.PyAudio()
     res = []
     for idx in range(pa.get_device_count()):
@@ -180,8 +183,8 @@ def find_device(min_input=0, min_output=0):
     return res
 
 
-def padding(x, width, tail=True, constant_values=0):
-    """Pad signal with certain width, support 1-3D tensors. 
+def padding(x: np.ndarray, width: int, tail: bool = True, constant_values: Union[int, float, None] = 0) -> np.ndarray:
+    """Pad signal with certain width, support 1-3D tensors.
     Use it to add silence to a signal
     TODO: CHECK pad array
 
@@ -191,7 +194,7 @@ def padding(x, width, tail=True, constant_values=0):
     x : np.ndarray
         A numpy array
     width : int
-        The amount of padding. 
+        The amount of padding.
     tail : bool
         If true pad to the tail, else pad to the start.
     constant_values : int or float or None
@@ -213,13 +216,13 @@ def padding(x, width, tail=True, constant_values=0):
         raise AttributeError("only support ndim 1 or 2, 3. For higher please just use np.pad ")
 
 
-def is_pow2(val):
+def is_pow2(val: float) -> bool:
     """Check if input is a power of 2 return a bool result."""
     return False if val <= 0 else math.log(val, 2).is_integer()
 
 
-def next_pow2(x):
-    """Find the closest pow of 2 that is great or equal or x, 
+def next_pow2(x: int) -> int:
+    """Find the closest pow of 2 that is great or equal or x,
     based on shift_bit_length
 
     Parameters
@@ -237,18 +240,18 @@ def next_pow2(x):
     return 1 << (x - 1).bit_length()
 
 
-def round_half_up(number):
+def round_half_up(number: Union[int, float]) -> int:
     """Round up if >= .5"""
     return int(decimal.Decimal(number).quantize(decimal.Decimal('1'), rounding=decimal.ROUND_HALF_UP))
 
 
-def rolling_window(a, window, step=1):
+def rolling_window(a: np.ndarray, window: int, step: int = 1) -> np.ndarray:
     shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
     strides = a.strides + (a.strides[-1],)
     return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)[::step]
 
 
-def signal_to_frame(sig, n_per_frame, frame_step, window=None, stride_trick=True):
+def signal_to_frame(sig: np.ndarray, n_per_frame: int, frame_step: int, window: Optional[np.ndarray] = None, stride_trick: bool = True) -> np.ndarray:
     """Frame a signal into overlapping frames.
 
     Parameters
@@ -298,7 +301,7 @@ def signal_to_frame(sig, n_per_frame, frame_step, window=None, stride_trick=True
     return frames * win
 
 
-def magspec(frames, NFFT):
+def magspec(frames: np.ndarray, NFFT: int) -> np.ndarray:
     """Compute the magnitude spectrum of each frame in frames.
     If frames is an NxD matrix, output will be Nx(NFFT/2+1).
 
@@ -322,8 +325,8 @@ def magspec(frames, NFFT):
     return np.abs(complex_spec)
 
 
-def powspec(frames, NFFT):
-    """Compute the power spectrum of each frame in frames, 
+def powspec(frames: np.ndarray, NFFT: int) -> np.ndarray:
+    """Compute the power spectrum of each frame in frames,
     first comeputer the magnitude spectrum
 
     Parameters
@@ -336,13 +339,13 @@ def powspec(frames, NFFT):
     Returns
     -------
     _ : numpy array
-        Power spectrum of the framed signal. 
+        Power spectrum of the framed signal.
         Each row has the size of NFFT / 2 + 1 due to rfft.
     """
     return 1.0 / NFFT * np.square(magspec(frames, NFFT))
 
 
-def hz2mel(hz):
+def hz2mel(hz: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
     """Convert a value in Hertz to Mels
 
     Parameters
@@ -358,7 +361,7 @@ def hz2mel(hz):
     return 2595 * np.log10(1 + hz / 700.)
 
 
-def mel2hz(mel):
+def mel2hz(mel: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
     """Convert a value in Hertz to Mels
 
     Parameters
