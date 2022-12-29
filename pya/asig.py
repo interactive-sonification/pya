@@ -117,16 +117,14 @@ class Asig:
             raise TypeError("Channel names cn should be a list of strings, or not set.")
 
     @property
-    def channels(self):
-        """Return the number of channels"""
+    def channels(self) -> int:
         try:
             return self.sig.shape[1]
         except IndexError:
             return 1
 
     @property
-    def cn(self):
-        """Channel names getter"""
+    def cn(self) -> list:
         return self._cn
 
     @cn.setter
@@ -157,7 +155,7 @@ class Asig:
         """
         return self.samples / self.sr
 
-    def save_wavfile(self, fname="asig.wav", dtype="float32"):
+    def save_wavfile(self, fname: str = "asig.wav", dtype: str = "float32"):
         """Save signal as .wav file, return self.
 
         Parameters
@@ -175,6 +173,8 @@ class Asig:
             data = (self.sig * 127 + 128).astype("uint8")
         elif dtype == "float32":
             data = self.sig.astype("float32")
+        else:
+            raise AttributeError("Current only accept: float32(default), int16, int32, uint8")
         wavfile.write(fname, self.sr, data)
         return self
 
