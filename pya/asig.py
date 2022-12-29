@@ -3,7 +3,6 @@ from __future__ import absolute_import
 import logging
 import numbers
 from itertools import compress
-from typing import Optional
 from typing import Union
 from warnings import warn
 
@@ -63,7 +62,8 @@ class Asig:
         the .bound, .extend and .overwrite properties.
     """
 
-    def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
+    def __init__(self, sig: Union[np.ndarray, int, float, str], sr: int = 44100,
+                 label: str = "", channels: int = 1, cn: list = []):
         """__init__ method
 
         Parameters
@@ -83,13 +83,13 @@ class Asig:
                 Number of channels,
                 no need to set it if you already have a
                 signal for the sig argument.
-            cn : list or None
+            cn : list
                 A list of channel names, size should match the channels.
         """
         if isinstance(sr, int):
             self.sr = sr
         else:
-            raise AttributeError("sr needs to be int.")
+            raise TypeError("sr needs to be int.")
         self.mix_mode = None
         self._ = {}  # dictionary for further return values
         self.label = label
@@ -111,8 +111,10 @@ class Asig:
                     (int(sig * sr), channels)).astype(self.dtype)
         else:
             self.sig = np.array(sig).astype(self.dtype)
-        self.cn = cn
-        self._set_col_names()
+        if isinstance(cn, list):
+            self._cn = cn or [str(i) for i in range(self.channels)]
+        else:
+            raise TypeError("Channel names cn should be a list of strings, or not set.")
 
     @property
     def channels(self):
@@ -128,23 +130,18 @@ class Asig:
         return self._cn
 
     @cn.setter
-    def cn(self, val):
-        """Channel names setter"""
-        if val is None:
-            self._cn = None
-        else:
-            if len(val) == self.channels:
-                # check if all elements are str
-                if all(isinstance(x, str) for x in val):
-                    self._cn = val
-                else:
-                    raise TypeError(
-                        "channel names cn need to be a list of string(s).")
+    def cn(self, val: list):
+        if len(val) == self.channels:
+            if all(isinstance(x, str) for x in val):
+                self._cn = val
             else:
-                raise ValueError(
-                    "list size doesn't match channel numbers {}".format(
-                        self.channels)
-                )
+                raise TypeError(
+                    "channel names cn need to be a list of string(s).")
+        else:
+            raise ValueError(
+                "list size doesn't match channel numbers {}".format(
+                    self.channels)
+            )
 
     @property
     def samples(self) -> int:
@@ -180,15 +177,6 @@ class Asig:
             data = self.sig.astype("float32")
         wavfile.write(fname, self.sr, data)
         return self
-
-    def _set_col_names(self):
-        if self.cn is None:
-            self.cn = [str(i) for i in range(self.channels)]
-        else:
-            if isinstance(self.cn[0], str):
-                self.col_name = {self.cn[i]: i for i in range(len(self.cn))}
-            else:
-                raise TypeError("column names need to be a list of strings")
 
     def __getitem__(self, index):
         """ Accessing array elements through slicing.
@@ -268,7 +256,7 @@ class Asig:
         if hasattr(cindex, "__iter__"):
             _LOGGER.debug(" getitem: column index is iterable.")
             if isinstance(cindex[0], str):
-                cidx = [self.col_name.get(s) for s in cindex]
+                cidx = [self.cn.index(s) for s in cindex]
                 if cidx is None:
                     _LOGGER.error("Input column names does not exist")
                 cn_new = [self.cn[i]
@@ -297,7 +285,7 @@ class Asig:
         # if only a single channel name is given.
         elif isinstance(cindex, str):
             _LOGGER.debug(" getitem: column index is string.")
-            cidx = self.col_name.get(cindex)
+            cidx = self.cn.index(cindex)
             cn_new = [cindex]
         else:  # if nothing is given, e.g. index = (ridx,) on calling a[:]
             cidx = slice(None, None, None)
@@ -429,7 +417,7 @@ class Asig:
         # now parse cindex
         if hasattr(cindex, "__iter__"):
             if isinstance(cindex[0], str):
-                cidx = [self.col_name.get(s) for s in cindex]
+                cidx = [self.cn.index(s) for s in cindex]
                 cidx = cidx[0] if len(cidx) == 1 else cidx  # hotfix for now.
             else:
                 try:
@@ -441,7 +429,7 @@ class Asig:
             cidx = cindex
         # if only a single channel name is given.
         elif isinstance(cindex, str):
-            cidx = self.col_name.get(cindex)
+            cidx = self.cn.index(cindex)
         else:
             cidx = slice(None)
 
