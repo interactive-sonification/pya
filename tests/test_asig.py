@@ -53,6 +53,16 @@ class TestAsig(TestCase):
 
         self.assertEqual(100, as1.samples)
 
+    def test_valid_sample_rate(self):
+        as1 = Asig(44100, sr=48000)
+        self.assertEqual(48000, as1.sr)
+
+    def test_invalid_sample_rate(self):
+        with self.assertRaises(TypeError):
+            _ = Asig(44100, sr=48000.0)
+        with self.assertRaises(TypeError):
+            _ = Asig(48000, sr='480000')
+
     def test_channels(self):
         as1 = Asig(np.ones((100, 4)), sr=100)
         self.assertEqual(4, as1.channels)
@@ -68,7 +78,7 @@ class TestAsig(TestCase):
             self.astereo.cn = ["b", 10]
 
         with self.assertRaises(TypeError):  # If list is not string only, TypeError
-            asig = Asig(1000, channels=3, cn=3)
+            _ = Asig(1000, channels=3, cn=3)
 
         self.assertEqual(self.astereo.cn, ['left', 'right'])
 
