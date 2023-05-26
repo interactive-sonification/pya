@@ -88,7 +88,7 @@ class Aserver:
             if int(self.backend.get_device_info_by_index(i)['maxOutputChannels']) > 0:
                 self.output_devices.append(self.backend.get_device_info_by_index(i))
 
-        self._device = device or self.backend.get_default_output_device_info()['index']
+        self._device = self.backend.get_default_input_device_info()['index'] if device is None else device
         self.channels = channels or self.backend.get_device_info_by_index(self.device)['maxOutputChannels']
 
         self.gain = 1.0
