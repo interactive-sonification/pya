@@ -39,7 +39,7 @@ class Arecorder(Aserver):
         self._record_all = True
         self.gains = np.ones(self.channels)
         self.tracks = slice(None)
-        self._device = device or self.backend.get_default_input_device_info()['index']
+        self._device = self.backend.get_default_input_device_info()['index'] if device is None else device
         self.channels = channels or self.backend.get_device_info_by_index(self._device)['maxInputChannels']
 
     def set_tracks(self, tracks, gains):
