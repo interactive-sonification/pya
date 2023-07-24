@@ -1,3 +1,4 @@
+pyamapping
 scipy>=1.7.3
 matplotlib>=3.5.3
 pyaudio>=0.2.12; python_version >= '3.10'

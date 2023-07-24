@@ -7,7 +7,7 @@ import numpy as np
 import pyaudio
 from . import Asig
 from . import Aserver
-from .helper import dbamp
+from pyamapping import db_to_amp
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -71,10 +71,10 @@ class Arecorder(Aserver):
             elif len(tracks) > self.channels or len(gains) > self.channels:
                 raise AttributeError("argument cannot be larger than channels.")
             self.tracks = tracks
-            self.gains = np.array([dbamp(g) for g in gains], dtype="float32")
+            self.gains = np.array([db_to_amp(g) for g in gains], dtype="float32")
         elif isinstance(tracks, numbers.Number) and isinstance(gains, numbers.Number):
             self.tracks = [tracks]
-            self.gains = dbamp(gains)
+            self.gains = db_to_amp(gains)
         else:
             raise TypeError("Arguments need to be both list or both number.")
 
