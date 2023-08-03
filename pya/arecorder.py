@@ -37,10 +37,23 @@ class Arecorder(Aserver):
         self.recordings = []  # store recorded Asigs, time stamp in label
         self._recording = False
         self._record_all = True
-        self.gains = np.ones(self.channels)
         self.tracks = slice(None)
         self._device = self.backend.get_default_input_device_info()['index'] if device is None else device
-        self.channels = channels or self.backend.get_device_info_by_index(self._device)['maxInputChannels']
+        self._channels = channels or self.max_in_chn
+        self.gains = np.ones(self._channels)
+
+    @property
+    def channels(self):
+        return self._channels
+
+    @channels.setter
+    def channels(self, val: int):
+        """
+        Set the number of channels. Aserver needs reboot.
+        """
+        if val > self.max_in_chn:
+            raise ValueError(f"AServer: channels {val} > max {self.max_in_chn}")
+        self._channels = val
 
     def set_tracks(self, tracks, gains):
         """Define the number of track to be recorded and their gains.
