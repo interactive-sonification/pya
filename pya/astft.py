@@ -71,7 +71,7 @@ class Astft:
         # self.cn = cn
         self.im = None  # buffer for the image
 
-        if type(x) == pya.asig.Asig:
+        if isinstance(x, pya.asig.Asig):
             self.sr = x.sr
             self.channels = x.channels
             self.label = x.label + "_stft"

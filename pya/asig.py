@@ -1548,7 +1548,7 @@ class Asig:
         if not win:
             return self
         winstr = win
-        if type(winstr) == tuple:
+        if isinstance(winstr, tuple):
             winstr = win[0]
         if self.channels == 1:
             return Asig(self.sig * scipy.signal.get_window(win, self.samples, **kwargs),
@@ -1843,7 +1843,7 @@ class Asig:
             Asig with the added signal.
 
         """
-        if type(sig) == Asig:
+        if isinstance(sig, Asig):
             n = sig.samples
             sr = sig.sr
             sigar = sig.sig

@@ -24,14 +24,14 @@ class Aspec:
         cn : list or Nonpya.asige
             Channel names (Default value = None)
         """
-        if type(x) == pya.asig.Asig:
+        if isinstance(x, pya.asig.Asig):
             self.sr = x.sr
             self.rfftspec = np.fft.rfft(x.sig, axis=0)
             self.label = x.label + "_spec"
             self.samples = x.samples
             self.channels = x.channels
             self.cn = cn or x.cn
-        elif type(x) == list or type(x) == np.ndarray:
+        elif isinstance(x, np.ndarray):
             # TODO. This is in the assumption x is spec. which is wrong. We define x to be the audio signals instead.
             self.rfftspec = np.array(x)
             self.sr = sr
