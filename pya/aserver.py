@@ -63,7 +63,7 @@ class Aserver:
             The device index based on pya.device_info(), default is None which will set 
             the default device from PyAudio
         channels : int
-            number of channel (Default value = 2)
+            number of channel, default is the max output channels of the device
         kwargs : backend parameter
 
         Returns
@@ -88,13 +88,13 @@ class Aserver:
             if int(self.backend.get_device_info_by_index(i)['maxOutputChannels']) > 0:
                 self.output_devices.append(self.backend.get_device_info_by_index(i))
 
-        self._device = self.backend.get_default_input_device_info()['index'] if device is None else device
-        self.channels = channels or self.backend.get_device_info_by_index(self.device)['maxOutputChannels']
+        self._device = self.backend.get_default_output_device_info()['index'] if device is None else device
+        self._channels = channels or self.max_out_chn
 
         self.gain = 1.0
         self.srv_onsets = []
-        self.srv_asigs = []
         self.srv_curpos = []  # start of next frame to deliver
+        self.srv_asigs = []
         self.srv_outs = []  # output channel offset for that asig
         self.stream = None
         self.boot_time = 0  # time.time() when stream starts
@@ -102,41 +102,41 @@ class Aserver:
         self.block_duration = self.bs / self.sr  # nominal time increment per callback
         self.block_time = 0  # estimated time stamp for current block
         self._stop = True
-        self.empty_buffer = np.zeros((self.bs, self.channels),
-                                     dtype=self.backend.dtype)
+        self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
         self._is_active = False
 
     @property
+    def channels(self):
+        return self._channels
+
+    @channels.setter
+    def channels(self, val: int):
+        """
+        Set the number of channels. Aserver needs reboot.
+        """
+        if val > self.max_out_chn:
+            raise ValueError(f"AServer: channels {val} > max {self.max_out_chn}")
+        self._channels = val
+
+    @property
     def device_dict(self):
         return self.backend.get_device_info_by_index(self._device)
 
     @property
-    def max_out_chn(self):
+    def max_out_chn(self) -> int:
         return int(self.device_dict['maxOutputChannels'])
 
     @property
-    def max_in_chn(self):
+    def max_in_chn(self) -> int:
         return int(self.device_dict['maxInputChannels'])
-
-    @property
-    def device_dict(self):
-        return self.backend.get_device_info_by_index(self._device)
-
-    @property
-    def max_out_chn(self):
-        return int(self.device_dict['maxOutputChannels'])
-
-    @property
-    def max_in_chn(self):
-        return int(self.device_dict['maxInputChannels'])
-
-    @property
-    def device(self):
-        return self._device
 
     @property
     def is_active(self) -> bool:
         return self.stream is not None and self.stream.is_active()
+
+    @property
+    def device(self):
+        return self._device
 
     @device.setter
     def device(self, val):
@@ -146,7 +146,6 @@ class Aserver:
             self.channels = self.max_out_chn
 
     def __repr__(self):
-        state = False
         msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs},
          Stream Active: {self.is_active}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
@@ -163,7 +162,8 @@ class Aserver:
         return self.input_devices, self.output_devices
 
     def set_device(self, idx, reboot=True):
-        """Set audio device
+        """Set audio device, an alternative way is to direct set the device property, i.e. Aserver.device = 1, 
+        but that will not reboot the server.
 
         Parameters
         ----------
@@ -316,5 +316,3 @@ class Aserver:
         self.quit()
         self.backend.terminate()
 
-    def __enter__(self):
-        return self.boot()
