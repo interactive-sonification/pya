@@ -1,9 +1,11 @@
 from .helper.backend import determine_backend
 import copy
-import time
 import logging
-import numpy as np
+import time
+from typing import Optional, Union
 from warnings import warn
+
+import numpy as np
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -49,8 +51,9 @@ class Aserver:
         else:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    def __init__(self, sr=44100, bs=None, device=None,
-                 channels=None, backend=None, **kwargs):
+    def __init__(self, sr: int = 44100, bs: Optional[int] = None,
+                 device: Optional[int] = None, channels: Optional[int] = None,
+                 backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
 
@@ -147,7 +150,7 @@ class Aserver:
          Stream Active: {self.is_active}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
         return msg
 
-    def get_devices(self, verbose=False):
+    def get_devices(self, verbose: bool = False):
         """Return (and optionally print) available input and output device"""
         if verbose:
             print("Input Devices: ")
@@ -158,7 +161,7 @@ class Aserver:
              for i in self.output_devices]
         return self.input_devices, self.output_devices
 
-    def set_device(self, idx, reboot=True):
+    def set_device(self, idx: int, reboot: bool = True):
         """Set audio device, an alternative way is to direct set the device property, i.e. Aserver.device = 1, 
         but that will not reboot the server.
 
@@ -212,8 +215,16 @@ class Aserver:
         self.stream = None
         return 0
 
-    def play(self, asig, onset=0, out=0, **kwargs):
-        """Dispatch asigs or arrays for given onset."""
+    def play(self, asig, onset: Union[int, float] = 0, out: int = 0, **kwargs):
+        """Dispatch asigs or arrays for given onset.
+
+        asig: pya.Asig
+            An Asig object
+        onset: int or float
+            Time when the sound should play, 0 means asap
+        out: int
+            Output channel
+        """
         self._stop = False
 
         sigid = id(asig)  # for copy check

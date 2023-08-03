@@ -1,10 +1,12 @@
-from . import Asig
 import numpy as np
 from scipy import signal
+from typing import Optional, Union
+
+from . import Asig
 from .helper import normalize
 
 
-def get_num_of_rows(dur, n_rows, sr):
+def get_num_of_rows(dur: Optional[float], n_rows: Optional[int], sr: int):
     """Return total number of samples. If dur is set, return dur*sr, if num_samples is set, return num_samples,
     if both set, raise an AttributeError. Only use one of the two.
     """
@@ -39,8 +41,9 @@ class Ugen(Asig):
     def __init__(self):
         pass
 
-    def sine(self, freq=440, amp=1.0, dur=None, n_rows=None,
-             sr=44100, channels=1, cn=None, label="sine"):
+    def sine(self, freq: Union[int, float] = 440, amp: Union[int, float] = 1.0,
+             dur: Optional[float] = None, n_rows: Optional[int] = None,
+             sr: int = 44100, channels: int = 1, cn: Optional[list] = None, label: str = "sine"):
         """Generate Sine signal Asig object.
 
         Parameters
@@ -51,7 +54,7 @@ class Ugen(Asig):
             signal amplitude (Default value = 1.0)
         dur : float
             duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
-        num_rows : int
+        n_rows : int
             number of rows (samples). dur and num_rows only use one of the two(Default value = None)
         sr : int
             sampling rate (Default value = 44100)
@@ -73,8 +76,9 @@ class Ugen(Asig):
             sig = sig.reshape((length, channels))
         return Asig(sig, sr=sr, label=label, channels=channels, cn=cn)
 
-    def cos(self, freq=440, amp=1.0, dur=None, n_rows=None,
-            sr=44100, channels=1, cn=None, label="cosine"):
+    def cos(self, freq: Union[int, float] = 440, amp: Union[int, float] = 1.0,
+            dur: Optional[float] = None, n_rows: Optional[int] = None,
+            sr: int = 44100, channels: int = 1, cn: Optional[list] = None, label: str = "cosine"):
         """Generate Cosine signal Asig object.
 
         Parameters
@@ -85,7 +89,7 @@ class Ugen(Asig):
             signal amplitude (Default value = 1.0)
         dur : int, float
             duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
-        num_rows : int
+        n_rows : int
             number of rows (samples). dur and num_rows only use one of the two(Default value = None)
         sr : int
             sampling rate (Default value = 44100)

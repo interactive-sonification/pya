@@ -51,7 +51,7 @@ def normalize(d):
     return d
 
 
-def audio_from_file(path, dtype=np.float32):
+def audio_from_file(path: str, dtype=np.float32):
     '''Load an audio buffer using audioread.
     This loads one block at a time, and then concatenates the results.
     '''

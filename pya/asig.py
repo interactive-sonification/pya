@@ -1,12 +1,16 @@
-import numbers
-from warnings import warn
-import logging
 from itertools import compress
-import matplotlib.pyplot as plt
+import numbers
+import logging
+from typing import Optional
+from typing import Union
+from warnings import warn
+
 import numpy as np
+import matplotlib.pyplot as plt
 import scipy.interpolate
 import scipy.signal
 from scipy.io import wavfile
+
 from . import Aserver
 import pya.aspec
 import pya.astft
@@ -18,6 +22,8 @@ from .helper import basicplot
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
+
+
 
 
 class Asig:
@@ -53,17 +59,23 @@ class Asig:
         the .bound, .extend and .overwrite properties.
     """
 
-    def __init__(self, sig, sr=44100, label="", channels=1, cn=None):
+    def __init__(self, sig: Union[str, int, float, np.ndarray], sr: int = 44100,
+                 label: str = "", channels: int = 1, cn: Optional[list] = None):
         """__init__ method
 
         Parameters
         ----------
             sig: numpy.array or int or float or str
+                This is a multiple type argument, which all results in Asig.sig being a numpy.array to
+                represent the audio signal.
+
                 numpy.array for audio signal,
-                str for filepath. Currently support two types
-                of audio loader: 1) Standard library for .wav, .aiff,
-                and ffmpeg for other such as .mp3.
+
+                str for filepath. Currently support two types of audio loader:
+                1) Standard library for .wav, .aiff, and ffmpeg for other such as .mp3.
+
                 int create x samples of silence,
+
                 float creates x seconds of seconds.
             sr : int
                 Sampling rate
@@ -102,10 +114,15 @@ class Asig:
         else:
             self.sig = np.array(sig).astype(self.dtype)
         self.cn = cn
+        if self.cn is not None:
+            if len(self.cn) != self.channels:
+                raise ValueError(
+                    "cn length doesn't match channels {}".format(self.channels)
+                )
         self._set_col_names()
 
     @property
-    def channels(self):
+    def channels(self) -> int:
         """Return the number of channels"""
         try:
             return self.sig.shape[1]
@@ -113,7 +130,7 @@ class Asig:
             return 1
 
     @property
-    def cn(self):
+    def cn(self) -> list:
         """Channel names getter"""
         return self._cn
 
@@ -150,7 +167,7 @@ class Asig:
         """
         return self.samples / self.sr
 
-    def save_wavfile(self, fname="asig.wav", dtype="float32"):
+    def save_wavfile(self, fname: str = "asig.wav", dtype: str = "float32"):
         """Save signal as .wav file, return self.
 
         Parameters
@@ -569,7 +586,7 @@ class Asig:
             self.sig = sig  # Update self.sig
         return self
 
-    def resample(self, target_sr=44100, rate=1, kind="linear"):
+    def resample(self, target_sr: int = 44100, rate: float = 1., kind: str = "linear"):
         """Resample signal based on interpolation, can process multichannel signals.
 
         Parameters
@@ -617,7 +634,7 @@ class Asig:
                 new_sig[:, i] = interp_fn(tsel)
             return Asig(new_sig, target_sr, label=self.label + "_resampled", cn=self.cn)
 
-    def play(self, rate=1, server=None, onset=0, channel=0, block=False):
+    def play(self, rate: float = 1., server: Aserver = Aserver.default, onset=0, channel=0, block=False):
         """Play Asig audio via Aserver, using Aserver.default (if existing)
         kwargs are propagated to Aserver:play(onset=0, out=0)
 
@@ -634,18 +651,14 @@ class Asig:
         _ : Asig
             return self
         """
-        s = server or Aserver.default
-        if not isinstance(s, Aserver):
-            warn("Asig.play: no default server running, nor server arg specified.")
-            return self
-        if rate == 1 and self.sr == s.sr:
+        if rate == 1 and self.sr == server.sr:
             asig = self
         else:
-            asig = self.resample(s.sr, rate)
-        s.play(asig, server=s, onset=onset, out=channel, block=block)
+            asig = self.resample(server.sr, rate)
+        server.play(asig, server=server, onset=onset, out=channel, block=block)
         return self
 
-    def shift_channel(self, shift=0):
+    def shift_channel(self, shift: int = 0):
         """Shift signal to other channels. This is particular useful for assigning a mono signal to a specific channel.
             * shift = 0: does nothing as the same signal is being routed to the same position
             * shift > 0: shift channels of self.sig 'right', i.e. from [0,..channels-1] to channels [shift,shift+1,...]
@@ -661,40 +674,40 @@ class Asig:
         _ : Asig
             Rerouted asig
         """
-        if isinstance(shift, int):
-            # not optimized method here
-            new_sig = np.zeros((self.samples, shift + self.channels))
-            _LOGGER.debug(
-                "Shift by %d, new signal has %d channels", shift, new_sig.shape[1]
-            )
-            if self.channels == 1:
-                new_sig[:, shift] = self.sig
-            elif shift > 0:
-                new_sig[:, shift: (shift + self.channels)] = self.sig
-            elif shift < 0:
-                new_sig[:] = self.sig[:, -shift:]
-            if self.cn is None:
-                new_cn = self.cn
-            else:
-                if shift > 0:
-                    uname_list = ["unnamed" for i in range(shift)]
-                    if isinstance(self.cn, list):
-                        new_cn = uname_list + self.cn
-                    else:
-                        new_cn = uname_list.append(self.cn)
-                elif shift < 0:
-                    new_cn = self.cn[-shift:]
-            return Asig(new_sig, self.sr, label=self.label + "_routed", cn=new_cn)
-        else:
+        if not isinstance(shift, int):
             raise AttributeError("Argument needs to be int")
+        # not optimized method here
+        new_sig = np.zeros((self.samples, shift + self.channels))
+        _LOGGER.debug(
+            "Shift by %d, new signal has %d channels", shift, new_sig.shape[1]
+        )
+        if self.channels == 1:
+            new_sig[:, shift] = self.sig
+        elif shift > 0:
+            new_sig[:, shift: (shift + self.channels)] = self.sig
+        elif shift < 0:
+            new_sig[:] = self.sig[:, -shift:]
+        if self.cn is None:
+            new_cn = self.cn
+        else:
+            if shift > 0:
+                uname_list = ["unnamed" for i in range(shift)]
+                if isinstance(self.cn, list):
+                    new_cn = uname_list + self.cn
+                else:
+                    new_cn = uname_list.append(self.cn)
+            elif shift < 0:
+                new_cn = self.cn[-shift:]
+        return Asig(new_sig, self.sr, label=self.label + "_routed", cn=new_cn)
 
-    def mono(self, blend=None):
+    def mono(self, blend: Optional[list] = None):
         """Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)
 
         Parameters
         ----------
         blend : list
-            list of gain for each channel as a multiplier.
+            list of linear gain for each channel as a multiplier.
+            By default, the result signal is the sum of signal divided by channels
             Do nothing if signal is already mono, raise warning (Default value = None)
 
         Returns
@@ -715,7 +728,7 @@ class Asig:
                 self.cn[np.argmax(blend)]] if self.cn is not None else None
             return Asig(sig, self.sr, label=self.label + "_blended", cn=col_names)
 
-    def stereo(self, blend=None):
+    def stereo(self, blend: Optional[list] = None):
         """Blend all channels of the signal to stereo. Applicable for any single-/ or multi-channel Asig.
 
         Parameters
@@ -792,7 +805,7 @@ class Asig:
             new_sig[:, key[1]] = self.sig[:, key[0]] * val
         return Asig(new_sig, self.sr, label=self.label + "_rewire", cn=self.cn)
 
-    def pan2(self, pan=0.0):
+    def pan2(self, pan: float = 0.0):
         """Stereo panning of asig to a stereo output.
         Panning is based on constant power panning, see pan below
         Behavior depends on nr of channels self.channels
@@ -854,7 +867,7 @@ class Asig:
         sig = self.sig - np.mean(self.sig, 0)
         return Asig(sig, sr=self.sr, label=self.label + "_DCfree", cn=self.cn)
 
-    def norm(self, norm=1, in_db=False, dcflag=False):
+    def norm(self, norm: float = 1., in_db: bool = False, dcflag: bool = False):
         # ToDO add channel_wise argument . default True, currently it is the false.
         """Normalize signal
 
@@ -882,7 +895,7 @@ class Asig:
         sig = norm * sig / np.max(np.abs(sig), 0)
         return Asig(sig, self.sr, label=self.label + "_normalised", cn=self.cn)
 
-    def gain(self, amp=None, db=None):
+    def gain(self, amp: Optional[float] = None, db: Optional[float, int] = None):
         """Apply gain in amplitude or dB, only use one or the other arguments. Argument can be either a scalar
         or a list (to apply individual gain to each channel). The method returns a new asig with gain applied.
 
@@ -904,22 +917,18 @@ class Asig:
             amp = db_to_amp(db)
         elif amp is None:  # default 1 if neither is given
             amp = 1
+        self.sig *= amp
         return Asig(self.sig * amp, self.sr, label=self.label + "_scaled", cn=self.cn)
 
-    def rms(self, axis=0):
-        """Return signal's RMS
-
-        Parameters
-        ----------
-        axis : int
-            Axis to perform np.mean() on (Default value = 0)
+    def rms(self):
+        """Return channel signal's RMS
 
         Returns
         -------
         _ : float
             RMS value
         """
-        return np.sqrt(np.mean(np.square(self.sig), axis))
+        return np.sqrt(np.mean(np.square(self.sig), 0))
 
     def plot(
         self,
@@ -987,7 +996,7 @@ class Asig:
         )
         return self
 
-    def get_duration(self):
+    def get_duration(self) -> float:
         """Return the duration in second."""
         return self.samples / self.sr
 
@@ -1188,11 +1197,11 @@ class Asig:
 
     def find_events(
         self,
-        step_dur=0.001,
-        sil_thr=-20,
-        evt_min_dur=0,
-        sil_min_dur=0.1,
-        sil_pad=[0.001, 0.1],
+        step_dur: float = 0.001,
+        sil_thr: int = -20,
+        evt_min_dur: float = 0,
+        sil_min_dur: float = 0.1,
+        sil_pad: list = [0.001, 0.1],
     ):
         """Locate meaningful 'events' in the signal and create event list. Onset detection.
 
@@ -1257,7 +1266,7 @@ class Asig:
         self._["events"] = np.array(event_list)
         return self
 
-    def select_event(self, index=None, onset=None):
+    def select_event(self, index: Optional[int] = None, onset: Optional[int] = None):
         """This method can be called after find_event (aka onset detection).
 
         Parameters
@@ -1299,7 +1308,7 @@ class Asig:
             raise ValueError(
                 "No events found, use find_events() before plotting.")
 
-    def fade_in(self, dur=0.1, curve=1):
+    def fade_in(self, dur: float = 0.1, curve: float = 1):
         """Fade in the signal at the beginning
 
         Parameters
@@ -1339,7 +1348,7 @@ class Asig:
                 cn=self.cn,
             )
 
-    def fade_out(self, dur=0.1, curve=1):
+    def fade_out(self, dur: float = 0.1, curve: float = 1):
         """Fade out the signal at the end
 
         Parameters
@@ -1381,13 +1390,13 @@ class Asig:
 
     def iirfilter(
         self,
-        cutoff_freqs,
-        btype="bandpass",
-        ftype="butter",
-        order=4,
-        filter="lfilter",
-        rp=None,
-        rs=None,
+        cutoff_freqs: Union[float, list],
+        btype: str = "bandpass",
+        ftype: str = "butter",
+        order: int = 4,
+        filter: str = "lfilter",
+        rp: Optional[float] = None,
+        rs: Optional[float] = None,
     ):
         """iirfilter based on scipy.signal.iirfilter
 
@@ -1497,7 +1506,8 @@ class Asig:
                 sig_new = (self.sig * interp_fn(np.linspace(0, duration, self.samples)) ** curve)
         return Asig(sig_new, self.sr, label=self.label + "_enveloped", cn=self.cn)
 
-    def adsr(self, att=0, dec=0.1, sus=0.7, rel=0.1, curve=1, kind="linear"):
+    def adsr(self, att: float = 0, dec: float = 0.1, sus: float = 0.7, rel: float = 0.1,
+             curve: int = 1, kind: str = "linear"):
         """Create and applied a ADSR evelope to signal.
 
         Parameters
@@ -1529,7 +1539,7 @@ class Asig:
             kind=kind,
         )
 
-    def window(self, win="triang", **kwargs):
+    def window(self, win: str = "triang", **kwargs):
         """Apply windowing to self.sig
 
         Parameters
@@ -1707,7 +1717,7 @@ class Asig:
             cn=self.cn,
         )
 
-    def plot_spectrum(self, offset=0, scale=1.0, xlim=None, **kwargs):
+    def plot_spectrum(self, offset: float = 0, scale: float = 1.0, xlim: Optional[tuple, list] = None, **kwargs):
         """Plot spectrum of the signal
 
         Parameters
@@ -1717,7 +1727,7 @@ class Asig:
             channels to create a stacked view for better viewing (Default value = 0.)
         scale : float
             scale the y_axis (Default value = 1.)
-        xlim : tuple
+        xlim : tuple or list
             range of x_axis (Default value = None)
         **kwargs :
             keywords arguments for matplotlib.pyplot.plot()
@@ -1782,15 +1792,6 @@ class Asig:
     def get_size(self):
         """Return signal array shape and duration in seconds."""
         return self.sig.shape, self.sig.shape[0] / self.sr
-
-    # TODO this method is currently commented.
-    # def vstack(self, chan):
-    #     """Create multichannel signal from mono"""
-    #     self.sig = np.vstack([self.sig] * chan)
-    #     self.sig = self.sig.transpose()
-    #     return self.overwrite(self.sig, self.sr)  # Overwrite the signal
-    #     # TODO: replace this (old) overwrite by a hidden private _transplant_sig(ndarr, sr)
-    #     # since overwrite is now a property for setitem...
 
     def append(self, asig, amp=1):
         """Apppend an asig with another. Conditions: the appended asig should have the same channels. If
@@ -1878,7 +1879,7 @@ class Asig:
             cn=None,
         )
 
-    def pad(self, width=0, tail=True, constant_values=0, dur=None):
+    def pad(self, width: int = 0, tail: bool = True, constant_values: Union[int, float] = 0):
         """Pads the signal
 
         Parameters
@@ -1887,20 +1888,16 @@ class Asig:
             The number of samples to append to the tail or head of the array.
         tail : bool
             By default it is True, if trail pad to the end, else pad to the start.
-        constant_values: float32
+        constant_values: int or float
             value to be padded, defaults to 0
-        dur : float
-            duration to be padded;  if specified, it overrides the parameter width
 
         Returns
         -------
         _ : Asig
             Asig of the pad signal.
         """
-        if dur:
-            width = self.sr * dur
         return Asig(
-            padding(self.sig, width, tail=tail),
+            padding(self.sig, width, tail=tail, constant_values=constant_values),
             sr=self.sr,
             label=self.label + "_padded",
             channels=self.channels,
@@ -1912,14 +1909,14 @@ class Asig:
         func(self, **kwargs)
         return self
 
-    def convolve(self, sig, mode="full", method="fft", norm="amp"):
+    def convolve(self, sig, mode: str = "full", method: str = "fft", norm: str = "amp"):
         """Convolution based on scipy.signal.convolve.
 
         Parameters
         ----------
             ins : Asig or array_like
                 Input signal to convolve with, e.g. impulse response.
-            mode : str {'full', 'valid', 'same'}, optional
+            mode : str {'full', 'valid', 'same'}
                 A string indicating the size of the output:
                 full
                     The output is the full discrete linear convolution of the inputs. (Default)
@@ -1928,7 +1925,7 @@ class Asig:
                     self.sr or ins must be at least as large as the other in every dimension.
                 same
                     The output is the same size as self.sr, centered with respect to the full output.
-            method : str {'auto', 'direct', 'fft'}, optional
+            method : str {'auto', 'direct', 'fft'}
                 A string indicating which method to use to calculate the convolution
                 direct
                     Compute directly from sums, the definition of convolution
@@ -1936,9 +1933,9 @@ class Asig:
                     The Fourier Transform is used to perform the convolution by calling fftconvolve
                 auto
                     Automatically chooses direct or Fourier method based on an estimate of which is faster.
-            norm : str, optional
+            norm : str
                 If "amp" (default value), the result signal will have the same peak as the original signal.
-                If "none" or other unrecognized name, no normalization is applied.
+                Otherwise, no normalization is applied.
 
         Returns
         -------
