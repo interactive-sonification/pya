@@ -11,7 +11,7 @@ from . import Aserver
 import pya.aspec
 import pya.astft
 import pya.amfcc
-from .helper import ampdb, dbamp, linlin
+from pyamapping import amp_to_db, db_to_amp, linlin
 from .helper import spectrum, audio_from_file, padding
 from .helper import basicplot
 
@@ -874,7 +874,7 @@ class Asig:
 
         """
         if in_db:
-            norm = dbamp(norm)
+            norm = db_to_amp(norm)
         if dcflag:
             sig = self.sig - np.mean(self.sig, 0)
         else:
@@ -901,7 +901,7 @@ class Asig:
         if db is not None and amp is not None:
             raise AttributeError("Both amp and db are set, use one only.")
         elif db is not None:  # overwrites amp
-            amp = dbamp(db)
+            amp = db_to_amp(db)
         elif amp is None:  # default 1 if neither is given
             amp = 1
         return Asig(self.sig * amp, self.sr, label=self.label + "_scaled", cn=self.cn)
@@ -958,7 +958,7 @@ class Asig:
             if fn == "db":
 
                 def fn(x):
-                    return np.sign(x) * ampdb((abs(x) * 2 ** 16 + 1))
+                    return np.sign(x) * amp_to_db((abs(x) * 2 ** 16 + 1))
 
             elif not callable(fn):
                 msg = "Asig.plot: fn is neither keyword nor function"
@@ -1223,7 +1223,7 @@ class Asig:
             warn(msg)
             return -1
         step_samples = int(step_dur * self.sr)
-        sil_thr_amp = dbamp(sil_thr)
+        sil_thr_amp = db_to_amp(sil_thr)
         sil_flag = True
         sil_count = 0
         sil_min_steps = int(sil_min_dur / step_dur)
@@ -1443,7 +1443,7 @@ class Asig:
 
         """
         w, h = scipy.signal.freqz(self._["b"], self._["a"], worN)
-        plt.plot(w * self.sr / 2 / np.pi, ampdb(abs(h)), **kwargs)
+        plt.plot(w * self.sr / 2 / np.pi, amp_to_db(abs(h)), **kwargs)
 
     def envelope(self, amps, ts=None, curve=1, kind="linear"):
         """Create an envelop and multiply by the signal.

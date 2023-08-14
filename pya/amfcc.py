@@ -1,7 +1,8 @@
 import numpy as np
 from warnings import warn
+from pyamapping import mel_to_hz, hz_to_mel
 from .helper import next_pow2, signal_to_frame, round_half_up, magspec
-from .helper import mel2hz, hz2mel, is_pow2
+from .helper import is_pow2
 from .helper import basicplot
 from scipy.signal import get_window
 from scipy.fftpack import dct
@@ -260,12 +261,12 @@ class Amfcc:
         highfreq = highfreq or sr // 2
 
         # compute points evenly spaced in mels
-        lowmel = hz2mel(lowfreq)
-        highmel = hz2mel(highfreq)
+        lowmel = hz_to_mel(lowfreq)
+        highmel = hz_to_mel(highfreq)
         melpoints = np.linspace(lowmel, highmel, nfilters + 2)
         # our points are in Hz, but we use fft bins, so we have to convert
         #  from Hz to fft bin number
-        bin = np.floor((nfft + 1) * mel2hz(melpoints) / sr)
+        bin = np.floor((nfft + 1) * mel_to_hz(melpoints) / sr)
 
         filter_banks = np.zeros([nfilters, nfft // 2 + 1])
         for j in range(0, nfilters):

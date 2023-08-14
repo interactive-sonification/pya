@@ -12,49 +12,6 @@ class _error(Exception):
     pass
 
 
-def linlin(x, smi, sma, dmi, dma):
-    """Linear mapping
-
-    Parameters
-    ----------
-    x : float
-        input value
-    smi : float
-        input range's minimum
-    sma : float
-        input range's maximum
-    dmi : float
-        input range's minimum
-    dma :
-
-    Returns
-    -------
-    _ : float
-        mapped output
-    """
-    return (x - smi) / (sma - smi) * (dma - dmi) + dmi
-
-
-def midicps(m):
-    """Convert midi number into cycle per second"""
-    return 440.0 * 2 ** ((m - 69) / 12.0)
-
-
-def cpsmidi(c):
-    """Convert cycle per second into midi number"""
-    return 69 + 12 * np.log2(c / 440.0)
-
-
-def dbamp(db):
-    """Convert db to amplitude"""
-    return 10 ** (db / 20.0)
-
-
-def ampdb(amp):
-    """Convert amplitude to db"""
-    return 20 * np.log10(amp)
-
-
 def spectrum(sig, samples, channels, sr):
     """Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.
 
@@ -340,35 +297,3 @@ def powspec(frames, NFFT):
         Each row has the size of NFFT / 2 + 1 due to rfft.
     """
     return 1.0 / NFFT * np.square(magspec(frames, NFFT))
-
-
-def hz2mel(hz):
-    """Convert a value in Hertz to Mels
-
-    Parameters
-    ----------
-    hz : number of array
-        value in Hz, can be an array
-
-    Returns:
-    --------
-    _ : number of array
-        value in Mels, same type as the input.
-    """
-    return 2595 * np.log10(1 + hz / 700.)
-
-
-def mel2hz(mel):
-    """Convert a value in Hertz to Mels
-
-    Parameters
-    ----------
-    hz : number of array
-        value in Hz, can be an array
-
-    Returns:
-    --------
-    _ : number of array
-        value in Mels, same type as the input.
-    """
-    return 700 * (10 ** (mel / 2595.0) - 1)
