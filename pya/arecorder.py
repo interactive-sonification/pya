@@ -12,6 +12,7 @@ from pyamapping import db_to_amp
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
+
 class Arecorder(Aserver):
     """pya audio recorder Based on pyaudio, uses callbacks to save audio data
     for pyaudio signals into ASigs
