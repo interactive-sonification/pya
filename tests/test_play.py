@@ -1,19 +1,14 @@
+from .helpers import check_for_output
 import time
 from unittest import TestCase, skipUnless, mock
 from pya import *
 import numpy as np
-import pyaudio
 import warnings
 import pytest
 
 
 # check if we have an output device
-has_output = False
-try:
-    pyaudio.PyAudio().get_default_output_device_info()
-    has_output = True
-except OSError:
-    pass
+has_output = check_for_output()
 
 
 class MockAudio(mock.MagicMock):

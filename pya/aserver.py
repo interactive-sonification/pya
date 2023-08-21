@@ -74,8 +74,19 @@ class Aserver:
         # TODO check if channels is overwritten by the device.
         self.sr = sr
         if backend is None:
-            from .backend.PyAudio import PyAudioBackend
-            self.backend = PyAudioBackend(**kwargs)
+            try:
+                from .backend.PyAudio import PyAudioBackend
+                self.backend = PyAudioBackend(**kwargs)
+            except ImportError:
+                from .helper.backend import determine_backend
+                jupyter_backend = determine_backend()
+                if jupyter_backend is not None:
+                    self.backend = jupyter_backend
+                else:
+                    raise RuntimeError(
+                        "Could not find a backend."
+                        "To use the Aserver install the 'pyaudio' or 'remote' extra."
+                    ) 
         else:
             self.backend = backend
         self.bs = bs or self.backend.bs

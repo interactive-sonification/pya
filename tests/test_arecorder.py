@@ -3,16 +3,6 @@ import time
 from pya import Arecorder, Aserver, find_device
 from unittest import TestCase, mock
 import pytest
-import pyaudio
-
-# check if we have an output device
-has_input = False
-try:
-    pyaudio.PyAudio().get_default_input_device_info()
-    has_input = True
-except OSError:
-    pass
-
 
 FAKE_INPUT = {'index': 0,
               'structVersion': 2,

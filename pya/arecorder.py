@@ -4,7 +4,6 @@ import logging
 import numbers
 from warnings import warn
 import numpy as np
-import pyaudio
 from . import Asig
 from . import Aserver
 from pyamapping import db_to_amp
@@ -12,6 +11,14 @@ from pyamapping import db_to_amp
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
+
+PYAUDIO_PACONTINUE = 0
+try:
+    import pyaudio
+except ImportError:
+    pass
+else:
+    assert PYAUDIO_PACONTINUE == pyaudio.paContinue
 
 
 class Arecorder(Aserver):
@@ -108,7 +115,7 @@ class Arecorder(Aserver):
             self.record_buffer.append(data_float)
             # E = 10 * np.log10(np.mean(data_float ** 2)) # energy in dB
             # os.write(1, f"\r{E}    | {self.block_cnt}".encode())
-        return None, pyaudio.paContinue
+        return None, PYAUDIO_PACONTINUE
 
     def record(self):
         """Activate recording"""
