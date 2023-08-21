@@ -73,6 +73,8 @@ class Aserver:
         """
         # TODO check if channels is overwritten by the device.
         self.sr = sr
+        self.stream = None
+
         if backend is None:
             try:
                 from .backend.PyAudio import PyAudioBackend
@@ -107,7 +109,6 @@ class Aserver:
         self.srv_curpos = []  # start of next frame to deliver
         self.srv_asigs = []
         self.srv_outs = []  # output channel offset for that asig
-        self.stream = None
         self.boot_time = 0  # time.time() when stream starts
         self.block_cnt = 0  # nr. of callback invocations
         self.block_duration = self.bs / self.sr  # nominal time increment per callback
