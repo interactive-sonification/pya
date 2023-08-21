@@ -4,6 +4,13 @@ from pya import Arecorder, Aserver, find_device
 from unittest import TestCase, mock
 import pytest
 
+try:
+    import pyaudio
+    has_pyaudio = True
+except ImportError:
+    has_pyaudio = False
+
+
 FAKE_INPUT = {'index': 0,
               'structVersion': 2,
               'name': 'Mock Input',
@@ -154,6 +161,7 @@ class TestArecorder(TestArecorderBase):
 
 class TestMockArecorder(TestCase):
 
+    @pytest.mark.skipif(not has_pyaudio, reason="requires pyaudio to be installed")
     def test_mock_arecorder(self):
         mock_recorder = MockRecorder()
         with mock.patch('pyaudio.PyAudio', return_value=mock_recorder):
