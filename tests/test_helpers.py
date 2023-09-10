@@ -4,15 +4,6 @@ from pya.helper import spectrum, padding, next_pow2, is_pow2
 from pya.helper import signal_to_frame, magspec, powspec
 
 import numpy as np
-import pyaudio
-
-
-has_input = False
-try:
-    pyaudio.PyAudio().get_default_input_device_info()
-    has_input = True
-except OSError:
-    pass
 
 
 class TestHelpers(TestCase):

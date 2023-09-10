@@ -3,15 +3,12 @@ import time
 from pya import Arecorder, Aserver, find_device
 from unittest import TestCase, mock
 import pytest
-import pyaudio
 
-# check if we have an output device
-has_input = False
 try:
-    pyaudio.PyAudio().get_default_input_device_info()
-    has_input = True
-except OSError:
-    pass
+    import pyaudio
+    has_pyaudio = True
+except ImportError:
+    has_pyaudio = False
 
 
 FAKE_INPUT = {'index': 0,
@@ -164,6 +161,7 @@ class TestArecorder(TestArecorderBase):
 
 class TestMockArecorder(TestCase):
 
+    @pytest.mark.skipif(not has_pyaudio, reason="requires pyaudio to be installed")
     def test_mock_arecorder(self):
         mock_recorder = MockRecorder()
         with mock.patch('pyaudio.PyAudio', return_value=mock_recorder):

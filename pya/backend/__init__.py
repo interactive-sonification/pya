@@ -1,5 +1,4 @@
 from .Dummy import DummyBackend
-from .PyAudio import PyAudioBackend
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -11,4 +10,12 @@ try:
 except ImportError:  # pragma: no cover
     _LOGGER.warning("Jupyter backend not found.")
     pass
+
+try:
+    from .PyAudio import PyAudioBackend
+except ImportError:  # pragma: no cover
+    _LOGGER.warning("PyAudio backend not found.")
+    pass
+
+
 from ..helper.backend import determine_backend

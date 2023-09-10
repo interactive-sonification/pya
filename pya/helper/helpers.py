@@ -1,6 +1,5 @@
 # Collection of small helper functions
 import numpy as np
-import pyaudio
 from scipy.fftpack import fft
 from .codec import audio_read
 import logging
@@ -111,9 +110,21 @@ def buf_to_float(x, n_bytes=2, dtype=np.float32):
     return scale * np.frombuffer(x, fmt).astype(dtype)
 
 
+def _try_initializing_pyaudio(fun_name):
+    try:
+        import pyaudio
+    except ImportError as e:
+        msg = (
+            f"Function '{fun_name}' requires pyaudio"
+        )
+        raise RuntimeError(msg) from e
+    else:
+        return pyaudio.PyAudio()
+
+
 def device_info():
     """Return a formatted string about available audio devices and their info"""
-    pa = pyaudio.PyAudio()
+    pa = _try_initializing_pyaudio("device_info")
     line1 = (f"idx {'Device Name':25}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
     devs = [pa.get_device_info_by_index(i) for i in range(pa.get_device_count())]
     lines = [line1]
@@ -128,7 +139,7 @@ def device_info():
 
 
 def find_device(min_input=0, min_output=0):
-    pa = pyaudio.PyAudio()
+    pa = _try_initializing_pyaudio("find_device")
     res = []
     for idx in range(pa.get_device_count()):
         dev = pa.get_device_info_by_index(idx)

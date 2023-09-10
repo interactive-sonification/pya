@@ -24,7 +24,7 @@ install:
   - conda config --append channels conda-forge
   - "conda create -q -n test-environment python=%PYTHON_VERSION% ffmpeg coverage --file=requirements_remote.txt --file=requirements_test.txt"
   - activate test-environment
-  - "pip install -r requirements.txt"
+  - "pip install -r requirements.txt -r requirements_pyaudio.txt"
 
 test_script:
   - pytest
