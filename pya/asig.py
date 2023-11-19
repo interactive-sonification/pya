@@ -1,6 +1,7 @@
 from itertools import compress
 import numbers
 import logging
+from typing import Iterable
 from typing import Optional
 from typing import Union
 from warnings import warn
@@ -11,10 +12,6 @@ import scipy.interpolate
 import scipy.signal
 from scipy.io import wavfile
 
-from . import Aserver
-import pya.aspec
-import pya.astft
-import pya.amfcc
 from pyamapping import amp_to_db, db_to_amp, linlin
 from .helper import spectrum, audio_from_file, padding
 from .helper import basicplot
@@ -22,8 +19,6 @@ from .helper import basicplot
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
-
-
 
 
 class Asig:
@@ -634,7 +629,7 @@ class Asig:
                 new_sig[:, i] = interp_fn(tsel)
             return Asig(new_sig, target_sr, label=self.label + "_resampled", cn=self.cn)
 
-    def play(self, rate: float = 1., server: Aserver = Aserver.default, onset=0, channel=0, block=False):
+    def play(self, rate: float = 1., server = None, onset=0, channel=0, block=False):
         """Play Asig audio via Aserver, using Aserver.default (if existing)
         kwargs are propagated to Aserver:play(onset=0, out=0)
 
@@ -651,6 +646,9 @@ class Asig:
         _ : Asig
             return self
         """
+        import pya.aserver
+        if server is None:
+            server = pya.aserver.Aserver.default
         if rate == 1 and self.sr == server.sr:
             asig = self
         else:
@@ -895,7 +893,7 @@ class Asig:
         sig = norm * sig / np.max(np.abs(sig), 0)
         return Asig(sig, self.sr, label=self.label + "_normalised", cn=self.cn)
 
-    def gain(self, amp: Optional[float] = None, db: Optional[float, int] = None):
+    def gain(self, amp: Optional[float] = None, db: Optional[numbers.Number] = None):
         """Apply gain in amplitude or dB, only use one or the other arguments. Argument can be either a scalar
         or a list (to apply individual gain to each channel). The method returns a new asig with gain applied.
 
@@ -917,7 +915,6 @@ class Asig:
             amp = db_to_amp(db)
         elif amp is None:  # default 1 if neither is given
             amp = 1
-        self.sig *= amp
         return Asig(self.sig * amp, self.sr, label=self.label + "_scaled", cn=self.cn)
 
     def rms(self):
@@ -1682,11 +1679,13 @@ class Asig:
 
     def to_spec(self):
         """Return Aspec object which is the rfft of the signal."""
+        import pya.aspec
         return pya.aspec.Aspec(self)
 
     def to_stft(self, **kwargs):
         """Return Astft object which is the stft of the signal. Keyword arguments are the arguments for
         scipy.signal.stft(). """
+        import pya.astft
         return pya.astft.Astft(self, **kwargs)
 
     def to_mfcc(
@@ -1702,6 +1701,7 @@ class Asig:
         append_energy=True,
     ):
         """Return Amfcc object. """
+        import pya.amfcc
         return pya.amfcc.Amfcc(
             self,
             label=self.label,
@@ -1717,7 +1717,7 @@ class Asig:
             cn=self.cn,
         )
 
-    def plot_spectrum(self, offset: float = 0, scale: float = 1.0, xlim: Optional[tuple, list] = None, **kwargs):
+    def plot_spectrum(self, offset: float = 0, scale: float = 1.0, xlim: Optional[Iterable] = None, **kwargs):
         """Plot spectrum of the signal
 
         Parameters

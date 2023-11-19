@@ -19,7 +19,7 @@ class Astft:
         attribute cn being the list of channel names, and label being the name of the Asig
     """
 
-    def __init__(self, x: Union[pya.Asig, np.ndarray], sr: Optional[int] = None,
+    def __init__(self, x: Union[pya.asig.Asig, np.ndarray], sr: Optional[int] = None, label: str = "STFT",
                  window: str = 'hann', nperseg: int = 256, noverlap: Optional[int] = None,
                  nfft: Optional[int] = None, detrend: bool = False,
                  return_onesided: bool = True, boundary: str = 'zeros',

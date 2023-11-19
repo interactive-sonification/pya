@@ -14,7 +14,7 @@ _LOGGER.addHandler(logging.NullHandler())
 
 class Aspec:
     """Audio spectrum class using rfft"""
-    def __init__(self, x: Union[pya.Asig, np.ndarray], sr: int = 44100,
+    def __init__(self, x: Union[pya.asig.Asig, np.ndarray], sr: int = 44100,
                  label: Optional[str] = None, cn: Optional[list] = None):
         """__init__() method
         Parameters
