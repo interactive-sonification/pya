@@ -93,14 +93,20 @@ class TestAsig(TestCase):
         self.assertAlmostEqual(0.6309, np.max(result.sig), places=3)
 
     def test_gain(self):
-        result = self.astereo.gain(amp=0.)
-        self.assertEqual(0, np.max(result.sig))
+        current_max_amplitude = np.max(self.astereo.sig)
+
+        result = self.astereo.gain()  # by default amp=1. nothing change.
+        self.assertEqual(current_max_amplitude, np.max(result.sig), "gain() should not change anything")
+
         result = self.astereo.gain(amp=2.)
         self.assertEqual(2, np.max(result.sig))
+
         result = self.astereo.gain(db=3.)
         with self.assertRaises(AttributeError):
             _ = self.astereo.gain(amp=1, db=3.)
-        result = self.astereo.gain()  # by default amp=1. nothing change.
+
+        result = self.astereo.gain(amp=0.)
+        self.assertEqual(0, np.max(result.sig), "amp 0 should result in 0")
 
     def test_rms(self):
         result = self.asine16ch.rms()
