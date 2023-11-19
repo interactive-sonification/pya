@@ -629,7 +629,7 @@ class Asig:
                 new_sig[:, i] = interp_fn(tsel)
             return Asig(new_sig, target_sr, label=self.label + "_resampled", cn=self.cn)
 
-    def play(self, rate: float = 1., server = None, onset=0, channel=0, block=False):
+    def play(self, rate: float = 1., server=None, onset=0, channel=0, block=False):
         """Play Asig audio via Aserver, using Aserver.default (if existing)
         kwargs are propagated to Aserver:play(onset=0, out=0)
 
