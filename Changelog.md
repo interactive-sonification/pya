@@ -1,7 +1,9 @@
 # Changelog
 
-## 0.5.2 (??? 2023)
+## 0.5.2 (Nov 2023)
 * `pyaudio` is now optional: If you plan to use `PyAudioBackend`, install `pya` with `pip install pya[pyaudio]`
+* Fix audio device bug 
+* #77, Improve code type hint
 
 ## 0.5.1 (Dec 2022)
 * Now support Python3.10
