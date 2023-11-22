@@ -1,11 +1,14 @@
-import numpy as np
+from typing import Optional, Union
 from warnings import warn
+
+import numpy as np
 from pyamapping import mel_to_hz, hz_to_mel
+from scipy.signal import get_window
+from scipy.fftpack import dct
+
 from .helper import next_pow2, signal_to_frame, round_half_up, magspec
 from .helper import is_pow2
 from .helper import basicplot
-from scipy.signal import get_window
-from scipy.fftpack import dct
 import pya.asig
 import logging
 
@@ -65,10 +68,12 @@ class Amfcc:
         An array of the MFCC coeffcient, size: nframes x ncep
     """
 
-    def __init__(self, x, sr=None, label='', n_per_frame=None,
-                 hopsize=None, nfft=None, window='hann', nfilters=26,
-                 ncep=13, ceplifter=22, preemph=0.95,
-                 append_energy=True, cn=None):
+    def __init__(self, x: Union[pya.Asig, np.ndarray], sr: Optional[int] = None,
+                 label: str = '', n_per_frame: Optional[int] = None,
+                 hopsize: Optional[int] = None, nfft: Optional[int] = None,
+                 window: str = 'hann', nfilters: int = 26,
+                 ncep: int = 13, ceplifter: int = 22, preemph: float = 0.95,
+                 append_energy: bool = True, cn: Optional[list] = None):
         """Initialize Amfcc object
 
         Parameters
@@ -104,8 +109,8 @@ class Amfcc:
         append_energy : bool
             If true, the zeroth cepstral coefficient is replaced with the log
             of the total frame energy.
-        cn : list
-            A list of channel name based on the Asig.
+        cn : list or None
+            A list of channel names, size should match the channels.
         """
         # ----------Prepare attributes ------------`-------------
         # First prepare for parameters
@@ -130,9 +135,9 @@ class Amfcc:
             self.duration = np.shape(x)[0] / self.sr
             self.label = label
             self.channels = 1 if self.x.ndim == 1 else self.x.shape[1]
-            self.cn = None
+            self.cn = cn
         else:
-            msg = "x can only be either a numpy.ndarray or pya.Asig object."
+            msg = "x can only be either a numpy.ndarray or Asig object."
             raise TypeError(msg)
 
         # default 25ms length window.
@@ -212,7 +217,7 @@ class Amfcc:
         return f"Amfcc({self.label}): sr {self.sr}, length: {self.duration} s"
 
     @staticmethod
-    def preemphasis(x, coeff=0.97):
+    def preemphasis(x: np.ndarray, coeff: float = 0.97):
         """Pre-emphasis filter to whiten the spectrum.
         Pre-emphasis is a way of compensating for the
         rapid decaying spectrum of speech.
@@ -234,7 +239,8 @@ class Amfcc:
         return np.append(x[0], x[1:] - coeff * x[:-1])
 
     @staticmethod
-    def mel_filterbanks(sr, nfilters=26, nfft=512, lowfreq=0, highfreq=None):
+    def mel_filterbanks(sr: int, nfilters: int = 26, nfft: int = 512,
+                        lowfreq: float = 0, highfreq: Optional[float] = None):
         """Compute a Mel-filterbank. The filters are stored in the rows,
         the columns correspond to fft bins. The filters are returned as
         an array of size nfilt * (nfft/2 + 1)
@@ -247,9 +253,9 @@ class Amfcc:
             The number of filters, default 20
         nfft : int
             The size of FFT, default 512
-        lowfreq : int or float
+        lowfreq : float
             The lowest band edge of the mel filters, default 0 Hz
-        highfreq : int or float
+        highfreq : float
             The highest band edge of the mel filters, default sr // 2
 
         Returns
@@ -277,7 +283,7 @@ class Amfcc:
         return filter_banks
 
     @staticmethod
-    def lifter(cepstra, L=22):
+    def lifter(cepstra: np.ndarray, L: int = 22):
         """Apply a cepstral lifter the the matrix of cepstra.
         This has the effect of increasing the magnitude of
         the high frequency DCT coeffs.
@@ -316,21 +322,23 @@ class Amfcc:
             # values of L <= 0, do nothing
             return cepstra
 
-    def plot(self, cmap='inferno', show_bar=True,
-             offset=0, scale=1., xlim=None, ylim=None,
-             x_as_time=True, nxlabel=8, ax=None, **kwargs):
+    def plot(self, show_bar: bool = True, offset: int = 0, scale: float = 1.,
+             xlim: Optional[float] = None, ylim: Optional[float] = None,
+             x_as_time: bool = True, nxlabel: int = 8, ax=None, **kwargs):
         """Plot Amfcc.features via matshow, x is frames/time, y is the MFCCs
 
         Parameters
         ----------
-        figsize : (float, float), optional, default: None
-            Figure size, width, height in inches, Default = [6.4, 4.8]
-        cmap : str
-            colormap for matplotlib. Default is 'inferno'.
         show_bar : bool, optional
             Default is True, show colorbar.
-        x_as_time : bool, optional
-            Default is True, show x axis as time or sample index.
+        offset: int
+            It is the spacing between channel, without setting it every channel will be overlayed onto each other.
+        scale: float
+            Visual scaling for improve visibility
+        xlim: float, optional
+            x axis value range limit
+        ylim: float, optional
+            y axis value range limit
         nxlabel : int, optional
             The amountt of labels on the x axis. Default is 8 .
         """

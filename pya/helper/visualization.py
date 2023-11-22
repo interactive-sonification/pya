@@ -6,7 +6,7 @@ import matplotlib.gridspec as grd
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-def basicplot(data, ticks, channels, offset=0, scale=1,
+def basicplot(data: np.ndarray, ticks, channels, offset=0, scale=1,
               cn=None, ax=None, typ='plot', cmap='inferno',
               xlim=None, ylim=None, xlabel='', ylabel='',
               show_bar=False,

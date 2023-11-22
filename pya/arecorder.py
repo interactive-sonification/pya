@@ -1,8 +1,9 @@
 # Arecorder class
-import time
 import logging
 import numbers
-from warnings import warn
+import time
+from typing import Optional, Union
+
 import numpy as np
 from . import Asig
 from . import Aserver
@@ -29,7 +30,8 @@ class Arecorder(Aserver):
     [Asig(''): ... x ... @ 44100Hz = ...
     """
 
-    def __init__(self, sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs):
+    def __init__(self, sr: int = 44100, bs: int = 256, device: Optional[int] = None,
+                 channels: Optional[int] = None, backend=None, **kwargs):
         super().__init__(sr=sr, bs=bs, device=device, 
                          backend=backend, **kwargs)
         self.record_buffer = []
@@ -54,7 +56,7 @@ class Arecorder(Aserver):
             raise ValueError(f"AServer: channels {val} > max {self.max_in_chn}")
         self._channels = val
 
-    def set_tracks(self, tracks, gains):
+    def set_tracks(self, tracks: Union[list, np.ndarray], gains: Union[list, np.ndarray]):
         """Define the number of track to be recorded and their gains.
 
         parameters
@@ -82,8 +84,6 @@ class Arecorder(Aserver):
         self.gains = np.ones(self.channels)
 
     def boot(self):
-        """boot recorder"""
-        # when input = True, the channels refers to the input channels.
         self.boot_time = time.time()
         self.block_time = self.boot_time
         # self.block_cnt = 0

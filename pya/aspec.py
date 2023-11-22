@@ -1,6 +1,9 @@
 import logging
+from typing import Union, Optional
+
 import numpy as np
 import scipy.interpolate
+
 import pya.asig
 from .helper import basicplot
 
@@ -11,7 +14,8 @@ _LOGGER.addHandler(logging.NullHandler())
 
 class Aspec:
     """Audio spectrum class using rfft"""
-    def __init__(self, x, sr=44100, label=None, cn=None):
+    def __init__(self, x: Union[pya.asig.Asig, np.ndarray], sr: int = 44100,
+                 label: Optional[str] = None, cn: Optional[list] = None):
         """__init__() method
         Parameters
         ----------
@@ -56,7 +60,7 @@ class Aspec:
         return pya.asig.Asig(np.fft.irfft(self.rfftspec),
                              sr=self.sr, label=self.label + '_2sig', cn=self.cn)
 
-    def weight(self, weights, freqs=None, curve=1, kind='linear'):
+    def weight(self, weights: list, freqs=None, curve=1, kind='linear'):
         """TODO
 
         Parameters
@@ -79,19 +83,17 @@ class Aspec:
             given_freqs = np.linspace(0, self.freqs[-1], nfreqs)
         else:
             if nfreqs != len(freqs):
-                _LOGGER.error("len(weights)!=len(freqs)")
-                return self
-            if all(freqs[i] < freqs[i + 1] for i in range(len(freqs) - 1)):
-                # check if list is monotonous
-                if freqs[0] > 0:
-                    freqs = np.insert(np.array(freqs), 0, 0)
-                    weights = np.insert(np.array(weights), 0, weights[0])
-                if freqs[-1] < self.sr / 2:
-                    freqs = np.insert(np.array(freqs), -1, self.sr / 2)
-                    weights = np.insert(np.array(weights), -1, weights[-1])
-            else:
-                _LOGGER.error("Aspec.weight error: freqs not sorted")
-                return self
+                raise AttributeError("Size of weights and freqs are not equal")
+
+            if not all(freqs[i] < freqs[i + 1] for i in range(len(freqs) - 1)):
+                raise AttributeError("Aspec.weight error: freqs not sorted")
+            # check if list is monotonous
+            if freqs[0] > 0:
+                freqs = np.insert(np.array(freqs), 0, 0)
+                weights = np.insert(np.array(weights), 0, weights[0])
+            if freqs[-1] < self.sr / 2:
+                freqs = np.insert(np.array(freqs), -1, self.sr / 2)
+                weights = np.insert(np.array(weights), -1, weights[-1])
             given_freqs = freqs
         if nfreqs != self.nr_freqs:
             interp_fn = scipy.interpolate.interp1d(given_freqs,
