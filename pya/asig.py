@@ -67,7 +67,7 @@ class Asig:
                 numpy.array for audio signal,
 
                 str for filepath. Currently support two types of audio loader:
-                1) Standard library for .wav, .aiff, and ffmpeg for other such as .mp3.
+                1) Standard library for .wav, .aiff, and 2) ffmpeg for other such as .mp3.
 
                 int create x samples of silence,
 

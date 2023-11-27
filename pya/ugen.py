@@ -53,9 +53,9 @@ class Ugen(Asig):
         amp : int, float
             signal amplitude (Default value = 1.0)
         dur : float
-            duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+            duration in second. dur and n_rows only use one of the two. (Default value = 1.0)
         n_rows : int
-            number of rows (samples). dur and num_rows only use one of the two(Default value = None)
+            number of rows (samples). dur and n_rows only use one of the two(Default value = None)
         sr : int
             sampling rate (Default value = 44100)
         channels : int
