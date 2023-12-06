@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.2 (Nov 2023)
+* #82, `pyaudio` is now optional: If you plan to use `PyAudioBackend`, install `pya` with `pip install pya[pyaudio]`.
+* Fix audio device bug
+* #77, Improve code type hint
+* #79, Use pyamapping 
+
 ## 0.5.1 (Dec 2022)
 * Now support Python3.10
 * Bugfix #67: When the channels argument of Aserver and Arecorder has not been set it was determined by the default device instead of the actual device.

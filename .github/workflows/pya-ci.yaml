@@ -13,10 +13,11 @@ on:
 jobs:
   unit-test:
     runs-on: ${{ matrix.os  }}
+    timeout-minutes: 120
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10"]
     steps:
     - uses: actions/checkout@v3
     - name: Install portaudio Ubuntu

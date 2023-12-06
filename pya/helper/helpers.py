@@ -1,6 +1,5 @@
 # Collection of small helper functions
 import numpy as np
-import pyaudio
 from scipy.fftpack import fft
 from .codec import audio_read
 import logging
@@ -10,49 +9,6 @@ import math
 
 class _error(Exception):    
     pass
-
-
-def linlin(x, smi, sma, dmi, dma):
-    """Linear mapping
-
-    Parameters
-    ----------
-    x : float
-        input value
-    smi : float
-        input range's minimum
-    sma : float
-        input range's maximum
-    dmi : float
-        input range's minimum
-    dma :
-
-    Returns
-    -------
-    _ : float
-        mapped output
-    """
-    return (x - smi) / (sma - smi) * (dma - dmi) + dmi
-
-
-def midicps(m):
-    """Convert midi number into cycle per second"""
-    return 440.0 * 2 ** ((m - 69) / 12.0)
-
-
-def cpsmidi(c):
-    """Convert cycle per second into midi number"""
-    return 69 + 12 * np.log2(c / 440.0)
-
-
-def dbamp(db):
-    """Convert db to amplitude"""
-    return 10 ** (db / 20.0)
-
-
-def ampdb(amp):
-    """Convert amplitude to db"""
-    return 20 * np.log10(amp)
 
 
 def spectrum(sig, samples, channels, sr):
@@ -95,7 +51,7 @@ def normalize(d):
     return d
 
 
-def audio_from_file(path, dtype=np.float32):
+def audio_from_file(path: str, dtype=np.float32):
     '''Load an audio buffer using audioread.
     This loads one block at a time, and then concatenates the results.
     '''
@@ -154,9 +110,21 @@ def buf_to_float(x, n_bytes=2, dtype=np.float32):
     return scale * np.frombuffer(x, fmt).astype(dtype)
 
 
+def _try_initializing_pyaudio(fun_name):
+    try:
+        import pyaudio
+    except ImportError as e:
+        msg = (
+            f"Function '{fun_name}' requires pyaudio"
+        )
+        raise RuntimeError(msg) from e
+    else:
+        return pyaudio.PyAudio()
+
+
 def device_info():
     """Return a formatted string about available audio devices and their info"""
-    pa = pyaudio.PyAudio()
+    pa = _try_initializing_pyaudio("device_info")
     line1 = (f"idx {'Device Name':25}{'INP':4}{'OUT':4}   SR   INP-(Lo|Hi)  OUT-(Lo/Hi) (Latency in ms)")
     devs = [pa.get_device_info_by_index(i) for i in range(pa.get_device_count())]
     lines = [line1]
@@ -171,7 +139,7 @@ def device_info():
 
 
 def find_device(min_input=0, min_output=0):
-    pa = pyaudio.PyAudio()
+    pa = _try_initializing_pyaudio("find_device")
     res = []
     for idx in range(pa.get_device_count()):
         dev = pa.get_device_info_by_index(idx)
@@ -340,35 +308,3 @@ def powspec(frames, NFFT):
         Each row has the size of NFFT / 2 + 1 due to rfft.
     """
     return 1.0 / NFFT * np.square(magspec(frames, NFFT))
-
-
-def hz2mel(hz):
-    """Convert a value in Hertz to Mels
-
-    Parameters
-    ----------
-    hz : number of array
-        value in Hz, can be an array
-
-    Returns:
-    --------
-    _ : number of array
-        value in Mels, same type as the input.
-    """
-    return 2595 * np.log10(1 + hz / 700.)
-
-
-def mel2hz(mel):
-    """Convert a value in Hertz to Mels
-
-    Parameters
-    ----------
-    hz : number of array
-        value in Hz, can be an array
-
-    Returns:
-    --------
-    _ : number of array
-        value in Mels, same type as the input.
-    """
-    return 700 * (10 ** (mel / 2595.0) - 1)

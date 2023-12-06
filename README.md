@@ -47,7 +47,15 @@ At this time pya is more suitable for offline rendering than realtime.
 
 ## Installation
 
-`pya` requires `portaudio` and its Python wrapper `PyAudio` to play and record audio. 
+Install using
+```
+pip install pya
+```
+
+However to play and record audio you need a backend.
+
+-  `pip install pya[remote]` for a web based Jupyter backend
+-  `pip install pya[pyaudio]` for `portaudio` and its Python wrapper `PyAudio`
 
 ### Using Conda
 
@@ -101,7 +109,7 @@ For Apple ARM Chip, if you failed to install the PyAudio dependency, you can fol
 Try `sudo apt-get install portaudio19-dev` or equivalent to your distro, then 
 
 ```
-pip isntall pya
+pip install pya
 ```
 
 ### Using PIP (Windows)

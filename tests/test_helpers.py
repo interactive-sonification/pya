@@ -1,18 +1,9 @@
 from unittest import TestCase
 from pya import Asig, Ugen
-from pya.helper import spectrum, padding, next_pow2, is_pow2, midicps, cpsmidi
-from pya.helper import signal_to_frame, magspec, powspec, linlin
-from pya.helper import hz2mel, mel2hz
+from pya.helper import spectrum, padding, next_pow2, is_pow2
+from pya.helper import signal_to_frame, magspec, powspec
+
 import numpy as np
-import pyaudio
-
-
-has_input = False
-try:
-    pyaudio.PyAudio().get_default_input_device_info()
-    has_input = True
-except OSError:
-    pass
 
 
 class TestHelpers(TestCase):
@@ -33,18 +24,6 @@ class TestHelpers(TestCase):
 
     def tearDown(self):
         pass
-
-    def test_linlin(self):
-        self.assertTrue(np.array_equal(linlin(np.arange(0, 10),
-                                              smi=0, sma=10, dmi=0., dma=1.0),
-                                       np.array([0., 0.1, 0.2, 0.3, 0.4, 0.5,
-                                                 0.6, 0.7, 0.8, 0.9])))
-
-    def test_midi_conversion(self):
-        m = 69
-        f = 440
-        self.assertEqual(f, midicps(m))
-        self.assertEqual(m, cpsmidi(f))
 
     def test_spectrum(self):
         # Not tested expected outcome yet.
@@ -126,7 +105,3 @@ class TestHelpers(TestCase):
         ps = powspec(frames, 512)
         self.assertEqual(ps.shape, (20, 257))
         self.assertTrue((ps >= 0.).all())  # All elements should be non-negative
-
-    def test_melhzconversion(self):
-        self.assertAlmostEqual(hz2mel(440), 549.64, 2)
-        self.assertAlmostEqual(mel2hz(549.64), 440, 2)
