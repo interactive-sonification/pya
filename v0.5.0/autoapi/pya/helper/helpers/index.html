@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pya.helper.helpers &mdash; pya  documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -43,11 +44,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.1/" >v0.5.1</option>
+  <option value="/pya/v0.5.2/" >v0.5.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.5.1/" >v0.5.1</option>
 
   <option value="/pya/v0.5.0/" selected="selected">v0.5.0</option>
 
@@ -71,7 +74,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -106,28 +109,6 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.helper.helpers.powspec"><code class="docutils literal notranslate"><span class="pre">powspec()</span></code></a></li>
 <li><a class="reference internal" href="#pya.helper.helpers.hz2mel"><code class="docutils literal notranslate"><span class="pre">hz2mel()</span></code></a></li>
 <li><a class="reference internal" href="#pya.helper.helpers.mel2hz"><code class="docutils literal notranslate"><span class="pre">mel2hz()</span></code></a></li>
-<li><a class="reference internal" href="#pya.helper.helpers._error">_error</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.linlin">linlin</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.midicps">midicps</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.cpsmidi">cpsmidi</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.dbamp">dbamp</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.ampdb">ampdb</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.spectrum">spectrum</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.normalize">normalize</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.audio_from_file">audio_from_file</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.buf_to_float">buf_to_float</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.device_info">device_info</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.find_device">find_device</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.padding">padding</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.is_pow2">is_pow2</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.next_pow2">next_pow2</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.round_half_up">round_half_up</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.rolling_window">rolling_window</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.signal_to_frame">signal_to_frame</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.magspec">magspec</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.powspec">powspec</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.hz2mel">hz2mel</a></li>
-<li><a class="reference internal" href="#pya.helper.helpers.mel2hz">mel2hz</a></li>
 </ul>
 </li>
 </ul>
@@ -149,7 +130,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.helpers</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../../_sources/autoapi/pya/helper/helpers/index.rst.txt" rel="nofollow"> View page source</a>
@@ -161,16 +142,12 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
            <div itemprop="articleBody">
              
   <section id="module-pya.helper.helpers">
-<span id="pya-helper-helpers"></span><h1><a class="reference internal" href="#module-pya.helper.helpers" title="pya.helper.helpers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.helpers</span></code></a><a class="headerlink" href="#module-pya.helper.helpers" title="Permalink to this heading"></a></h1>
+<span id="pya-helper-helpers"></span><h1><a class="reference internal" href="#module-pya.helper.helpers" title="pya.helper.helpers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.helpers</span></code></a><a class="headerlink" href="#module-pya.helper.helpers" title="Link to this heading"></a></h1>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.helpers.linlin" title="pya.helper.helpers.linlin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linlin</span></code></a>(x, smi, sma, dmi, dma)</p></td>
 <td><p>Linear mapping</p></td>
@@ -239,17 +216,17 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 <dl class="py exception">
 <dt class="sig sig-object py" id="pya.helper.helpers._error">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">_error</span></span><a class="headerlink" href="#pya.helper.helpers._error" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">_error</span></span><a class="headerlink" href="#pya.helper.helpers._error" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>Common base class for all non-exit exceptions.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.linlin">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">linlin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.linlin" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">linlin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.linlin" title="Link to this definition"></a></dt>
 <dd><p>Linear mapping</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>float</em>) – input value</p></li>
 <li><p><strong>smi</strong> (<em>float</em>) – input range’s minimum</p></li>
@@ -258,10 +235,10 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><p><strong>dma</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>_</strong> – mapped output</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -269,34 +246,34 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.midicps">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">midicps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.midicps" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">midicps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.midicps" title="Link to this definition"></a></dt>
 <dd><p>Convert midi number into cycle per second</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.cpsmidi">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">cpsmidi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.cpsmidi" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">cpsmidi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.cpsmidi" title="Link to this definition"></a></dt>
 <dd><p>Convert cycle per second into midi number</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.dbamp">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">dbamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.dbamp" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">dbamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.dbamp" title="Link to this definition"></a></dt>
 <dd><p>Convert db to amplitude</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.ampdb">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">ampdb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.ampdb" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">ampdb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.ampdb" title="Link to this definition"></a></dt>
 <dd><p>Convert amplitude to db</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.spectrum">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.spectrum" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.spectrum" title="Link to this definition"></a></dt>
 <dd><p>Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sig</strong> (<em>numpy.ndarray</em>) – signal array</p></li>
 <li><p><strong>samples</strong> (<em>int</em>) – total amount of samples</p></li>
@@ -304,7 +281,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><p><strong>sr</strong> (<em>int</em>) – sampling rate</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>frq</strong> (<em>numpy.ndarray</em>) – frequencies</p></li>
 <li><p><strong>Y</strong> (<em>numpy.ndarray</em>) – FFT of the signal.</p></li>
@@ -316,36 +293,36 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.normalize">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.normalize" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.normalize" title="Link to this definition"></a></dt>
 <dd><p>Return the normalized input array</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.audio_from_file">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">audio_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.audio_from_file" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">audio_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.audio_from_file" title="Link to this definition"></a></dt>
 <dd><p>Load an audio buffer using audioread.
 This loads one block at a time, and then concatenates the results.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.buf_to_float">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">buf_to_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bytes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.buf_to_float" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">buf_to_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bytes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.buf_to_float" title="Link to this definition"></a></dt>
 <dd><p>Convert an integer buffer to floating point values.
 This is primarily useful when loading integer-valued wav data
 into numpy arrays.
 .. seealso:: <a class="reference internal" href="#pya.helper.helpers.buf_to_float" title="pya.helper.helpers.buf_to_float"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buf_to_float</span></code></a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>np.ndarray</em><em> [</em><em>dtype=int</em><em>]</em>) – The integer-valued data buffer</p></li>
 <li><p><strong>n_bytes</strong> (<em>int</em><em> [</em><em>1</em><em>, </em><em>2</em><em>, </em><em>4</em><em>]</em>) – The number of bytes per sample in <cite>x</cite></p></li>
 <li><p><strong>dtype</strong> (<em>numeric type</em>) – The target output type (default: 32-bit float)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>x_float</strong> – The input data buffer cast to floating point</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray [dtype=float]</p>
 </dd>
 </dl>
@@ -353,23 +330,23 @@ into numpy arrays.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.device_info">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.device_info" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.device_info" title="Link to this definition"></a></dt>
 <dd><p>Return a formatted string about available audio devices and their info</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.find_device">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">find_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.find_device" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">find_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.find_device" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.padding">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">padding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constant_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.padding" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">padding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tail</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constant_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.padding" title="Link to this definition"></a></dt>
 <dd><p>Pad signal with certain width, support 1-3D tensors.
 Use it to add silence to a signal
 TODO: CHECK pad array</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>np.ndarray</em>) – A numpy array</p></li>
 <li><p><strong>width</strong> (<em>int</em>) – The amount of padding.</p></li>
@@ -377,10 +354,10 @@ TODO: CHECK pad array</p>
 <li><p><strong>constant_values</strong> (<em>int</em><em> or </em><em>float</em><em> or </em><em>None</em>) – The value to be padded, add None will pad nan to the array</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>_</strong> – Padded array</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
@@ -388,23 +365,23 @@ TODO: CHECK pad array</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.is_pow2">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">is_pow2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.is_pow2" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">is_pow2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.is_pow2" title="Link to this definition"></a></dt>
 <dd><p>Check if input is a power of 2 return a bool result.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.next_pow2">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">next_pow2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.next_pow2" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">next_pow2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.next_pow2" title="Link to this definition"></a></dt>
 <dd><p>Find the closest pow of 2 that is great or equal or x,
 based on shift_bit_length</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>x</strong> (<em>int</em>) – A positive number</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>_</strong> – The cloest  integer that is greater or equal to input x.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -412,21 +389,21 @@ based on shift_bit_length</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.round_half_up">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">round_half_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.round_half_up" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">round_half_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.round_half_up" title="Link to this definition"></a></dt>
 <dd><p>Round up if &gt;= .5</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.rolling_window">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">rolling_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.rolling_window" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">rolling_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.rolling_window" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.signal_to_frame">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">signal_to_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_per_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride_trick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.signal_to_frame" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">signal_to_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_per_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride_trick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.signal_to_frame" title="Link to this definition"></a></dt>
 <dd><p>Frame a signal into overlapping frames.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sig</strong> (<em>numpy.ndarray</em>) – The audio signal</p></li>
 <li><p><strong>n_per_frame</strong> (<em>int</em>) – Number of samples each frame</p></li>
@@ -435,10 +412,10 @@ based on shift_bit_length</p>
 <li><p><strong>stride_trick</strong> (<em>bool</em>) – Use stride trick to compute the rolling window and window multiplication faster</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>_</strong> – an array of frames.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
@@ -446,21 +423,21 @@ based on shift_bit_length</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.magspec">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">magspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NFFT</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.magspec" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">magspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NFFT</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.magspec" title="Link to this definition"></a></dt>
 <dd><p>Compute the magnitude spectrum of each frame in frames.
 If frames is an NxD matrix, output will be Nx(NFFT/2+1).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>frames</strong> (<em>numpy.ndarray</em>) – The framed array, each row is a frame, can be just a single frame.</p></li>
 <li><p><strong>NFFT</strong> (<em>int</em>) – FFT length. If NFFT &gt; frame_len, the frames are zero_padded.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>_</strong> – If frames is an NxD matrix, output will be Nx(NFFT/2+1).
 Each row will be the magnitude spectrum of the corresponding frame.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
@@ -468,21 +445,21 @@ Each row will be the magnitude spectrum of the corresponding frame.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.powspec">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">powspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NFFT</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.powspec" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">powspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NFFT</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.powspec" title="Link to this definition"></a></dt>
 <dd><p>Compute the power spectrum of each frame in frames,
 first comeputer the magnitude spectrum</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>frames</strong> (<em>numpy.ndarray</em>) – Framed signal, can be just a single frame.</p></li>
 <li><p><strong>NFFT</strong> (<em>int</em>) – The FFT length to use. If NFFT &gt; frame_len, the frames are zero-padded.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>_</strong> – Power spectrum of the framed signal.
 Each row has the size of NFFT / 2 + 1 due to rfft.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy array</p>
 </dd>
 </dl>
@@ -490,10 +467,10 @@ Each row has the size of NFFT / 2 + 1 due to rfft.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.hz2mel">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">hz2mel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.hz2mel" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">hz2mel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.hz2mel" title="Link to this definition"></a></dt>
 <dd><p>Convert a value in Hertz to Mels</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>hz</strong> (<em>number</em><em> of </em><em>array</em>) – value in Hz, can be an array</p></li>
 <li><p><strong>Returns</strong> – </p></li>
@@ -506,10 +483,10 @@ Each row has the size of NFFT / 2 + 1 due to rfft.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.helpers.mel2hz">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">mel2hz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.mel2hz" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.helpers.</span></span><span class="sig-name descname"><span class="pre">mel2hz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.helpers.mel2hz" title="Link to this definition"></a></dt>
 <dd><p>Convert a value in Hertz to Mels</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>hz</strong> (<em>number</em><em> of </em><em>array</em>) – value in Hz, can be an array</p></li>
 <li><p><strong>Returns</strong> – </p></li>

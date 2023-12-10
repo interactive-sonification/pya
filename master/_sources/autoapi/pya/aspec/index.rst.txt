@@ -26,11 +26,11 @@ Attributes
 
 
 .. py:data:: _LOGGER
-   
 
    
 
-.. py:class:: Aspec(x, sr=44100, label=None, cn=None)
+.. py:class:: Aspec(x: Union[pya.asig.Asig, numpy.ndarray], sr: int = 44100, label: Optional[str] = None, cn: Optional[list] = None)
+
 
    Audio spectrum class using rfft
 
@@ -44,7 +44,7 @@ Attributes
       Convert Aspec into Asig
 
 
-   .. py:method:: weight(weights, freqs=None, curve=1, kind='linear')
+   .. py:method:: weight(weights: list, freqs=None, curve=1, kind='linear')
 
       TODO
 

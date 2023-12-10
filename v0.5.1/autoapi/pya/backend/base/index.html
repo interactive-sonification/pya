@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pya.backend.base &mdash; pya  documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -43,11 +44,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.1/" selected="selected">v0.5.1</option>
+  <option value="/pya/v0.5.2/" >v0.5.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.5.1/" selected="selected">v0.5.1</option>
 
   <option value="/pya/v0.5.0/" >v0.5.0</option>
 
@@ -71,7 +74,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -101,23 +104,6 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.backend.base.StreamBase.close"><code class="docutils literal notranslate"><span class="pre">StreamBase.close()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#pya.backend.base.BackendBase">BackendBase</a><ul>
-<li><a class="reference internal" href="#pya.backend.base.BackendBase.get_device_count">get_device_count</a></li>
-<li><a class="reference internal" href="#pya.backend.base.BackendBase.get_device_info_by_index">get_device_info_by_index</a></li>
-<li><a class="reference internal" href="#pya.backend.base.BackendBase.get_default_output_device_info">get_default_output_device_info</a></li>
-<li><a class="reference internal" href="#pya.backend.base.BackendBase.get_default_input_device_info">get_default_input_device_info</a></li>
-<li><a class="reference internal" href="#pya.backend.base.BackendBase.open">open</a></li>
-<li><a class="reference internal" href="#pya.backend.base.BackendBase.terminate">terminate</a></li>
-<li><a class="reference internal" href="#pya.backend.base.BackendBase.process_buffer">process_buffer</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#pya.backend.base.StreamBase">StreamBase</a><ul>
-<li><a class="reference internal" href="#pya.backend.base.StreamBase.is_active">is_active</a></li>
-<li><a class="reference internal" href="#pya.backend.base.StreamBase.start_stream">start_stream</a></li>
-<li><a class="reference internal" href="#pya.backend.base.StreamBase.stop_stream">stop_stream</a></li>
-<li><a class="reference internal" href="#pya.backend.base.StreamBase.close">close</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -139,7 +125,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.base</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../../_sources/autoapi/pya/backend/base/index.rst.txt" rel="nofollow"> View page source</a>
@@ -151,16 +137,12 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
            <div itemprop="articleBody">
              
   <section id="module-pya.backend.base">
-<span id="pya-backend-base"></span><h1><a class="reference internal" href="#module-pya.backend.base" title="pya.backend.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.base</span></code></a><a class="headerlink" href="#module-pya.backend.base" title="Permalink to this heading"></a></h1>
+<span id="pya-backend-base"></span><h1><a class="reference internal" href="#module-pya.backend.base" title="pya.backend.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.base</span></code></a><a class="headerlink" href="#module-pya.backend.base" title="Link to this heading"></a></h1>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.backend.base.BackendBase" title="pya.backend.base.BackendBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BackendBase</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
@@ -172,71 +154,71 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="pya.backend.base.BackendBase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.backend.base.</span></span><span class="sig-name descname"><span class="pre">BackendBase</span></span><a class="headerlink" href="#pya.backend.base.BackendBase" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.backend.base.</span></span><span class="sig-name descname"><span class="pre">BackendBase</span></span><a class="headerlink" href="#pya.backend.base.BackendBase" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.BackendBase.get_device_count">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_device_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.get_device_count" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_device_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.get_device_count" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.BackendBase.get_device_info_by_index">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_device_info_by_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.get_device_info_by_index" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_device_info_by_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.get_device_info_by_index" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.BackendBase.get_default_output_device_info">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_default_output_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.get_default_output_device_info" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_default_output_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.get_default_output_device_info" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.BackendBase.get_default_input_device_info">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_default_input_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.get_default_input_device_info" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_default_input_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.get_default_input_device_info" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.BackendBase.open">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.open" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.open" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.BackendBase.terminate">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.terminate" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.terminate" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.BackendBase.process_buffer">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.process_buffer" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.BackendBase.process_buffer" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pya.backend.base.StreamBase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.backend.base.</span></span><span class="sig-name descname"><span class="pre">StreamBase</span></span><a class="headerlink" href="#pya.backend.base.StreamBase" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.backend.base.</span></span><span class="sig-name descname"><span class="pre">StreamBase</span></span><a class="headerlink" href="#pya.backend.base.StreamBase" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.StreamBase.is_active">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_active</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.StreamBase.is_active" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_active</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.StreamBase.is_active" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.StreamBase.start_stream">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.StreamBase.start_stream" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.StreamBase.start_stream" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.StreamBase.stop_stream">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.StreamBase.stop_stream" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.StreamBase.stop_stream" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.base.StreamBase.close">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.StreamBase.close" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.base.StreamBase.close" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

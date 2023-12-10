@@ -17,7 +17,8 @@ Classes
 
 
 
-.. py:class:: Amfcc(x, sr=None, label='', n_per_frame=None, hopsize=None, nfft=None, window='hann', nfilters=26, ncep=13, ceplifter=22, preemph=0.95, append_energy=True, cn=None)
+.. py:class:: Amfcc(x: Union[pya.Asig, numpy.ndarray], sr: Optional[int] = None, label: str = '', n_per_frame: Optional[int] = None, hopsize: Optional[int] = None, nfft: Optional[int] = None, window: str = 'hann', nfilters: int = 26, ncep: int = 13, ceplifter: int = 22, preemph: float = 0.95, append_energy: bool = True, cn: Optional[list] = None)
+
 
    Mel filtered Fourier spectrum (MFCC) class,
    this class is inspired by jameslyons/python_speech_features,
@@ -141,7 +142,7 @@ Classes
       Return repr(self).
 
 
-   .. py:method:: preemphasis(x, coeff=0.97)
+   .. py:method:: preemphasis(x: numpy.ndarray, coeff: float = 0.97)
       :staticmethod:
 
       Pre-emphasis filter to whiten the spectrum.
@@ -159,7 +160,7 @@ Classes
       :rtype: numpy.ndarray
 
 
-   .. py:method:: mel_filterbanks(sr, nfilters=26, nfft=512, lowfreq=0, highfreq=None)
+   .. py:method:: mel_filterbanks(sr: int, nfilters: int = 26, nfft: int = 512, lowfreq: float = 0, highfreq: Optional[float] = None)
       :staticmethod:
 
       Compute a Mel-filterbank. The filters are stored in the rows,
@@ -173,16 +174,16 @@ Classes
       :param nfft: The size of FFT, default 512
       :type nfft: int
       :param lowfreq: The lowest band edge of the mel filters, default 0 Hz
-      :type lowfreq: int or float
+      :type lowfreq: float
       :param highfreq: The highest band edge of the mel filters, default sr // 2
-      :type highfreq: int or float
+      :type highfreq: float
 
       :returns: **_** -- A numpy array of size nfilt * (nfft/2 + 1)
                 containing filterbank. Each row holds 1 filter.
       :rtype: numpy.ndarray
 
 
-   .. py:method:: lifter(cepstra, L=22)
+   .. py:method:: lifter(cepstra: numpy.ndarray, L: int = 22)
       :staticmethod:
 
       Apply a cepstral lifter the the matrix of cepstra.
@@ -213,18 +214,20 @@ Classes
       :type L: int
 
 
-   .. py:method:: plot(cmap='inferno', show_bar=True, offset=0, scale=1.0, xlim=None, ylim=None, x_as_time=True, nxlabel=8, ax=None, **kwargs)
+   .. py:method:: plot(show_bar: bool = True, offset: int = 0, scale: float = 1.0, xlim: Optional[float] = None, ylim: Optional[float] = None, x_as_time: bool = True, nxlabel: int = 8, ax=None, **kwargs)
 
       Plot Amfcc.features via matshow, x is frames/time, y is the MFCCs
 
-      :param figsize: Figure size, width, height in inches, Default = [6.4, 4.8]
-      :type figsize: (float, float), optional, default: None
-      :param cmap: colormap for matplotlib. Default is 'inferno'.
-      :type cmap: str
       :param show_bar: Default is True, show colorbar.
       :type show_bar: bool, optional
-      :param x_as_time: Default is True, show x axis as time or sample index.
-      :type x_as_time: bool, optional
+      :param offset: It is the spacing between channel, without setting it every channel will be overlayed onto each other.
+      :type offset: int
+      :param scale: Visual scaling for improve visibility
+      :type scale: float
+      :param xlim: x axis value range limit
+      :type xlim: float, optional
+      :param ylim: y axis value range limit
+      :type ylim: float, optional
       :param nxlabel: The amountt of labels on the x axis. Default is 8 .
       :type nxlabel: int, optional
 

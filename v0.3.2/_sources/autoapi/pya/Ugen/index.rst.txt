@@ -33,6 +33,7 @@ Functions
 
 .. py:class:: Ugen
 
+
    Bases: :py:obj:`pya.Asig.Asig`
 
    Unit Generator for to create Asig with predefined signal

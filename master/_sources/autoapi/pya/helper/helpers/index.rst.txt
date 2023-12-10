@@ -13,15 +13,11 @@ Functions
 
 .. autoapisummary::
 
-   pya.helper.helpers.linlin
-   pya.helper.helpers.midicps
-   pya.helper.helpers.cpsmidi
-   pya.helper.helpers.dbamp
-   pya.helper.helpers.ampdb
    pya.helper.helpers.spectrum
    pya.helper.helpers.normalize
    pya.helper.helpers.audio_from_file
    pya.helper.helpers.buf_to_float
+   pya.helper.helpers._try_initializing_pyaudio
    pya.helper.helpers.device_info
    pya.helper.helpers.find_device
    pya.helper.helpers.padding
@@ -32,54 +28,15 @@ Functions
    pya.helper.helpers.signal_to_frame
    pya.helper.helpers.magspec
    pya.helper.helpers.powspec
-   pya.helper.helpers.hz2mel
-   pya.helper.helpers.mel2hz
 
 
 
 .. py:exception:: _error
 
+
    Bases: :py:obj:`Exception`
 
    Common base class for all non-exit exceptions.
-
-
-.. py:function:: linlin(x, smi, sma, dmi, dma)
-
-   Linear mapping
-
-   :param x: input value
-   :type x: float
-   :param smi: input range's minimum
-   :type smi: float
-   :param sma: input range's maximum
-   :type sma: float
-   :param dmi: input range's minimum
-   :type dmi: float
-   :param dma:
-
-   :returns: **_** -- mapped output
-   :rtype: float
-
-
-.. py:function:: midicps(m)
-
-   Convert midi number into cycle per second
-
-
-.. py:function:: cpsmidi(c)
-
-   Convert cycle per second into midi number
-
-
-.. py:function:: dbamp(db)
-
-   Convert db to amplitude
-
-
-.. py:function:: ampdb(amp)
-
-   Convert amplitude to db
 
 
 .. py:function:: spectrum(sig, samples, channels, sr)
@@ -104,7 +61,7 @@ Functions
    Return the normalized input array
 
 
-.. py:function:: audio_from_file(path, dtype=np.float32)
+.. py:function:: audio_from_file(path: str, dtype=np.float32)
 
    Load an audio buffer using audioread.
    This loads one block at a time, and then concatenates the results.
@@ -126,6 +83,9 @@ Functions
 
    :returns: **x_float** -- The input data buffer cast to floating point
    :rtype: np.ndarray [dtype=float]
+
+
+.. py:function:: _try_initializing_pyaudio(fun_name)
 
 
 .. py:function:: device_info()
@@ -228,29 +188,5 @@ Functions
    :returns: **_** -- Power spectrum of the framed signal.
              Each row has the size of NFFT / 2 + 1 due to rfft.
    :rtype: numpy array
-
-
-.. py:function:: hz2mel(hz)
-
-   Convert a value in Hertz to Mels
-
-   :param hz: value in Hz, can be an array
-   :type hz: number of array
-   :param Returns:
-   :param --------:
-   :param _: value in Mels, same type as the input.
-   :type _: number of array
-
-
-.. py:function:: mel2hz(mel)
-
-   Convert a value in Hertz to Mels
-
-   :param hz: value in Hz, can be an array
-   :type hz: number of array
-   :param Returns:
-   :param --------:
-   :param _: value in Mels, same type as the input.
-   :type _: number of array
 
 

@@ -57,6 +57,7 @@ Functions
 
 .. py:exception:: _error
 
+
    Bases: :py:obj:`Exception`
 
    Common base class for all non-exit exceptions.

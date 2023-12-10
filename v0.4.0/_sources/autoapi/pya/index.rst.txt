@@ -92,6 +92,7 @@ Functions
 
 .. py:class:: Asig(sig, sr=44100, label='', channels=1, cn=None)
 
+
    Audio signal class.
    Asig enables manipulation of audio signals in the style of numpy and more.
    Asig offer functions for plotting (via matplotlib) and playing audio
@@ -172,17 +173,14 @@ Functions
       :type: Overwrite mode
 
    .. py:attribute:: extend
-      
 
       
 
    .. py:attribute:: bound
-      
 
       
 
    .. py:attribute:: overwrite
-      
 
       
 
@@ -779,6 +777,7 @@ Functions
 
 .. py:class:: Astft(x, sr=None, label=None, window='hann', nperseg=256, noverlap=None, nfft=None, detrend=False, return_onesided=True, boundary='zeros', padded=True, cn=None)
 
+
    Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
    attribute cn being the list of channel names, and label being the name of the Asig
 
@@ -825,6 +824,7 @@ Functions
 
 
 .. py:class:: Aspec(x, sr=44100, label=None, cn=None)
+
 
    Audio spectrum class using rfft
 
@@ -878,6 +878,7 @@ Functions
 
 
 .. py:class:: Amfcc(x, sr=None, label='', n_per_frame=None, hopsize=None, nfft=None, window='hann', nfilters=26, ncep=13, ceplifter=22, preemph=0.95, append_energy=True, cn=None)
+
 
    Mel filtered Fourier spectrum (MFCC) class,
    this class is inspired by jameslyons/python_speech_features,
@@ -1092,6 +1093,7 @@ Functions
 
 .. py:class:: Aserver(sr=44100, bs=None, device=None, channels=2, backend=None, **kwargs)
 
+
    Pya audio server
    Based on pyaudio, works as a FIFO style audio stream pipeline,
    allowing Asig.play() to send audio segement into the stream.
@@ -1111,7 +1113,6 @@ Functions
 
 
    .. py:attribute:: default
-      
 
       
 
@@ -1171,6 +1172,7 @@ Functions
 
 
 .. py:class:: Arecorder(sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs)
+
 
    Bases: :py:obj:`pya.Aserver`
 
@@ -1237,6 +1239,7 @@ Functions
 
 
 .. py:class:: Ugen
+
 
    Bases: :py:obj:`pya.Asig.Asig`
 
@@ -1420,6 +1423,7 @@ Functions
 
 
 .. py:exception:: _error
+
 
    Bases: :py:obj:`Exception`
 
@@ -1638,23 +1642,24 @@ Functions
 
 .. py:class:: DummyBackend(dummy_devices=None)
 
+
    Bases: :py:obj:`pya.backend.base.BackendBase`
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
    .. py:attribute:: dtype
-      :annotation: = float32
+      :value: 'float32'
 
       
 
    .. py:attribute:: range
-      :annotation: = 1
+      :value: 1
 
       
 
    .. py:attribute:: bs
-      :annotation: = 256
+      :value: 256
 
       
 
@@ -1682,18 +1687,19 @@ Functions
 
 .. py:class:: PyAudioBackend(format=pyaudio.paFloat32)
 
+
    Bases: :py:obj:`pya.backend.base.BackendBase`
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
    .. py:attribute:: _boot_delay
-      :annotation: = 0.5
+      :value: 0.5
 
       
 
    .. py:attribute:: bs
-      :annotation: = 512
+      :value: 512
 
       
 

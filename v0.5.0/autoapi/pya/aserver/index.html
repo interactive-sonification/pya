@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pya.aserver &mdash; pya  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -43,11 +44,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.1/" >v0.5.1</option>
+  <option value="/pya/v0.5.2/" >v0.5.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.5.1/" >v0.5.1</option>
 
   <option value="/pya/v0.5.0/" selected="selected">v0.5.0</option>
 
@@ -71,7 +74,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -108,8 +111,6 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.aserver.Aserver.__del__"><code class="docutils literal notranslate"><span class="pre">Aserver.__del__()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#pya.aserver._LOGGER">_LOGGER</a></li>
-<li><a class="reference internal" href="#pya.aserver.Aserver">Aserver</a></li>
 </ul>
 </li>
 </ul>
@@ -131,7 +132,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.aserver</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/autoapi/pya/aserver/index.rst.txt" rel="nofollow"> View page source</a>
@@ -143,16 +144,12 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
            <div itemprop="articleBody">
              
   <section id="module-pya.aserver">
-<span id="pya-aserver"></span><h1><a class="reference internal" href="#module-pya.aserver" title="pya.aserver"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.aserver</span></code></a><a class="headerlink" href="#module-pya.aserver" title="Permalink to this heading"></a></h1>
+<span id="pya-aserver"></span><h1><a class="reference internal" href="#module-pya.aserver" title="pya.aserver"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.aserver</span></code></a><a class="headerlink" href="#module-pya.aserver" title="Link to this heading"></a></h1>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.aserver.Aserver" title="pya.aserver.Aserver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Aserver</span></code></a></p></td>
 <td><p>Pya audio server</p></td>
@@ -161,12 +158,8 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 </section>
 <section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.aserver._LOGGER" title="pya.aserver._LOGGER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_LOGGER</span></code></a></p></td>
 <td><p></p></td>
@@ -175,17 +168,17 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 <dl class="py data">
 <dt class="sig sig-object py" id="pya.aserver._LOGGER">
-<span class="sig-prename descclassname"><span class="pre">pya.aserver.</span></span><span class="sig-name descname"><span class="pre">_LOGGER</span></span><a class="headerlink" href="#pya.aserver._LOGGER" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.aserver.</span></span><span class="sig-name descname"><span class="pre">_LOGGER</span></span><a class="headerlink" href="#pya.aserver._LOGGER" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pya.aserver.Aserver">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.aserver.</span></span><span class="sig-name descname"><span class="pre">Aserver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.aserver.</span></span><span class="sig-name descname"><span class="pre">Aserver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver" title="Link to this definition"></a></dt>
 <dd><p>Pya audio server
 Based on pyaudio, works as a FIFO style audio stream pipeline,
 allowing Asig.play() to send audio segement into the stream.</p>
 <section id="examples">
-<h4>Examples:<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h4>
+<h4>Examples:<a class="headerlink" href="#examples" title="Link to this heading"></a></h4>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span> <span class="o">=</span> <span class="n">Aserver</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ser</span><span class="o">.</span><span class="n">boot</span><span class="p">()</span>
@@ -198,62 +191,62 @@ allowing Asig.play() to send audio segement into the stream.</p>
 </div>
 <dl class="py property">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.device_dict">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device_dict</span></span><a class="headerlink" href="#pya.aserver.Aserver.device_dict" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device_dict</span></span><a class="headerlink" href="#pya.aserver.Aserver.device_dict" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.max_out_chn">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_out_chn</span></span><a class="headerlink" href="#pya.aserver.Aserver.max_out_chn" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_out_chn</span></span><a class="headerlink" href="#pya.aserver.Aserver.max_out_chn" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.max_in_chn">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_in_chn</span></span><a class="headerlink" href="#pya.aserver.Aserver.max_in_chn" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_in_chn</span></span><a class="headerlink" href="#pya.aserver.Aserver.max_in_chn" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.device">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#pya.aserver.Aserver.device" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#pya.aserver.Aserver.device" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.is_active">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_active</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pya.aserver.Aserver.is_active" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_active</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#pya.aserver.Aserver.is_active" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.default">
-<span class="sig-name descname"><span class="pre">default</span></span><a class="headerlink" href="#pya.aserver.Aserver.default" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">default</span></span><a class="headerlink" href="#pya.aserver.Aserver.default" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.startup_default_server">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">startup_default_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.startup_default_server" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">startup_default_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.startup_default_server" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.shutdown_default_server">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shutdown_default_server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.shutdown_default_server" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shutdown_default_server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.shutdown_default_server" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.__repr__">
-<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.__repr__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.__repr__" title="Link to this definition"></a></dt>
 <dd><p>Return repr(self).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.get_devices">
-<span class="sig-name descname"><span class="pre">get_devices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.get_devices" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_devices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.get_devices" title="Link to this definition"></a></dt>
 <dd><p>Return (and optionally print) available input and output device</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.set_device">
-<span class="sig-name descname"><span class="pre">set_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reboot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.set_device" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reboot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.set_device" title="Link to this definition"></a></dt>
 <dd><p>Set audio device</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>idx</strong> (<em>int</em>) – Index of the device</p></li>
 <li><p><strong>reboot</strong> (<em>bool</em>) – If true the server will reboot. (Default value = True)</p></li>
@@ -264,46 +257,46 @@ allowing Asig.play() to send audio segement into the stream.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.boot">
-<span class="sig-name descname"><span class="pre">boot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.boot" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">boot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.boot" title="Link to this definition"></a></dt>
 <dd><p>boot Aserver = start stream, setting its callback to this callback.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.quit">
-<span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.quit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">quit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.quit" title="Link to this definition"></a></dt>
 <dd><p>Aserver quit server: stop stream and terminate pa</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.play">
-<span class="sig-name descname"><span class="pre">play</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.play" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">play</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.play" title="Link to this definition"></a></dt>
 <dd><p>Dispatch asigs or arrays for given onset.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver._play_callback">
-<span class="sig-name descname"><span class="pre">_play_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver._play_callback" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">_play_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver._play_callback" title="Link to this definition"></a></dt>
 <dd><p>callback function, called from pastream thread when data needed.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.stop">
-<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.stop" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.stop" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.__enter__">
-<span class="sig-name descname"><span class="pre">__enter__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.__enter__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__enter__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.__enter__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.__exit__">
-<span class="sig-name descname"><span class="pre">__exit__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traceback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.__exit__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__exit__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traceback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.__exit__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.aserver.Aserver.__del__">
-<span class="sig-name descname"><span class="pre">__del__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.__del__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__del__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.aserver.Aserver.__del__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>

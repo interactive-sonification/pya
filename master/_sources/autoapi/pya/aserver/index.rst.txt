@@ -26,11 +26,11 @@ Attributes
 
 
 .. py:data:: _LOGGER
-   
 
    
 
-.. py:class:: Aserver(sr=44100, bs=None, device=None, channels=None, backend=None, **kwargs)
+.. py:class:: Aserver(sr: int = 44100, bs: Optional[int] = None, device: Optional[int] = None, channels: Optional[int] = None, backend=None, **kwargs)
+
 
    Pya audio server
    Based on pyaudio, works as a FIFO style audio stream pipeline,
@@ -47,33 +47,28 @@ Attributes
    >>> asine.play(server=ser)
    Asig('sine'): 1 x 44100 @ 44100Hz = 1.000s cn=['0']
 
-   .. py:property:: device_dict
-
-
-   .. py:property:: max_out_chn
-
-
-   .. py:property:: max_in_chn
+   .. py:property:: channels
 
 
    .. py:property:: device_dict
 
 
    .. py:property:: max_out_chn
+      :type: int
 
 
    .. py:property:: max_in_chn
-
-
-   .. py:property:: device
+      :type: int
 
 
    .. py:property:: is_active
       :type: bool
 
 
+   .. py:property:: device
+
+
    .. py:attribute:: default
-      
 
       
 
@@ -90,14 +85,15 @@ Attributes
       Return repr(self).
 
 
-   .. py:method:: get_devices(verbose=False)
+   .. py:method:: get_devices(verbose: bool = False)
 
       Return (and optionally print) available input and output device
 
 
-   .. py:method:: set_device(idx, reboot=True)
+   .. py:method:: set_device(idx: int, reboot: bool = True)
 
-      Set audio device
+      Set audio device, an alternative way is to direct set the device property, i.e. Aserver.device = 1,
+      but that will not reboot the server.
 
       :param idx: Index of the device
       :type idx: int
@@ -115,9 +111,16 @@ Attributes
       Aserver quit server: stop stream and terminate pa
 
 
-   .. py:method:: play(asig, onset=0, out=0, **kwargs)
+   .. py:method:: play(asig, onset: Union[int, float] = 0, out: int = 0, **kwargs)
 
       Dispatch asigs or arrays for given onset.
+
+      asig: pya.Asig
+          An Asig object
+      onset: int or float
+          Time when the sound should play, 0 means asap
+      out: int
+          Output channel
 
 
    .. py:method:: _play_callback(in_data, frame_count, time_info, flag)
@@ -135,9 +138,6 @@ Attributes
 
 
    .. py:method:: __del__()
-
-
-   .. py:method:: __enter__()
 
 
 

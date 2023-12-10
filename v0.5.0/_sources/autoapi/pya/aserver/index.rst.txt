@@ -26,11 +26,11 @@ Attributes
 
 
 .. py:data:: _LOGGER
-   
 
    
 
 .. py:class:: Aserver(sr=44100, bs=512, device=None, channels=2, backend=None, **kwargs)
+
 
    Pya audio server
    Based on pyaudio, works as a FIFO style audio stream pipeline,
@@ -64,7 +64,6 @@ Attributes
 
 
    .. py:attribute:: default
-      
 
       
 

@@ -25,13 +25,14 @@ Functions
 
 
 
-.. py:function:: get_num_of_rows(dur, n_rows, sr)
+.. py:function:: get_num_of_rows(dur: Optional[float], n_rows: Optional[int], sr: int)
 
    Return total number of samples. If dur is set, return dur*sr, if num_samples is set, return num_samples,
    if both set, raise an AttributeError. Only use one of the two.
 
 
 .. py:class:: Ugen
+
 
    Bases: :py:obj:`pya.Asig`
 
@@ -52,7 +53,7 @@ Functions
    >>> # Make a white noise, another option is 'pink', at 44100Hz for 1second.
    >>> noi = Ugen().noise(type='white')
 
-   .. py:method:: sine(freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='sine')
+   .. py:method:: sine(freq: Union[int, float] = 440, amp: Union[int, float] = 1.0, dur: Optional[float] = None, n_rows: Optional[int] = None, sr: int = 44100, channels: int = 1, cn: Optional[list] = None, label: str = 'sine')
 
       Generate Sine signal Asig object.
 
@@ -60,10 +61,10 @@ Functions
       :type freq: int, float
       :param amp: signal amplitude (Default value = 1.0)
       :type amp: int, float
-      :param dur: duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+      :param dur: duration in second. dur and n_rows only use one of the two. (Default value = 1.0)
       :type dur: float
-      :param num_rows: number of rows (samples). dur and num_rows only use one of the two(Default value = None)
-      :type num_rows: int
+      :param n_rows: number of rows (samples). dur and n_rows only use one of the two(Default value = None)
+      :type n_rows: int
       :param sr: sampling rate (Default value = 44100)
       :type sr: int
       :param channels: number of channels (Default value = 1)
@@ -76,7 +77,7 @@ Functions
       :rtype: Asig
 
 
-   .. py:method:: cos(freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='cosine')
+   .. py:method:: cos(freq: Union[int, float] = 440, amp: Union[int, float] = 1.0, dur: Optional[float] = None, n_rows: Optional[int] = None, sr: int = 44100, channels: int = 1, cn: Optional[list] = None, label: str = 'cosine')
 
       Generate Cosine signal Asig object.
 
@@ -86,8 +87,8 @@ Functions
       :type amp: int, float
       :param dur: duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
       :type dur: int, float
-      :param num_rows: number of rows (samples). dur and num_rows only use one of the two(Default value = None)
-      :type num_rows: int
+      :param n_rows: number of rows (samples). dur and num_rows only use one of the two(Default value = None)
+      :type n_rows: int
       :param sr: sampling rate (Default value = 44100)
       :type sr: int
       :param channels: number of channels (Default value = 1)

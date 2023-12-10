@@ -40,23 +40,24 @@ Functions
 
 .. py:class:: DummyBackend(dummy_devices=None)
 
+
    Bases: :py:obj:`pya.backend.base.BackendBase`
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
    .. py:attribute:: dtype
-      :annotation: = float32
+      :value: 'float32'
 
       
 
    .. py:attribute:: range
-      :annotation: = 1
+      :value: 1
 
       
 
    .. py:attribute:: bs
-      :annotation: = 256
+      :value: 256
 
       
 
@@ -84,18 +85,19 @@ Functions
 
 .. py:class:: PyAudioBackend(format=pyaudio.paFloat32)
 
+
    Bases: :py:obj:`pya.backend.base.BackendBase`
 
    Helper class that provides a standard way to create an ABC using
    inheritance.
 
    .. py:attribute:: _boot_delay
-      :annotation: = 0.5
+      :value: 0.5
 
       
 
    .. py:attribute:: bs
-      :annotation: = 512
+      :value: 512
 
       
 

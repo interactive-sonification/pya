@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pya.Aspec &mdash; pya  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -43,11 +44,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.1/" >v0.5.1</option>
+  <option value="/pya/v0.5.2/" >v0.5.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.5.1/" >v0.5.1</option>
 
   <option value="/pya/v0.5.0/" >v0.5.0</option>
 
@@ -71,7 +74,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -91,14 +94,6 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.Aspec.Aspec.weight"><code class="docutils literal notranslate"><span class="pre">Aspec.weight()</span></code></a></li>
 <li><a class="reference internal" href="#pya.Aspec.Aspec.plot"><code class="docutils literal notranslate"><span class="pre">Aspec.plot()</span></code></a></li>
 <li><a class="reference internal" href="#pya.Aspec.Aspec.__repr__"><code class="docutils literal notranslate"><span class="pre">Aspec.__repr__()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#pya.Aspec._LOGGER">_LOGGER</a></li>
-<li><a class="reference internal" href="#pya.Aspec.Aspec">Aspec</a><ul>
-<li><a class="reference internal" href="#pya.Aspec.Aspec.to_sig">to_sig</a></li>
-<li><a class="reference internal" href="#pya.Aspec.Aspec.weight">weight</a></li>
-<li><a class="reference internal" href="#pya.Aspec.Aspec.plot">plot</a></li>
-<li><a class="reference internal" href="#pya.Aspec.Aspec.__repr__">__repr__</a></li>
 </ul>
 </li>
 </ul>
@@ -122,7 +117,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Aspec</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/autoapi/pya/Aspec/index.rst.txt" rel="nofollow"> View page source</a>
@@ -134,16 +129,12 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
            <div itemprop="articleBody">
              
   <section id="module-pya.Aspec">
-<span id="pya-aspec"></span><h1><a class="reference internal" href="../index.html#pya.Aspec" title="pya.Aspec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Aspec</span></code></a><a class="headerlink" href="#module-pya.Aspec" title="Permalink to this heading"></a></h1>
+<span id="pya-aspec"></span><h1><a class="reference internal" href="../index.html#pya.Aspec" title="pya.Aspec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.Aspec</span></code></a><a class="headerlink" href="#module-pya.Aspec" title="Link to this heading"></a></h1>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.Aspec.Aspec" title="pya.Aspec.Aspec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Aspec</span></code></a></p></td>
 <td><p>Audio spectrum class using rfft</p></td>
@@ -152,12 +143,8 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 </section>
 <section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.Aspec._LOGGER" title="pya.Aspec._LOGGER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_LOGGER</span></code></a></p></td>
 <td><p></p></td>
@@ -166,25 +153,25 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 <dl class="py data">
 <dt class="sig sig-object py" id="pya.Aspec._LOGGER">
-<span class="sig-prename descclassname"><span class="pre">pya.Aspec.</span></span><span class="sig-name descname"><span class="pre">_LOGGER</span></span><a class="headerlink" href="#pya.Aspec._LOGGER" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.Aspec.</span></span><span class="sig-name descname"><span class="pre">_LOGGER</span></span><a class="headerlink" href="#pya.Aspec._LOGGER" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pya.Aspec.Aspec">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.Aspec.</span></span><span class="sig-name descname"><span class="pre">Aspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.Aspec.</span></span><span class="sig-name descname"><span class="pre">Aspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec" title="Link to this definition"></a></dt>
 <dd><p>Audio spectrum class using rfft</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.Aspec.Aspec.to_sig">
-<span class="sig-name descname"><span class="pre">to_sig</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.to_sig" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">to_sig</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.to_sig" title="Link to this definition"></a></dt>
 <dd><p>Convert Aspec into Asig</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.Aspec.Aspec.weight">
-<span class="sig-name descname"><span class="pre">weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.weight" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.weight" title="Link to this definition"></a></dt>
 <dd><p>TODO</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>weights</strong> – </p></li>
 <li><p><strong>freqs</strong> – (Default value = None)</p></li>
@@ -197,10 +184,10 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.Aspec.Aspec.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.abs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.plot" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.abs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.plot" title="Link to this definition"></a></dt>
 <dd><p>Plot spectrum</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fn</strong> (<em>func</em>) – function for processing the rfft spectrum. (Default value = np.abs)</p></li>
 <li><p><strong>xlim</strong> (<em>tuple</em><em> or </em><em>list</em><em> or </em><em>None</em>) – Set x axis range (Default value = None)</p></li>
@@ -208,10 +195,10 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><p><strong>**kwargs</strong> – Keyword arguments for matplotlib.pyplot.plot()</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>_</strong> – self</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../index.html#pya.Asig" title="pya.Asig">Asig</a></p>
 </dd>
 </dl>
@@ -219,7 +206,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.Aspec.Aspec.__repr__">
-<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.__repr__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.Aspec.Aspec.__repr__" title="Link to this definition"></a></dt>
 <dd><p>Return repr(self).</p>
 </dd></dl>
 

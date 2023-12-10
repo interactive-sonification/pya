@@ -26,11 +26,11 @@ Attributes
 
 
 .. py:data:: _LOGGER
-   
 
    
 
 .. py:class:: Aspec(x, sr=44100, label=None, cn=None)
+
 
    Audio spectrum class using rfft
 

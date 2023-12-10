@@ -26,11 +26,11 @@ Attributes
 
 
 .. py:data:: _LOGGER
-   
 
    
 
 .. py:class:: Astft(x, sr=None, label=None, window='hann', nperseg=256, noverlap=None, nfft=None, detrend=False, return_onesided=True, boundary='zeros', padded=True, axis=-1, cn=None)
+
 
    Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
    attribute cn being the list of channel names, and label being the name of the Asig

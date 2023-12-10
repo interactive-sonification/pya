@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pya.arecorder &mdash; pya  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -43,11 +44,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.1/" >v0.5.1</option>
+  <option value="/pya/v0.5.2/" >v0.5.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.5.1/" >v0.5.1</option>
 
   <option value="/pya/v0.5.0/" >v0.5.0</option>
 
@@ -71,7 +74,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -98,8 +101,6 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#pya.arecorder.Arecorder.__repr__"><code class="docutils literal notranslate"><span class="pre">Arecorder.__repr__()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#pya.arecorder._LOGGER">_LOGGER</a></li>
-<li><a class="reference internal" href="#pya.arecorder.Arecorder">Arecorder</a></li>
 </ul>
 </li>
 </ul>
@@ -121,7 +122,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.arecorder</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/autoapi/pya/arecorder/index.rst.txt" rel="nofollow"> View page source</a>
@@ -133,16 +134,12 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
            <div itemprop="articleBody">
              
   <section id="module-pya.arecorder">
-<span id="pya-arecorder"></span><h1><a class="reference internal" href="#module-pya.arecorder" title="pya.arecorder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.arecorder</span></code></a><a class="headerlink" href="#module-pya.arecorder" title="Permalink to this heading"></a></h1>
+<span id="pya-arecorder"></span><h1><a class="reference internal" href="#module-pya.arecorder" title="pya.arecorder"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.arecorder</span></code></a><a class="headerlink" href="#module-pya.arecorder" title="Link to this heading"></a></h1>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.arecorder.Arecorder" title="pya.arecorder.Arecorder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Arecorder</span></code></a></p></td>
 <td><p>pya audio recorder Based on pyaudio, uses callbacks to save audio data</p></td>
@@ -151,12 +148,8 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 </section>
 <section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.arecorder._LOGGER" title="pya.arecorder._LOGGER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_LOGGER</span></code></a></p></td>
 <td><p></p></td>
@@ -165,17 +158,17 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 <dl class="py data">
 <dt class="sig sig-object py" id="pya.arecorder._LOGGER">
-<span class="sig-prename descclassname"><span class="pre">pya.arecorder.</span></span><span class="sig-name descname"><span class="pre">_LOGGER</span></span><a class="headerlink" href="#pya.arecorder._LOGGER" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.arecorder.</span></span><span class="sig-name descname"><span class="pre">_LOGGER</span></span><a class="headerlink" href="#pya.arecorder._LOGGER" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pya.arecorder.Arecorder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.arecorder.</span></span><span class="sig-name descname"><span class="pre">Arecorder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.arecorder.</span></span><span class="sig-name descname"><span class="pre">Arecorder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">44100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="../index.html#pya.Aserver" title="pya.Aserver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pya.Aserver</span></code></a></p>
 <p>pya audio recorder Based on pyaudio, uses callbacks to save audio data
 for pyaudio signals into ASigs</p>
 <section id="examples">
-<h4>Examples:<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h4>
+<h4>Examples:<a class="headerlink" href="#examples" title="Link to this heading"></a></h4>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="n">Arecorder</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ar</span> <span class="o">=</span> <span class="n">Arecorder</span><span class="p">()</span><span class="o">.</span><span class="n">boot</span><span class="p">()</span>
@@ -188,15 +181,15 @@ for pyaudio signals into ASigs</p>
 </div>
 <dl class="py property">
 <dt class="sig sig-object py" id="pya.arecorder.Arecorder.device">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#pya.arecorder.Arecorder.device" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#pya.arecorder.Arecorder.device" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.arecorder.Arecorder.set_tracks">
-<span class="sig-name descname"><span class="pre">set_tracks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gains</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.set_tracks" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_tracks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gains</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.set_tracks" title="Link to this definition"></a></dt>
 <dd><p>Define the number of track to be recorded and their gains.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tracks</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – A list of input channel indices. By default None (record all channels)</p></li>
 <li><p><strong>gains</strong> (<em>list</em><em> of </em><em>numpy.ndarray</em>) – A list of gains in decibel. Needs to be same length as tracks.</p></li>
@@ -207,42 +200,42 @@ for pyaudio signals into ASigs</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.arecorder.Arecorder.reset">
-<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.reset" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.reset" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.arecorder.Arecorder.boot">
-<span class="sig-name descname"><span class="pre">boot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.boot" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">boot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.boot" title="Link to this definition"></a></dt>
 <dd><p>boot recorder</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.arecorder.Arecorder._recorder_callback">
-<span class="sig-name descname"><span class="pre">_recorder_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder._recorder_callback" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">_recorder_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder._recorder_callback" title="Link to this definition"></a></dt>
 <dd><p>Callback function during streaming.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.arecorder.Arecorder.record">
-<span class="sig-name descname"><span class="pre">record</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.record" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">record</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.record" title="Link to this definition"></a></dt>
 <dd><p>Activate recording</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.arecorder.Arecorder.pause">
-<span class="sig-name descname"><span class="pre">pause</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.pause" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pause</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.pause" title="Link to this definition"></a></dt>
 <dd><p>Pause the recording, but the record_buffer remains</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.arecorder.Arecorder.stop">
-<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.stop" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.stop" title="Link to this definition"></a></dt>
 <dd><p>Stop recording, then stores the data from record_buffer into recordings</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.arecorder.Arecorder.__repr__">
-<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.__repr__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.arecorder.Arecorder.__repr__" title="Link to this definition"></a></dt>
 <dd><p>Return repr(self).</p>
 </dd></dl>
 

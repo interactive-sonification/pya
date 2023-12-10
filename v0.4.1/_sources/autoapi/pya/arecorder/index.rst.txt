@@ -26,11 +26,11 @@ Attributes
 
 
 .. py:data:: _LOGGER
-   
 
    
 
 .. py:class:: Arecorder(sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs)
+
 
    Bases: :py:obj:`pya.Aserver`
 

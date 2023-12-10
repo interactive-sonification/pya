@@ -44,26 +44,27 @@ Attributes
 
 
 .. py:data:: COMMANDS
-   :annotation: = ['ffmpeg', 'avconv']
+   :value: ('ffmpeg', 'avconv')
 
    
 
 .. py:data:: PROC_FLAGS
-   :annotation: = 134217728
+   :value: 134217728
 
    
 
 .. py:data:: TARGET_WIDTH
-   :annotation: = 2
+   :value: 2
 
    
 
 .. py:data:: SUPPORTED_WIDTHS
-   :annotation: = [1, 2, 3, 4]
+   :value: (1, 2, 3, 4)
 
    
 
 .. py:exception:: DecodeError
+
 
    Bases: :py:obj:`Exception`
 
@@ -73,6 +74,7 @@ Attributes
 
 .. py:exception:: NoBackendError
 
+
    Bases: :py:obj:`DecodeError`
 
    The file could not be decoded by any backend. Either no backends
@@ -81,6 +83,7 @@ Attributes
 
 .. py:exception:: UnsupportedError
 
+
    Bases: :py:obj:`DecodeError`
 
    File is not an AIFF, WAV, or Au file.
@@ -88,12 +91,14 @@ Attributes
 
 .. py:exception:: BitWidthError
 
+
    Bases: :py:obj:`DecodeError`
 
    The file uses an unsupported bit width.
 
 
 .. py:exception:: FFmpegError
+
 
    Bases: :py:obj:`DecodeError`
 
@@ -103,6 +108,7 @@ Attributes
 
 .. py:exception:: CommunicationError
 
+
    Bases: :py:obj:`FFmpegError`
 
    Raised when the output of FFmpeg is not parseable.
@@ -110,12 +116,14 @@ Attributes
 
 .. py:exception:: NotInstalledError
 
+
    Bases: :py:obj:`FFmpegError`
 
    Could not find the ffmpeg binary.
 
 
 .. py:exception:: ReadTimeoutError
+
 
    Bases: :py:obj:`FFmpegError`
 
@@ -130,6 +138,7 @@ Attributes
 
 
 .. py:class:: RawAudioFile(filename)
+
 
    Bases: :py:obj:`object`
 
@@ -176,6 +185,7 @@ Attributes
 
 .. py:class:: QueueReaderThread(fh, blocksize=1024, discard=False)
 
+
    Bases: :py:obj:`threading.Thread`
 
    A thread that consumes data from a filehandle and sends the data
@@ -210,11 +220,11 @@ Attributes
 
 
 .. py:data:: windows_error_mode_lock
-   
 
    
 
 .. py:class:: FFmpegAudioFile(filename, block_size=4096)
+
 
    Bases: :py:obj:`object`
 

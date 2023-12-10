@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pya.helper.backend &mdash; pya  documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -43,11 +44,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.1/" >v0.5.1</option>
+  <option value="/pya/v0.5.2/" >v0.5.2</option>
 
   <option value="/pya/master/" selected="selected">master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.5.1/" >v0.5.1</option>
 
   <option value="/pya/v0.5.0/" >v0.5.0</option>
 
@@ -71,7 +74,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -85,9 +88,9 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#functions">Functions</a><ul>
 <li><a class="reference internal" href="#pya.helper.backend.get_server_info"><code class="docutils literal notranslate"><span class="pre">get_server_info()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.backend.try_pyaudio_backend"><code class="docutils literal notranslate"><span class="pre">try_pyaudio_backend()</span></code></a></li>
+<li><a class="reference internal" href="#pya.helper.backend.try_jupyter_backend"><code class="docutils literal notranslate"><span class="pre">try_jupyter_backend()</span></code></a></li>
 <li><a class="reference internal" href="#pya.helper.backend.determine_backend"><code class="docutils literal notranslate"><span class="pre">determine_backend()</span></code></a></li>
-<li><a class="reference internal" href="#pya.helper.backend.get_server_info">get_server_info</a></li>
-<li><a class="reference internal" href="#pya.helper.backend.determine_backend">determine_backend</a></li>
 </ul>
 </li>
 </ul>
@@ -109,7 +112,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.backend</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../../_sources/autoapi/pya/helper/backend/index.rst.txt" rel="nofollow"> View page source</a>
@@ -121,34 +124,65 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
            <div itemprop="articleBody">
              
   <section id="module-pya.helper.backend">
-<span id="pya-helper-backend"></span><h1><a class="reference internal" href="#module-pya.helper.backend" title="pya.helper.backend"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.backend</span></code></a><a class="headerlink" href="#module-pya.helper.backend" title="Permalink to this heading"></a></h1>
+<span id="pya-helper-backend"></span><h1><a class="reference internal" href="#module-pya.helper.backend" title="pya.helper.backend"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.helper.backend</span></code></a><a class="headerlink" href="#module-pya.helper.backend" title="Link to this heading"></a></h1>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading"></a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.backend.get_server_info" title="pya.helper.backend.get_server_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_server_info</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.backend.determine_backend" title="pya.helper.backend.determine_backend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_backend</span></code></a>([force_webaudio, port])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.backend.try_pyaudio_backend" title="pya.helper.backend.try_pyaudio_backend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">try_pyaudio_backend</span></code></a>(...)</p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pya.helper.backend.try_jupyter_backend" title="pya.helper.backend.try_jupyter_backend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">try_jupyter_backend</span></code></a>(...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pya.helper.backend.determine_backend" title="pya.helper.backend.determine_backend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_backend</span></code></a>(→ pya.backend.base.BackendBase)</p></td>
+<td><p>Determine a suitable Backend implementation</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.backend.get_server_info">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.backend.</span></span><span class="sig-name descname"><span class="pre">get_server_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.backend.get_server_info" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.backend.</span></span><span class="sig-name descname"><span class="pre">get_server_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.backend.get_server_info" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pya.helper.backend.try_pyaudio_backend">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.backend.</span></span><span class="sig-name descname"><span class="pre">try_pyaudio_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../backend/PyAudio/index.html#pya.backend.PyAudio.PyAudioBackend" title="pya.backend.PyAudio.PyAudioBackend"><span class="pre">pya.backend.PyAudio.PyAudioBackend</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#pya.helper.backend.try_pyaudio_backend" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pya.helper.backend.try_jupyter_backend">
+<span class="sig-prename descclassname"><span class="pre">pya.helper.backend.</span></span><span class="sig-name descname"><span class="pre">try_jupyter_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../backend/Jupyter/index.html#pya.backend.Jupyter.JupyterBackend" title="pya.backend.Jupyter.JupyterBackend"><span class="pre">pya.backend.Jupyter.JupyterBackend</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#pya.helper.backend.try_jupyter_backend" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.helper.backend.determine_backend">
-<span class="sig-prename descclassname"><span class="pre">pya.helper.backend.</span></span><span class="sig-name descname"><span class="pre">determine_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force_webaudio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8765</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.helper.backend.determine_backend" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">pya.helper.backend.</span></span><span class="sig-name descname"><span class="pre">determine_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force_webaudio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8765</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../backend/base/index.html#pya.backend.base.BackendBase" title="pya.backend.base.BackendBase"><span class="pre">pya.backend.base.BackendBase</span></a></span></span><a class="headerlink" href="#pya.helper.backend.determine_backend" title="Link to this definition"></a></dt>
+<dd><p>Determine a suitable Backend implementation</p>
+<p>This will first try a local pyaudio Backend unless force_webaudio is set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>force_webaudio</strong> (<em>bool</em><em>, </em><em>optional</em>) – prefer JupyterBackend, by default False</p></li>
+<li><p><strong>port</strong> (<em>int</em><em>, </em><em>optional</em>) – port for the JupyterBackend, by default 8765</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Backend instance</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../backend/PyAudio/index.html#pya.backend.PyAudio.PyAudioBackend" title="pya.backend.PyAudio.PyAudioBackend">PyAudioBackend</a> or <a class="reference internal" href="../../backend/Jupyter/index.html#pya.backend.Jupyter.JupyterBackend" title="pya.backend.Jupyter.JupyterBackend">JupyterBackend</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – if no Backend is available</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 </section>

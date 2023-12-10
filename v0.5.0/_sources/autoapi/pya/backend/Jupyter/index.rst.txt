@@ -27,11 +27,11 @@ Attributes
 
 
 .. py:data:: Sanic
-   
 
    
 
 .. py:class:: JupyterBackend(port=8765, proxy_suffix=None)
+
 
    Bases: :py:obj:`pya.backend.base.BackendBase`
 
@@ -39,17 +39,17 @@ Attributes
    inheritance.
 
    .. py:attribute:: dtype
-      :annotation: = float32
+      :value: 'float32'
 
       
 
    .. py:attribute:: range
-      :annotation: = 1
+      :value: 1
 
       
 
    .. py:attribute:: bs
-      :annotation: = 4096
+      :value: 4096
 
       
 
@@ -76,6 +76,7 @@ Attributes
 
 
 .. py:class:: JupyterStream(channels, rate, stream_callback, port, proxy_suffix)
+
 
    Bases: :py:obj:`pya.backend.base.StreamBase`
 

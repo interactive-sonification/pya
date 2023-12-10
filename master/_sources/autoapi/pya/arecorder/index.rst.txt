@@ -26,11 +26,11 @@ Attributes
 
 
 .. py:data:: _LOGGER
-   
 
    
 
-.. py:class:: Arecorder(sr=44100, bs=256, device=None, channels=None, backend=None, **kwargs)
+.. py:class:: Arecorder(sr: int = 44100, bs: int = 256, device: Optional[int] = None, channels: Optional[int] = None, backend=None, **kwargs)
+
 
    Bases: :py:obj:`pya.Aserver`
 
@@ -48,7 +48,11 @@ Attributes
    >>> print(ar.recordings)  # doctest:+ELLIPSIS
    [Asig(''): ... x ... @ 44100Hz = ...
 
-   .. py:method:: set_tracks(tracks, gains)
+   .. py:property:: channels
+
+      Set the number of channels. Aserver needs reboot.
+
+   .. py:method:: set_tracks(tracks: Union[list, numpy.ndarray], gains: Union[list, numpy.ndarray])
 
       Define the number of track to be recorded and their gains.
 
@@ -63,7 +67,7 @@ Attributes
 
    .. py:method:: boot()
 
-      boot recorder
+      boot Aserver = start stream, setting its callback to this callback.
 
 
    .. py:method:: _recorder_callback(in_data, frame_count, time_info, flag)

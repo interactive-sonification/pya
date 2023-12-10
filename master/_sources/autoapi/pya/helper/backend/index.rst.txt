@@ -14,6 +14,8 @@ Functions
 .. autoapisummary::
 
    pya.helper.backend.get_server_info
+   pya.helper.backend.try_pyaudio_backend
+   pya.helper.backend.try_jupyter_backend
    pya.helper.backend.determine_backend
 
 
@@ -21,6 +23,26 @@ Functions
 .. py:function:: get_server_info()
 
 
-.. py:function:: determine_backend(force_webaudio=False, port=8765)
+.. py:function:: try_pyaudio_backend(**kwargs) -> Optional[pya.backend.PyAudio.PyAudioBackend]
+
+
+.. py:function:: try_jupyter_backend(port, **kwargs) -> Optional[pya.backend.Jupyter.JupyterBackend]
+
+
+.. py:function:: determine_backend(force_webaudio=False, port=8765, **kwargs) -> pya.backend.base.BackendBase
+
+   Determine a suitable Backend implementation
+
+   This will first try a local pyaudio Backend unless force_webaudio is set.
+
+   :param force_webaudio: prefer JupyterBackend, by default False
+   :type force_webaudio: bool, optional
+   :param port: port for the JupyterBackend, by default 8765
+   :type port: int, optional
+
+   :returns: Backend instance
+   :rtype: PyAudioBackend or JupyterBackend
+
+   :raises RuntimeError: if no Backend is available
 
 

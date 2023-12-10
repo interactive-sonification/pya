@@ -18,7 +18,7 @@ Functions
 
 
 
-.. py:function:: basicplot(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)
+.. py:function:: basicplot(data: numpy.ndarray, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)
 
    Basic version of the plot for pya, this can be directly used
    by Asig. Aspec/Astft/Amfcc will have different extra setting

@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pya &mdash; pya  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -43,11 +44,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.1/" >v0.5.1</option>
+  <option value="/pya/v0.5.2/" >v0.5.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.5.1/" >v0.5.1</option>
 
   <option value="/pya/v0.5.0/" >v0.5.0</option>
 
@@ -71,7 +74,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -114,7 +117,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">pya</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/includeme.rst.txt" rel="nofollow"> View page source</a>
@@ -128,9 +131,9 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
   <a class="reference external image-reference" href="https://pypi.org/project/pya"><img alt="PyPI" src="https://img.shields.io/pypi/v/pya.svg" /></a>
 <a class="reference external image-reference" href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/interactive-sonification/pya.svg" /></a>
 <section id="pya">
-<h1>pya<a class="headerlink" href="#pya" title="Permalink to this heading"></a></h1>
+<h1>pya<a class="headerlink" href="#pya" title="Link to this heading"></a></h1>
 <section id="what-is-pya">
-<h2>What is pya?<a class="headerlink" href="#what-is-pya" title="Permalink to this heading"></a></h2>
+<h2>What is pya?<a class="headerlink" href="#what-is-pya" title="Link to this heading"></a></h2>
 <p>pya is a package to support creation and manipulation of audio signals with Python.
 It uses numpy arrays to store and compute audio signals.</p>
 <ul class="simple">
@@ -162,7 +165,7 @@ such as sine, square, swatooth, noise</p></li>
 <p>At this time pya is more suitable for offline rendering than realtime.</p>
 </section>
 <section id="authors-and-contributors">
-<h2>Authors and Contributors<a class="headerlink" href="#authors-and-contributors" title="Permalink to this heading"></a></h2>
+<h2>Authors and Contributors<a class="headerlink" href="#authors-and-contributors" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Thomas Hermann, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (author and maintainer)</p></li>
 <li><p>Jiajun Yang, Ambient Intelligence Group, Faculty of Technology, Bielefeld University (co-author)</p></li>
@@ -171,7 +174,7 @@ such as sine, square, swatooth, noise</p></li>
 </ul>
 </section>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <!-- **Disclaimer**: We are currently making sure that pya can be uploaded to PyPI, until then clone the master branch and from inside the pya directory install via `pip install -e .` --><p><strong>Note</strong>: pya can be installed using <strong>pip</strong>. But pya uses PyAudio for audio playback and record, and PyAudio 0.2.11 has yet to fully support Python 3.7. So using pip install with Python 3.7 may encounter issues such as portaudio. Solutions are:</p>
 <ol class="arabic">
 <li><p>Anaconda can install non-python packages, so that the easiest way (if applicable) would be to</p>
@@ -189,9 +192,9 @@ such as sine, square, swatooth, noise</p></li>
 <p>See pyaudio installation <a class="reference external" href="http://people.csail.mit.edu/hubert/pyaudio/#downloads">http://people.csail.mit.edu/hubert/pyaudio/#downloads</a></p>
 </section>
 <section id="a-simple-example">
-<h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this heading"></a></h2>
+<h2>A simple example<a class="headerlink" href="#a-simple-example" title="Link to this heading"></a></h2>
 <section id="startup">
-<h3>Startup:<a class="headerlink" href="#startup" title="Permalink to this heading"></a></h3>
+<h3>Startup:<a class="headerlink" href="#startup" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pya</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="n">s</span> <span class="o">=</span> <span class="n">Aserver</span><span class="p">(</span><span class="n">bs</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
 <span class="n">Aserver</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">s</span>  <span class="c1"># to set as default server</span>
@@ -200,7 +203,7 @@ such as sine, square, swatooth, noise</p></li>
 </div>
 </section>
 <section id="create-an-asig-signal">
-<h3>Create an Asig signal:<a class="headerlink" href="#create-an-asig-signal" title="Permalink to this heading"></a></h3>
+<h3>Create an Asig signal:<a class="headerlink" href="#create-an-asig-signal" title="Link to this heading"></a></h3>
 <p>A 1s / 440 Hz sine tone at sampling rate 44100 as channel name ‘left’:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="n">signal_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">440</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">44100</span><span class="p">))</span>
@@ -239,7 +242,7 @@ such as sine, square, swatooth, noise</p></li>
 </ul>
 </section>
 <section id="key-attributes">
-<h3>Key attributes<a class="headerlink" href="#key-attributes" title="Permalink to this heading"></a></h3>
+<h3>Key attributes<a class="headerlink" href="#key-attributes" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">atone.sig</span></code>  –&gt; The numpy array containing the signal is</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">atone.sr</span></code>  –&gt; the sampling rate</p></li>
@@ -248,14 +251,14 @@ such as sine, square, swatooth, noise</p></li>
 </ul>
 </section>
 <section id="play-signals">
-<h3>Play signals<a class="headerlink" href="#play-signals" title="Permalink to this heading"></a></h3>
+<h3>Play signals<a class="headerlink" href="#play-signals" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>play() uses Aserver.default if server is not specified</p>
 </section>
 <section id="plotting-signals">
-<h3>Plotting signals<a class="headerlink" href="#plotting-signals" title="Permalink to this heading"></a></h3>
+<h3>Plotting signals<a class="headerlink" href="#plotting-signals" title="Link to this heading"></a></h3>
 <p>to plot the first 1000 samples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="p">[:</span><span class="mi">1000</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
@@ -272,7 +275,7 @@ such as sine, square, swatooth, noise</p></li>
 </div>
 </section>
 <section id="selection-of-subsets">
-<h3>Selection of subsets<a class="headerlink" href="#selection-of-subsets" title="Permalink to this heading"></a></h3>
+<h3>Selection of subsets<a class="headerlink" href="#selection-of-subsets" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Asigs support multi-channel audio (as columns of the signal array)</p>
 <ul>
@@ -283,21 +286,21 @@ such as sine, square, swatooth, noise</p></li>
 </ul>
 </section>
 <section id="method-chaining">
-<h3>Method chaining<a class="headerlink" href="#method-chaining" title="Permalink to this heading"></a></h3>
+<h3>Method chaining<a class="headerlink" href="#method-chaining" title="Link to this heading"></a></h3>
 <p>Asig methods usually return an Asig, so methods can be chained, e.g</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atone</span><span class="p">[{</span><span class="mi">0</span><span class="p">:</span><span class="mf">1.5</span><span class="p">}]</span><span class="o">.</span><span class="n">fade_in</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">fade_out</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span><span class="o">.</span><span class="n">gain</span><span class="p">(</span><span class="n">db</span><span class="o">=-</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="learning-more">
-<h3>Learning more<a class="headerlink" href="#learning-more" title="Permalink to this heading"></a></h3>
+<h3>Learning more<a class="headerlink" href="#learning-more" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Please check the examples/pya-examples.ipynb for more examples and details.</p></li>
 </ul>
 </section>
 </section>
 <section id="contributing">
-<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading"></a></h2>
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>Please get in touch with us if you wish to contribute. We are happy to be involved in the discussion of new features and to receive pull requests.</p></li>
 </ul>

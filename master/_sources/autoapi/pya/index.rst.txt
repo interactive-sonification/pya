@@ -44,7 +44,6 @@ Classes
    pya.Amfcc
    pya.Ugen
    pya.DummyBackend
-   pya.PyAudioBackend
 
 
 
@@ -56,15 +55,11 @@ Functions
    pya.basicplot
    pya.gridplot
    pya.audio_read
-   pya.linlin
-   pya.midicps
-   pya.cpsmidi
-   pya.dbamp
-   pya.ampdb
    pya.spectrum
    pya.normalize
    pya.audio_from_file
    pya.buf_to_float
+   pya._try_initializing_pyaudio
    pya.device_info
    pya.find_device
    pya.padding
@@ -75,8 +70,6 @@ Functions
    pya.signal_to_frame
    pya.magspec
    pya.powspec
-   pya.hz2mel
-   pya.mel2hz
    pya.determine_backend
    pya.startup
    pya.shutdown
@@ -91,7 +84,8 @@ Attributes
    pya._LOGGER
 
 
-.. py:class:: Aserver(sr=44100, bs=None, device=None, channels=None, backend=None, **kwargs)
+.. py:class:: Aserver(sr: int = 44100, bs: Optional[int] = None, device: Optional[int] = None, channels: Optional[int] = None, backend=None, **kwargs)
+
 
    Pya audio server
    Based on pyaudio, works as a FIFO style audio stream pipeline,
@@ -108,33 +102,28 @@ Attributes
    >>> asine.play(server=ser)
    Asig('sine'): 1 x 44100 @ 44100Hz = 1.000s cn=['0']
 
-   .. py:property:: device_dict
-
-
-   .. py:property:: max_out_chn
-
-
-   .. py:property:: max_in_chn
+   .. py:property:: channels
 
 
    .. py:property:: device_dict
 
 
    .. py:property:: max_out_chn
+      :type: int
 
 
    .. py:property:: max_in_chn
-
-
-   .. py:property:: device
+      :type: int
 
 
    .. py:property:: is_active
       :type: bool
 
 
+   .. py:property:: device
+
+
    .. py:attribute:: default
-      
 
       
 
@@ -151,14 +140,15 @@ Attributes
       Return repr(self).
 
 
-   .. py:method:: get_devices(verbose=False)
+   .. py:method:: get_devices(verbose: bool = False)
 
       Return (and optionally print) available input and output device
 
 
-   .. py:method:: set_device(idx, reboot=True)
+   .. py:method:: set_device(idx: int, reboot: bool = True)
 
-      Set audio device
+      Set audio device, an alternative way is to direct set the device property, i.e. Aserver.device = 1,
+      but that will not reboot the server.
 
       :param idx: Index of the device
       :type idx: int
@@ -176,9 +166,16 @@ Attributes
       Aserver quit server: stop stream and terminate pa
 
 
-   .. py:method:: play(asig, onset=0, out=0, **kwargs)
+   .. py:method:: play(asig, onset: Union[int, float] = 0, out: int = 0, **kwargs)
 
       Dispatch asigs or arrays for given onset.
+
+      asig: pya.Asig
+          An Asig object
+      onset: int or float
+          Time when the sound should play, 0 means asap
+      out: int
+          Output channel
 
 
    .. py:method:: _play_callback(in_data, frame_count, time_info, flag)
@@ -198,11 +195,9 @@ Attributes
    .. py:method:: __del__()
 
 
-   .. py:method:: __enter__()
 
+.. py:class:: Asig(sig: Union[str, int, float, numpy.ndarray], sr: int = 44100, label: str = '', channels: int = 1, cn: Optional[list] = None)
 
-
-.. py:class:: Asig(sig, sr=44100, label='', channels=1, cn=None)
 
    Audio signal class.
    Asig enables manipulation of audio signals in the style of numpy and more.
@@ -257,10 +252,12 @@ Attributes
       :type: str or None
 
    .. py:property:: channels
+      :type: int
 
       Return the number of channels
 
    .. py:property:: cn
+      :type: list
 
       Channel names getter
 
@@ -296,21 +293,18 @@ Attributes
       :type: Overwrite mode
 
    .. py:attribute:: extend
-      
 
       
 
    .. py:attribute:: bound
-      
 
       
 
    .. py:attribute:: overwrite
-      
 
       
 
-   .. py:method:: save_wavfile(fname='asig.wav', dtype='float32')
+   .. py:method:: save_wavfile(fname: str = 'asig.wav', dtype: str = 'float32')
 
       Save signal as .wav file, return self.
 
@@ -386,7 +380,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: resample(target_sr=44100, rate=1, kind='linear')
+   .. py:method:: resample(target_sr: int = 44100, rate: float = 1.0, kind: str = 'linear')
 
       Resample signal based on interpolation, can process multichannel signals.
 
@@ -401,7 +395,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: play(rate=1, server=None, onset=0, channel=0, block=False)
+   .. py:method:: play(rate: float = 1.0, server=None, onset=0, channel=0, block=False)
 
       Play Asig audio via Aserver, using Aserver.default (if existing)
       kwargs are propagated to Aserver:play(onset=0, out=0)
@@ -417,7 +411,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: shift_channel(shift=0)
+   .. py:method:: shift_channel(shift: int = 0)
 
       Shift signal to other channels. This is particular useful for assigning a mono signal to a specific channel.
           * shift = 0: does nothing as the same signal is being routed to the same position
@@ -431,11 +425,12 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: mono(blend=None)
+   .. py:method:: mono(blend: Optional[list] = None)
 
       Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)
 
-      :param blend: list of gain for each channel as a multiplier.
+      :param blend: list of linear gain for each channel as a multiplier.
+                    By default, the result signal is the sum of signal divided by channels
                     Do nothing if signal is already mono, raise warning (Default value = None)
       :type blend: list
 
@@ -443,7 +438,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: stereo(blend=None)
+   .. py:method:: stereo(blend: Optional[list] = None)
 
       Blend all channels of the signal to stereo. Applicable for any single-/ or multi-channel Asig.
 
@@ -480,7 +475,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: pan2(pan=0.0)
+   .. py:method:: pan2(pan: float = 0.0)
 
       Stereo panning of asig to a stereo output.
       Panning is based on constant power panning, see pan below
@@ -506,7 +501,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: norm(norm=1, in_db=False, dcflag=False)
+   .. py:method:: norm(norm: float = 1.0, in_db: bool = False, dcflag: bool = False)
 
       Normalize signal
 
@@ -521,7 +516,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: gain(amp=None, db=None)
+   .. py:method:: gain(amp: Optional[float] = None, db: Optional[numbers.Number] = None)
 
       Apply gain in amplitude or dB, only use one or the other arguments. Argument can be either a scalar
       or a list (to apply individual gain to each channel). The method returns a new asig with gain applied.
@@ -535,12 +530,9 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: rms(axis=0)
+   .. py:method:: rms()
 
-      Return signal's RMS
-
-      :param axis: Axis to perform np.mean() on (Default value = 0)
-      :type axis: int
+      Return channel signal's RMS
 
       :returns: **_** -- RMS value
       :rtype: float
@@ -566,7 +558,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: get_duration()
+   .. py:method:: get_duration() -> float
 
       Return the duration in second.
 
@@ -633,7 +625,7 @@ Attributes
    .. py:method:: __rsub__(other)
 
 
-   .. py:method:: find_events(step_dur=0.001, sil_thr=-20, evt_min_dur=0, sil_min_dur=0.1, sil_pad=[0.001, 0.1])
+   .. py:method:: find_events(step_dur: float = 0.001, sil_thr: int = -20, evt_min_dur: float = 0, sil_min_dur: float = 0.1, sil_pad: list = [0.001, 0.1])
 
       Locate meaningful 'events' in the signal and create event list. Onset detection.
 
@@ -654,7 +646,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: select_event(index=None, onset=None)
+   .. py:method:: select_event(index: Optional[int] = None, onset: Optional[int] = None)
 
       This method can be called after find_event (aka onset detection).
 
@@ -670,7 +662,7 @@ Attributes
    .. py:method:: plot_events()
 
 
-   .. py:method:: fade_in(dur=0.1, curve=1)
+   .. py:method:: fade_in(dur: float = 0.1, curve: float = 1)
 
       Fade in the signal at the beginning
 
@@ -683,7 +675,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: fade_out(dur=0.1, curve=1)
+   .. py:method:: fade_out(dur: float = 0.1, curve: float = 1)
 
       Fade out the signal at the end
 
@@ -696,7 +688,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: iirfilter(cutoff_freqs, btype='bandpass', ftype='butter', order=4, filter='lfilter', rp=None, rs=None)
+   .. py:method:: iirfilter(cutoff_freqs: Union[float, list], btype: str = 'bandpass', ftype: str = 'butter', order: int = 4, filter: str = 'lfilter', rp: Optional[float] = None, rs: Optional[float] = None)
 
       iirfilter based on scipy.signal.iirfilter
 
@@ -747,7 +739,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: adsr(att=0, dec=0.1, sus=0.7, rel=0.1, curve=1, kind='linear')
+   .. py:method:: adsr(att: float = 0, dec: float = 0.1, sus: float = 0.7, rel: float = 0.1, curve: int = 1, kind: str = 'linear')
 
       Create and applied a ADSR evelope to signal.
 
@@ -768,7 +760,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: window(win='triang', **kwargs)
+   .. py:method:: window(win: str = 'triang', **kwargs)
 
       Apply windowing to self.sig
 
@@ -820,7 +812,7 @@ Attributes
       Return Amfcc object.
 
 
-   .. py:method:: plot_spectrum(offset=0, scale=1.0, xlim=None, **kwargs)
+   .. py:method:: plot_spectrum(offset: float = 0, scale: float = 1.0, xlim: Optional[Iterable] = None, **kwargs)
 
       Plot spectrum of the signal
 
@@ -830,7 +822,7 @@ Attributes
       :param scale: scale the y_axis (Default value = 1.)
       :type scale: float
       :param xlim: range of x_axis (Default value = None)
-      :type xlim: tuple
+      :type xlim: tuple or list
       :param \*\*kwargs: keywords arguments for matplotlib.pyplot.plot()
 
       :returns: **_** -- self
@@ -885,7 +877,7 @@ Attributes
       Flatten a multidimentional array into a vector using np.ravel()
 
 
-   .. py:method:: pad(width=0, tail=True, constant_values=0, dur=None)
+   .. py:method:: pad(width: int = 0, tail: bool = True, constant_values: Union[int, float] = 0)
 
       Pads the signal
 
@@ -894,9 +886,7 @@ Attributes
       :param tail: By default it is True, if trail pad to the end, else pad to the start.
       :type tail: bool
       :param constant_values: value to be padded, defaults to 0
-      :type constant_values: float32
-      :param dur: duration to be padded;  if specified, it overrides the parameter width
-      :type dur: float
+      :type constant_values: int or float
 
       :returns: **_** -- Asig of the pad signal.
       :rtype: Asig
@@ -907,7 +897,7 @@ Attributes
       custom function method. TODO add example
 
 
-   .. py:method:: convolve(sig, mode='full', method='fft', norm='amp')
+   .. py:method:: convolve(sig, mode: str = 'full', method: str = 'fft', norm: str = 'amp')
 
       Convolution based on scipy.signal.convolve.
 
@@ -921,7 +911,7 @@ Attributes
                        self.sr or ins must be at least as large as the other in every dimension.
                    same
                        The output is the same size as self.sr, centered with respect to the full output.
-      :type mode: str {'full', 'valid', 'same'}, optional
+      :type mode: str {'full', 'valid', 'same'}
       :param method: A string indicating which method to use to calculate the convolution
                      direct
                          Compute directly from sums, the definition of convolution
@@ -929,10 +919,10 @@ Attributes
                          The Fourier Transform is used to perform the convolution by calling fftconvolve
                      auto
                          Automatically chooses direct or Fourier method based on an estimate of which is faster.
-      :type method: str {'auto', 'direct', 'fft'}, optional
+      :type method: str {'auto', 'direct', 'fft'}
       :param norm: If "amp" (default value), the result signal will have the same peak as the original signal.
-                   If "none" or other unrecognized name, no normalization is applied.
-      :type norm: str, optional
+                   Otherwise, no normalization is applied.
+      :type norm: str
 
       :returns: **_** -- A new asig with convlved signal. The size will depends on mode.
       :rtype: Asig
@@ -950,7 +940,8 @@ Attributes
 
 
 
-.. py:class:: Astft(x, sr=None, label=None, window='hann', nperseg=256, noverlap=None, nfft=None, detrend=False, return_onesided=True, boundary='zeros', padded=True, cn=None)
+.. py:class:: Astft(x: Union[pya.asig.Asig, numpy.ndarray], sr: Optional[int] = None, label: str = 'STFT', window: str = 'hann', nperseg: int = 256, noverlap: Optional[int] = None, nfft: Optional[int] = None, detrend: bool = False, return_onesided: bool = True, boundary: str = 'zeros', padded: bool = True, cn: Optional[list] = None)
+
 
    Audio spectrogram (STFT) class, attributes refers to scipy.signal.stft. With an addition
    attribute cn being the list of channel names, and label being the name of the Asig
@@ -997,7 +988,8 @@ Attributes
 
 
 
-.. py:class:: Aspec(x, sr=44100, label=None, cn=None)
+.. py:class:: Aspec(x: Union[pya.asig.Asig, numpy.ndarray], sr: int = 44100, label: Optional[str] = None, cn: Optional[list] = None)
+
 
    Audio spectrum class using rfft
 
@@ -1011,7 +1003,7 @@ Attributes
       Convert Aspec into Asig
 
 
-   .. py:method:: weight(weights, freqs=None, curve=1, kind='linear')
+   .. py:method:: weight(weights: list, freqs=None, curve=1, kind='linear')
 
       TODO
 
@@ -1050,7 +1042,8 @@ Attributes
 
 
 
-.. py:class:: Amfcc(x, sr=None, label='', n_per_frame=None, hopsize=None, nfft=None, window='hann', nfilters=26, ncep=13, ceplifter=22, preemph=0.95, append_energy=True, cn=None)
+.. py:class:: Amfcc(x: Union[pya.Asig, numpy.ndarray], sr: Optional[int] = None, label: str = '', n_per_frame: Optional[int] = None, hopsize: Optional[int] = None, nfft: Optional[int] = None, window: str = 'hann', nfilters: int = 26, ncep: int = 13, ceplifter: int = 22, preemph: float = 0.95, append_energy: bool = True, cn: Optional[list] = None)
+
 
    Mel filtered Fourier spectrum (MFCC) class,
    this class is inspired by jameslyons/python_speech_features,
@@ -1174,7 +1167,7 @@ Attributes
       Return repr(self).
 
 
-   .. py:method:: preemphasis(x, coeff=0.97)
+   .. py:method:: preemphasis(x: numpy.ndarray, coeff: float = 0.97)
       :staticmethod:
 
       Pre-emphasis filter to whiten the spectrum.
@@ -1192,7 +1185,7 @@ Attributes
       :rtype: numpy.ndarray
 
 
-   .. py:method:: mel_filterbanks(sr, nfilters=26, nfft=512, lowfreq=0, highfreq=None)
+   .. py:method:: mel_filterbanks(sr: int, nfilters: int = 26, nfft: int = 512, lowfreq: float = 0, highfreq: Optional[float] = None)
       :staticmethod:
 
       Compute a Mel-filterbank. The filters are stored in the rows,
@@ -1206,16 +1199,16 @@ Attributes
       :param nfft: The size of FFT, default 512
       :type nfft: int
       :param lowfreq: The lowest band edge of the mel filters, default 0 Hz
-      :type lowfreq: int or float
+      :type lowfreq: float
       :param highfreq: The highest band edge of the mel filters, default sr // 2
-      :type highfreq: int or float
+      :type highfreq: float
 
       :returns: **_** -- A numpy array of size nfilt * (nfft/2 + 1)
                 containing filterbank. Each row holds 1 filter.
       :rtype: numpy.ndarray
 
 
-   .. py:method:: lifter(cepstra, L=22)
+   .. py:method:: lifter(cepstra: numpy.ndarray, L: int = 22)
       :staticmethod:
 
       Apply a cepstral lifter the the matrix of cepstra.
@@ -1246,24 +1239,27 @@ Attributes
       :type L: int
 
 
-   .. py:method:: plot(cmap='inferno', show_bar=True, offset=0, scale=1.0, xlim=None, ylim=None, x_as_time=True, nxlabel=8, ax=None, **kwargs)
+   .. py:method:: plot(show_bar: bool = True, offset: int = 0, scale: float = 1.0, xlim: Optional[float] = None, ylim: Optional[float] = None, x_as_time: bool = True, nxlabel: int = 8, ax=None, **kwargs)
 
       Plot Amfcc.features via matshow, x is frames/time, y is the MFCCs
 
-      :param figsize: Figure size, width, height in inches, Default = [6.4, 4.8]
-      :type figsize: (float, float), optional, default: None
-      :param cmap: colormap for matplotlib. Default is 'inferno'.
-      :type cmap: str
       :param show_bar: Default is True, show colorbar.
       :type show_bar: bool, optional
-      :param x_as_time: Default is True, show x axis as time or sample index.
-      :type x_as_time: bool, optional
+      :param offset: It is the spacing between channel, without setting it every channel will be overlayed onto each other.
+      :type offset: int
+      :param scale: Visual scaling for improve visibility
+      :type scale: float
+      :param xlim: x axis value range limit
+      :type xlim: float, optional
+      :param ylim: y axis value range limit
+      :type ylim: float, optional
       :param nxlabel: The amountt of labels on the x axis. Default is 8 .
       :type nxlabel: int, optional
 
 
 
 .. py:class:: Ugen
+
 
    Bases: :py:obj:`pya.Asig`
 
@@ -1284,7 +1280,7 @@ Attributes
    >>> # Make a white noise, another option is 'pink', at 44100Hz for 1second.
    >>> noi = Ugen().noise(type='white')
 
-   .. py:method:: sine(freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='sine')
+   .. py:method:: sine(freq: Union[int, float] = 440, amp: Union[int, float] = 1.0, dur: Optional[float] = None, n_rows: Optional[int] = None, sr: int = 44100, channels: int = 1, cn: Optional[list] = None, label: str = 'sine')
 
       Generate Sine signal Asig object.
 
@@ -1292,10 +1288,10 @@ Attributes
       :type freq: int, float
       :param amp: signal amplitude (Default value = 1.0)
       :type amp: int, float
-      :param dur: duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
+      :param dur: duration in second. dur and n_rows only use one of the two. (Default value = 1.0)
       :type dur: float
-      :param num_rows: number of rows (samples). dur and num_rows only use one of the two(Default value = None)
-      :type num_rows: int
+      :param n_rows: number of rows (samples). dur and n_rows only use one of the two(Default value = None)
+      :type n_rows: int
       :param sr: sampling rate (Default value = 44100)
       :type sr: int
       :param channels: number of channels (Default value = 1)
@@ -1308,7 +1304,7 @@ Attributes
       :rtype: Asig
 
 
-   .. py:method:: cos(freq=440, amp=1.0, dur=None, n_rows=None, sr=44100, channels=1, cn=None, label='cosine')
+   .. py:method:: cos(freq: Union[int, float] = 440, amp: Union[int, float] = 1.0, dur: Optional[float] = None, n_rows: Optional[int] = None, sr: int = 44100, channels: int = 1, cn: Optional[list] = None, label: str = 'cosine')
 
       Generate Cosine signal Asig object.
 
@@ -1318,8 +1314,8 @@ Attributes
       :type amp: int, float
       :param dur: duration in second. dur and num_rows only use one of the two. (Default value = 1.0)
       :type dur: int, float
-      :param num_rows: number of rows (samples). dur and num_rows only use one of the two(Default value = None)
-      :type num_rows: int
+      :param n_rows: number of rows (samples). dur and num_rows only use one of the two(Default value = None)
+      :type n_rows: int
       :param sr: sampling rate (Default value = 44100)
       :type sr: int
       :param channels: number of channels (Default value = 1)
@@ -1409,7 +1405,7 @@ Attributes
 
 
 
-.. py:function:: basicplot(data, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)
+.. py:function:: basicplot(data: numpy.ndarray, ticks, channels, offset=0, scale=1, cn=None, ax=None, typ='plot', cmap='inferno', xlim=None, ylim=None, xlabel='', ylabel='', show_bar=False, **kwargs)
 
    Basic version of the plot for pya, this can be directly used
    by Asig. Aspec/Astft/Amfcc will have different extra setting
@@ -1463,47 +1459,10 @@ Attributes
 
 .. py:exception:: _error
 
+
    Bases: :py:obj:`Exception`
 
    Common base class for all non-exit exceptions.
-
-
-.. py:function:: linlin(x, smi, sma, dmi, dma)
-
-   Linear mapping
-
-   :param x: input value
-   :type x: float
-   :param smi: input range's minimum
-   :type smi: float
-   :param sma: input range's maximum
-   :type sma: float
-   :param dmi: input range's minimum
-   :type dmi: float
-   :param dma:
-
-   :returns: **_** -- mapped output
-   :rtype: float
-
-
-.. py:function:: midicps(m)
-
-   Convert midi number into cycle per second
-
-
-.. py:function:: cpsmidi(c)
-
-   Convert cycle per second into midi number
-
-
-.. py:function:: dbamp(db)
-
-   Convert db to amplitude
-
-
-.. py:function:: ampdb(amp)
-
-   Convert amplitude to db
 
 
 .. py:function:: spectrum(sig, samples, channels, sr)
@@ -1528,7 +1487,7 @@ Attributes
    Return the normalized input array
 
 
-.. py:function:: audio_from_file(path, dtype=np.float32)
+.. py:function:: audio_from_file(path: str, dtype=np.float32)
 
    Load an audio buffer using audioread.
    This loads one block at a time, and then concatenates the results.
@@ -1550,6 +1509,9 @@ Attributes
 
    :returns: **x_float** -- The input data buffer cast to floating point
    :rtype: np.ndarray [dtype=float]
+
+
+.. py:function:: _try_initializing_pyaudio(fun_name)
 
 
 .. py:function:: device_info()
@@ -1654,31 +1616,8 @@ Attributes
    :rtype: numpy array
 
 
-.. py:function:: hz2mel(hz)
-
-   Convert a value in Hertz to Mels
-
-   :param hz: value in Hz, can be an array
-   :type hz: number of array
-   :param Returns:
-   :param --------:
-   :param _: value in Mels, same type as the input.
-   :type _: number of array
-
-
-.. py:function:: mel2hz(mel)
-
-   Convert a value in Hertz to Mels
-
-   :param hz: value in Hz, can be an array
-   :type hz: number of array
-   :param Returns:
-   :param --------:
-   :param _: value in Mels, same type as the input.
-   :type _: number of array
-
-
 .. py:class:: DummyBackend
+
 
    Bases: :py:obj:`pya.backend.base.BackendBase`
 
@@ -1686,17 +1625,17 @@ Attributes
    inheritance.
 
    .. py:attribute:: dtype
-      :annotation: = float32
+      :value: 'float32'
 
       
 
    .. py:attribute:: range
-      :annotation: = 1
+      :value: 1
 
       
 
    .. py:attribute:: bs
-      :annotation: = 256
+      :value: 256
 
       
 
@@ -1722,51 +1661,25 @@ Attributes
 
 
 
-.. py:class:: PyAudioBackend(format=pyaudio.paFloat32)
-
-   Bases: :py:obj:`pya.backend.base.BackendBase`
-
-   Helper class that provides a standard way to create an ABC using
-   inheritance.
-
-   .. py:attribute:: _boot_delay
-      :annotation: = 0.5
-
-      
-
-   .. py:attribute:: bs
-      :annotation: = 512
-
-      
-
-   .. py:method:: get_device_count()
-
-
-   .. py:method:: get_device_info_by_index(idx)
-
-
-   .. py:method:: get_default_input_device_info()
-
-
-   .. py:method:: get_default_output_device_info()
-
-
-   .. py:method:: open(rate, channels, input_flag, output_flag, frames_per_buffer, input_device_index=None, output_device_index=None, start=True, input_host_api_specific_stream_info=None, output_host_api_specific_stream_info=None, stream_callback=None)
-
-
-   .. py:method:: process_buffer(buffer)
-
-
-   .. py:method:: terminate()
-
-
-
 .. py:data:: _LOGGER
-   
 
    
 
-.. py:function:: determine_backend(force_webaudio=False, port=8765)
+.. py:function:: determine_backend(force_webaudio=False, port=8765, **kwargs) -> pya.backend.base.BackendBase
+
+   Determine a suitable Backend implementation
+
+   This will first try a local pyaudio Backend unless force_webaudio is set.
+
+   :param force_webaudio: prefer JupyterBackend, by default False
+   :type force_webaudio: bool, optional
+   :param port: port for the JupyterBackend, by default 8765
+   :type port: int, optional
+
+   :returns: Backend instance
+   :rtype: PyAudioBackend or JupyterBackend
+
+   :raises RuntimeError: if no Backend is available
 
 
 .. py:function:: startup(**kwargs)

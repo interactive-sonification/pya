@@ -26,11 +26,11 @@ Attributes
 
 
 .. py:data:: _LOGGER
-   
 
    
 
 .. py:class:: Asig(sig, sr=44100, label='', channels=1, cn=None)
+
 
    Audio signal class.
    Asig enables manipulation of audio signals in the style of numpy and more.
@@ -112,17 +112,14 @@ Attributes
       :type: Overwrite mode
 
    .. py:attribute:: extend
-      
 
       
 
    .. py:attribute:: bound
-      
 
       
 
    .. py:attribute:: overwrite
-      
 
       
 

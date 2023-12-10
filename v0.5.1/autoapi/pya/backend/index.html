@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pya.backend &mdash; pya  documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -43,11 +44,13 @@
 <div class="version">
 version: <select style="padding: 0;" onchange="location = this.value;" autocomplete="off">
 
-  <option value="/pya/v0.5.1/" selected="selected">v0.5.1</option>
+  <option value="/pya/v0.5.2/" >v0.5.2</option>
 
   <option value="/pya/master/" >master</option>
 
   <option value="/pya/develop/" >develop</option>
+
+  <option value="/pya/v0.5.1/" selected="selected">v0.5.1</option>
 
   <option value="/pya/v0.5.0/" >v0.5.0</option>
 
@@ -71,7 +74,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -114,33 +117,6 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </li>
 <li><a class="reference internal" href="#pya.backend._LOGGER"><code class="docutils literal notranslate"><span class="pre">_LOGGER</span></code></a></li>
 <li><a class="reference internal" href="#pya.backend.determine_backend"><code class="docutils literal notranslate"><span class="pre">determine_backend()</span></code></a></li>
-<li><a class="reference internal" href="#pya.backend.DummyBackend">DummyBackend</a><ul>
-<li><a class="reference internal" href="#pya.backend.DummyBackend.dtype">dtype</a></li>
-<li><a class="reference internal" href="#pya.backend.DummyBackend.range">range</a></li>
-<li><a class="reference internal" href="#pya.backend.DummyBackend.bs">bs</a></li>
-<li><a class="reference internal" href="#pya.backend.DummyBackend.get_device_count">get_device_count</a></li>
-<li><a class="reference internal" href="#pya.backend.DummyBackend.get_device_info_by_index">get_device_info_by_index</a></li>
-<li><a class="reference internal" href="#pya.backend.DummyBackend.get_default_input_device_info">get_default_input_device_info</a></li>
-<li><a class="reference internal" href="#pya.backend.DummyBackend.get_default_output_device_info">get_default_output_device_info</a></li>
-<li><a class="reference internal" href="#pya.backend.DummyBackend.open">open</a></li>
-<li><a class="reference internal" href="#pya.backend.DummyBackend.process_buffer">process_buffer</a></li>
-<li><a class="reference internal" href="#pya.backend.DummyBackend.terminate">terminate</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#pya.backend.PyAudioBackend">PyAudioBackend</a><ul>
-<li><a class="reference internal" href="#pya.backend.PyAudioBackend._boot_delay">_boot_delay</a></li>
-<li><a class="reference internal" href="#pya.backend.PyAudioBackend.bs">bs</a></li>
-<li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_device_count">get_device_count</a></li>
-<li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_device_info_by_index">get_device_info_by_index</a></li>
-<li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_default_input_device_info">get_default_input_device_info</a></li>
-<li><a class="reference internal" href="#pya.backend.PyAudioBackend.get_default_output_device_info">get_default_output_device_info</a></li>
-<li><a class="reference internal" href="#pya.backend.PyAudioBackend.open">open</a></li>
-<li><a class="reference internal" href="#pya.backend.PyAudioBackend.process_buffer">process_buffer</a></li>
-<li><a class="reference internal" href="#pya.backend.PyAudioBackend.terminate">terminate</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#pya.backend._LOGGER">_LOGGER</a></li>
-<li><a class="reference internal" href="#pya.backend.determine_backend">determine_backend</a></li>
 </ul>
 </li>
 </ul>
@@ -162,7 +138,7 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/autoapi/pya/backend/index.rst.txt" rel="nofollow"> View page source</a>
@@ -174,9 +150,9 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
            <div itemprop="articleBody">
              
   <section id="module-pya.backend">
-<span id="pya-backend"></span><h1><a class="reference internal" href="#module-pya.backend" title="pya.backend"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend</span></code></a><a class="headerlink" href="#module-pya.backend" title="Permalink to this heading"></a></h1>
+<span id="pya-backend"></span><h1><a class="reference internal" href="#module-pya.backend" title="pya.backend"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend</span></code></a><a class="headerlink" href="#module-pya.backend" title="Link to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Dummy/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pya.backend.Dummy</span></code></a></li>
@@ -187,14 +163,10 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </div>
 </section>
 <section id="package-contents">
-<h2>Package Contents<a class="headerlink" href="#package-contents" title="Permalink to this heading"></a></h2>
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading"></a></h2>
 <section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.backend.DummyBackend" title="pya.backend.DummyBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DummyBackend</span></code></a></p></td>
 <td><p>Helper class that provides a standard way to create an ABC using</p></td>
@@ -206,12 +178,8 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 </section>
 <section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h3>
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.backend.determine_backend" title="pya.backend.determine_backend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_backend</span></code></a>([force_webaudio, port])</p></td>
 <td><p></p></td>
@@ -220,12 +188,8 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 </section>
 <section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pya.backend._LOGGER" title="pya.backend._LOGGER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_LOGGER</span></code></a></p></td>
 <td><p></p></td>
@@ -234,123 +198,123 @@ version: <select style="padding: 0;" onchange="location = this.value;" autocompl
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.backend.</span></span><span class="sig-name descname"><span class="pre">DummyBackend</span></span><a class="headerlink" href="#pya.backend.DummyBackend" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.backend.</span></span><span class="sig-name descname"><span class="pre">DummyBackend</span></span><a class="headerlink" href="#pya.backend.DummyBackend" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="base/index.html#pya.backend.base.BackendBase" title="pya.backend.base.BackendBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pya.backend.base.BackendBase</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend.dtype">
-<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">float32</span></em><a class="headerlink" href="#pya.backend.DummyBackend.dtype" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'float32'</span></em><a class="headerlink" href="#pya.backend.DummyBackend.dtype" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend.range">
-<span class="sig-name descname"><span class="pre">range</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#pya.backend.DummyBackend.range" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">range</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pya.backend.DummyBackend.range" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend.bs">
-<span class="sig-name descname"><span class="pre">bs</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">256</span></em><a class="headerlink" href="#pya.backend.DummyBackend.bs" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">bs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">256</span></em><a class="headerlink" href="#pya.backend.DummyBackend.bs" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend.get_device_count">
-<span class="sig-name descname"><span class="pre">get_device_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_device_count" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_device_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_device_count" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend.get_device_info_by_index">
-<span class="sig-name descname"><span class="pre">get_device_info_by_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_device_info_by_index" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_device_info_by_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_device_info_by_index" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend.get_default_input_device_info">
-<span class="sig-name descname"><span class="pre">get_default_input_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_default_input_device_info" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_default_input_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_default_input_device_info" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend.get_default_output_device_info">
-<span class="sig-name descname"><span class="pre">get_default_output_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_default_output_device_info" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_default_output_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.get_default_output_device_info" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend.open">
-<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_per_buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.open" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_per_buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.open" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend.process_buffer">
-<span class="sig-name descname"><span class="pre">process_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.process_buffer" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">process_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.process_buffer" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.DummyBackend.terminate">
-<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.terminate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.DummyBackend.terminate" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pya.backend.PyAudioBackend">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.backend.</span></span><span class="sig-name descname"><span class="pre">PyAudioBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">pyaudio.paFloat32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pya.backend.</span></span><span class="sig-name descname"><span class="pre">PyAudioBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">pyaudio.paFloat32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="base/index.html#pya.backend.base.BackendBase" title="pya.backend.base.BackendBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pya.backend.base.BackendBase</span></code></a></p>
 <p>Helper class that provides a standard way to create an ABC using
 inheritance.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pya.backend.PyAudioBackend._boot_delay">
-<span class="sig-name descname"><span class="pre">_boot_delay</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">0.5</span></em><a class="headerlink" href="#pya.backend.PyAudioBackend._boot_delay" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">_boot_delay</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.5</span></em><a class="headerlink" href="#pya.backend.PyAudioBackend._boot_delay" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pya.backend.PyAudioBackend.bs">
-<span class="sig-name descname"><span class="pre">bs</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">512</span></em><a class="headerlink" href="#pya.backend.PyAudioBackend.bs" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">bs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">512</span></em><a class="headerlink" href="#pya.backend.PyAudioBackend.bs" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.PyAudioBackend.get_device_count">
-<span class="sig-name descname"><span class="pre">get_device_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_device_count" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_device_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_device_count" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.PyAudioBackend.get_device_info_by_index">
-<span class="sig-name descname"><span class="pre">get_device_info_by_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_device_info_by_index" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_device_info_by_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_device_info_by_index" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.PyAudioBackend.get_default_input_device_info">
-<span class="sig-name descname"><span class="pre">get_default_input_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_default_input_device_info" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_default_input_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_default_input_device_info" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.PyAudioBackend.get_default_output_device_info">
-<span class="sig-name descname"><span class="pre">get_default_output_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_default_output_device_info" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_default_output_device_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.get_default_output_device_info" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.PyAudioBackend.open">
-<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_per_buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_device_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_device_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_host_api_specific_stream_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_host_api_specific_stream_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.open" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_per_buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_device_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_device_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_host_api_specific_stream_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_host_api_specific_stream_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.open" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.PyAudioBackend.process_buffer">
-<span class="sig-name descname"><span class="pre">process_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.process_buffer" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">process_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.process_buffer" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pya.backend.PyAudioBackend.terminate">
-<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.terminate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.PyAudioBackend.terminate" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="pya.backend._LOGGER">
-<span class="sig-prename descclassname"><span class="pre">pya.backend.</span></span><span class="sig-name descname"><span class="pre">_LOGGER</span></span><a class="headerlink" href="#pya.backend._LOGGER" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.backend.</span></span><span class="sig-name descname"><span class="pre">_LOGGER</span></span><a class="headerlink" href="#pya.backend._LOGGER" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pya.backend.determine_backend">
-<span class="sig-prename descclassname"><span class="pre">pya.backend.</span></span><span class="sig-name descname"><span class="pre">determine_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force_webaudio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8765</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.determine_backend" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pya.backend.</span></span><span class="sig-name descname"><span class="pre">determine_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force_webaudio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8765</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pya.backend.determine_backend" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
