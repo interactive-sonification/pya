@@ -1816,8 +1816,12 @@ class Asig:
             atmp = asig.resample(self.sr)
         else:
             atmp = asig
+        if self.channels == 1:
+            sig = np.hstack((self.sig, atmp.sig))
+        else:
+            sig = np.vstack((self.sig, atmp.sig))
         return Asig(
-            np.hstack((self.sig, atmp.sig)),
+            sig,
             self.sr,
             label=self.label + "+" + asig.label,
             cn=self.cn,

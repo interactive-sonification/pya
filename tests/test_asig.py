@@ -239,6 +239,20 @@ class TestAsig(TestCase):
         test = Asig(np.ones((20, 10)), sr=20)
         result = test.convolve(test)
 
+    def test_append(self):
+        a = Asig(np.arange(4), sr=2)
+        b = Asig(np.ones(4), sr=2)
+        # self.assertTrue(np.array_equal([1, 0, -1, -2], (b - a).sig))
+        self.assertEqual(a.append(b).sig.shape, (8,))
+        with self.assertRaises(AttributeError):
+            a.append(b.stereo())
+        self.assertEqual(a.stereo().append(b.stereo()).sig.shape, (8,2) )
+        a = Asig([1, 2, 3], sr=2).stereo()
+        b = Asig(np.array([[1, 0, 1], [0, 1, 0]]).T, sr=2)
+        ab = b.append(a).sig
+        r = np.array([[1, 0],[0, 1],[1, 0],[1, 1],[2, 2],[3, 3]], dtype=np.float32)
+        self.assertEqual(np.max(np.abs(ab - r)), 0) 
+
     # # At the top I import Asig by: from pya import Asig
     @mock.patch("pya.asig.wavfile")
     def test_save_wavefile(self, mock_wavfile):
