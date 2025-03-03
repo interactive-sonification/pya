@@ -39,6 +39,7 @@ jobs:
       shell: bash -l {0}
       run: |
         conda init bash
+        conda config --add channels defaults
         conda activate test-env
         conda install ffmpeg coverage python-coveralls --file=requirements_remote.txt --file=requirements_test.txt
         # pyaudio is not yet available on conda
