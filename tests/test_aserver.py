@@ -119,4 +119,3 @@ class TestAserver(TestCase):
         s.boot()
         asine.play(server=s)
         s.quit()
-
