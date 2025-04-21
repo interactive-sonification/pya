@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.3 (Apr 2025)
+* Improve aserver playback with ringbuffer and event scheduling
+
 ## 0.5.2 (Nov 2023)
 * #82, `pyaudio` is now optional: If you plan to use `PyAudioBackend`, install `pya` with `pip install pya[pyaudio]`.
 * Fix audio device bug
