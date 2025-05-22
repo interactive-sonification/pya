@@ -19,6 +19,9 @@ with open(join(project_root, 'requirements_remote.txt')) as read_file:
 with open(join(project_root, 'requirements_pyaudio.txt')) as read_file:
     REQUIRED_EXTRAS['pyaudio'] = read_file.read().splitlines()
 
+with open(join(project_root, 'requirements_agen.txt')) as read_file:
+    REQUIRED_EXTRAS['agen'] = read_file.read().splitlines()
+
 with open(join(project_root, 'requirements_test.txt')) as read_file:
     REQUIRED_TEST = read_file.read().splitlines()
 
