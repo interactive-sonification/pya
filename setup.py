@@ -52,4 +52,7 @@ setup(
         "Topic :: Multimedia :: Sound/Audio :: Analysis",
         "Topic :: Multimedia :: Sound/Audio :: Sound Synthesis"
     ],
+    entry_points={
+        "console_scripts": ["agen=pya.agen.cli:main"], 
+    }, 
 )
