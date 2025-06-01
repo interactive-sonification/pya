@@ -1,12 +1,17 @@
 import argparse
 import os
+import pathlib
 import shutil
 import subprocess
 import sys
 import urllib
 import urllib.request
+from importlib import metadata
+import modulefinder
 
 COMMANDS = {}
+
+PACKAGE_INDEX_URL = "https://gitlab.ub.uni-bielefeld.de/IchbinLuka/pya_index_test"
 
 
 def command(name: str):
@@ -64,7 +69,7 @@ requires = ["setuptools>=61.0"]
 [project]
 name = "{name}"
 version = "0.0.1"
-description = "An extension for pya utilising audio generators for sound synthesis"
+description = "A pya AGen extension"
 requires-python = ">=3.10"
 readme = "README.md"
 authors = []
@@ -87,7 +92,7 @@ dependencies = [
 def resolve_package_url(package_name: str) -> str | None:
     with urllib.request.urlopen(
         # TODO: This should be replaced with a github repo of the  Interactive-Sonification organization
-        "https://gitlab.ub.uni-bielefeld.de/IchbinLuka/pya_index_test/-/raw/main/directory.txt"
+        f"{PACKAGE_INDEX_URL}/-/raw/main/directory.txt"
     ) as response:
         for line in response:
             line = line.decode().strip()
@@ -117,6 +122,35 @@ def get_package(args: argparse.Namespace):
         sys.exit(1)
     print(url)
 
+
+@command("publish")
+def publish(args: argparse.Namespace):
+    popen = subprocess.Popen(["git", "remote"], stdout=subprocess.PIPE)
+    popen.wait()
+    output = popen.stdout.read().decode().splitlines()
+    if len(output) == 0:
+        print("No remote repository found. Please add a remote repository first.")
+        sys.exit(1)
+    remote = output[0].strip()
+    popen = subprocess.Popen(["git", "remote", "get-url", remote], stdout=subprocess.PIPE)
+    popen.wait()
+    remote_url = popen.stdout.read().decode().strip()
+    if remote_url.startswith("git@"):
+        remote_url = remote_url.replace(":", "/")
+
+    head_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
+    if args.package_name is not None:
+        project_name = args.package_name
+    else:
+        # Else use current directory name as project name
+        project_name = pathlib.Path(os.getcwd()).name
+    protocol_prefix = "" if remote_url.startswith("https://") else "ssh://"
+    package_url = f"{project_name}: git+{protocol_prefix}{remote_url}@{head_hash}"
+    print(f"""To publish the current HEAD as '{project_name}', add the following entry to 'directory.txt' in {PACKAGE_INDEX_URL} and open a merge request:
+
+{package_url}""")
+    
+
 def main():
     parser = create_parser()
     args = parser.parse_args()
@@ -134,10 +168,13 @@ def create_parser():
     create_parser.add_argument("--directory", type=str, default=".", help="Directory to create the project in")
 
     get_package_parser = subparsers.add_parser("get-package", help="Looks up a package in the pya package index and returns the URL")
-    get_package_parser.add_argument("package_name", help="Name of the package to get the URL for")
+    get_package_parser.add_argument("package-name", help="Name of the package to get the URL for")
 
     install_parser = subparsers.add_parser("install", help="Helper command to look up a package in the pya package index and install it")
-    install_parser.add_argument("package_name", help="Name of the package to install")
+    install_parser.add_argument("package-name", help="Name of the package to install")
+
+    publish_parser = subparsers.add_parser("publish", help="Generates a package URL for the current project based on the git remote URL")
+    publish_parser.add_argument("--package-name", help="Name of the package to publish", default=None)
 
     return parser
 
