@@ -11,6 +11,7 @@ import modulefinder
 
 COMMANDS = {}
 
+# TODO: This needs to be changed
 PACKAGE_INDEX_URL = "https://gitlab.ub.uni-bielefeld.de/IchbinLuka/pya_index_test"
 PYA_DEPENDENCY = "pya[agen] @ git+https://github.com/interactive-sonification/pya@feature-agen"
 
@@ -75,7 +76,7 @@ requires-python = ">=3.10"
 readme = "README.md"
 authors = []
 dependencies = [
-    {PYA_DEPENDENCY},
+    "{PYA_DEPENDENCY}",
 ]
 """
         )
