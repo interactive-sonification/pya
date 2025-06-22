@@ -575,8 +575,8 @@ class Env(SingleChannelGen):
 
     def __init__(
         self,
-        values: list[float],
-        dtimes: list[float],
+        values: list[float] | np.ndarray,
+        dtimes: list[float] | np.ndarray,
         *args,
         **kwargs,
     ) -> None:
@@ -1411,3 +1411,43 @@ class OnePole(SingleChannelGen):
         out, y_1 = _one_pole_numba(gen, coef, y_1)
         self.state.data["y_1"] = y_1
         return out
+
+
+@njit(Tuple((float64[:], float64))(float64[:], int64, float64))
+def _pluck_numba(
+    wavetable: np.ndarray, 
+    sample_count: int, 
+    last: float, 
+) -> tuple[np.ndarray, float]:
+    result = np.zeros(sample_count, dtype=np.float64)
+    for i in range(sample_count):
+        current_sample = i % len(wavetable)
+        wavetable[current_sample] = 0.5 * (wavetable[current_sample] + last)
+        result[i] = wavetable[current_sample]
+        last = wavetable[current_sample]
+    return result, last
+
+
+class Pluck(AGen):
+    """A Karplus-Strong plucked string synthesis generator.
+    
+    Based on the implementation in https://flothesof.github.io/Karplus-Strong-algorithm-Python.html.
+
+    Parameters
+    ----------
+    freq
+        The fundamental frequency of the plucked string in Hz. Note that currently, this cannot 
+        be modulated.
+    """
+
+    def __init__(self, freq: float | int, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        w_size = self.sr // int(freq)
+        self.wavetable = (2 * np.random.randint(0, 2, w_size) - 1).astype(np.float64)
+
+    def _generate_new(self, sample_count, start, channel):
+        result = np.zeros(sample_count, dtype=np.float64)
+        last = self.state.data.get("last", 0)
+        result, last = _pluck_numba(self.wavetable, sample_count, last)
+        self.state.data["last"] = last
+        return result
