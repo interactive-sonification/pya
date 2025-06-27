@@ -296,19 +296,28 @@ class PlayAsig(AGen):
         The Asig object to play.
     rate
         The rate at which to play the Asig. This needs to be positive for all samples.
+    loop
+        Whether the Asig should be looped. This is different from using done="loop" as this would
+        loop the generated signal only while this allows further modulation of the rate argument.
     """
 
     def __init__(
         self,
-        asig: Asig,
+        asig: Asig | np.ndarray,
         rate: GenOrNum = 1,
+        loop: bool = False,
         *args,
         sr: int | None = None,
         **kwargs,
     ):
         assert (
-            sr is None
+            sr is None or not isinstance(asig, Asig)
         ), "Cannot use custom sample rate here. PlayAsig always uses the sample rate of the provided AGen"
+        if not isinstance(asig, Asig):
+            if sr is None:
+                sr = config.AUDIO_RATE
+            asig = Asig(asig, sr=sr)
+        
         super().__init__(
             sr=asig.sr,
             label=asig.label,
@@ -316,6 +325,7 @@ class PlayAsig(AGen):
             cn=asig.cn,
             **kwargs,
         )
+        self.loop = loop
         self._asig = asig
         self._add_node(rate, "rate", convert_num_to_arr=True)
 
@@ -323,10 +333,13 @@ class PlayAsig(AGen):
         assert np.all(self.nodes["rate"] >= 0), "Rate must be positive."
         current_t = self.state.data.get("current_t", 0)
         t = np.cumsum(np.concatenate([[current_t], self.nodes["rate"]]))
-        t = t[np.ceil(t) <= self._asig.sig.shape[0]]
+        if not self.loop:
+            t = t[np.ceil(t) <= self._asig.sig.shape[0]]
+        else:
+            t = t % self._asig.sig.shape[0]
         self.state.data["current_t"] = t[-1]
-        sample_start = math.floor(t[0])
-        sample_end = math.ceil(t[-1])
+        sample_start = math.floor(np.min(t))
+        sample_end = math.ceil(np.max(t))
         if self.channels == 1:
             sig = self._asig.sig[sample_start:sample_end].reshape(-1)
         else:
