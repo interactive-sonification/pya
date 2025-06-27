@@ -1074,6 +1074,7 @@ class SeqAGen(AGen):
         result = np.zeros(sample_count)
         max_len = 0
         for onset, gen in self.gens:
+            onset = max(onset, 0)
             onset_sample = (
                 int(onset * self.sr) if self.time_mode == TimeMode.SECONDS else onset
             )
