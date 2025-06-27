@@ -1051,6 +1051,9 @@ class ChannelSelectorGen(AGen):
         if isinstance(index, int):
             channels = 1
             self._mapping = [index]
+        elif isinstance(index, str):
+            channels = 1
+            self._mapping = [self._gen.cn.index(index)]
         elif isinstance(index, list):
             assert len(index) > 0, "Index must not be empty."
             if isinstance(index[0], bool):
@@ -1059,6 +1062,9 @@ class ChannelSelectorGen(AGen):
                 ), "Length of index must match number of channels."
                 channels = sum(index)
                 self._mapping = [i for i, val in enumerate(index) if val]
+            elif isinstance(index[0], str):
+                self._mapping = [self._gen.cn.index(n) for n in index]
+                channels = len(index)
             else:
                 assert isinstance(
                     index[0], int
@@ -1086,8 +1092,8 @@ class ChannelSelectorGen(AGen):
         )
 
 
-def multi_channel(*gens: GenOrNum) -> MultiChannelGen:
-    return MultiChannelGen(list(gens))
+def multi_channel(*gens: GenOrNum, cn: list[str] | None = None) -> MultiChannelGen:
+    return MultiChannelGen(list(gens), cn=cn)
 
 
 def stereo(left: GenOrNum, right: GenOrNum) -> MultiChannelGen:
