@@ -11,8 +11,8 @@ import modulefinder
 
 COMMANDS = {}
 
-# TODO: This needs to be changed
-PACKAGE_INDEX_URL = "https://gitlab.ub.uni-bielefeld.de/IchbinLuka/pya_index_test"
+DIRECTORY_URL = "https://raw.githubusercontent.com/interactive-sonification/pyapackages/refs/heads/main/directory.txt"
+PACKAGE_INDEX_URL = "https://github.com/interactive-sonification/pyapackages"
 PYA_DEPENDENCY = "pya[agen] @ git+https://github.com/interactive-sonification/pya@feature-agen"
 
 
@@ -92,14 +92,14 @@ dependencies = [
 
 
 def resolve_package_url(package_name: str) -> str | None:
-    with urllib.request.urlopen(
-        # TODO: This should be replaced with a github repo of the  Interactive-Sonification organization
-        f"{PACKAGE_INDEX_URL}/-/raw/main/directory.txt"
-    ) as response:
-        for line in response:
-            line = line.decode().strip()
-            if line.startswith(package_name):
-                return ":".join(line.split(":")[1:]).strip()
+    try:
+        with urllib.request.urlopen(DIRECTORY_URL) as response:
+            for line in response:
+                line = line.decode().strip()
+                if line.startswith(package_name):
+                    return ":".join(line.split(":")[1:]).strip()
+    except:
+        return None
     return None
 
 
@@ -170,10 +170,10 @@ def create_parser():
     create_parser.add_argument("--directory", type=str, default=".", help="Directory to create the project in")
 
     get_package_parser = subparsers.add_parser("get-package", help="Looks up a package in the pya package index and returns the URL")
-    get_package_parser.add_argument("package-name", help="Name of the package to get the URL for")
+    get_package_parser.add_argument("package_name", help="Name of the package to get the URL for")
 
     install_parser = subparsers.add_parser("install", help="Helper command to look up a package in the pya package index and install it")
-    install_parser.add_argument("package-name", help="Name of the package to install")
+    install_parser.add_argument("package_name", help="Name of the package to install")
 
     publish_parser = subparsers.add_parser("publish", help="Generates a package URL for the current project based on the git remote URL")
     publish_parser.add_argument("--package-name", help="Name of the package to publish", default=None)
