@@ -6,8 +6,6 @@ import subprocess
 import sys
 import urllib
 import urllib.request
-from importlib import metadata
-import modulefinder
 
 COMMANDS = {}
 
