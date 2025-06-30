@@ -589,13 +589,17 @@ class Env(SingleChannelGen):
     def __init__(
         self,
         values: list[float] | np.ndarray,
-        dtimes: list[float] | np.ndarray,
+        dtimes: list[float] | np.ndarray | float,
         *args,
         **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)
         self._values = np.array(values)
-        self._dtimes = np.array(dtimes)
+        
+        if isinstance(dtimes, float) or isinstance(dtimes, int):
+            self._dtimes = np.full((values.shape[0] - 1,), dtimes)
+        else:
+            self._dtimes = np.array(dtimes)
         self._times = np.concatenate((np.zeros(1), self.sr * np.cumsum(self._dtimes)))
 
     def get_nodes(self) -> dict[str, GenOrNum]:
