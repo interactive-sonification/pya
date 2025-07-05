@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from collections import deque
 from dataclasses import dataclass
 from enum import Enum, EnumMeta
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Sequence
 
 import numpy as np
 import pyamapping as pam
@@ -158,7 +158,7 @@ class AGen(ABC):
         self.done = done
         self.downsample_children = downsample_children
         self.states = None
-        self.state = None
+        self.state = None  # type: ignore
 
         self.uuid = uuid.uuid4()
 
@@ -237,7 +237,7 @@ class AGen(ABC):
         self._node_items[name] = c
         if isinstance(node, AGen):
             if self.__adaptive_sr:
-                self.sr = max(self.sr, c.gen.sr)
+                self.sr = max(self.sr, node.sr)
             if node.channels > 1:
                 if self.channels > 1 and node.channels != self.channels:
                     raise ValueError(
@@ -507,7 +507,7 @@ class AGen(ABC):
             current = remaining_nodes.popleft()
             finished_nodes.add(current.uuid)
             if not isinstance(current, AGen):
-                graph.node(str(uuid.uuid4(), label=str(current)))
+                graph.node(str(uuid.uuid4()), label=str(current))
                 continue
             for name, gen in current.get_nodes().items():
                 if isinstance(gen, AGen):
@@ -578,7 +578,7 @@ class AGen(ABC):
                         start=start,
                         channel=channel,
                     )
-                    self.state = None
+                    self.state: AGenState = None  # type: ignore
                     self.__clear_nodes()
                     state.add_to_cache(new_samples)
                     samples = new_samples
@@ -717,7 +717,7 @@ class AGen(ABC):
             if seconds is not None:
                 count = int(seconds * self.sr)
             else:
-                count = sample_count
+                count: int = sample_count  # type: ignore
 
             # sig = self.generate(count, start=0)
             sig = [
@@ -788,7 +788,7 @@ class AGen(ABC):
         if seconds is not None:
             samples = int(seconds * self.sr)
 
-        return SkipGen(self, samples)
+        return SkipGen(self, samples)  # type: ignore
 
     def delay(
         self,
@@ -816,7 +816,7 @@ class AGen(ABC):
         if seconds is not None:
             samples = int(seconds * self.sr)
 
-        return DelayGen(self, samples, padding=padding)
+        return DelayGen(self, samples, padding=padding)  # type: ignore
 
     # endregion
 
@@ -983,7 +983,7 @@ class AGen(ABC):
         if both is not None:
             in_secs = out_secs = both
 
-        return FadeInGen(FadeOutGen(self, out_secs, curve), in_secs, curve)
+        return FadeInGen(FadeOutGen(self, out_secs, curve), in_secs, curve)  # type: ignore
 
 
 class PartialAGen:
@@ -995,7 +995,7 @@ class PartialAGen:
         self.kwargs = kwargs
 
     def __ror__(self, value: GenOrNum) -> AGen:
-        return self.gen_class(value, *self.args, **self.kwargs)
+        return self.gen_class(value, *self.args, **self.kwargs)  # type: ignore
 
 
 class SingleChannelGen(AGen):
@@ -1013,23 +1013,23 @@ class SingleChannelGen(AGen):
 class DoneGen(AGen):
     def __init__(self, gen: GenOrNum, done: DoneAction, *args, **kwargs):
         super().__init__(*args, done=done, **kwargs)
-        self._add_node(gen, "gen")
+        self._add_node(gen, "gen", convert_num_to_arr=True)
 
-    def get_nodes(self) -> dict[str, AGen | float | int]:
+    def get_nodes(self) -> dict[str, AGen | Any]:
         return {
             "done": self.done, 
             **super().get_nodes()
         }
     
     def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
-        return self.nodes["gen"]
+        return self.nodes["gen"]  # type: ignore
 
     
 
 class MultiChannelGen(AGen):
     def __init__(
         self,
-        gens: list[GenOrNum],
+        gens: Sequence[GenOrNum],
         cn: list[str] | None = None,
         *args,
         **kwargs,
@@ -1043,9 +1043,6 @@ class MultiChannelGen(AGen):
             for i in range(num_channels):
                 self.gen_channels.append((gen, i))
                 channel += 1
-            # if not isinstance(gen, AGen):
-            #     continue
-            # assert gen.channels == 1, "All generators must have only one channel."
         super().__init__(*args, channels=channel, sr=get_max_sr(gens), cn=cn, **kwargs)
 
     def get_nodes(self):
@@ -1059,7 +1056,7 @@ class MultiChannelGen(AGen):
             start,
             channel=i,
             convert_num_to_array=True,
-        )
+        )  # type: ignore
 
 
 class ChannelSelectorGen(AGen):
@@ -1076,6 +1073,7 @@ class ChannelSelectorGen(AGen):
             channels = 1
             self._mapping = [index]
         elif isinstance(index, str):
+            assert self._gen.cn is not None, "No channel names defined"
             channels = 1
             self._mapping = [self._gen.cn.index(index)]
         elif isinstance(index, list):
@@ -1087,6 +1085,7 @@ class ChannelSelectorGen(AGen):
                 channels = sum(index)
                 self._mapping = [i for i, val in enumerate(index) if val]
             elif isinstance(index[0], str):
+                assert self._gen.cn is not None, "No channel names defined"
                 self._mapping = [self._gen.cn.index(n) for n in index]
                 channels = len(index)
             else:
@@ -1101,7 +1100,7 @@ class ChannelSelectorGen(AGen):
             self._mapping = list(range(start, stop, step))
         super().__init__(*args, channels=channels, sr=gen.sr, **kwargs)
 
-    def get_nodes(self) -> dict[str, AGen | float | int]:
+    def get_nodes(self) -> dict[str, AGen | Any]:
         return {"gen": self._gen, "index": self._index}
 
     def __get_channel(self, channel: int) -> int:
@@ -1149,7 +1148,7 @@ class TimeLimitGen(AGen):
     def _generate_new(self, sample_count, start, channel):
         if start + sample_count < self._samples:
             return self.nodes["gen"]
-        return self.nodes["gen"][: self._samples - start]
+        return self.nodes["gen"][: self._samples - start]  # type: ignore
 
 
 class DelayGen(AGen):
@@ -1176,7 +1175,7 @@ class DelayGen(AGen):
     ) -> None:
         assert samples >= 0, "samples must be greater or equal to 0."
         self._gen = gen
-        self.delay = samples
+        self.delay_samples = samples
         self.padding = padding
         if sr is None:
             sr = gen.sr
@@ -1191,14 +1190,14 @@ class DelayGen(AGen):
     def get_nodes(self) -> dict[str, AGen | float | int]:
         return {
             "gen": self._gen,
-            "delay": self.delay,
+            "delay": self.delay_samples,
         }
 
     def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
-        if start > self.delay:
+        if start > self.delay_samples:
             return self._get_samples(
-                self._gen, sample_count, start - self.delay, channel=channel
-            )
+                self._gen, sample_count, start - self.delay_samples, channel=channel, convert_num_to_array=True,
+            )  # type: ignore
         else:
             padding_value = self.state.data.get("padding_value", None)
             if padding_value is None:
@@ -1209,7 +1208,8 @@ class DelayGen(AGen):
                             sample_count=1,
                             start=0,
                             channel=channel,
-                        ).item()
+                            convert_num_to_array=True,
+                        ).item()  # type: ignore
                     case PaddingType.ZERO:
                         padding_value = 0
                     case _:
@@ -1217,7 +1217,7 @@ class DelayGen(AGen):
                             f"Invalid padding type: {self.padding}. Must be one of: {', '.join(PaddingType)}"
                         )
                 self.state.data["padding_value"] = padding_value
-            gen_start = min(self.delay - start, sample_count)
+            gen_start = min(self.delay_samples - start, sample_count)
             return np.concatenate(
                 [
                     padding_value * np.ones(gen_start),
@@ -1301,13 +1301,13 @@ class ConcatGen(AGen):
         # Generate samples from the current generator and continue to the next one
         # if necessary until we have enough samples or we run out of generators
         while count < sample_count:
-            s = self._get_samples(
+            s: np.ndarray = self._get_samples(
                 self._gens[current_gen],
                 sample_count - count,
                 start=gen_sample,
                 channel=channel,
                 convert_num_to_array=True,
-            )
+            )  # type: ignore
             samples.append(s)
             count += s.shape[0]
             gen_sample += s.shape[0]
@@ -1337,7 +1337,7 @@ class AddGen(AGen):
             self._add_node(gen, f"s_{i}", convert_num_to_arr=True)
 
     def _generate_new(self, **_) -> np.ndarray:
-        return np.sum(list(self.nodes.values()), axis=0)
+        return np.sum(list(self.nodes.values()), axis=0)  # type: ignore
 
 
 class MulGen(AGen):
@@ -1356,7 +1356,7 @@ class MulGen(AGen):
             self._add_node(gen, f"f_{i}", convert_num_to_arr=True)
 
     def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
-        return np.prod(list(self.nodes.values()), axis=0)
+        return np.prod(list(self.nodes.values()), axis=0)  # type: ignore
 
 
 class PowGen(AGen):
@@ -1378,7 +1378,7 @@ class PowGen(AGen):
         self._add_node(exp, "exp")
 
     def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
-        return self.nodes["base"] ** self.nodes["exp"]
+        return self.nodes["base"] ** self.nodes["exp"]  # type: ignore
 
 
 class DivGen(AGen):
@@ -1400,7 +1400,7 @@ class DivGen(AGen):
         self._add_node(divisor, "divisor")
 
     def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
-        return self.nodes["dividend"] / self.nodes["divisor"]
+        return self.nodes["dividend"] / self.nodes["divisor"]  # type: ignore
 
 
 def xgen(
@@ -1448,7 +1448,7 @@ class FadeInGen(SingleChannelGen):
         The curve of the fade in.
     """
 
-    def __init__(self, gen: GenOrNum, duration: float, curve: int = 1, *args, **kwargs):
+    def __init__(self, gen: GenOrNum, duration: float, curve: int | float = 1, *args, **kwargs):
         super().__init__(*args, sr=None, **kwargs)
         self._add_node(gen, "gen", convert_num_to_arr=True)
         self.duration = duration
@@ -1458,7 +1458,7 @@ class FadeInGen(SingleChannelGen):
         return {"duration": self.duration, "curve": self.curve, **super().get_nodes()}
 
     def _generate_single(self, sample_count, start):
-        samples = self.nodes["gen"]
+        samples: np.ndarray = self.nodes["gen"]  # type: ignore
 
         end = self.duration * self.sr
 
@@ -1499,7 +1499,7 @@ class FadeOutGen(AGen):
         The curve of the fade out.
     """
 
-    def __init__(self, gen: GenOrNum, duration: float, curve: int = 1, *args, **kwargs):
+    def __init__(self, gen: GenOrNum, duration: float, curve: int | float = 1, *args, **kwargs):
         super().__init__(*args, sr=None, **kwargs)
         self._add_node(gen, "gen", convert_num_to_arr=True)
         self.gen = gen
@@ -1513,13 +1513,13 @@ class FadeOutGen(AGen):
         start_fade = self.state.data.get("start_fade", None)
         if start_fade is None:
             look_ahead_len = math.ceil(self.sr * self.duration) + sample_count
-            look_ahead = self._get_samples(
+            look_ahead: np.ndarray = self._get_samples(
                 self.gen,
                 look_ahead_len,
                 start,
                 channel=channel,
                 convert_num_to_array=True,
-            )
+            )  # type: ignore
             if look_ahead.shape[0] < look_ahead_len:
                 if look_ahead.shape[0] < math.ceil(self.sr * self.duration):
                     warnings.warn(
@@ -1531,7 +1531,7 @@ class FadeOutGen(AGen):
                 )
                 self.state.data["start_fade"] = start_fade
 
-        samples = self.nodes["gen"]
+        samples: np.ndarray = self.nodes["gen"]  # type: ignore
         if start_fade is None or start + sample_count <= start_fade:
             return samples
 
@@ -1574,7 +1574,7 @@ class MixGen(AGen):
         self.gen = gen
 
     def _generate_new(self, sample_count, start, channel):
-        sigs = [
+        sigs: list[np.ndarray] = [
             self._get_samples(
                 self.gen,
                 sample_count,
@@ -1583,6 +1583,6 @@ class MixGen(AGen):
                 convert_num_to_array=True,
             )
             for i in range(self.gen.channels)
-        ]
+        ]  # type: ignore
         min_len = min((s.shape[0] for s in sigs))
         return np.sum([s[:min_len] for s in sigs], axis=0)

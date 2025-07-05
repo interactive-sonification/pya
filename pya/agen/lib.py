@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 import warnings
 from enum import Enum
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Sequence
 
 import numpy as np
 from pya.asig import Asig
@@ -303,7 +303,7 @@ class PlayAsig(AGen):
 
     def __init__(
         self,
-        asig: Asig | np.ndarray,
+        asig: Asig | np.ndarray | str,
         rate: GenOrNum = 1,
         loop: bool = False,
         *args,
@@ -351,10 +351,6 @@ class PlayAsig(AGen):
             np.arange(sample_start, sample_start + sig.shape[0]),
             sig,
         )
-
-    @classmethod
-    def load_file(cls, path: str, label: str | None = None) -> PlayAsig:
-        return cls(Asig(path, label=label))
 
 
 class Line(SingleChannelGen):
@@ -1052,7 +1048,7 @@ class SeqAGen(AGen):
 
     def __init__(
         self,
-        gens: list[tuple[float, GenOrNum]],
+        gens: Sequence[tuple[float, GenOrNum]],
         time_mode: TimeMode = TimeMode.SECONDS,
         *args,
         **kwargs,
@@ -1105,7 +1101,7 @@ class SeqAGen(AGen):
         ax.set_xlim(-1, np.max(onsets) + 1)
         for i, (_, gen) in enumerate(self.gens):
             ax.annotate(
-                gen.label,
+                gen.label if isinstance(gen, AGen) else str(gen),
                 (onsets[i], 0.5 if i % 2 == 0 else -0.5),
                 textcoords="offset points",
                 verticalalignment="bottom" if i % 2 == 0 else "top",
@@ -1123,13 +1119,13 @@ class SeqAGen(AGen):
             )
             if onset_sample >= start + sample_count:
                 return result
-            new_samples = self._get_samples(
+            new_samples: np.ndarray = self._get_samples(
                 gen,
                 sample_count - max(onset_sample - start, 0),
                 max(start - onset_sample, 0),
                 channel,
                 convert_num_to_array=True,
-            )
+            )  # type: ignore
             max_len = max(max_len, new_samples.shape[0] + max(onset_sample - start, 0))
             result[
                 max(onset_sample - start, 0) : new_samples.shape[0]
@@ -1207,8 +1203,8 @@ class LPF(SingleChannelGen):
     def _generate_single(self, sample_count, start):
         y_1, y_2, x_1, x_2 = self.state.data.get("z", (0, 0, 0, 0))
         out, y_1, y_2, x_1, x_2 = _lpf_numba(
-            self.nodes["gen"],
-            self.nodes["freq"],
+            self.nodes["gen"],  # type: ignore
+            self.nodes["freq"],  # type: ignore
             self.sr,
             y_1,
             y_2,
