@@ -23,6 +23,7 @@ It provides:
   * Asig - a versatile audio signal class 
       * Ugen - a subclass of Asig, which offers unit generators 
         such as sine, square, sawtooth, noise
+  * AGen - a lazy generator of Asigs, enabling parameter modulation and dynamic durations
   * Aserver - an audio server class for queuing and playing Asigs
   * Arecorder - an audio recorder class
   * Aspec - an audio spectrum class, using rfft as real-valued signals are always implied
@@ -50,6 +51,11 @@ At this time pya is more suitable for offline rendering than realtime.
 Install using
 ```
 pip install pya
+```
+
+To install pya with AGens, run:
+```bash
+pip install git+https://github.com/interactive-sonification/pya.git@feature-agen[agen]
 ```
 
 However to play and record audio you need a backend.
@@ -248,6 +254,7 @@ Asig methods usually return an Asig, so methods can be chained, e.g
 
 ### Learning more
 * Please check the examples/pya-examples.ipynb for more examples and details.
+* For documentation on AGens, check the examples/pya-examples-agen.ipynb notebook.
 
 
 ## Contributing 

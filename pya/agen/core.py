@@ -677,7 +677,7 @@ class AGen(ABC):
                 break
 
         return Asig(
-            sig=np.concatenate(blocks),
+            sig=np.concatenate(blocks).squeeze(),
             sr=self.sr,
             label=self.label,
             channels=self.channels,
@@ -734,7 +734,7 @@ class AGen(ABC):
                     np.stack(
                         [s[:min_len] for s in sig],
                         axis=1,
-                    )
+                    ).squeeze()
                 ),
                 sr=self.sr,
                 label=self.label,

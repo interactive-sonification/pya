@@ -589,13 +589,17 @@ class Env(SingleChannelGen):
     def __init__(
         self,
         values: list[float] | np.ndarray,
-        dtimes: list[float] | np.ndarray,
+        dtimes: list[float] | np.ndarray | float,
         *args,
         **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)
         self._values = np.array(values)
-        self._dtimes = np.array(dtimes)
+        
+        if isinstance(dtimes, float) or isinstance(dtimes, int):
+            self._dtimes = np.full((values.shape[0] - 1,), dtimes)
+        else:
+            self._dtimes = np.array(dtimes)
         self._times = np.concatenate((np.zeros(1), self.sr * np.cumsum(self._dtimes)))
 
     def get_nodes(self) -> dict[str, GenOrNum]:
@@ -709,6 +713,32 @@ class BLIT(AGen):
             M = np.minimum(M, np.array(self.nodes["m"], dtype=int))
 
         return digisinc(x, M)
+
+class BLImp(BLIT):
+    """Band-Limited Impulse generator. Similar to Blip in SuperCollider. 
+    
+    Parameters
+    ----------
+    freq
+        The frequency of the impulses in Hz. 
+    numharm
+        The number of harmonics. 
+    """
+
+    def __init__(self, freq, numharm, *args, **kwargs):
+        if isinstance(numharm, AGen):
+            n_floor = numharm.apply(np.floor)
+        else:
+            n_floor = math.floor(numharm)
+        self.numharm = numharm
+        self.freq = freq
+        super().__init__(freq, even=False, m=n_floor * 2 + 1, *args, **kwargs)
+
+    def get_nodes(self):
+        return {
+            "numharm": self.numharm, 
+            "freq": self.freq, 
+        }
 
 
 class BLSaw(AGen):
