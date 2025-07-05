@@ -94,6 +94,9 @@ class DoneAction(str, Enum):
     LOOP = "loop"
     """Loop the generator from the beginning."""
 
+    ZERO = "zero"
+    """Fill with zeros."""
+
 
 class AGen(ABC):
     """Abstract base class for audio generators.
@@ -621,6 +624,8 @@ class AGen(ABC):
                             ]
                         )[:remaining]
                     return np.concatenate([samples, looped])
+                case DoneAction.ZERO:
+                    return np.concatenate([samples, np.zeros(sample_count - samples.shape[0])])
 
         return samples
 
@@ -753,6 +758,10 @@ class AGen(ABC):
         """
         self.label = label
         return self
+    
+    def with_done(self, done: DoneAction) -> AGen:
+        """Wraps this AGen with another AGen with `done` as done action. """
+        return DoneGen(self, done)
 
     def skip(
         self,
@@ -1001,6 +1010,21 @@ class SingleChannelGen(AGen):
     def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
         return self._generate_single(sample_count=sample_count, start=start)
 
+class DoneGen(AGen):
+    def __init__(self, gen: GenOrNum, done: DoneAction, *args, **kwargs):
+        super().__init__(*args, done=done, **kwargs)
+        self._add_node(gen, "gen")
+
+    def get_nodes(self) -> dict[str, AGen | float | int]:
+        return {
+            "done": self.done, 
+            **super().get_nodes()
+        }
+    
+    def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
+        return self.nodes["gen"]
+
+    
 
 class MultiChannelGen(AGen):
     def __init__(

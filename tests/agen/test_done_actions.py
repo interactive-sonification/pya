@@ -40,6 +40,21 @@ class DoneActionTest(unittest.TestCase):
         gen_long_asig = gen_long.gen_asig()
         self.assertEqual(asig.get_duration(), gen_long_asig.get_duration())
 
+    def test_zero(self):
+        gen = Line(0, 1, 1, done="zero", sr=100)
+        asig = gen.gen_asig(seconds=100)
+        self.assertAlmostEqual(asig.get_duration(), 100.0)
+        self.assertAlmostEqual(asig.sig[-1], 0)
+        self.assertAlmostEqual(asig.sig[-20], 0)
+
+    def test_with_done(self):
+        gen = Line(0, 1, 1, sr=100, done="stop").with_done("last")
+        asig = gen.gen_asig(seconds=100)
+        self.assertAlmostEqual(asig.get_duration(), 100.0)
+        self.assertAlmostEqual(asig.sig[-1], 0.99)
+        self.assertAlmostEqual(asig.sig[-20], 0.99)
+
+
 
 if __name__ == "__main__":
     unittest.main()
