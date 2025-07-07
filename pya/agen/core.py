@@ -130,7 +130,7 @@ class AGen(ABC):
         cn: list | None = None,
         *,
         sr: int | None = 44100,
-        done: DoneAction = DoneAction.STOP,
+        done: DoneAction | str = DoneAction.STOP,
         downsample_children: bool = False,
     ) -> None:
         self.nodes: dict[str, float | int | np.ndarray] = {}
@@ -759,7 +759,7 @@ class AGen(ABC):
         self.label = label
         return self
     
-    def with_done(self, done: DoneAction) -> AGen:
+    def with_done(self, done: DoneAction | str) -> AGen:
         """Wraps this AGen with another AGen with `done` as done action. """
         return DoneGen(self, done)
 
@@ -1011,7 +1011,7 @@ class SingleChannelGen(AGen):
         return self._generate_single(sample_count=sample_count, start=start)
 
 class DoneGen(AGen):
-    def __init__(self, gen: GenOrNum, done: DoneAction, *args, **kwargs):
+    def __init__(self, gen: GenOrNum, done: DoneAction | str, *args, **kwargs):
         super().__init__(*args, done=done, **kwargs)
         self._add_node(gen, "gen", convert_num_to_arr=True)
 
