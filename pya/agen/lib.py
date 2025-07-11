@@ -364,6 +364,11 @@ class Line(SingleChannelGen):
         The value at the end of the line.
     dur
         The duration of the line in seconds.
+    curve
+        The curvature of the line
+        - curve=0: linear mapping from start to end over time
+        - curve<0: curved to change faster initially, slower towards end
+        - curve>0: curved to change slower initially, faster towards end
     """
 
     def __init__(
@@ -371,12 +376,14 @@ class Line(SingleChannelGen):
         start: float | int,
         end: float | int,
         dur: float | int,
+        curve: float | int = 0,
         *args,
         **kwargs,
     ) -> None:
         self._start = start
         self._end = end
         self._dur = dur
+        self._curve = curve
         super().__init__(*args, **kwargs)
 
     def get_nodes(self) -> dict[str, AGen | float | int]:
@@ -384,18 +391,31 @@ class Line(SingleChannelGen):
             "start": self._start,
             "end": self._end,
             "dur": self._dur,
+            "curve": self._curve,
         }
 
     def _generate_single(self, sample_count: int, start: int) -> np.ndarray:
         start_time = start / self.sr
         end_sample = math.floor(min((start + sample_count), self._dur * self.sr))
-        slope = (self._end - self._start) / self._dur
-        return np.linspace(
-            start=self._start + slope * start_time,
-            stop=self._start + slope * end_sample / self.sr,
-            num=min(sample_count, max(end_sample - start, 0)),
-            endpoint=False,
-        )
+        if abs(self._curve) < 0.001:
+            slope = (self._end - self._start) / self._dur
+            linear = np.linspace(
+                start=self._start + slope * start_time,
+                stop=self._start + slope * end_sample / self.sr,
+                num=min(sample_count, max(end_sample - start, 0)),
+                endpoint=False,
+            )
+            return linear
+        else:
+            tsvec = np.linspace(
+                start=start_time / self._dur,
+                stop=end_sample / self.sr / self._dur,
+                num=min(sample_count, max(end_sample - start, 0)),
+                endpoint=False,
+            )
+            return self._start + (self._end - self._start) / (
+                1.0 - np.exp(self._curve)
+            ) * (1 - np.exp(self._curve) ** tsvec)
 
 
 class XLine(SingleChannelGen):
