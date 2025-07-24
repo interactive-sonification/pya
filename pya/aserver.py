@@ -1,3 +1,4 @@
+from pya.asig import Asig
 from .helper.backend import determine_backend
 import copy
 import logging
@@ -96,7 +97,7 @@ class Aserver:
         self.gain = 1.0
         self.srv_onsets = []
         self.srv_curpos = []  # start of next frame to deliver
-        self.srv_asigs = []
+        self.srv_asigs = []  # array of asigs or agens
         self.srv_outs = []  # output channel offset for that asig
         self.boot_time = 0  # time.time() when stream starts
         self.block_cnt = 0  # nr. of callback invocations
@@ -105,6 +106,9 @@ class Aserver:
         self._stop = True
         self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
         self._is_active = False
+
+        # TH: added for scope test
+        self.scope = None 
 
     @property
     def channels(self):
@@ -261,6 +265,54 @@ class Aserver:
                 time.sleep(asig.get_duration())
         return self
 
+    def play_agen(self, agen, onset: Union[int, float] = 0, out: int = 0, **kwargs):
+        """Dispatch agen for given onset.
+
+        agen: pya.agen.AGen
+            An AGen object
+        onset: int or float
+            Time when the sound should play, 0 means asap
+        out: int
+            Output channel
+        """
+        self._stop = False
+
+        # as of now assume Agen sr == Aserver.sr
+
+        if onset < 1e6:
+            rt_onset = time.time() + onset
+        else:
+            rt_onset = onset
+
+        idx = np.searchsorted(self.srv_onsets, rt_onset)
+        self.srv_onsets.insert(idx, rt_onset)
+        self.srv_asigs.insert(idx, agen) # ToDo refactor later: srv_asigs -> srv_aobjs (asigs or agens)
+        self.srv_curpos.insert(idx, 0)
+        self.srv_outs.insert(idx, out)
+        if 'block' in kwargs and kwargs['block']:
+            if onset > 0:  # here really onset and not rt_onset!
+                _LOGGER.warning("blocking inactive with play(onset>0)")
+            else:
+                print("play_agen(): implement sleep until AGen end...")
+                # time.sleep(asig.get_duration())
+        return self
+
+    def scope_gui(self, pos=(-400, 0), size=(400, 300), rate=12):
+        """Create and activate oscilloscope using pyagui Scope"""
+        print("scope-test")
+        try:
+            from pyagui import Scope
+
+            self.scope = Scope(self.bs, self._channels, pos=pos, size=size, rate=rate)
+            self.scope.start()
+            print("Aserver: Scope opened and started")
+        except BaseException as e:
+            _LOGGER.warning(
+                "Scope is an optional feature. Requires additional package pyagui"
+            )
+            print(e)
+            self.scope = None
+
     def _play_callback(self, in_data, frame_count, time_info, flag):
         """callback function, called from pastream thread when data needed."""
         tnow = self.block_time
@@ -288,26 +340,50 @@ class Aserver:
         for i, t in enumerate(self.srv_onsets):
             if t > t_next_block:  # doesn't begin before next block
                 break  # since list is always onset-sorted
-            a = self.srv_asigs[i]
+            a = self.srv_asigs[i]  # ATTENTION: a can be asig or agen
             c = self.srv_curpos[i]
             if t > tnow:  # first block: apply precise zero padding
                 io0 = int((t - tnow) * self.sr)
             else:
                 io0 = 0
-            tmpsig = a.sig[c:c + self.bs - io0]
+            # here we need to take different action for asigs and agens
+            if isinstance(a, Asig):
+                tmpsig = a.sig[c:c + self.bs - io0]
+            else: # can only be AGen
+                # tmpsig = a.generate(self.bs-io0, c, 0) # take care for multichannel later
+                tmpsig = [
+                    a.generate(self.bs-io0, c, k)
+                    for k in range(a.channels)
+                ]
+                min_len = min((s.shape[0] for s in tmpsig))
+                tmpsig = np.stack([s[:min_len] for s in tmpsig], axis=1)
+
+                # ToDo: more flexible channel handling
+                if len(tmpsig.shape) == 1: # ToDo: dirty hack, improve later
+                    tmpsig = np.expand_dims(tmpsig, axis=1)
             n, nch = tmpsig.shape
             out = self.srv_outs[i]
             # .reshape(n, nch) not needed as moved to play
             data[io0:io0 + n, out:out + nch] += tmpsig
             self.srv_curpos[i] += n
-            if self.srv_curpos[i] >= a.samples:
-                dellist.append(i)  # store for deletion
+            # different delete conditions for AGen and Asig
+            if isinstance(a, Asig):
+                if self.srv_curpos[i] >= a.samples:
+                    dellist.append(i)  # store for deletion
+            else: # then it must be an AGen
+                if n != self.bs - io0:
+                    dellist.append(i)  # store for deletion
         # clean up lists
         for i in dellist[::-1]:  # traverse backwards!
-            del self.srv_asigs[i]
+            del self.srv_asigs[i]  # Asig or AGen
             del self.srv_onsets[i]
             del self.srv_curpos[i]
             del self.srv_outs[i]
+
+        # TH: added for scope
+        if self.scope and self.scope.running:
+            self.scope.set_data(data)
+
         return self.backend.process_buffer(data * (self.backend.range * self.gain))
 
     def stop(self):
@@ -330,3 +406,7 @@ class Aserver:
                 self.backend.terminate()
             except:
                 pass  # Ignore cleanup errors during shutdown
+
+        # TH: added for scope test
+        if self.scope:
+            del(self.scope)

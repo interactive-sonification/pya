@@ -818,6 +818,38 @@ class AGen(ABC):
 
         return DelayGen(self, samples, padding=padding)  # type: ignore
 
+    def play(
+        self, rate: float = 1.0, server=None, onset=0, channel: int = 0, block=False
+    ) -> AGen:
+        """Play AGen via Aserver, using Aserver.default (if existing)
+        kwargs are propagated to Aserver:play(onset=0, out=0)
+
+        Parameters
+        ----------
+        rate : float
+            Playback rate (Default value = 1) NOT YET IMPLEMENTED
+        **kwargs : str
+            'server' : Aserver
+                Set which server to play. e.g. s = Aserver(); s.boot(); asig.play(server=s)
+
+        Returns
+        -------
+        _ : AGen
+            return self
+        """
+        import pya.aserver
+
+        if server is None:
+            server = pya.aserver.Aserver.default
+        if rate == 1 and self.sr == server.sr:
+            agen = self
+        else:
+            # TODO: add rate support by improving resampling
+            from pya.agen.lib import ResampleGen
+            agen = ResampleGen(self, server.sr)  # -> incorporate rate
+        server.play_agen(agen, server=server, onset=onset, out=channel, block=block)
+        return self
+
     # endregion
 
     # region - CLASSMETHODS -
