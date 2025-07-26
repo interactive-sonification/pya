@@ -844,9 +844,7 @@ class AGen(ABC):
         if rate == 1 and self.sr == server.sr:
             agen = self
         else:
-            # TODO: add rate support by improving resampling
-            from pya.agen.lib import ResampleGen
-            agen = ResampleGen(self, server.sr)  # -> incorporate rate
+            agen = ResampleGen(self, sr=server.sr, rate=rate)
         server.play_agen(agen, server=server, onset=onset, out=channel, block=block)
         return self
 
@@ -1016,6 +1014,20 @@ class AGen(ABC):
             in_secs = out_secs = both
 
         return FadeInGen(FadeOutGen(self, out_secs, curve), in_secs, curve)  # type: ignore
+
+    def to_sr(self, sr: int = 44100, rate: float = 1.0):
+        """resample shortcut - wraps AGen.Resample() around self
+
+        Args:
+            sr (float, optional): target sampling rate. Defaults to 44100.
+            rate (float, optional): additional resampling rate. Defaults to 1.0.
+
+        Returns:
+            AGen: new generator running at target sr
+        """
+        return ResampleGen(self, rate=rate, sr=sr)
+
+
 
 
 class PartialAGen:
@@ -1618,3 +1630,55 @@ class MixGen(AGen):
         ]  # type: ignore
         min_len = min((s.shape[0] for s in sigs))
         return np.sum([s[:min_len] for s in sigs], axis=0)
+
+class ResampleGen(SingleChannelGen):
+    """Resample an AGen to sr apply resampling rate
+
+    Parameters
+    ----------
+    gen (SingleChannelGen)
+        The AGen that should be resampled
+    rate (float)
+        The resampling rate (default 1.0), e.g. 0.5 stretches sound by factor 2
+    sr (integer)
+        the target rate (as default kwarg of the AGen)        
+    """
+    def __init__(self, gen: AGen, rate: float = 1.0, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.state = AGenState()
+        self.sample_incr = gen.sr / self.sr * rate
+        self.agen = gen
+        self.rate = rate
+
+    def _generate_single(
+        self,
+        sample_count: int,  # The amount of samples that should be generated
+        start: int,  # The index of the first sample
+    ) -> np.ndarray:
+        # TH TODO: make rate an GenOrNum, check multi-channel
+        gen_pos = self.state.data.get("gen_pos", 0)
+        start_idx = max(0, int(gen_pos)-1)
+        gen_stop_pos = gen_pos + self.sample_incr * sample_count
+        n_render = int(gen_stop_pos + 1) - start_idx + 1
+
+        ch = 0  # TODO: for all channels (add loop over ch here)?
+        src_sig = self.agen.generate(n_render, start_idx, channel=ch)
+        n_pts = src_sig.shape[0]
+        src_pos = np.arange(0, n_pts) + start_idx # faster than np.linspace
+
+        if n_pts < n_render: # limit output if input end was reached 
+            stop_index = start_idx + n_pts
+            m = int((min(stop_index, gen_stop_pos) - gen_pos) / self.sample_incr)
+            dest_max_pos = gen_pos + m * self.sample_incr
+        else:
+            m = sample_count
+            dest_max_pos = gen_stop_pos
+        dest_pos = np.linspace(gen_pos, dest_max_pos, m, endpoint=False)
+        dest_sig = np.interp(dest_pos, src_pos, src_sig)
+
+        self.state.data["gen_pos"] = gen_pos + m * self.sample_incr
+
+        if n_pts > 0:
+            return dest_sig
+        else:
+            return np.empty(0)

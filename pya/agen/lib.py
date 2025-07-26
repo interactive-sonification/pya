@@ -1152,29 +1152,33 @@ class SeqAGen(AGen):
                 + max(onset_sample - start, 0)
             ] += new_samples
         return result[:max_len]
+    
 
+# TH: proposal to replace by more flexible Resample
+#     or to integrate that even deeper in core AGen._get_samples() as resampling default
+# remove old ResampleGen temporarily 
 
-class ResampleGen(SingleChannelGen):
-    """Resamples a given AGen.
+# class ResampleGen(SingleChannelGen):
+#     """Resamples a given AGen.
 
-    This can be useful to resample an AGen where the sample rate cannot be customized,
-    such as `PlayAsig`.
+#     This can be useful to resample an AGen where the sample rate cannot be customized,
+#     such as `PlayAsig`.
 
-    Parameters
-    ----------
-    gen
-        The AGen that should be resampled.
-    """
+#     Parameters
+#     ----------
+#     gen
+#         The AGen that should be resampled.
+#     """
 
-    def __init__(self, gen: GenOrNum, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._add_node(gen, "gen", convert_num_to_arr=True)
+#     def __init__(self, gen: GenOrNum, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self._add_node(gen, "gen", convert_num_to_arr=True)
 
-    def get_nodes(self):
-        return {"sr": self.sr, **super().get_nodes()}
+#     def get_nodes(self):
+#         return {"sr": self.sr, **super().get_nodes()}
 
-    def _generate_single(self, sample_count, start):
-        return self.nodes["gen"]
+#     def _generate_single(self, sample_count, start):
+#         return self.nodes["gen"]
 
 
 @njit(
