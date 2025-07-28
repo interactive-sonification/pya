@@ -1631,7 +1631,7 @@ class MixGen(AGen):
         min_len = min((s.shape[0] for s in sigs))
         return np.sum([s[:min_len] for s in sigs], axis=0)
 
-class ResampleGen(SingleChannelGen):
+class ResampleGen(AGen):
     """Resample an AGen to sr apply resampling rate
 
     Parameters
@@ -1649,20 +1649,20 @@ class ResampleGen(SingleChannelGen):
         self.sample_incr = gen.sr / self.sr * rate
         self.agen = gen
         self.rate = rate
+        self.channels = gen.channels
 
-    def _generate_single(
+    def _generate_new(
         self,
         sample_count: int,  # The amount of samples that should be generated
         start: int,  # The index of the first sample
+        channel: int,
     ) -> np.ndarray:
         # TH TODO: make rate an GenOrNum, check multi-channel
         gen_pos = self.state.data.get("gen_pos", 0)
         start_idx = max(0, int(gen_pos)-1)
         gen_stop_pos = gen_pos + self.sample_incr * sample_count
         n_render = int(gen_stop_pos + 1) - start_idx + 1
-
-        ch = 0  # TODO: for all channels (add loop over ch here)?
-        src_sig = self.agen.generate(n_render, start_idx, channel=ch)
+        src_sig = self.agen.generate(n_render, start_idx, channel=channel)
         n_pts = src_sig.shape[0]
         src_pos = np.arange(0, n_pts) + start_idx # faster than np.linspace
 
