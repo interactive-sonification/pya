@@ -225,7 +225,8 @@ class LFPulse(SingleChannelGen):
 
 
 class LFSaw(AGen):
-    """Sawtooth Oscillator
+    """Sawtooth Oscillator: non-band-limited, range [-1, 1], starts at zero
+    with positive slope.
 
     Parameters
     ----------
@@ -234,7 +235,7 @@ class LFSaw(AGen):
     amp
         The amplitude of the oscillator.
     phase
-        The phase of the oscillator in radians.
+        The initial (normalized) phase of the oscillator [0, 1].
     """
 
     def __init__(
@@ -264,7 +265,7 @@ class LFSaw(AGen):
         x = phases[:-1] + self.nodes["phase"]
         if x.shape[0] > 0:
             self.state.data["m_phase"] = phases[-1]
-        return (x % 1.0) * 2 - 1
+        return ((x - 0.5) % 1.0) * 2 - 1
 
 
 def klang(
