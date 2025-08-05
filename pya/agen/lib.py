@@ -268,6 +268,48 @@ class LFSaw(AGen):
         return ((x - 0.5) % 1.0) * 2 - 1
 
 
+class LFTri(AGen):
+    """Triangle Oscillator: non band-limited, range [-1, 1], starts at zero
+    with positive slope
+
+    Parameters
+    ----------
+    freq
+        The frequency [Hz] of the oscillator.
+    phase
+        The initial (normalized) phase of the oscillator [0, 1].
+    """
+
+    def __init__(
+        self,
+        freq: GenOrNum,
+        phase: GenOrNum = 0.0,
+        *args,
+        **kwargs,
+    ) -> None:
+        super().__init__(*args, **kwargs)
+
+        self._add_node(freq, "freq", convert_num_to_arr=True)
+        self._add_node(phase, "phase")
+
+    def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
+        # Use a cumsum here to account for varying frequencies
+        m_phase = self.state.data.get("m_phase", 0)
+        phases = np.cumsum(
+            np.concatenate(
+                [
+                    np.array([m_phase]),
+                    self.nodes["freq"] / self.sr,
+                ]
+            )
+        )
+
+        x = phases[:-1] + self.nodes["phase"]
+        if x.shape[0] > 0:
+            self.state.data["m_phase"] = phases[-1]
+        return np.abs(((x - 0.25) % 1.0) - 0.5) * 4 - 1
+
+
 def klang(
     timbre: Iterable[tuple[GenOrNum, ...]],
 ) -> AGen:
