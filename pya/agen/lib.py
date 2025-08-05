@@ -176,16 +176,14 @@ class BrownNoise(SingleChannelGen):
 
 
 class LFPulse(SingleChannelGen):
-    """LF PulseOscillator
+    """Non-band-limited Pulse Oscillator. output in [0,1]
 
     Parameters
     ----------
     freq
-        The frequency of the oscillator in Hz.
-    amp
-        The amplitude of the oscillator.
+        the frequency of the oscillator in Hz.
     phase
-        The phase of the oscillator in radians.
+        the phase of the oscillator in cycles (i.e. phase/2pi)
     width
         the duty cycle in [0, 1]
     """
@@ -206,7 +204,7 @@ class LFPulse(SingleChannelGen):
 
     @staticmethod
     def lf_pulse_osc(phases, widths):
-        return np.sign((phases % (2 * np.pi)) - 2 * np.pi * (1 - widths))
+        return np.signbit((phases % 1.0) - widths)
 
     def _generate_single(self, sample_count: int, start: int) -> np.ndarray:
         m_phase = self.state.data.get("m_phase", 0)
@@ -214,7 +212,7 @@ class LFPulse(SingleChannelGen):
             np.concatenate(
                 [
                     np.array([m_phase]),
-                    self.nodes["freq"] / self.sr * 2.0 * np.pi,
+                    self.nodes["freq"] / self.sr,
                 ]
             )
         )
