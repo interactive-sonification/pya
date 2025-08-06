@@ -1502,15 +1502,26 @@ def _one_pole_numba(
 
 
 class OnePole(SingleChannelGen):
-    """One-pole filter."""
+    """One-pole filter. Implements out[i] = (1 - abs(coef[i])) * x[i] + coef[i] * y[i-1]
 
-    def __init__(self, gen: GenOrNum, coef: GenOrNum, *args, **kwargs):
+    Parameters
+    ----------
+    gen
+        The input signal (generator / AGen)
+    coef
+        The coefficient (GenOrNum)
+    yi
+        initial value of the filter delay (float): defaults to 0.0
+    """
+
+    def __init__(self, gen: GenOrNum, coef: GenOrNum, yi: float = 0, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._add_node(coef, "coef", convert_num_to_arr=True)
         self._add_node(gen, "gen", convert_num_to_arr=True)
+        self._yi = yi
 
     def _generate_single(self, sample_count, start):
-        y_1 = self.state.data.get("y_1", 0.0)
+        y_1 = self.state.data.get("y_1", self._yi)
         gen = self.nodes["gen"]
         coef = self.nodes["coef"]
         out, y_1 = _one_pole_numba(gen, coef, y_1)
