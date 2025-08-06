@@ -1529,6 +1529,47 @@ class OnePole(SingleChannelGen):
         return out
 
 
+@njit(Tuple((float64[:], float64))(float64[:], float64[:], float64))
+def _leaky_integrator_numba(
+    x: np.ndarray,
+    coef: np.ndarray,
+    y_1: float,
+) -> tuple[np.ndarray, float]:
+    out = np.zeros_like(x)
+    for i in range(len(x)):
+        out[i] = x[i] + coef[i] * y_1
+        y_1 = out[i]
+    return out, y_1
+
+
+class LeakyIntegrator(SingleChannelGen):
+    """LeakyIntegrator. Implements out[n] = coef[n] * out[n-1] + in[n].
+
+    Parameters
+    ----------
+    gen
+        The input signal (generator / AGen)
+    coef
+        The coefficient (GenOrNum)
+    yi
+        initial value of the filter delay (float): defaults to 0.0
+    """
+
+    def __init__(self, gen: GenOrNum, coef: GenOrNum, yi: float = 0.0, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._add_node(coef, "coef", convert_num_to_arr=True)
+        self._add_node(gen, "gen", convert_num_to_arr=True)
+        self._yi = yi
+
+    def _generate_single(self, sample_count, start):
+        y_1 = self.state.data.get("y_1", self._yi)
+        gen = self.nodes["gen"]
+        coef = self.nodes["coef"]
+        out, y_1 = _leaky_integrator_numba(gen, coef, y_1)
+        self.state.data["y_1"] = y_1
+        return out
+
+
 @njit(Tuple((float64[:], float64))(float64[:], int64, float64))
 def _pluck_numba(
     wavetable: np.ndarray, 
