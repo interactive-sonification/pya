@@ -204,7 +204,7 @@ class LFPulse(SingleChannelGen):
 
     @staticmethod
     def lf_pulse_osc(phases, widths):
-        return np.signbit((phases % 1.0) - widths)
+        return np.signbit((phases % 1.0) - widths).astype(np.float64)
 
     def _generate_single(self, sample_count: int, start: int) -> np.ndarray:
         m_phase = self.state.data.get("m_phase", 0)
