@@ -394,6 +394,94 @@ class PlayAsig(AGen):
         )
 
 
+class IndexMode(str, Enum):
+    INDEX = "index"
+    """samples, no matter what the sampling rate."""
+    RAD = "rad"
+    """index interval [0, 2 pi["""
+    ONE = "one"
+    """index interval in [0,1["""
+    TIME = "time"
+    """index interval in seconds using Asig sr"""
+
+
+class AsigRead(AGen):
+    """Generator for reading Asig objects (as Buffer).
+    (equivalent to BufRd in SuperCollider 3)
+
+    Parameters
+    ----------
+    asig: Asig | np.ndarray | str
+        data: either the Asig object to use, or an numpy array or filename
+        which are then used argument for Asig()
+    phase: GenOrNum
+        The phase at which to the Asig should be read. Interpretation according to mode.
+    mode: IndexMode | str
+        either "index" for raw index, "rad" (0..2pi), or "one" (0..1) range,
+        or "time" for time [s].
+    loop: bool
+        Whether the Asig should be looped.
+    """
+
+    def __init__(
+        self,
+        asig: Asig | np.ndarray | str,
+        phase: GenOrNum = 0,
+        mode: str | IndexMode = IndexMode.INDEX, 
+        loop: bool = False,
+        *args,
+        sr: int | None = None,
+        **kwargs,
+    ):
+        if not isinstance(asig, Asig):
+            if sr is None:
+                sr = config.AUDIO_RATE
+            asig = Asig(asig, sr=sr)
+        
+        super().__init__(
+            sr=asig.sr,
+            label=asig.label,
+            channels=asig.channels,
+            cn=asig.cn,
+            **kwargs,
+        )
+        self.loop = loop
+        self._asig = asig
+        self.mode = mode
+        self._add_node(phase, "phase", convert_num_to_arr=True)
+
+    def _generate_new(self, sample_count, start, channel):
+        t = self.nodes["phase"]
+        
+        match self.mode:
+            case IndexMode.RAD:
+                t = t * self._asig.samples / (2 * np.pi)
+            case IndexMode.ONE: 
+                t = t * self._asig.samples
+            case IndexMode.TIME:
+                t = t * self._asig.sr
+            case IndexMode.INDEX:
+                pass
+
+        if not self.loop:
+            t = t[np.ceil(t) <= self._asig.sig.shape[0]]
+        else:
+            t = t % self._asig.sig.shape[0]
+        sample_start = math.floor(np.min(t))
+        sample_end = math.ceil(np.max(t))
+        if self.channels == 1:
+            sig = self._asig.sig[sample_start:sample_end].reshape(-1)
+        else:
+            sig = self._asig.sig[sample_start:sample_end, channel].reshape(-1)
+        if sig.shape[0] == 0:
+            return np.empty(0)
+        return np.interp(
+            t,
+            np.arange(sample_start, sample_start + sig.shape[0]),
+            sig,
+        )
+
+
 class Line(SingleChannelGen):
     """Generator for simple lines.
 
