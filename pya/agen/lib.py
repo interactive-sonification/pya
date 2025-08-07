@@ -4,6 +4,7 @@ import math
 import warnings
 from enum import Enum
 from typing import TYPE_CHECKING, Iterable, Sequence
+import threading
 
 import numpy as np
 from pya.asig import Asig
@@ -46,6 +47,33 @@ except ImportError:
 
     Tuple, float64, int64 = DummyType(), DummyType(), DummyType()
 
+
+# optional tkinter import for MouseX, MouseY and GUI related AGens
+_tkinter = None
+
+def get_tkinter():
+    global _tkinter
+    if _tkinter is None:
+        try:
+            _tkinter = __import__('tkinter')
+        except ImportError:
+            warnings.warn(
+                "tkinter is not installed. MouseX, MouseY won't work")
+            pass
+    return _tkinter
+
+_pynput = None
+
+def get_pynput():
+    global _pynput
+    if _pynput is None:
+        try:
+            _pynput = __import__('pynput')
+        except ImportError:
+            warnings.warn(
+                "pynput is not installed. MouseX, MouseY won't work")
+            pass
+    return _pynput
 
 
 class ChannelMappingStrategy(str, Enum):
@@ -1696,3 +1724,204 @@ class Pluck(AGen):
         result, last = _pluck_numba(self.wavetable, sample_count, last)
         self.state.data["last"] = last
         return result
+
+
+class MouseX(SingleChannelGen):
+    """Mouse Cursor Tracking sensor for the x coordinate.
+
+    Parameters
+    ----------
+    minval : float
+        value delivered for MouseX coordinate 0
+    maxval : float
+        value delivered for MouseX coordinate 1
+    mode : str
+        "abs" for absolute coordinates, ignorse minval and maxval
+
+    Returns:
+        SingleChannelGen: generator usable in realtime synths
+    """
+
+    def __init__(
+        self, minval: float = 0.0, maxval: float = 1, mode: str = "rel", *args, **kwargs
+    ):
+        super().__init__(*args, **kwargs)
+        # self.pyautogui = get_pyautogui()
+        # if not self.pyautogui:
+        #     print("Error: Cannot import pyautogui.")
+        #     return
+
+        self.tkinter = get_tkinter()
+        if not self.tkinter:
+            print("Error: Cannot import tkinter.")
+            return
+
+        root = _tkinter.Tk()
+        self.desktop_width = root.winfo_screenwidth()
+        self.desktop_height = root.winfo_screenheight()
+        root.destroy()
+
+        self.pynput = get_pynput()
+        if not self.pynput:
+            print("Error: Cannot import pynput.")
+            return
+        self.mouse_controller = self.pynput.mouse.Controller()
+
+        self.minval = minval
+        self.maxval = maxval
+        self.mode = mode
+
+    def _generate_single(
+        self,
+        sample_count: int,  # The amount of samples that should be generated
+        start: int,  # The index of the first sample
+    ) -> np.ndarray:
+        # x = self.pyautogui.position().x
+        x = self.mouse_controller.position[0]
+        if self.mode == "rel":
+            x = x / self.desktop_width * (self.maxval - self.minval) + self.minval
+        return np.full(sample_count, x)
+
+
+class MouseY(SingleChannelGen):
+    """Mouse Cursor Tracking sensor for the y coordinate.
+
+    Parameters
+    ----------
+    minval : float
+        value delivered for Mouse cursor y-coordinate (default: 0)
+    maxval : float
+        value delivered for Mouse cursor y-coordinate (default: 1)
+    mode : str
+        "abs" for absolute coordinates, ignorse minval and maxval
+
+    Returns:
+        SingleChannelGen: generator usable in realtime synths
+    """
+
+    def __init__(
+        self, minval: float = 0.0, maxval: float = 1, mode: str = "rel", *args, **kwargs
+    ):
+        super().__init__(*args, **kwargs)
+        self.tkinter = get_tkinter()
+        if not self.tkinter:
+            print("Error: Cannot import tkinter.")
+            return
+
+        root = _tkinter.Tk()
+        self.desktop_width = root.winfo_screenwidth()
+        self.desktop_height = root.winfo_screenheight()
+        root.destroy()
+
+        self.pynput = get_pynput()
+        if not self.pynput:
+            print("Error: Cannot import pynput.")
+            return
+        self.mouse_controller = self.pynput.mouse.Controller()
+
+        self.minval = minval
+        self.maxval = maxval
+        self.mode = mode
+
+    def _generate_single(
+        self,
+        sample_count: int,  # The amount of samples that should be generated
+        start: int,  # The index of the first sample
+    ) -> np.ndarray:
+        y = self.mouse_controller.position[1]
+
+        if self.mode == "rel":
+            y = y / self.desktop_height * (self.maxval - self.minval) + self.minval
+        return np.full(sample_count, y)
+
+
+class MouseListenerManager:
+    _instance = None
+    _lock = threading.Lock()
+
+    def __new__(cls):
+        cls.pynput = get_pynput()
+        if not cls.pynput:
+            print("Error: Cannot import pynput.")
+            return
+        cls.mouse = cls.pynput.mouse
+
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = super(MouseListenerManager, cls).__new__(cls)
+                cls._instance._mouse_states = {
+                    "left": False,
+                    "middle": False,
+                    "right": False,
+                }
+                cls._instance._listener = None
+                cls._instance._listener_reference_count = 0
+                cls._instance._listener_lock = threading.Lock()
+        return cls._instance
+
+    def _on_click(self, x, y, button, pressed):
+        with self._listener_lock:
+            self._mouse_states[button.name] = pressed
+
+    def start_listener(self):
+        with self._listener_lock:
+            if self._listener is None:
+                self._listener = self.mouse.Listener(on_click=self._on_click)
+                self._listener.start()
+            self._listener_reference_count += 1
+
+    def stop_listener(self):
+        with self._listener_lock:
+            self._listener_reference_count -= 1
+            if self._listener_reference_count == 0 and self._listener is not None:
+                self._listener.stop()
+                self._listener = None
+
+    def get_button_state(self, button):
+        if isinstance(button, int):
+            button = ["left", "middle", "right"][button]
+        with self._listener_lock:
+            return self._mouse_states.get(button, False)
+
+
+class MouseButton(SingleChannelGen):
+    """Mouse Button sensor for click status.
+
+    Parameters
+    ----------
+    offval : float
+        value delivered for Mouse button not presse (default: 0)
+    onval : float
+        value delivered for Mouse button pressed (default: 1)
+    button : integer | str
+        [0,1,2] for ["left", "middle", "right"] mouse button
+
+    Returns:
+        SingleChannelGen: generator usable in realtime synths
+    """
+
+    def __init__(
+        self, offval: float = 0.0, onval: float = 1, button: int = 0, *args, **kwargs
+    ):
+        super().__init__(*args, **kwargs)
+
+        self.pynput = get_pynput()
+        if not self.pynput:
+            print("Error: Cannot import pynput.")
+            return
+        self.offval = offval
+        self.onval = onval
+        self.button = button
+        self.listener_manager = MouseListenerManager()
+        self.listener_manager.start_listener()
+
+    def _generate_single(
+        self,
+        sample_count: int,  # The amount of samples that should be generated
+        start: int,  # The index of the first sample
+    ) -> np.ndarray:
+        b = self.listener_manager.get_button_state(self.button)
+        return np.full(sample_count, self.onval if b else self.offval)
+
+    def __del__(self):
+        self.listener_manager.stop_listener()
