@@ -759,6 +759,40 @@ class AGen(ABC):
         self.label = label
         return self
     
+    def mul(self, x: GenOrNum = 1.0) -> AGen:
+        """Multiply generator with x (GenOrNum), equivalent to (self * x). 
+        The functional form can be easier to write and chain with other methods.
+
+        Parameters
+        ----------
+        x: GenOrNum
+            The factor (either value or generator).
+        """
+        return self * x
+
+    def lvl(self, db: GenOrNum = 0) -> AGen:
+        """Level generator by x (GenOrNum) where db is in dB units.
+        This multiplies self with pam.db_to_amp(db).
+        The functional form can be easier to write and chain with other methods.
+
+        Parameters
+        ----------
+        db: GenOrNum
+            The change in deciBel to be applied to self.
+        """
+        return self * pam.db_to_amp(db)
+    
+    def add(self, x: GenOrNum = 0.0) -> AGen:
+        """Add x (GenOrNum to generator, equivalent to (self + x). 
+        The functional form can be easier to write and chain with other methods.
+
+        Parameters
+        ----------
+        x: GenOrNum
+            The term to be added to self (either value or generator).
+        """
+        return self + x
+
     def with_done(self, done: DoneAction | str) -> AGen:
         """Wraps this AGen with another AGen with `done` as done action. """
         return DoneGen(self, done)
