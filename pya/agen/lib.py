@@ -203,6 +203,39 @@ class BrownNoise(SingleChannelGen):
         return result
 
 
+@njit
+def _pink_noise_kellet(
+    length: int64, 
+    coeffs: float64[:] = np.zeros(7)
+    ) -> Tuple((float64[:], float64[:])):
+    sig = np.zeros(length)
+    for i in range(length):
+        white = np.random.random() * 1.98 - 0.99
+        coeffs[0] = 0.99886 * coeffs[0] + white * 0.0555179
+        coeffs[1] = 0.99332 * coeffs[1] + white * 0.0750759
+        coeffs[2] = 0.96900 * coeffs[2] + white * 0.1538520
+        coeffs[3] = 0.86650 * coeffs[3] + white * 0.3104856
+        coeffs[4] = 0.55000 * coeffs[4] + white * 0.5329522
+        coeffs[5] = -0.7616 * coeffs[5] - white * 0.0168980
+        sig[i] = np.sum(coeffs[:7]) + white * 0.5362
+        coeffs[6] = white * 0.115926
+    return sig, coeffs
+
+
+class PinkNoise(SingleChannelGen):
+    """Pink noise generator, using Paul Kellet's method.
+    - result is scaled to match sc3 PinkNoise power spectral density.
+        - cf. pya-develop-pinknoise.ipynb 
+    - filter coeffients are stored as state to enable blockwise computation
+    - numba acceleration enables fast computation.
+    """
+    def _generate_single(self, sample_count, start):
+        coeffs = self.state.data.get("coeffs", np.zeros(7))
+        result, updated_coeffs = _pink_noise_kellet(length=sample_count, coeffs=coeffs)
+        self.state.data["coeffs"] = updated_coeffs
+        return result / (10*np.sqrt(2)) # empiric scaling to match rms of sc3 PinkNoise 
+
+
 class LFPulse(SingleChannelGen):
     """Non-band-limited Pulse Oscillator. output in [0,1]
 
