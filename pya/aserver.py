@@ -297,11 +297,10 @@ class Aserver:
                 # time.sleep(asig.get_duration())
         return self
 
-    def scope_gui(self, pos=(-400, 0), size=(400, 300), rate=12):
+    def scope_gui(self, pos=(-400, 0), size=(400, 300), rate=25, mode="signal"):
         """Create and activate oscilloscope using pyagui Scope"""
-        print("scope-test")
         try:
-            from pyagui import Scope
+            from pya.gui import Scope
 
             self.scope = Scope(self.bs, self._channels, pos=pos, size=size, rate=rate)
             self.scope.start()
