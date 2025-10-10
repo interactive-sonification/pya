@@ -1645,6 +1645,73 @@ class OnePole(SingleChannelGen):
         return out
 
 
+class Lag(SingleChannelGen):
+    """OnePole filter out[i] = (1 - abs(coef[i])) * x[i] + coef[i] * y[i-1],
+    computing coef from given decay time tau to decay ratio decay_db
+
+    Parameters
+    ----------
+    gen
+        The input signal (generator / AGen)
+    tau
+        The lag time (GenOrNum)
+    yi
+        initial value of the filter delay (float): defaults to 0.0
+    decay_db
+        loss after time tau (float): defaults to -60
+    """
+
+    def __init__(
+        self,
+        gen: GenOrNum,
+        tau: GenOrNum,
+        yi: float = 0,
+        decay_db: float = -60,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self._add_node(tau, "tau", convert_num_to_arr=True)
+        self._add_node(gen, "gen", convert_num_to_arr=True)
+        self._yi = yi
+        self._decay_db = decay_db
+
+    @staticmethod
+    def _pole_coefficient(lag_time, sr=44100, decay_db=-60):
+        """Compute OnePole coefficient for signal to decay in a given lag time.
+        Parameters
+        ----------
+        lag_time (float): 
+            time in [s] for signal to decay to decay_db
+        sr (float): 
+            sampling rate, e.g. from Aserver
+        decay_db: 
+            decay in dB, usually -60 dB used, e.g. in SuperCollider's Lag.ar()
+
+        returns the OnePole coeffient.
+        """
+        from pyamapping import db_to_amp
+
+        alpha = -np.log(db_to_amp(decay_db)) / lag_time
+        return np.exp(-alpha / sr)
+
+    def _generate_single(self, sample_count, start):
+        y_1 = self.state.data.get("y_1", self._yi)
+        gen = self.nodes["gen"]
+        tau = self.nodes["tau"]
+        coef = self._pole_coefficient(lag_time=tau, sr=self.sr, decay_db=self._decay_db)
+        out, y_1 = _one_pole_numba(gen, coef, y_1)
+        self.state.data["y_1"] = y_1
+        return out
+
+
+def _lag(self, tau: float = 0.1, yi=0, decay_db: float = -60, *args, **kwargs):
+    return Lag(self, tau=tau, yi=yi, decay_db=decay_db, *args, **kwargs)
+
+
+AGen.lag = _lag
+
+
 @njit(Tuple((float64[:], float64))(float64[:], float64[:], float64))
 def _leaky_integrator_numba(
     x: np.ndarray,
