@@ -976,6 +976,18 @@ class AGen(ABC):
 
     def stereo(self) -> AGen:
         return stereo(self, self)
+    
+    def dup(self, n: int) -> MultiChannelGen:
+        """Duplicate AGen n times to create a MultiChannelGen.
+        This is inspired from SuperColliders dup() function
+
+        Parameters
+        ----------
+        n: int
+            The number of duplications
+        """
+        return MultiChannelGen([self]*n)
+
 
     def mix(self) -> MixGen:
         """Mix the channels of the generator."""
