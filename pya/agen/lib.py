@@ -140,16 +140,17 @@ class SinOsc(SingleChannelGen):
     ----------
     freq
         The frequency of the oscillator in Hz.
-    amp
-        The amplitude of the oscillator.
     phase
         The phase of the oscillator in radians.
+    amp
+        The amplitude of the oscillator.
     """
 
     def __init__(
         self,
-        freq: GenOrNum,
+        freq: GenOrNum = 440.0,
         phase: GenOrNum = 0.0,
+        amp: GenOrNum = 1.0,
         *args,
         **kwargs,
     ):
@@ -157,6 +158,7 @@ class SinOsc(SingleChannelGen):
 
         self._add_node(freq, "freq", convert_num_to_arr=True)
         self._add_node(phase, "phase")
+        self._add_node(amp, "amp")
 
     def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
         m_phase = self.state.data.get("m_phase", 0)
@@ -172,7 +174,7 @@ class SinOsc(SingleChannelGen):
         x = phases[:-1] + self.nodes["phase"]
         if x.shape[0] > 0:
             self.state.data["m_phase"] = phases[-1]
-        return np.sin(x)
+        return np.sin(x) * self.nodes["amp"]
 
 
 class WhiteNoise(SingleChannelGen):
@@ -236,6 +238,61 @@ class PinkNoise(SingleChannelGen):
         return result / (10*np.sqrt(2)) # empiric scaling to match rms of sc3 PinkNoise 
 
 
+class LFImpulse(SingleChannelGen):
+    """
+    Non-band-limited single sample impulses.
+
+    Parameters
+    ----------
+    freq
+        The frequency of the oscillator in Hz. Clips at Nyquist.
+    phase
+        The phase of the oscillator in cycles (0..1).
+    amp
+        The amplitude of the oscillator.
+
+
+    LFImpulse will output a 1.0 on the first sample (assuming no phase offset).
+    If the initial freq = 0, a single impulse is output on first sample, followed by silence until the frequency changes.
+
+    """
+    def __init__(
+        self,
+        freq: GenOrNum = 440.0,
+        phase: GenOrNum = 0.0,
+        amp: GenOrNum = 1.0,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+        self._add_node(freq, "freq", convert_num_to_arr=True)
+        self._add_node(phase, "phase")
+        self._add_node(amp, "amp")
+
+    def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
+        m_phase = self.state.data.get("m_phase", 0)
+
+        # Use a cumsum here to account for varying frequencies
+        phases = np.cumsum(
+            np.concatenate(
+                [
+                    np.array([m_phase]),
+                    - np.minimum(self.nodes["freq"], self.sr/2) / self.sr,
+                ]
+            )
+        )
+
+        phases %= 1
+
+        if phases.shape[0] > 0:
+            self.state.data["m_phase"] = phases[-1]
+
+        phases = (phases - self.nodes["phase"]) % 1
+        # Create impulses every time the phase wraps from 0 to 1
+        return (phases[1:] > phases[:-1]) * self.nodes["amp"]
+
+
 class LFPulse(SingleChannelGen):
     """Non-band-limited Pulse Oscillator. output in [0,1]
 
@@ -291,16 +348,17 @@ class LFSaw(AGen):
     ----------
     freq
         The frequency of the oscillator in Hz.
-    amp
-        The amplitude of the oscillator.
     phase
         The initial (normalized) phase of the oscillator [0, 1].
+    amp
+        The amplitude of the oscillator.
     """
 
     def __init__(
         self,
         freq: GenOrNum,
         phase: GenOrNum = 0.0,
+        amp: GenOrNum = 1.0,
         *args,
         **kwargs,
     ) -> None:
@@ -308,6 +366,7 @@ class LFSaw(AGen):
 
         self._add_node(freq, "freq", convert_num_to_arr=True)
         self._add_node(phase, "phase")
+        self._add_node(amp, "amp")
 
     def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
         # Use a cumsum here to account for varying frequencies
@@ -324,7 +383,7 @@ class LFSaw(AGen):
         x = phases[:-1] + self.nodes["phase"]
         if x.shape[0] > 0:
             self.state.data["m_phase"] = phases[-1]
-        return ((x - 0.5) % 1.0) * 2 - 1
+        return (((x - 0.5) % 1.0) * 2 - 1) * self.nodes["amp"]
 
 
 class LFTri(AGen):
