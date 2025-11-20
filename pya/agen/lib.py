@@ -781,6 +781,65 @@ class ADSR(SingleChannelGen):
         )
 
 
+class Release(SingleChannelGen):
+    """Generator for gated fading-out on gate <= 0.
+    This is a test for a realtime gate to be checked.
+    - when gate set to 0 or negative 0, Release starts a release curve, 
+      starting from value 1, ending at 0 after specified duration.
+    - at the end the AGen behaves according to the done, the default is 'stop'
+
+    Parameters
+    ----------
+    gate
+        The gate signal (default 1), release starts once gate drops <= 0
+    duration
+        The duration of the fade out in seconds.
+    curve
+        The curve of the fade out (1=linear, f_c(t) = (1-t/dur)^c
+    """
+
+    def __init__(
+            self, 
+            gate: GenOrNum, 
+            duration: float, 
+            curve: int | float = 1, 
+            *args, 
+            **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+        self._add_node(gate, "gate", convert_num_to_arr=True)
+        self.duration = duration
+        self.curve = curve
+        self.slope_per_sample = -1 / self.sr / self.duration
+
+    def _generate_single(self, sample_count: int, start: int) -> np.ndarray:
+        start_fade = self.state.data.get("start_fade", None)
+        if start_fade is None:
+            gs = self.nodes["gate"]
+            # find first index where gate gets non-positive
+            idx = np.argmax(gs <= 0)
+            if not (gs <= 0).any():
+                idx = None   # no zero/negative found
+            if idx is not None:  # if we have a release event
+                start_fade = start + idx 
+                self.state.data["start_fade"] = start_fade
+
+        # in case now release happened yet:
+        if start_fade is None or start + sample_count <= start_fade:
+            return np.ones(sample_count)
+
+        # compute release ramp.
+        end_sample = start_fade + int(self.duration * self.sr) # idx where 0 is reached.
+        new_sample_count = min(max(end_sample - start, 0), sample_count) # clip to [0, sample_count]
+        x1 = start - start_fade  # is < 0 if start_fade is after block start
+        y1 = 1 + x1 * self.slope_per_sample
+        y2 = y1 + new_sample_count * self.slope_per_sample
+        samples = np.clip(np.linspace(y1, y2, new_sample_count, endpoint=False), 0, 1) ** self.curve
+        # samples = np.maximum(np.linspace(y1, y2, new_sample_count, endpoint=False), 0) ** self.curve
+        return samples
+    
+
 class Env(SingleChannelGen):
     """Env Envelope
 
