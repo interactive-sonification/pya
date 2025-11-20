@@ -466,6 +466,178 @@ class IndexMode(str, Enum):
     """index interval in seconds using Asig sr"""
 
 
+class LoopAsig(AGen):
+    """Generator for playing and looping in Asig objects.
+
+    Note that this AGen does not support specifying a custom sample rate as it always
+    uses the sample rate of the provided Asig.
+    To resample the provided Asig, instead wrap this AGen with a `ResampleGen`.
+
+    Parameters
+    ----------
+    asig
+        The Asig object to play.
+    rate
+        The rate at which to play the Asig: 
+        - 1 is normal, -1 is backwards
+        - 0.5 is one octave down, 2 is one octave up
+    gate
+        signal to control loop/reset behavior:
+        - positive gate starts/resets playback position immediately to start_pos
+        - negative gate deactivates loop condition, i.e. plays rest until Asig end.
+    start_pos
+        sample frame to start (and restart on positive gatee)
+    start_loop
+        sample frame to wrap to on a loop condition (i.e. first sample of loop)
+    end_loop
+        sample frame to end loop (i.e. last sample included)
+    mode: IndexMode | str (Default: IndexMode.INDEX)
+        either "index" for raw index, "rad" for (0..2pi), "one" for (0..1) range,
+        or "time" for time [s].
+    loop: bool
+        whether the Asig should be looped.
+    """
+
+    def __init__(
+        self,
+        asig: Asig | np.ndarray | str,
+        rate: GenOrNum = 1,
+        gate: GeonOrNum = 1,
+        start_pos: GenOrNum = 0,
+        start_loop: GenOrNum = 0,
+        end_loop: GenOrNum = 1,
+        mode: str | IndexMode = IndexMode.INDEX, 
+        loop: bool = False,
+        *args,
+        sr: int | None = None,
+        **kwargs,
+    ):
+        assert (
+            sr is None or not isinstance(asig, Asig)
+        ), "Cannot use custom sample rate here. LoopAsig always uses the sample rate of the provided ASig"
+        if not isinstance(asig, Asig):
+            if sr is None:
+                sr = config.AUDIO_RATE
+            asig = Asig(asig, sr=sr)
+        
+        super().__init__(
+            sr=asig.sr,
+            label=asig.label,
+            channels=asig.channels,
+            cn=asig.cn,
+            **kwargs,
+        )
+        self.loop = loop
+        self._asig = asig
+        self.mode = mode
+        self.loop_flag = True
+
+
+        self._add_node(rate, "rate", convert_num_to_arr=True)
+        self._add_node(gate, "gate", convert_num_to_arr=True)
+        self._add_node(start_pos, "start_pos", convert_num_to_arr=False)
+        self._add_node(start_loop, "start_loop", convert_num_to_arr=False)
+        self._add_node(end_loop, "end_loop", convert_num_to_arr=False)
+
+    def _generate_new(self, sample_count, start, channel):
+        gate = self.nodes['gate']
+        rate = self.nodes['rate']
+
+        factor = 1 # scale for start_pos, start_loop, end_loop
+        match self.mode:
+            case IndexMode.RAD:
+                factor = self._asig.samples / (2 * np.pi)
+            case IndexMode.ONE: 
+                factor = self._asig.samples
+            case IndexMode.TIME:
+                factor = self._asig.sr
+            case IndexMode.INDEX:
+                pass
+            case _:
+                print("Warning: unknown index mode: using IndexMode.Index")
+
+        start_pos = np.floor(self.nodes['start_pos'] * factor)
+        start_loop = np.floor(self.nodes['start_loop'] * factor)
+        end_loop = np.floor(self.nodes['end_loop'] * factor)
+
+        t_current = self.state.data.get("current_t", start_pos)
+
+        t = np.zeros_like(gate)
+        n = self._asig.samples
+        t_next = t_current
+        n_max = min(sample_count, len(gate), len(rate)) 
+
+        # for i in range(0, n_max):
+        #     if t_next >= n-1: # beyond end of asig
+        #         if self.loop:
+        #             t_next -= n  # jump to beginning
+        #         else:
+        #             break
+        #     t[i] = t_next
+        #     t_next += rate[i]
+ 
+        #     if gate[i] < 0: # play to end
+        #         continue
+        #     if gate[i] == 0 and t_next >= end_loop and t[i] < end_loop:  # loop between points
+        #         t_next -= (end_loop - start_loop) # keeps fractional intact
+        #         continue
+        #     if gate[i] > 0: # retrigger to start_pos
+        #         t_next = start_pos
+        #         continue
+
+        m_gate = self.state.data.get("m_gate", 0) # memorized last gate
+        for i in range(0, n_max):
+            if t_next >= n-1: # beyond end of asig
+                if self.loop:
+                    t_next = n-1  # stay at end
+                else:
+                    break
+            t[i] = t_next
+            t_next += rate[i]
+            new_gate = gate[i]
+            if new_gate > 0 and m_gate <= 0: # start from startop
+                t_next = start_pos
+                m_gate = new_gate
+                self.loop_flag = True
+                continue
+            if new_gate <= 0 and m_gate > 0: # play to end
+                m_gate = new_gate
+                self.loop_flag = False
+                continue
+            # if neither positive nor negative condition: make sure to loop
+            if self.loop_flag:
+                if t[i] < end_loop and t_next >= end_loop:  # loop between points
+                    t_next = start_loop + t_next % 1.0 # keeps fractional intact
+                continue
+        self.state.data["current_t"] = t_next
+        self.state.data["m_gate"] = new_gate # persist last gate for next block
+        sample_start = math.floor(np.min(t))
+        sample_end = math.ceil(np.max(t))
+
+        if sample_start == sample_end:  # if e.g. hold at start_pos
+            ch = self._asig.channels
+            if ch == 1:
+                return np.ones(i+1) * self._asig.sig[sample_start]
+            else:
+                return np.ones(i+1) * self._asig.sig[sample_start, channel%self._asig.channels]
+
+        
+        if self.channels == 1:
+            sig = self._asig.sig[sample_start:sample_end].reshape(-1)
+        else:
+            sig = self._asig.sig[sample_start:sample_end, channel].reshape(-1)
+
+        # for debugging: see when AGen ended
+        # if i+1 != sample_count:
+        #     print("ended!")
+
+        return np.interp(
+            t[:i+1],
+            np.arange(sample_start, sample_start + sig.shape[0]),
+            sig,
+        )
+
+
 class AsigRead(AGen):
     """Generator for reading Asig objects (as Buffer).
     (equivalent to BufRd in SuperCollider 3)
@@ -836,7 +1008,6 @@ class Release(SingleChannelGen):
         y1 = 1 + x1 * self.slope_per_sample
         y2 = y1 + new_sample_count * self.slope_per_sample
         samples = np.clip(np.linspace(y1, y2, new_sample_count, endpoint=False), 0, 1) ** self.curve
-        # samples = np.maximum(np.linspace(y1, y2, new_sample_count, endpoint=False), 0) ** self.curve
         return samples
     
 
