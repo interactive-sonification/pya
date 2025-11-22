@@ -34,10 +34,11 @@ class Aserver:
     default = None  # that's the default Aserver if Asigs play via it
 
     @staticmethod
-    def startup_default_server(**kwargs):
+    def startup_default_server(input_flag=False, **kwargs):
         if Aserver.default is None:
             _LOGGER.info("Aserver startup_default_server: create and boot")
             Aserver.default = Aserver(**kwargs)  # using all default settings
+            Aserver.default.input_flag = input_flag
             Aserver.default.boot()
             _LOGGER.info("Default server info: %s", Aserver.default)
         else:
@@ -196,11 +197,17 @@ class Aserver:
         self.boot_time = time.time()
         self.block_time = self.boot_time
         self.block_cnt = 0
-        self.stream = self.backend.open(channels=self.channels, rate=self.sr,
-                                        input_flag=False, output_flag=True,
-                                        frames_per_buffer=self.bs,
-                                        output_device_index=self.device,
-                                        stream_callback=self._play_callback)
+        # for now to enable AudioIn use Aserver.default.input_flag = True
+        input_flag = getattr(self, "input_flag", False)
+        self.stream = self.backend.open(
+            channels=self.channels,
+            rate=self.sr,
+            input_flag=input_flag,
+            output_flag=True,
+            frames_per_buffer=self.bs,
+            output_device_index=self.device,
+            stream_callback=self._play_callback,
+        )
         self._is_active = self.stream.is_active()
         _LOGGER.info("Server Booted")
         return self
@@ -314,6 +321,7 @@ class Aserver:
 
     def _play_callback(self, in_data, frame_count, time_info, flag):
         """callback function, called from pastream thread when data needed."""
+        self.latest_input = in_data
         tnow = self.block_time
         self.block_time += self.block_duration
         # self.block_cnt += 1  # TODO this will get very large eventually
