@@ -5,6 +5,7 @@ import warnings
 from enum import Enum
 from typing import TYPE_CHECKING, Iterable, Sequence
 import threading
+import sys
 
 import numpy as np
 from pya.asig import Asig
@@ -142,15 +143,12 @@ class SinOsc(SingleChannelGen):
         The frequency of the oscillator in Hz.
     phase
         The phase of the oscillator in radians.
-    amp
-        The amplitude of the oscillator.
     """
 
     def __init__(
         self,
         freq: GenOrNum = 440.0,
         phase: GenOrNum = 0.0,
-        amp: GenOrNum = 1.0,
         *args,
         **kwargs,
     ):
@@ -158,11 +156,16 @@ class SinOsc(SingleChannelGen):
 
         self._add_node(freq, "freq", convert_num_to_arr=True)
         self._add_node(phase, "phase")
-        self._add_node(amp, "amp")
 
     def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
         m_phase = self.state.data.get("m_phase", 0)
         # Use a cumsum here to account for varying frequencies
+
+        # TODO: parity check + profiling
+        # increments = self.nodes["freq"] / self.sr * 2.0 * np.pi
+        # increments[0] += m_phase
+        # phases = np.cumsum(increments)
+
         phases = np.cumsum(
             np.concatenate(
                 [
@@ -171,10 +174,11 @@ class SinOsc(SingleChannelGen):
                 ]
             )
         )
+
         x = phases[:-1] + self.nodes["phase"]
         if x.shape[0] > 0:
             self.state.data["m_phase"] = phases[-1]
-        return np.sin(x) * self.nodes["amp"]
+        return np.sin(x)
 
 
 class WhiteNoise(SingleChannelGen):
@@ -245,22 +249,19 @@ class LFImpulse(SingleChannelGen):
     Parameters
     ----------
     freq
-        The frequency of the oscillator in Hz. Clips at Nyquist.
+        The frequency of the oscillator in Hz. range (0Hz..Nyquist frequency).
     phase
         The phase of the oscillator in cycles (0..1).
-    amp
-        The amplitude of the oscillator.
 
 
-    LFImpulse will output a 1.0 on the first sample (assuming no phase offset).
-    If the initial freq = 0, a single impulse is output on first sample, followed by silence until the frequency changes.
-
+    LFImpulse will output a 1.0 on the first sample (if phase == 0).
+    If the initial freq is 0, a single impulse is output on first sample, 
+    followed by silence until the frequency changes.
     """
     def __init__(
         self,
         freq: GenOrNum = 440.0,
         phase: GenOrNum = 0.0,
-        amp: GenOrNum = 1.0,
         *args,
         **kwargs,
     ):
@@ -268,29 +269,29 @@ class LFImpulse(SingleChannelGen):
 
         self._add_node(freq, "freq", convert_num_to_arr=True)
         self._add_node(phase, "phase")
-        self._add_node(amp, "amp")
 
     def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
-        m_phase = self.state.data.get("m_phase", 0)
+        # To ensure first output is 1 if input phase == 0
+        m_phase = self.state.data.get("m_phase", -sys.float_info.min)
 
         # Use a cumsum here to account for varying frequencies
+        #increments = np.empty(min(sample_count, self.nodes["freq"].shape[0]) + 1)
+        #increments[0] = m_phase
+        #increments[1:] = np.minimum(self.nodes["freq"], self.sr/2) / self.sr
+        #phases = np.cumsum(increments)
+
         phases = np.cumsum(
             np.concatenate(
                 [
                     np.array([m_phase]),
-                    - np.minimum(self.nodes["freq"], self.sr/2) / self.sr,
+                    np.minimum(self.nodes["freq"], self.sr/2) / self.sr,
                 ]
             )
         )
 
-        phases %= 1
-
-        if phases.shape[0] > 0:
-            self.state.data["m_phase"] = phases[-1]
-
-        phases = (phases - self.nodes["phase"]) % 1
-        # Create impulses every time the phase wraps from 0 to 1
-        return (phases[1:] > phases[:-1]) * self.nodes["amp"]
+        self.state.data["m_phase"] = phases[-1] % 1
+        phases = (phases + self.nodes["phase"]) % 1
+        return (phases[1:] < phases[:-1])
 
 
 class LFPulse(SingleChannelGen):
