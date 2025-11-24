@@ -11,7 +11,7 @@ from IPython.display import display
 
 
 def get_audio_input_data(server=None):
-    """get aserver input data as numpy array.
+    """get Aserver input data as numpy array.
 
     Args:
         server (Aserver | None): the Aserver. Defaults to None.
@@ -30,15 +30,33 @@ def get_audio_input_data(server=None):
     return samples, server.sr
 
 
+def get_audio_output_data(server=None):
+    """get Aserver output data as numpy array.
+
+    Args:
+        server (Aserver | None): the Aserver. Defaults to None.
+        on None, Aserver.default will be used
+
+    Returns:
+        np.ndarray: the output data of shape (server.bs,  server.channels).
+
+    ToDo: move function to Aserver.
+    """
+    if not server:
+        server = Aserver.default
+    return server.latest_output.copy(), server.sr
+
+
 class ScopeWidget:
 
-    def __init__(self, server=None, fps=5, figsize=(8, 3)):
+    def __init__(self, server=None, fps=5, mode="input", figsize=(8, 3)):
         """ScopeWidget - a Scope/FreqScope view for Jupyter notebooks
         for interactive contexts using %matplotlib widget
 
         Args:
             server (Aserver, optional): pya Aserver. Defaults to None.
             fps (int, optional): frames per second for rendering. Defaults to 5.
+            mode (str, optional): "input" or "output"
             figsize (tuple, optional): figure size. Defaults to (8, 3).
         """
         self.server = server
@@ -48,32 +66,45 @@ class ScopeWidget:
         self.sr = self.server.sr
         self.fps = fps
 
-        # it is assumed that %matplotlib widget is used
-        self.fig = plt.figure(figsize=figsize)
+        self.output = widgets.Output()
+        with self.output:
+            # it is assumed that %matplotlib widget is used
+            self.fig = plt.figure(figsize=figsize)
 
-        # signal plot on the left
-        self.axsig = plt.subplot(1, 2, 1)
-        (self.line2Dsig,) = self.axsig.plot([], [], "b-")
-        plt.xlabel("time")
-        plt.ylabel("signal [arb. units]")
-        plt.grid()
+            # signal plot on the left
+            self.axsig = plt.subplot(1, 2, 1)
+            (self.line2Dsig,) = self.axsig.plot(
+                [0, self.server.bs / self.sr], [0, 0], "b-"
+            )
+            plt.xlabel("time")
+            plt.ylabel("signal [arb. units]")
+            plt.grid()
 
-        # spectrum plot on the right
-        self.axspec = plt.subplot(1, 2, 2)
-        (self.line2Dspec,) = self.axspec.plot([1, 22050], [1e2, 1e-5], "b-")
-        plt.xlabel("frequency")
-        plt.ylabel("E(w) [arb. units]")
-        plt.grid()
-        plt.tight_layout()
-        self.axspec.set_xscale("log")
-        self.axspec.set_yscale("log")
+            # spectrum plot on the right
+            self.axspec = plt.subplot(1, 2, 2)
+            (self.line2Dspec,) = self.axspec.plot([1, 22050], [1e2, 1e-5], "b-")
+            plt.xlabel("frequency")
+            plt.ylabel("E(w) [arb. units]")
+            plt.grid()
+            plt.tight_layout()
+            self.axspec.set_xscale("log")
+            self.axspec.set_yscale("log")
+            plt.show()
 
         @staticmethod
         def update(frame):
-            sig, sr = get_audio_input_data(self.server)
-            self.line2Dsig.set_data(np.linspace(0, 1.0, sig.shape[0]), sig[:, 0])
+            if self.mode == "input":
+                sig, sr = get_audio_input_data(self.server)
+            else:
+                sig, sr = get_audio_output_data(self.server)
+            block_size = sig.shape[0]
+            self.line2Dsig.set_data(
+                np.linspace(0, block_size / sr, block_size, endpoint=False), sig[:, 0]
+            )
             spec = np.fft.rfft(sig[:, 0], axis=0)
-            self.line2Dspec.set_data(np.linspace(0, 22050, spec.shape[0]), np.abs(spec))
+            self.line2Dspec.set_data(
+                np.linspace(0, sr // 2, spec.shape[0]), np.abs(spec)
+            )
 
         self.ani = FuncAnimation(
             self.fig,
@@ -83,28 +114,29 @@ class ScopeWidget:
             interval=int(1000 / self.fps),
             save_count=10,
         )
-        plt.show()
+        # plt.show()
 
         def quit(event):
             self.ani.event_source.stop()
             self.__del__()
 
-        self.btn_quit = widgets.Button(description="Shutdown")
+        layout = widgets.Layout(width="70px")
+
+        self.btn_quit = widgets.Button(description="Quit", layout=layout)
         self.btn_quit.on_click(quit)
 
         def pause(event):
             self.ani.pause()
 
-        self.btn_pause = widgets.Button(description="Pause")
+        self.btn_pause = widgets.Button(description="Pause", layout=layout)
         self.btn_pause.on_click(pause)
 
         def resume(event):
             self.ani.resume()
 
-        self.btn_resume = widgets.Button(description="Resume")
+        self.btn_resume = widgets.Button(description="Resume", layout=layout)
         self.btn_resume.on_click(resume)
 
-        # self.wdg = interactive(self.set_fps, fps=(1, 50, 1))
         self.fps_wdg = widgets.IntSlider(
             description="fps",
             value=self.fps,
@@ -114,21 +146,45 @@ class ScopeWidget:
         )
 
         def on_fps_value_change(change):
-            self.set_fps(change["new"])
+            self.fps = change["new"]
 
         self.fps_wdg.observe(on_fps_value_change, names="value")
 
-        display(
-            widgets.HBox(
-                [self.fps_wdg, self.btn_quit, self.btn_pause, self.btn_resume],
-                layout=widgets.Layout(
-                    display="flex",
-                    flex_flow="row wrap",
-                    align_items="stretch",
-                    width="100%",
-                ),
-            )
+        self.mode_wdg = widgets.Dropdown(
+            options=["input", "output"],
+            description="Source:",
+            # intent=False,
+            layout=widgets.Layout(width="160px"),
         )
+
+        self.mode = mode  # at the moment a string ("input" or "output")
+
+        def on_mode_change(change):
+            self.mode = change["new"]
+
+        self.mode_wdg.observe(on_mode_change, names="value")
+
+        self.scope_widgets = widgets.VBox(
+            [
+                self.output,
+                widgets.HBox(
+                    [
+                        self.fps_wdg,
+                        self.mode_wdg,
+                        self.btn_quit,
+                        self.btn_pause,
+                        self.btn_resume,
+                    ],
+                    layout=widgets.Layout(
+                        display="flex",
+                        flex_flow="row wrap",
+                        align_items="stretch",
+                        width="100%",
+                    ),
+                ),
+            ]
+        )
+        self.show()  # display plot and widgets
 
         # some interaction features / keybindings
         def on_key(event):
@@ -160,17 +216,56 @@ class ScopeWidget:
                 ax.relim()  # get data limits
                 ax.autoscale()  # and apply these
 
+            if event.key == "r":
+                ax = event.inaxes
+                if ax == self.axsig:
+                    ax.set_xlim(0, self.server.bs / self.server.sr)
+                    ax.set_yscale("linear")
+                    ax.set_xscale("linear")
+                    ax.set_ylim(-1.2, 1.2)
+
+                elif ax == self.axspec:
+                    ax.set_xlim(1, self.server.sr // 2)
+                    ax.set_ylim(0.001, 100)
+                    ax.set_yscale("log")
+                    ax.set_xscale("log")
+
         self.cid = self.fig.canvas.mpl_connect("key_press_event", on_key)
 
-    def set_fps(self, fps=5):
-        self.fps = fps
-        self.ani._interval = int(1000 / fps)
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, value):
+        if value in ["input", "output"]:
+            self._mode = value
+            self.mode_wdg.value = value
+        else:
+            raise ValueError("Mode must be either 'input' or 'output'.")
+
+    @property
+    def fps(self):
+        return self._fps
+
+    @fps.setter
+    def fps(self, value):
+        self._fps = value
+        try:  # works only after initialization of FuncAnimation
+            self.ani._interval = int(1000 / value)
+            self.fps_wdg.value = value
+        except BaseException:
+            pass
 
     def __del__(self):
         del self.ani
 
+    def show(self):
+        """display the scope UI including plot and widgets"""
+        display(self.scope_widgets)
+
     def init_plot(self):
-        self.axsig.set_xlim(0, 1)
+        self.axsig.set_xlim(0, self.server.bs / self.sr)
         self.axsig.set_ylim(-1.2, 1.2)
         self.axspec.set_xlim(10, self.sr)
         self.axspec.set_ylim(0.0001, 1)
