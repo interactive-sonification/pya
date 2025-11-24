@@ -10,7 +10,7 @@ class AserverGUI:
         self.audio_devices = device_info(verbose=False)
         self.blocksize = 1024
         self.sr = 44100
-        self.index = determine_backend().get_default_output_device_info()['index']
+        self.index = determine_backend().get_default_output_device_info()["index"]
 
         # audio device selector dropdown
         self.device_selector = widgets.Dropdown(
@@ -19,7 +19,7 @@ class AserverGUI:
             ],
             description="AOut Device:",
             disabled=False,
-            value=self.audio_devices[self.index]['name'],
+            value=self.audio_devices[self.index]["name"],
         )
 
         def on_pyagui_device_selection_change(change):
@@ -33,7 +33,21 @@ class AserverGUI:
 
         self.device_selector.observe(on_pyagui_device_selection_change, names="value")
 
-        # sr  selector
+        # input_flag selector
+        self.input_flag_wdg = widgets.Checkbox(
+            value=False,  # Initialzustand
+            description="AudioIn",
+            indent=False,  # Entfernt den zusätzlichen Einzug
+            layout=widgets.Layout(width="70px"),
+        )
+        self.input_flag = self.input_flag_wdg.value
+
+        def on_input_flag_wdg_change(change):
+            self.input_flag = change["new"]
+
+        self.input_flag_wdg.observe(on_input_flag_wdg_change, names="value")
+
+        # sr selector
         self.sr_wdg = widgets.IntText(
             description="sr:",
             value=self.sr,
@@ -59,7 +73,7 @@ class AserverGUI:
 
         # reboot button
         self.reboot_button = widgets.Button(
-            description="reboot", layout={"width": "60px"}
+            description="(re)boot", layout={"width": "75px"}
         )
 
         def on_reboot_button_click(change):
@@ -67,7 +81,12 @@ class AserverGUI:
             global s
             if "s" in globals() and isinstance(s, Aserver):
                 s.shutdown_default_server()
-            s = startup(sr=int(self.sr), device=self.index, bs=self.blocksize)
+            s = startup(
+                sr=int(self.sr),
+                device=self.index,
+                input_flag=self.input_flag,
+                bs=self.blocksize,
+            )
 
         self.reboot_button.on_click(on_reboot_button_click)
 
@@ -111,20 +130,29 @@ class AserverGUI:
         )
         self.stop_button.on_click(on_pyagui_stop_button_click)
 
-        # display GUI
-        display(
-            widgets.HBox(
-                [
-                    self.device_selector,
-                    self.sr_wdg,
-                    self.blocksize_wdg,
-                    self.reboot_button,
-                    self.test_tone_button,
-                    self.scope_button,
-                    self.stop_button,
-                ]
-            )
+        self.all_widgets = widgets.HBox(
+            [
+                self.device_selector,
+                self.sr_wdg,
+                self.blocksize_wdg,
+                self.input_flag_wdg,
+                self.reboot_button,
+                self.test_tone_button,
+                self.scope_button,
+                self.stop_button,
+            ],
+            layout=widgets.Layout(
+                display="flex",
+                flex_flow="row wrap",
+                align_items="stretch",
+                width="100%",
+            ),
         )
+        self.show()  # render GUI
+
+    def show(self):
+        display(self.all_widgets)
+
 
 class AGenPlayGUI:
 
@@ -137,27 +165,29 @@ class AGenPlayGUI:
                 s.stop()
             else:
                 print("no pya server.")
+
         self.stop_button = widgets.Button(
-            description='Stop',
-            tooltip='Stop all scheduled events on AServer',
-            layout=widgets.Layout(width='100px')
+            description="Stop",
+            tooltip="Stop all scheduled events on AServer",
+            layout=widgets.Layout(width="100px"),
         )
         self.stop_button.on_click(on_pyagui_stop_button_click)
 
         # scope selector drowpown
         def on_pyagui_scope_selection_change(change):
             # TODO: change to Aserver.default
-            if 's' in globals():
-                s.scope.set_mode(change['new'])
+            if "s" in globals():
+                s.scope.set_mode(change["new"])
             else:
                 print("no pya server")
+
         self.mode_selector = widgets.Dropdown(
-            options=['signal', 'spectrum'],
-            value='signal',
-            description='Mode:',
+            options=["signal", "spectrum"],
+            value="signal",
+            description="Mode:",
             disabled=False,
         )
-        self.mode_selector.observe(on_pyagui_scope_selection_change, names='value')
+        self.mode_selector.observe(on_pyagui_scope_selection_change, names="value")
 
         self.pyagui_gui_hbox = widgets.HBox([self.mode_selector, self.stop_button])
 
@@ -166,4 +196,5 @@ class AGenPlayGUI:
             display(self.pyagui_gui_hbox)
 
         from pya.agen.core import AGen
+
         AGen.playx = _play_with_jupyter_gui
