@@ -107,6 +107,7 @@ class Aserver:
         self._stop = True
         self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
         self._is_active = False
+        self.latest_output = self.empty_buffer.copy()
 
         # TH: added for scope test
         self.scope = None 
@@ -325,6 +326,7 @@ class Aserver:
         tnow = self.block_time
         self.block_time += self.block_duration
         # self.block_cnt += 1  # TODO this will get very large eventually
+        self.block_cnt = (self.block_cnt + 1) % 1000  # to enable check for updates
         # just curious - not needed but for time stability check
         self.timejitter = time.time() - self.block_time
         if self.timejitter > 3 * self.block_duration:
@@ -387,7 +389,9 @@ class Aserver:
             del self.srv_curpos[i]
             del self.srv_outs[i]
 
-        # TH: added for scope
+        # data maintenance for scope, ScopeWidget and other services
+        self.latest_output = data
+
         if self.scope and self.scope.running:
             self.scope.set_data(data)
 
