@@ -372,6 +372,7 @@ class LFTri(AGen):
 
 def klang(
     timbre: Iterable[tuple[GenOrNum, ...]],
+    freq_scale: GenOrNum = 1.0
 ) -> AGen:
     gens = []
     for e in timbre:
@@ -382,7 +383,7 @@ def klang(
             phase = 0.0
         else:
             raise ValueError(f"Invalid timbre element: {e}")
-        gens.append(amp * SinOsc(freq=freq, phase=phase))
+        gens.append(amp * SinOsc(freq=freq*freq_scale, phase=phase))
     return AddGen(*gens)
 
 
