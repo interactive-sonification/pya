@@ -251,7 +251,8 @@ class LFImpulse(SingleChannelGen):
     freq
         The frequency of the oscillator in Hz. range (0Hz..Nyquist frequency).
     phase
-        The phase of the oscillator in cycles (0..1).
+        The phase of the oscillator in cycles (0..1). When modulated downwards
+        faster than the phase increase of the freq, only zero-samples are returned.
 
 
     LFImpulse will output a 1.0 on the first sample (if phase == 0).
@@ -268,30 +269,26 @@ class LFImpulse(SingleChannelGen):
         super().__init__(*args, **kwargs)
 
         self._add_node(freq, "freq", convert_num_to_arr=True)
-        self._add_node(phase, "phase")
+        self._add_node(phase, "phase", convert_num_to_arr=True)
 
     def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
         # To ensure first output is 1 if input phase == 0
         m_phase = self.state.data.get("m_phase", -sys.float_info.min)
+        m_input_phase = self.state.data.get("m_input_phase", self.nodes["phase"][0]) # type: ignore
 
         # Use a cumsum here to account for varying frequencies
-        #increments = np.empty(min(sample_count, self.nodes["freq"].shape[0]) + 1)
-        #increments[0] = m_phase
-        #increments[1:] = np.minimum(self.nodes["freq"], self.sr/2) / self.sr
-        #phases = np.cumsum(increments)
-
         phases = np.cumsum(
             np.concatenate(
-                [
-                    np.array([m_phase]),
-                    np.minimum(self.nodes["freq"], self.sr/2) / self.sr,
-                ]
+                ([m_phase], np.minimum(self.nodes["freq"], self.sr/2) / self.sr)
             )
         )
+        input_phases = np.concatenate(([m_input_phase], self.nodes["phase"]))
 
-        self.state.data["m_phase"] = phases[-1] % 1
-        phases = (phases + self.nodes["phase"]) % 1
-        return (phases[1:] < phases[:-1])
+        self.state.data["m_phase"] = phases[-1] % 1 # modulo for long term numeric stability
+        self.state.data["m_input_phase"] = input_phases[-1]
+        
+        floor_phases = np.floor(phases + input_phases)
+        return (floor_phases[1:] > floor_phases[:-1])
 
 
 class LFPulse(SingleChannelGen):
