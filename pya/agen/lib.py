@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 import math
 import warnings
 from enum import Enum
@@ -418,6 +419,7 @@ class LFTri(AGen):
 
 def klang(
     timbre: Iterable[tuple[GenOrNum, ...]],
+    freq_scale: GenOrNum = 1.0
 ) -> AGen:
     gens = []
     for e in timbre:
@@ -428,7 +430,7 @@ def klang(
             phase = 0.0
         else:
             raise ValueError(f"Invalid timbre element: {e}")
-        gens.append(amp * SinOsc(freq=freq, phase=phase))
+        gens.append(amp * SinOsc(freq=freq*freq_scale, phase=phase))
     return AddGen(*gens)
 
 
@@ -760,6 +762,52 @@ class AsigRead(AGen):
             np.arange(sample_start, sample_start + sig.shape[0]),
             sig,
         )
+
+
+
+class AudioIn(SingleChannelGen):
+    """AudioIn generator"""
+
+    def __init__(
+        self,
+        server=None,
+        blocking=False,
+        *args,
+        **kwargs,
+    ) -> None:
+        """AudioIn reads data from Aserver inputs
+
+        Parameters
+        ----------
+        server (Aserver, optional): 
+            Aserver instance, Aserver.default as Defaults for None.
+        blocking (bool, optional): 
+            whether generation should block until new data arrives. Defaults to False.
+
+        Note that the block size is taken from server.bs. If this doesn't match
+        sample_count, the blocksize used for AGen rendering, generation will stop.
+        """
+        from pya import Aserver 
+        self.server = server if server is not None else Aserver.default
+        self.blocking = blocking
+        super().__init__(*args, **kwargs)
+
+    def _generate_single(self, sample_count: int, start: int) -> np.ndarray:
+        s = self.server
+        if s:
+            if self.blocking:
+                ct = self.state.data.get("m_block_counter", 0)
+                while s.block_cnt == ct: # this is a preliminary hack 
+                    time.sleep(0.2 * s.bs / s.sr)
+                self.state.data["m_block_counter"] = s.block_cnt
+            num_channels = s.channels
+            samples = np.frombuffer(s.latest_input, dtype=s.backend.dtype)
+            samples = samples.reshape(-1, num_channels)
+            if sample_count != s.bs:
+                print("mismatch:", sample_count, s.bs)
+            return np.squeeze(samples)
+        else:
+            return np.empty(0)
 
 
 class Line(SingleChannelGen):
