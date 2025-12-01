@@ -160,12 +160,6 @@ class SinOsc(SingleChannelGen):
     def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
         m_phase = self.state.data.get("m_phase", 0)
         # Use a cumsum here to account for varying frequencies
-
-        # TODO: parity check + profiling
-        # increments = self.nodes["freq"] / self.sr * 2.0 * np.pi
-        # increments[0] += m_phase
-        # phases = np.cumsum(increments)
-
         phases = np.cumsum(
             np.concatenate(
                 [
