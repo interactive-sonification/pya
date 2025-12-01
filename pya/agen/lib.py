@@ -348,15 +348,12 @@ class LFSaw(AGen):
         The frequency of the oscillator in Hz.
     phase
         The initial (normalized) phase of the oscillator [0, 1].
-    amp
-        The amplitude of the oscillator.
     """
 
     def __init__(
         self,
         freq: GenOrNum,
         phase: GenOrNum = 0.0,
-        amp: GenOrNum = 1.0,
         *args,
         **kwargs,
     ) -> None:
@@ -364,7 +361,6 @@ class LFSaw(AGen):
 
         self._add_node(freq, "freq", convert_num_to_arr=True)
         self._add_node(phase, "phase")
-        self._add_node(amp, "amp")
 
     def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
         # Use a cumsum here to account for varying frequencies
@@ -381,7 +377,7 @@ class LFSaw(AGen):
         x = phases[:-1] + self.nodes["phase"]
         if x.shape[0] > 0:
             self.state.data["m_phase"] = phases[-1]
-        return (((x - 0.5) % 1.0) * 2 - 1) * self.nodes["amp"]
+        return ((x - 0.5) % 1.0) * 2 - 1
 
 
 class LFTri(AGen):
@@ -559,7 +555,7 @@ class LoopAsig(AGen):
         self,
         asig: Asig | np.ndarray | str,
         rate: GenOrNum = 1,
-        gate: GeonOrNum = 1,
+        gate: GenOrNum = 1,
         start_pos: GenOrNum = 0,
         start_loop: GenOrNum = 0,
         end_loop: GenOrNum = 1,
