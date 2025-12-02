@@ -28,7 +28,7 @@ def basicplot(data: np.ndarray, ticks, channels, offset=0, scale=1,
             Plot type.
 
     """
-    ax = plt.gca() or ax
+    ax = plt.gca() if ax is None else ax
     if channels == 1 or (offset == 0 and scale == 1):
         # if mono signal or you would like to stack signals together
         # offset is the spacing between channel,
