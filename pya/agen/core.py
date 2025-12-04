@@ -3,6 +3,8 @@ from __future__ import annotations
 import math
 import uuid
 import warnings
+from functools import wraps
+from inspect import signature, _empty
 from abc import ABC, abstractmethod
 from collections import deque
 from dataclasses import dataclass
@@ -1732,3 +1734,45 @@ class ResampleGen(AGen):
             return dest_sig
         else:
             return np.empty(0)
+
+
+class ControlDict:
+    def __init__(self, nodes):
+        self._nodes = nodes
+
+    def __getattr__(self, name):
+        if name in self._nodes:
+            return self._nodes[name].gen
+        raise AttributeError(f"ControlDict object has no attribute '{name}'")
+
+    def __setattr__(self, name, value):
+        if name == "_nodes":
+            super().__setattr__(name, value)
+        elif name in self._nodes:
+            self._nodes[name].gen = value
+        else:
+            raise AttributeError(f"ControlDict object has no attribute '{name}'")
+
+
+def asynth(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        sig = signature(func)
+        bound = sig.bind(*args, **kwargs)
+        bound.apply_defaults()
+        args_node = {}
+        for name, value in bound.arguments.items():
+            annot = sig.parameters[name].annotation
+            wrap = (annot is _empty) 
+            if wrap:
+                args_node[name] = AGen.Node(value, True)
+            else:
+                # exclude parameter, don't make it a Node
+                args_node[name] = value
+        result = func(**args_node)
+        if not isinstance(result, AGen):
+            raise TypeError("asynth decorated function must return an AGen instance")
+        result.ctrl = ControlDict(args_node)
+        return result
+
+    return wrapper
