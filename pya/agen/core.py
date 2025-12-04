@@ -554,6 +554,7 @@ class AGen(ABC):
             )
         if self.states is None:
             self.states = [AGenState() for _ in range(self.channels)]
+            self.start_index = 0
         state = self.states[channel]
         # TODO: These are too many indentations. Refactor this.
         if not state.finished:
@@ -567,29 +568,33 @@ class AGen(ABC):
                 )
                 samples = state.get_from_cache(sample_count, start)
             else:
-                if state.length < start:
-                    # if state.length == 0:
-                    #     self.generate(start + sample_count, 0, channel=channel)
-                    #     samples = state.get_from_cache(sample_count, start)
-                    # else:
-                    raise ValueError(
-                        "Cannot skip samples while generating: "
-                        f"State is currently at sample {state.length}, requested start is {start}"
-                    )
-                else:
-                    self.__prepare_nodes(sample_count, start, channel=channel)
-                    self.state = state
-                    new_samples = self._generate_new(
-                        sample_count=sample_count,
-                        start=start,
-                        channel=channel,
-                    )
-                    self.state: AGenState = None  # type: ignore
-                    self.__clear_nodes()
-                    state.add_to_cache(new_samples)
-                    samples = new_samples
+                # in r/t use, AGens could start 'later'. For this we 
+                # set self.start_index>0. start is then offset by -self.start_index
+                self.start_index = start if state.length == 0 and start > 0 else 0
+
+                # if state.length < start:
+                #     # if state.length == 0:
+                #     #     self.generate(start + sample_count, 0, channel=channel)
+                #     #     samples = state.get_from_cache(sample_count, start)
+                #     # else:
+                #     raise ValueError(
+                #         "Cannot skip samples while generating: "
+                #         f"State is currently at sample {state.length}, requested start is {start}"
+                #     )
+                # else:
+                self.__prepare_nodes(sample_count, start - self.start_index, channel=channel)
+                self.state = state
+                new_samples = self._generate_new(
+                    sample_count=sample_count,
+                    start=start - self.start_index,
+                    channel=channel,
+                )
+                self.state: AGenState = None  # type: ignore
+                self.__clear_nodes()
+                state.add_to_cache(new_samples)
+                samples = new_samples
         else:
-            samples = state.get_from_cache(sample_count, start)
+            samples = state.get_from_cache(sample_count, start - self.start_index)
 
         if samples.shape[0] < sample_count:
             state.mark_finished()
