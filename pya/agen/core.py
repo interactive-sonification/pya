@@ -233,7 +233,11 @@ class AGen(ABC):
         AGen.Node
             The added node.
         """
-        c = self.Node(node, convert_num_to_arr)
+        if isinstance(node, AGen.Node):
+            c = node
+        else:
+            c = self.Node(node, convert_num_to_arr)
+    
         self._node_items[name] = c
         if isinstance(node, AGen):
             if self.__adaptive_sr:
