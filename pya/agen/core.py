@@ -123,6 +123,10 @@ class AGen(ABC):
             self.gen = gen
             self.convert_num_to_arr = convert_num_to_arr
             self.value: float | np.ndarray | None = None
+        
+        @property
+        def agen(self):
+            return Gen(self)
 
     # region - MAGIC -
     def __init__(
@@ -1739,6 +1743,17 @@ class ResampleGen(AGen):
             return dest_sig
         else:
             return np.empty(0)
+
+
+class Gen(SingleChannelGen):
+    """AGen to turn a AGen.Node into a full AGen, no other operation."""
+
+    def __init__(self, gen: GenOrNum, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._add_node(gen, "gen", convert_num_to_arr=True)
+
+    def _generate_single(self, sample_count, start):
+        return self.nodes["gen"]
 
 
 class ControlDict:
