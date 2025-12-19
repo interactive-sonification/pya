@@ -4,6 +4,7 @@ if TYPE_CHECKING:
     from pya.backend.base import BackendBase
     from pya.backend.PyAudio import PyAudioBackend
     from pya.backend.Jupyter import JupyterBackend
+    from pya.backend.SoundDevice import SoundDeviceBackend
 
 
 def get_server_info():
@@ -26,6 +27,14 @@ def get_server_info():
             if n["kernel"]["id"] == kernel_id:
                 return s
     return None
+
+
+def try_sounddevice_backend(**kwargs) -> Optional["SoundDeviceBackend"]:
+    try:
+        from pya.backend.SoundDevice import SoundDeviceBackend
+        return SoundDeviceBackend(**kwargs)
+    except ImportError:
+        return None
 
 
 def try_pyaudio_backend(**kwargs) -> Optional["PyAudioBackend"]:
@@ -70,7 +79,7 @@ def determine_backend(force_webaudio=False, port=8765, **kwargs) -> "BackendBase
     RuntimeError
         if no Backend is available
     """
-    backend = None if force_webaudio else try_pyaudio_backend(**kwargs)
+    backend = None if force_webaudio else try_sounddevice_backend(**kwargs) or try_pyaudio_backend(**kwargs)
     if backend is None:
         backend = try_jupyter_backend(port=port, **kwargs)
     if backend is None:
