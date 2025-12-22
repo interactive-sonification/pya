@@ -226,7 +226,6 @@ class Aserver:
         except AttributeError:
             _LOGGER.info("No stream found...")
         self.stream = None
-        self.backend.terminate()
 
     def play(self, asig, onset: Union[int, float] = 0, out: int = 0, **kwargs):
         """Dispatch asigs or arrays for given onset.
@@ -408,12 +407,14 @@ class Aserver:
         """Context manager exit"""
         _LOGGER.info("Exiting context manager. Cleaning up stream and backend")
         self.quit()
+        self.backend.terminate()
 
     def __del__(self):
         """Backup cleanup, only if context manager wasn't used"""
         if hasattr(self, 'stream') and self.stream is not None:
             try:
                 self.quit()
+                self.backend.terminate()
             except:
                 pass  # Ignore cleanup errors during shutdown
 
