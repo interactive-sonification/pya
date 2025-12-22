@@ -30,7 +30,12 @@ class BackendBase(ABC):
     @abstractmethod
     def process_buffer(self, *args, **kwargs):
         raise NotImplementedError
-
+    
+    def get_devices(self) -> list[dict]:
+        return [
+            self.get_device_info_by_index(i)
+            for i in range(self.get_device_count())
+        ]
 
 class StreamBase(ABC):
 
