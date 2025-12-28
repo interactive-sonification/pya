@@ -4,7 +4,7 @@ import time
 import math
 import warnings
 from enum import Enum
-from typing import TYPE_CHECKING, Iterable, Sequence
+from typing import TYPE_CHECKING, Iterable, Sequence, Callable
 import threading
 
 import numpy as np
@@ -2102,6 +2102,207 @@ class Pluck(AGen):
         result, last = _pluck_numba(self.wavetable, sample_count, last)
         self.state.data["last"] = last
         return result
+
+
+# Required spec for fractional delay functions
+delay_fn_spec = float64(
+                    float64, float64[:], int64
+                )
+
+@njit(delay_fn_spec)
+def delay_n_numba(
+    delay_samples: float,
+    buffer: np.ndarray,
+    head: int
+):
+    """
+    Integer delay
+    Rounds down delay time to whole sample
+    """
+
+    i = head - int(delay_samples)
+    return buffer[i] # implicit modulo from python
+
+
+@njit(delay_fn_spec)
+def delay_l_numba(
+    delay_samples: float,
+    buffer: np.ndarray,
+    head: int
+):
+    """
+    Linear Interpolation
+    https://en.wikipedia.org/wiki/Linear_interpolation
+    Adjusted variable names to show parallels to FIR-Filters
+    """
+    delta = delay_samples % 1
+
+    # FIR Coefficients
+    a0 = 1 - delta
+    a1 = delta
+
+    i = head - int(delay_samples)
+    return (a0 * buffer[i] + 
+            a1 * buffer[i-1])
+
+
+@njit(delay_fn_spec)
+def delay_c_numba(
+    delay_samples: float,
+    buffer: np.ndarray,
+    head: int
+):
+    """
+    Cubic Interpolation based on Catmull–Rom spline
+    https://en.wikipedia.org/wiki/Catmull%E2%80%93Rom_spline
+    Adjusted variable names to show parallels to FIR-Filters
+    Requires an extra minimum delay sample due to non-casual convolution
+    """
+    delta = delay_samples % 1
+    delta2 = delta * delta
+    delta3 = delta2 * delta
+
+    # FIR Coefficients
+    a_1 = -0.5 * delta3 +       delta2 - 0.5 * delta
+    a0  =  1.5 * delta3 - 2.5 * delta2 + 1.0
+    a1  = -1.5 * delta3 + 2.0 * delta2 + 0.5 * delta
+    a2  =  0.5 * delta3 - 0.5 * delta2
+
+    i = head - int(delay_samples)
+    return (a_1 * buffer[i+1] + 
+            a0  * buffer[i] + 
+            a1  * buffer[i-1] + 
+            a2  * buffer[i-2]) 
+
+
+@njit
+def comb_numba(
+    input: np.ndarray,
+    delay_samples: np.ndarray,
+    buffer: np.ndarray,
+    head: int,
+    fc: np.ndarray,
+    delay_fn
+) -> tuple[np.ndarray, int]:
+    len_input = len(input)
+    len_buffer = len(buffer)
+    result = np.empty(len_input)
+
+    for i in range(len_input):
+        result[i] = delay_fn(delay_samples[i], buffer, head)
+
+        buffer[head] = fc[i] * (input[i] + result[i])
+        head = (head + 1) % len_buffer
+
+    result += input
+    return result, head
+
+
+class Comb(SingleChannelGen):
+    """
+    Comb Delay Line: A delay line with self feedback (IIR).
+
+    The feedback coefficient is given by the equation:
+    fc = 0.001 ** (delay / abs(decay)) * sign(decay) 
+    where 0.001 is -60 dBFS.
+
+    Parameters
+    ----------
+    input : GenOrNum
+        The input source
+
+    delay_time : GenOrNum
+        The delay time. Unit based on mode
+        Constraint: 1 <= delay_time <= max_delay_time
+
+    decay_time : GenOrNum
+        Time for the echoes to decay by 60 decibels. Unit based on mode. 
+        Positive: Standard decay
+        Negative: Inverts the feedback phase, only emphasizing odd harmonics an octave lower
+        np.inf:   Infinite decay
+        -np.inf:  Infinite decay emphasizing odd harmonics an octave lower
+
+    max_delay_time : int | float
+        Maximum delay time expected, used to allocate the ring buffer. 
+        Unit based on mode.
+
+    delay_fn : str | Callable[[float, np.ndarray, int], float] | None
+        Interpolation method for fractional (non integer) delay times.
+        None, "none", "n", delay_n_numba:
+            No interpolation. Delay is rounded down. 
+            Most accurate, introduces aliasing when modulating delay_time.
+        "linear", "l", delay_l_numba:
+            Linear interpolation. Efficient,
+            acts as a low-pass filter based on delay_time. Robust for modulation.
+        "cubic", "c", delay_c_numba:
+            Cubic interpolation. Slightly higher CPU cost, 
+            retains high frequencies better. Robust for modulation.
+            Constraint: delay_time >= 2 samples
+        Callable Custom Numba JIT delay function with signature:
+            fn(delay_samples: float, buffer: np.ndarray, head: int) -> float
+            Recommended to use decorator @njit(delay_fn_spec)
+
+    mode: IndexMode | str (Default: IndexMode.INDEX)
+        Unit of time used for delay and decay parameters.
+        Either "index" for raw index or "time" for time [s].
+    """
+
+    def __init__(self, 
+                 input: GenOrNum,
+                 delay_time: GenOrNum = 0.2,
+                 decay_time: GenOrNum = 0.2,
+                 max_delay_time: int | float = 2.0,
+                 delay_fn: str | Callable[[float, np.ndarray, int], float] | None = delay_c_numba,
+                 mode: IndexMode = IndexMode.TIME,
+                 *args,
+                 **kwargs,
+    ) -> None:
+        super().__init__(*args, **kwargs)
+
+        self._add_node(input, "input", convert_num_to_arr=True)
+        self._add_node(delay_time, "delay_time", convert_num_to_arr=True)
+        self._add_node(decay_time, "decay_time")
+
+        self._time_factor = 1
+        match mode:
+            case IndexMode.TIME:
+                self._time_factor = self.sr
+            case IndexMode.INDEX:
+                pass
+            case _:
+                print("Warning: invalid index mode: using IndexMode.Index")
+
+        self._buffer = np.zeros(np.ceil(max_delay_time * self._time_factor).astype(int) + 3) # added samples for interpolation algorithms
+
+        self._delay_fn = delay_c_numba
+        if callable(delay_fn):
+            self._delay_fn = delay_fn 
+        else:
+            match str(delay_fn).lower() if delay_fn else "n":
+                case "n" | "none":
+                    self._delay_fn = delay_n_numba
+                case "l" | "linear":
+                    self._delay_fn = delay_l_numba
+                case "c" | "cubic":
+                    pass
+                case _:
+                    print("Warning: invalid delay algorithm: using cubic")
+
+        # Pre-compile JIT function to prevent lag on first audio block
+        # Passes dummy data to trigger the compilation
+        comb_numba(np.zeros(1), np.zeros(1), np.zeros(4), 0, np.zeros(1), self._delay_fn)
+        
+
+    def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
+        input = self.nodes["input"]
+        delay_samples = self._time_factor * self.nodes["delay_time"]
+        head = self.state.data.get("head", 0)
+        fc = 0.001 ** (self.nodes["delay_time"] / np.abs(self.nodes["decay_time"])) * np.sign(self.nodes["decay_time"])
+
+        output, new_head = comb_numba(input, delay_samples, self._buffer, head, fc, self._delay_fn) # type: ignore
+
+        self.state.data["head"] = new_head
+        return output
 
 
 class MouseX(SingleChannelGen):
