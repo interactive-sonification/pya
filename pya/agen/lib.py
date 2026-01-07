@@ -755,7 +755,7 @@ class AudioIn(SingleChannelGen):
                 self.state.data["m_block_counter"] = s.block_cnt
             num_channels = s.channels
             samples = np.frombuffer(s.latest_input, dtype=s.backend.dtype)
-            samples = samples.reshape(-1, num_channels)
+            samples = samples.reshape(-1, num_channels)[:, 0]
             if sample_count != s.bs:
                 print("mismatch:", sample_count, s.bs)
             return np.squeeze(samples)
