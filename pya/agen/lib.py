@@ -6,7 +6,6 @@ import warnings
 from enum import Enum
 from typing import TYPE_CHECKING, Iterable, Sequence
 import threading
-import sys
 
 import numpy as np
 from pya.asig import Asig
@@ -246,9 +245,7 @@ class LFImpulse(SingleChannelGen):
     freq
         The frequency of the oscillator in Hz. range (0Hz..Nyquist frequency).
     phase
-        The phase of the oscillator in cycles (0..1). When modulated downwards
-        faster than the phase increase of the freq, only zero-samples are returned.
-
+        The phase of the oscillator in cycles (0..1).
 
     LFImpulse will output a 1.0 on the first sample (if phase == 0).
     If the initial freq is 0, a single impulse is output on first sample, 
@@ -264,27 +261,27 @@ class LFImpulse(SingleChannelGen):
         super().__init__(*args, **kwargs)
 
         self._add_node(freq, "freq", convert_num_to_arr=True)
-        self._add_node(phase, "phase", convert_num_to_arr=True)
+        self._add_node(phase, "in_phase", convert_num_to_arr=True)
 
     def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
-        # To ensure first output is 1 if input phase == 0
-        m_phase = self.state.data.get("m_phase", -sys.float_info.min)
-        m_input_phase = self.state.data.get("m_input_phase", self.nodes["phase"][0]) # type: ignore
+        m_phase = self.state.data.get("m_phase", -self.nodes["freq"][0] / self.sr)
+        m_in_phase = self.state.data.get("m_in_phase", self.nodes["in_phase"][0])
 
-        # Use a cumsum here to account for varying frequencies
-        phases = np.cumsum(
-            np.concatenate(
-                ([m_phase], np.minimum(self.nodes["freq"], self.sr/2) / self.sr)
-            )
-        )
-        input_phases = np.concatenate(([m_input_phase], self.nodes["phase"]))
+        phasor = np.cumsum(np.concat(([m_phase], self.nodes["freq"] / self.sr)))        
+        phases = phasor + np.concat(([m_in_phase], self.nodes["in_phase"]))
+        floor_phases = np.floor(phases)
+        ceil_phases = np.ceil(phases)
+        result = np.logical_or(floor_phases[1:] > floor_phases[:-1], ceil_phases[1:] < ceil_phases[:-1])
 
-        self.state.data["m_phase"] = phases[-1] % 1 # modulo for long term numeric stability
-        self.state.data["m_input_phase"] = input_phases[-1]
-        
-        floor_phases = np.floor(phases + input_phases)
-        return (floor_phases[1:] > floor_phases[:-1])
+        # Special supercollider behaviour for first sample
+        if start == 0:
+            result[0] = 1 if m_in_phase % 1 == 0 else 0
 
+        self.state.data["m_phase"] = phasor[-1] % 1 # long term numeric stability
+        self.state.data["m_in_phase"] = self.nodes["in_phase"][-1]
+
+        return result.astype(float)
+    
 
 class LFPulse(SingleChannelGen):
     """Non-band-limited Pulse Oscillator. output in [0,1]
