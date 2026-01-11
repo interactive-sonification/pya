@@ -111,3 +111,52 @@ class MultiSliderPlot:
         self.fig.canvas.mpl_disconnect(self.cid_motion)
         self.fig.canvas.mpl_disconnect(self.cid_release)
         self.fig.canvas.mpl_disconnect(self.cid_key)
+
+
+def ctrl_gui(agen, **kwargs):
+    """Render ipywidgets GUI for synth controls.
+    This function can be used directly, or indirectly by setting the widget
+    argument of the AGen's playx() method (see pya.gui.AGenPlayGUI).
+
+    Parameters
+    ----------
+    - agen (AGen)
+        this should be an AGen with `ctrl` attribute (which is currently added to
+        AGen via the @asynth decorator.
+    - kwargs
+        to specify (min, max, step) for parameter names analogous to
+        ipywidgets.interactive
+
+    Returns
+    -------
+    the return value of ipywidgets.interactive()
+    """
+    from ipywidgets import interactive
+    import inspect
+
+    ix_dict = {}
+    set_param_kwargs = {}
+    sig_params = []
+
+    for k, v in kwargs.items():
+        if k in agen.ctrl._nodes:  # only kwargs that are agen nodes
+            ix_dict[k] = v  # store ranges for interactive()
+            gen = agen.ctrl[k]
+            if isinstance(gen, (int, float, bool)):  # for default value extraction
+                set_param_kwargs[k] = gen
+                p = inspect.Parameter(
+                    name=k,
+                    kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                    default=gen,
+                )
+                sig_params.append(p)
+        else:
+            print(f"ctrlgui(): parameter {k} not in agen.ctrl nodes")
+
+    def _set_params(**set_param_kwargs):  # ():
+        for k, v in set_param_kwargs.items():
+            agen.ctrl[k] = v
+
+    _set_params.__signature__ = inspect.Signature(sig_params)
+
+    return interactive(_set_params, **ix_dict)

@@ -1773,6 +1773,16 @@ class ControlDict:
         else:
             raise AttributeError(f"ControlDict object has no attribute '{name}'")
 
+    def __getitem__(self, key):
+        if key in self._nodes:
+            return self._nodes[key].gen
+        raise KeyError(f"Key '{key}' not found in ControlDict")
+
+    def __setitem__(self, key, value):
+        if key in self._nodes:
+            self._nodes[key].gen = value
+        else:
+            raise KeyError(f"Key '{key}' not found in ControlDict")
 
 def asynth(func):
     @wraps(func)

@@ -1,7 +1,10 @@
 from ipywidgets import widgets
+from ipywidgets.widgets import VBox, Layout
 from IPython.display import display
 from pya import device_info, startup, Aserver
 from pya.aserver import determine_backend
+from pya.gui.lib import ctrl_gui
+from pya.agen.core import AGen
 
 
 class AserverGUI:
@@ -176,7 +179,7 @@ class AGenPlayGUI:
         self.stop_button = widgets.Button(
             description="Stop",
             tooltip="Stop all scheduled events on AServer",
-            layout=widgets.Layout(width="100px"),
+            layout=widgets.Layout(width="60px"),
         )
         self.stop_button.on_click(on_pyagui_stop_button_click)
 
@@ -193,15 +196,24 @@ class AGenPlayGUI:
             value="signal",
             description="Mode:",
             disabled=False,
+            layout={"description_width": "50px", "width": "150px"}
         )
         self.mode_selector.observe(on_pyagui_scope_selection_change, names="value")
 
         self.pyagui_gui_hbox = widgets.HBox([self.mode_selector, self.stop_button])
 
-        def _play_with_jupyter_gui(agen, *args, **kwargs):
-            agen.play(*args, **kwargs)
-            display(self.pyagui_gui_hbox)
-
-        from pya.agen.core import AGen
+        def _play_with_jupyter_gui(agen, widgets=None, *args, **kwargs):
+            agen.play(**kwargs)
+            gui_widgets = self.pyagui_gui_hbox
+            if widgets is not None:
+                ix = ctrl_gui(agen, **widgets)
+                gui_widgets = VBox([gui_widgets, *ix.children], layout=Layout(
+                    display="flex",
+                    flex_flow="row wrap",
+                    align_items="stretch",
+                    width="100%",
+                    )
+                )
+            display(gui_widgets)
 
         AGen.playx = _play_with_jupyter_gui
