@@ -201,6 +201,12 @@ class AGen(ABC):
     def __rtruediv__(self, other: GenOrNum):
         return DivGen(other, self)
 
+    def __mod__(self, other: GenOrNum):
+        return ModGen(self, other)
+    
+    def __rmod__(self, other: GenOrNum):
+        return ModGen(other, self)
+
     def __and__(self, other: GenOrNum) -> ConcatGen:
         return ConcatGen(self, other)
 
@@ -774,6 +780,28 @@ class AGen(ABC):
         self.label = label
         return self
     
+    def add(self, x: GenOrNum = 0.0) -> AGen:
+        """Add x (GenOrNum to generator, equivalent to (self + x). 
+        The functional form can be easier to write and chain with other methods.
+
+        Parameters
+        ----------
+        x: GenOrNum
+            The term to be added to self (either value or generator).
+        """
+        return self + x
+    
+    def sub(self, x: GenOrNum = 0.0) -> AGen:
+        """Substract x (GenOrNum to generator, equivalent to (self - x). 
+        The functional form can be easier to write and chain with other methods.
+
+        Parameters
+        ----------
+        x: GenOrNum
+            The term to be substracted from self (either value or generator).
+        """
+        return self - x
+    
     def mul(self, x: GenOrNum = 1.0) -> AGen:
         """Multiply generator with x (GenOrNum), equivalent to (self * x). 
         The functional form can be easier to write and chain with other methods.
@@ -784,6 +812,39 @@ class AGen(ABC):
             The factor (either value or generator).
         """
         return self * x
+    
+    def div(self, x: GenOrNum = 0.0) -> AGen:
+        """Divide by x (GenOrNum to generator, equivalent to (self / x). 
+        The functional form can be easier to write and chain with other methods.
+
+        Parameters
+        ----------
+        x: GenOrNum
+            The divisor (either value or generator).
+        """
+        return self / x
+    
+    def pow(self, x: GenOrNum = 1.0) -> AGen:
+        """Power generator with x (GenOrNum), equivalent to (self ** x). 
+        The functional form can be easier to write and chain with other methods.
+
+        Parameters
+        ----------
+        x: GenOrNum
+            The exponent (either value or generator).
+        """
+        return self ** x
+    
+    def mod(self, x: GenOrNum = 0.0) -> AGen:
+        """Get modulo x (GenOrNum to generator, equivalent to (self / x). 
+        The functional form can be easier to write and chain with other methods.
+
+        Parameters
+        ----------
+        x: GenOrNum
+            The divisor (either value or generator).
+        """
+        return self % x
 
     def lvl(self, db: GenOrNum = 0) -> AGen:
         """Level generator by x (GenOrNum) where db is in dB units.
@@ -796,17 +857,6 @@ class AGen(ABC):
             The change in deciBel to be applied to self.
         """
         return self * pam.db_to_amp(db)
-    
-    def add(self, x: GenOrNum = 0.0) -> AGen:
-        """Add x (GenOrNum to generator, equivalent to (self + x). 
-        The functional form can be easier to write and chain with other methods.
-
-        Parameters
-        ----------
-        x: GenOrNum
-            The term to be added to self (either value or generator).
-        """
-        return self + x
 
     def with_done(self, done: DoneAction | str) -> AGen:
         """Wraps this AGen with another AGen with `done` as done action. """
@@ -967,6 +1017,15 @@ class AGen(ABC):
 
     def sign(self, **kwargs):
         return self.apply(np.sign, **kwargs)
+    
+    def floor(self, **kwargs):
+        return self.apply(np.floor, **kwargs)
+    
+    def ceil(self, **kwargs):
+        return self.apply(np.ceil, **kwargs)
+    
+    def round(self, *args, **kwargs):
+        return self.apply(np.round, *args, **kwargs)
 
     def sin(self, **kwargs):
         return self.apply(np.sin, **kwargs)
@@ -1506,6 +1565,28 @@ class DivGen(AGen):
 
     def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
         return self.nodes["dividend"] / self.nodes["divisor"]  # type: ignore
+
+
+class ModGen(AGen):
+    """Generator for modulo (remainder of a division) of two generators.
+    At least one of gen1 and gen2 must be an AGen.
+
+    Parameters
+    ----------
+    dividend
+        The dividend generator
+    divisor
+        The divisor generator
+    """
+
+    def __init__(self, dividend: GenOrNum, divisor: GenOrNum, *args, **kwargs):
+        super().__init__(*args, sr=None, label="%", **kwargs)
+
+        self._add_node(dividend, "dividend")
+        self._add_node(divisor, "divisor")
+
+    def _generate_new(self, sample_count: int, start: int, channel: int) -> np.ndarray:
+        return self.nodes["dividend"] % self.nodes["divisor"]  # type: ignore 
 
 
 def xgen(

@@ -141,15 +141,13 @@ class SinOsc(SingleChannelGen):
     ----------
     freq
         The frequency of the oscillator in Hz.
-    amp
-        The amplitude of the oscillator.
     phase
         The phase of the oscillator in radians.
     """
 
     def __init__(
         self,
-        freq: GenOrNum,
+        freq: GenOrNum = 440.0,
         phase: GenOrNum = 0.0,
         *args,
         **kwargs,
@@ -170,6 +168,7 @@ class SinOsc(SingleChannelGen):
                 ]
             )
         )
+
         x = phases[:-1] + self.nodes["phase"]
         if x.shape[0] > 0:
             self.state.data["m_phase"] = phases[-1]
@@ -237,6 +236,53 @@ class PinkNoise(SingleChannelGen):
         return result / (10*np.sqrt(2)) # empiric scaling to match rms of sc3 PinkNoise 
 
 
+class LFImpulse(SingleChannelGen):
+    """
+    Non-band-limited single sample impulses.
+
+    Parameters
+    ----------
+    freq
+        The frequency of the oscillator in Hz. range (0Hz..Nyquist frequency).
+    phase
+        The phase of the oscillator in cycles (0..1).
+
+    LFImpulse will output a 1.0 on the first sample (if phase == 0).
+    If the initial freq is 0, a single impulse is output on first sample, 
+    followed by silence until the frequency changes.
+    """
+    def __init__(
+        self,
+        freq: GenOrNum = 440.0,
+        phase: GenOrNum = 0.0,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+        self._add_node(freq, "freq", convert_num_to_arr=True)
+        self._add_node(phase, "in_phase", convert_num_to_arr=True)
+
+    def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
+        m_phase = self.state.data.get("m_phase", -self.nodes["freq"][0] / self.sr)
+        m_in_phase = self.state.data.get("m_in_phase", self.nodes["in_phase"][0])
+
+        phasor = np.cumsum(np.concat(([m_phase], self.nodes["freq"] / self.sr)))        
+        phases = phasor + np.concat(([m_in_phase], self.nodes["in_phase"]))
+        floor_phases = np.floor(phases)
+        ceil_phases = np.ceil(phases)
+        result = np.logical_or(floor_phases[1:] > floor_phases[:-1], ceil_phases[1:] < ceil_phases[:-1])
+
+        # Special supercollider behaviour for first sample
+        if start == 0:
+            result[0] = 1 if m_in_phase % 1 == 0 else 0
+
+        self.state.data["m_phase"] = phasor[-1] % 1 # long term numeric stability
+        self.state.data["m_in_phase"] = self.nodes["in_phase"][-1]
+
+        return result.astype(float)
+    
+
 class LFPulse(SingleChannelGen):
     """Non-band-limited Pulse Oscillator. output in [0,1]
 
@@ -292,8 +338,6 @@ class LFSaw(AGen):
     ----------
     freq
         The frequency of the oscillator in Hz.
-    amp
-        The amplitude of the oscillator.
     phase
         The initial (normalized) phase of the oscillator [0, 1].
     """
@@ -504,7 +548,7 @@ class LoopAsig(AGen):
         self,
         asig: Asig | np.ndarray | str,
         rate: GenOrNum = 1,
-        gate: GeonOrNum = 1,
+        gate: GenOrNum = 1,
         start_pos: GenOrNum = 0,
         start_loop: GenOrNum = 0,
         end_loop: GenOrNum = 1,
