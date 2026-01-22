@@ -11,6 +11,65 @@ class _error(Exception):
     pass
 
 
+class RingBuffer():
+    """
+    Simple RingBuffer for storing values efficiently 
+    and retrieving unwrapped copies for further processing.
+
+    The ring is only apllied for the first dimension. All other
+    dimensions can have an abitrary size.
+
+    Parameters
+    ----------
+    shape: Tuple
+        Shape of the allocated ring buffer.
+
+    """
+    def __init__(self, shape: tuple):
+        self.buffer = np.zeros(shape)
+        self.size = shape[0]
+        self.head = 0
+
+    def insert(self, data: np.ndarray):
+        """
+        (Over-)writes data in the ring buffer. The first dimension
+        can be an arbirary as long as it fits in the allocated buffer.
+        All other dimension have to fit the allocated shape.
+        """
+        assert(self.buffer.shape[0] >= data.shape[0] and self.buffer.shape[1:] == data.shape[1:])
+        n = self.buffer.shape[0]
+        m = len(data)
+        h = self.head
+        end_space = n - h
+
+        if m <= end_space:
+            self.buffer[h : h + m] = data
+        else:
+            self.buffer[h:] = data[:end_space]
+            self.buffer[:m - end_space] = data[end_space:]
+        self.head = (h + m) % n
+
+    def unwrapped_copy(self, size: int|None =None):
+        """
+        Returns a unwrapped copy of (a part of) the ring buffer.
+        If size < buffer.shape the most current part of the buffer is returned.
+        """
+        if not size:
+            size = self.buffer.shape[0]
+        assert(size <= self.buffer.shape[0])
+        n = self.buffer.shape[0]
+        h = self.head
+
+        unwrapped = np.empty((size, *self.buffer.shape[1:]))
+        if size <= h:
+            unwrapped[:] = self.buffer[h-size:h] # [:] ensures the values are copied
+        else:
+            unwrapped[:size-h] = self.buffer[n-(size-h):]
+            unwrapped[size-h:] = self.buffer[:h]
+
+        return unwrapped
+
+
 def spectrum(sig, samples, channels, sr):
     """Return spectrum of a given signal. This method return spectrum matrix if input signal is multi-channels.
 
