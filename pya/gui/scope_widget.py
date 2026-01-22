@@ -8,55 +8,28 @@ import matplotlib.pyplot as plt
 from pya import Aserver
 import numpy as np
 from IPython.display import display
-
-
-def get_audio_input_data(server=None):
-    """get Aserver input data as numpy array.
-
-    Args:
-        server (Aserver | None): the Aserver. Defaults to None.
-        on None, Aserver.default will be used
-
-    Returns:
-        np.ndarray: the input data of shape (server.bs,  server.channels).
-
-    ToDo: move function to Aserver.
-    """
-    if not server:
-        server = Aserver.default
-    num_channels = server.channels
-    samples = np.frombuffer(server.latest_input, dtype=server.backend.dtype)
-    samples = samples.reshape(-1, num_channels)
-    return samples, server.sr
-
-
-def get_audio_output_data(server=None):
-    """get Aserver output data as numpy array.
-
-    Args:
-        server (Aserver | None): the Aserver. Defaults to None.
-        on None, Aserver.default will be used
-
-    Returns:
-        np.ndarray: the output data of shape (server.bs,  server.channels).
-
-    ToDo: move function to Aserver.
-    """
-    if not server:
-        server = Aserver.default
-    return server.latest_output.copy(), server.sr
-
+from scipy.signal import get_window
+from time import time
 
 class ScopeWidget:
 
-    def __init__(self, server=None, fps=5, mode="input", figsize=(8, 3)):
+    def __init__(self, 
+                 server=None, 
+                 fps=20, 
+                 mode="input", 
+                 window : str = 'hann', 
+                 window_size : int = 4096, 
+                 figsize=(8, 3)
+        ):
         """ScopeWidget - a Scope/FreqScope view for Jupyter notebooks
         for interactive contexts using %matplotlib widget
 
         Args:
             server (Aserver, optional): pya Aserver. Defaults to None.
-            fps (int, optional): frames per second for rendering. Defaults to 5.
+            fps (int, optional): frames per second for rendering. Defaults to 20.
             mode (str, optional): "input" or "output"
+            window_shape (str): type of the window function (Default value = 'hann')
+            window_size: size of the analyzed window. Power of 2 recommended. Has to be <= server.history_size 
             figsize (tuple, optional): figure size. Defaults to (8, 3).
         """
         self.server = server
@@ -65,6 +38,17 @@ class ScopeWidget:
 
         self.sr = self.server.sr
         self.fps = fps
+        self.last_frame_time = time()
+        self._window = window
+        self._window_size = window_size
+        self.init_spec()
+
+        self.spec_decay_seconds = 2.5 # seconds it takes for a bin to get from ylim[1] to ylim[0]
+        self.spec_lin_xlim = (0,  self.sr//2 + 1)
+        self.spec_log_xlim = (20, self.sr//2 + 1)
+        self.spec_lin_ylim = (0, 1.118)
+        self.spec_log_ylim = (1e-4, 3)
+
 
         self.output = widgets.Output()
         with self.output:
@@ -74,7 +58,7 @@ class ScopeWidget:
             # signal plot on the left
             self.axsig = plt.subplot(1, 2, 1)
             (self.line2Dsig,) = self.axsig.plot(
-                [0, self.server.bs / self.sr], [0, 0], "b-"
+                [0, self._window_size / self.sr], [0, 0], "b-"
             )
             plt.xlabel("time")
             plt.ylabel("signal [arb. units]")
@@ -82,7 +66,7 @@ class ScopeWidget:
 
             # spectrum plot on the right
             self.axspec = plt.subplot(1, 2, 2)
-            (self.line2Dspec,) = self.axspec.plot([1, 22050], [1e2, 1e-5], "b-")
+            (self.line2Dspec,) = self.axspec.plot(np.array(self.spec_log_xlim), np.array(self.spec_log_ylim), "b-")
             plt.xlabel("frequency")
             plt.ylabel("E(w) [arb. units]")
             plt.grid()
@@ -93,17 +77,27 @@ class ScopeWidget:
 
         @staticmethod
         def update(frame):
+            sr = self.server.sr
+            dt = time() - self.last_frame_time
+            self.last_frame_time = time()
+
             if self.mode == "input":
-                sig, sr = get_audio_input_data(self.server)
+                sig = self.server.input_history.unwrapped_copy(self._window_size)
             else:
-                sig, sr = get_audio_output_data(self.server)
+                sig = self.server.output_history.unwrapped_copy(self._window_size)
             block_size = sig.shape[0]
             self.line2Dsig.set_data(
-                np.linspace(0, block_size / sr, block_size, endpoint=False), sig[:, 0]
+                np.linspace(0, self._window_size / sr, self._window_size, endpoint=False), sig[:, 0]
             )
-            spec = np.fft.rfft(sig[:, 0], axis=0)
+            spec = np.fft.rfft(self.norm_window * sig[:, 0], axis=0)
+            spec[1:-1] *= 2
+            if self.axspec.get_yscale() == 'log':
+                self.last_spec /= (self.spec_log_ylim[1] / self.spec_log_ylim[0]) ** (dt / self.spec_decay_seconds)
+            else:
+                self.last_spec -= dt / self.spec_decay_seconds * (self.spec_lin_ylim[1] - self.spec_lin_ylim[0])
+            self.last_spec = np.maximum(np.abs(spec), self.last_spec)
             self.line2Dspec.set_data(
-                np.linspace(0, sr // 2, spec.shape[0]), np.abs(spec)
+                self.spec_freqs, self.last_spec
             )
 
         self.ani = FuncAnimation(
@@ -118,6 +112,7 @@ class ScopeWidget:
 
         def quit(event):
             self.ani.event_source.stop()
+            plt.close(self.fig)
             self.__del__()
 
         layout = widgets.Layout(width="70px")
@@ -150,6 +145,35 @@ class ScopeWidget:
 
         self.fps_wdg.observe(on_fps_value_change, names="value")
 
+        self.window_size_wdg = widgets.FloatLogSlider(
+            description="Window Size",
+            value=self._window_size,
+            base=2, 
+            min=8, 
+            max=np.log2(self.server.history_size), 
+            step=1, 
+            readout_format=".0f"
+        )
+
+        def on_window_size_value_change(change):
+            self.window_size = change["new"]
+
+        self.window_size_wdg.observe(on_window_size_value_change, names="value")
+
+        self.spec_decay_wdg = widgets.FloatLogSlider(
+            description="Spec Decay [s]",
+            value=self.spec_decay_seconds,
+            base=10, 
+            min=np.log10(0.2), 
+            max=np.log10(20),
+            step=0
+        )
+
+        def on_spec_decay_change(change):
+            self.spec_decay_seconds = change["new"]
+
+        self.spec_decay_wdg.observe(on_spec_decay_change, names="value")
+
         self.mode_wdg = widgets.Dropdown(
             options=["input", "output"],
             description="Source:",
@@ -170,6 +194,8 @@ class ScopeWidget:
                 widgets.HBox(
                     [
                         self.fps_wdg,
+                        self.window_size_wdg,
+                        self.spec_decay_wdg,
                         self.mode_wdg,
                         self.btn_quit,
                         self.btn_pause,
@@ -206,8 +232,17 @@ class ScopeWidget:
                 new_yscale = ["linear", "log"][index // 2]  # MSB for y
                 ax.set_xscale(new_xscale)
                 ax.set_yscale(new_yscale)
-                ax.relim()
-                ax.autoscale()
+                
+                if ax == self.axspec:
+                    new_xlim = [self.spec_lin_xlim, self.spec_log_xlim][index % 2] 
+                    new_ylim = [self.spec_lin_ylim, self.spec_log_ylim][index // 2]
+                    ax.set_xlim(new_xlim)
+                    ax.set_ylim(new_ylim)
+                else:
+                    ax.relim()
+                    ax.autoscale()
+
+                ax.xaxis.set_major_formatter(plt.ScalarFormatter())
 
             if event.key == "a":
                 ax = event.inaxes
@@ -226,7 +261,7 @@ class ScopeWidget:
 
                 elif ax == self.axspec:
                     ax.set_xlim(1, self.server.sr // 2)
-                    ax.set_ylim(0.001, 100)
+                    ax.set_ylim(1e-5, 3.1)
                     ax.set_yscale("log")
                     ax.set_xscale("log")
 
@@ -257,6 +292,30 @@ class ScopeWidget:
         except BaseException:
             pass
 
+    def init_spec(self):
+        self.temp_window = get_window(self._window, self._window_size)
+        self.norm_window = self.temp_window / np.sum(self.temp_window)
+        self.last_spec = np.ones(self._window_size//2 + 1) * 1e-12
+        self.spec_freqs = np.linspace(0, self.sr // 2, self._window_size//2+1)
+
+    @property
+    def window(self):
+        return self._window
+    
+    @window.setter
+    def window(self, value: str):
+        self._window = value
+        self.init_spec()
+
+    @property
+    def window_size(self):
+        return self._window
+    
+    @window.setter
+    def window_size(self, value: str):
+        self._window_size = int(value)
+        self.init_spec()
+
     def __del__(self):
         del self.ani
 
@@ -267,5 +326,6 @@ class ScopeWidget:
     def init_plot(self):
         self.axsig.set_xlim(0, self.server.bs / self.sr)
         self.axsig.set_ylim(-1.2, 1.2)
-        self.axspec.set_xlim(10, self.sr)
-        self.axspec.set_ylim(0.0001, 1)
+        self.axspec.set_xlim(self.spec_log_xlim)
+        self.axspec.set_ylim(self.spec_log_ylim)
+        self.axspec.xaxis.set_major_formatter(plt.ScalarFormatter())
