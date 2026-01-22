@@ -1,5 +1,6 @@
 from pya.asig import Asig
 from .helper.backend import determine_backend
+from .helper.helpers import RingBuffer
 import copy
 import logging
 import time
@@ -55,7 +56,8 @@ class Aserver:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
     def __init__(self, sr: int = 44100, bs: Optional[int] = None,
-                 device: Optional[int] = None, channels: Optional[int] = None,
+                 device: Optional[int] = None, channels: Optional[int] = None, 
+                 history_size: Optional[int] = 2**14,
                  backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
@@ -71,6 +73,8 @@ class Aserver:
             the default device from PyAudio
         channels : int
             number of channel, default is the max output channels of the device
+        history_size : int
+            The size of the stored input and output history.
         kwargs : backend parameter
 
         Returns
@@ -107,7 +111,11 @@ class Aserver:
         self._stop = True
         self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
         self._is_active = False
-        self.latest_output = self.empty_buffer.copy()
+
+        assert(history_size >= bs)
+        self.history_size = history_size
+        self.output_history = RingBuffer((self.history_size, self._channels))
+        self.input_history  = RingBuffer((self.history_size, self._channels))
 
         # TH: added for scope test
         self.scope = None 
@@ -322,7 +330,11 @@ class Aserver:
 
     def _play_callback(self, in_data, frame_count, time_info, flag):
         """callback function, called from pastream thread when data needed."""
-        self.latest_input = in_data
+        # TODO input handling
+        #in_samples = np.frombuffer(in_data, dtype=self.backend.dtype)
+        #in_samples = in_samples.reshape(-1, self.channels)
+        #self.input_history.insert(in_samples)
+
         tnow = self.block_time
         self.block_time += self.block_duration
         # self.block_cnt += 1  # TODO this will get very large eventually
@@ -390,7 +402,7 @@ class Aserver:
             del self.srv_outs[i]
 
         # data maintenance for scope, ScopeWidget and other services
-        self.latest_output = data
+        self.output_history.insert(data)
 
         if self.scope and self.scope.running:
             self.scope.set_data(data)
