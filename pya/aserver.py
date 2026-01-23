@@ -112,7 +112,7 @@ class Aserver:
         self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
         self._is_active = False
 
-        assert(history_size >= bs)
+        assert(history_size >= self.bs)
         self.history_size = history_size
         self.output_history = RingBuffer((self.history_size, self._channels))
         self.input_history  = RingBuffer((self.history_size, self._channels))
