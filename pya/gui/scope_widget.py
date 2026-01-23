@@ -8,16 +8,16 @@ import matplotlib.pyplot as plt
 from pya import Aserver
 import numpy as np
 from IPython.display import display
-from scipy.signal import get_window
+from scipy.signal import get_window, find_peaks
 from time import time
 
 class ScopeWidget:
 
     def __init__(self, 
                  server=None, 
-                 fps=20, 
+                 fps=25, 
                  mode="input", 
-                 window : str = 'hann', 
+                 window : str = 'blackmanharris', 
                  window_size : int = 4096, 
                  figsize=(8, 3)
         ):
@@ -28,7 +28,7 @@ class ScopeWidget:
             server (Aserver, optional): pya Aserver. Defaults to None.
             fps (int, optional): frames per second for rendering. Defaults to 20.
             mode (str, optional): "input" or "output"
-            window_shape (str): type of the window function (Default value = 'hann')
+            window_shape (str): type of the window function
             window_size: size of the analyzed window. Power of 2 recommended. Has to be <= server.history_size 
             figsize (tuple, optional): figure size. Defaults to (8, 3).
         """
@@ -48,7 +48,11 @@ class ScopeWidget:
         self.spec_log_xlim = (20, self.sr//2 + 1)
         self.spec_lin_ylim = (0, 1.118)
         self.spec_log_ylim = (1e-4, 3)
-
+        self.spec_peak_prominance = 0.005
+        self.spec_selected_idx = None
+        self.last_mouse_ax_pos = None
+        self.spec_hovered = False
+        self.mouse_ax_pos = np.array([0, 0])
 
         self.output = widgets.Output()
         with self.output:
@@ -67,12 +71,22 @@ class ScopeWidget:
             # spectrum plot on the right
             self.axspec = plt.subplot(1, 2, 2)
             (self.line2Dspec,) = self.axspec.plot(np.array(self.spec_log_xlim), np.array(self.spec_log_ylim), "b-")
+            (self.line2Dspec_p,) = self.axspec.plot([0], [0], "bo")
+            self.line2Dspec_p.set_visible(False)
+            self.peak_label = self.axspec.text(0, 0, "", transform=self.axspec.transAxes, 
+                ha="center", va="bottom", #fontsize=12,
+                bbox=dict(boxstyle="round", fc="w", ec="0.5"))
+            self.peak_label.set_visible(False)
+            self.axspec.scatter(np.array(0), np.array(0))
             plt.xlabel("frequency")
             plt.ylabel("E(w) [arb. units]")
             plt.grid()
             plt.tight_layout()
             self.axspec.set_xscale("log")
             self.axspec.set_yscale("log")
+            self.axspec.figure.canvas.mpl_connect('axes_enter_event', self.on_mouse_enter)
+            self.axspec.figure.canvas.mpl_connect('axes_leave_event', self.on_mouse_leave)
+            self.axspec.figure.canvas.mpl_connect('motion_notify_event', self.on_mouse_hover)
             plt.show()
 
         @staticmethod
@@ -91,14 +105,53 @@ class ScopeWidget:
             )
             spec = np.fft.rfft(self.norm_window * sig[:, 0], axis=0)
             spec[1:-1] *= 2
+            spec_decay_seconds = self.spec_decay_seconds if not self.spec_hovered else 3 * self.spec_decay_seconds + 3
             if self.axspec.get_yscale() == 'log':
-                self.last_spec /= (self.spec_log_ylim[1] / self.spec_log_ylim[0]) ** (dt / self.spec_decay_seconds)
+                self.last_spec /= (self.spec_log_ylim[1] / self.spec_log_ylim[0]) ** (dt / spec_decay_seconds)
             else:
-                self.last_spec -= dt / self.spec_decay_seconds * (self.spec_lin_ylim[1] - self.spec_lin_ylim[0])
+                self.last_spec -= dt / spec_decay_seconds * (self.spec_lin_ylim[1] - self.spec_lin_ylim[0])
             self.last_spec = np.maximum(np.abs(spec), self.last_spec)
             self.line2Dspec.set_data(
                 self.spec_freqs, self.last_spec
             )
+
+            # Find closest peak to mouse and display it
+            if self.spec_hovered:
+                mouse_moved = np.all(self.mouse_ax_pos != self.last_mouse_ax_pos)
+                if mouse_moved:
+                    peaks_idx = find_peaks(self.last_spec, prominence=self.spec_peak_prominance)[0]
+                    peaks_coord = np.array([self.spec_freqs[peaks_idx], self.last_spec[peaks_idx]])
+                    peaks_px = self.axspec.transData.transform(np.column_stack(peaks_coord))
+                    peaks_ax_pos = self.axspec.transAxes.inverted().transform(peaks_px)
+
+                    mouse_distances = np.linalg.norm(peaks_ax_pos - self.mouse_ax_pos, axis=1)
+                    nearest_peak_idx = np.argmin(mouse_distances)
+
+                    if mouse_distances[nearest_peak_idx] < 0.1:
+                        self.spec_selected_idx = peaks_idx[nearest_peak_idx]
+                    else:
+                        self.spec_selected_idx = None
+                self.last_mouse_ax_pos = self.mouse_ax_pos
+
+                if self.spec_selected_idx:
+                    idx = self.spec_selected_idx
+                    freq = self.spec_freqs[idx]
+                    self.line2Dspec_p.set_data([freq], [self.last_spec[idx]])
+                    self.line2Dspec_p.set_visible(True)
+
+                    if not self.peak_label.get_visible() or mouse_moved:
+                        selected_px = self.axspec.transData.transform(np.column_stack([freq, self.last_spec[idx]]))
+                        selected_ax_pos = self.axspec.transAxes.inverted().transform(selected_px)
+                        self.peak_label.set_position(selected_ax_pos[0] + [0, 0.1])
+                        self.peak_label.set_visible(True)
+                    self.peak_label.set_text(f"{freq:{".1f" if freq < 100 else ".0f"}} Hz\n{self.last_spec[idx]:.1e}")
+                else:
+                    self.line2Dspec_p.set_visible(False)
+                    self.peak_label.set_visible(False)
+            else:
+                self.spec_selected_idx = None
+
+
 
         self.ani = FuncAnimation(
             self.fig,
@@ -164,7 +217,7 @@ class ScopeWidget:
             description="Spec Decay [s]",
             value=self.spec_decay_seconds,
             base=10, 
-            min=np.log10(0.2), 
+            min=np.log10(0.05), 
             max=np.log10(20),
             step=0
         )
@@ -266,6 +319,18 @@ class ScopeWidget:
                     ax.set_xscale("log")
 
         self.cid = self.fig.canvas.mpl_connect("key_press_event", on_key)
+
+    def on_mouse_enter(self, event):
+        if event.inaxes == self.axspec:
+            self.spec_hovered = True
+
+    def on_mouse_leave(self, event):
+        if event.inaxes == self.axspec:
+            self.spec_hovered = False
+
+    def on_mouse_hover(self, event):
+        if event.inaxes == self.axspec:
+            self.mouse_ax_pos = self.axspec.transAxes.inverted().transform((event.x, event.y))
 
     @property
     def mode(self):
