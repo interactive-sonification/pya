@@ -798,7 +798,8 @@ class AudioIn(SingleChannelGen):
                     time.sleep(0.2 * s.bs / s.sr)
                 self.state.data["m_block_counter"] = s.block_cnt
             num_channels = s.channels
-            samples = np.frombuffer(s.latest_input, dtype=s.backend.dtype)
+            ### TODO: JM: Test ass soon general imput handling is fixed 
+            samples = s.get_input_history(s.bs)
             samples = samples.reshape(-1, num_channels)[:, 0]
             if sample_count != s.bs:
                 print("mismatch:", sample_count, s.bs)
