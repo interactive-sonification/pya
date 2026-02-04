@@ -99,9 +99,10 @@ class ScopeWidget:
             self.last_frame_time = time()
 
             if self.mode == "input":
-                sig = self.server.input_history.unwrapped_copy(self._window_size)
+                #sig = self.server.input_history.unwrapped_copy(self._window_size)
+                pass
             else:
-                sig = self.server.output_history.unwrapped_copy(self._window_size)
+                sig = self.server.get_output_history(self._window_size)
             block_size = sig.shape[0]
             self.line2Dsig.set_data(
                 np.linspace(0, self._window_size / sr, self._window_size, endpoint=False), sig[:, 0]

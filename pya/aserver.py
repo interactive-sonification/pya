@@ -1,6 +1,7 @@
 from pya.asig import Asig
 from .helper.backend import determine_backend
-from .helper.helpers import RingBuffer
+from collections import deque
+import itertools
 import copy
 import logging
 import time
@@ -74,7 +75,8 @@ class Aserver:
         channels : int
             number of channel, default is the max output channels of the device
         history_size : int
-            The size of the stored input and output history.
+            The size of the stored input and output history in samples. 
+            Internally the next integer multiple of bs is allocated. 
         kwargs : backend parameter
 
         Returns
@@ -112,10 +114,9 @@ class Aserver:
         self.empty_buffer = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
         self._is_active = False
 
-        assert(history_size >= self.bs)
         self.history_size = history_size
-        self.output_history = RingBuffer((self.history_size, self._channels))
-        self.input_history  = RingBuffer((self.history_size, self._channels))
+        self._output_history = deque(maxlen=int(np.ceil(history_size/bs)))
+        self._input_history = deque(maxlen=int(np.ceil(history_size/bs)))
 
         # TH: added for scope test
         self.scope = None 
@@ -330,10 +331,7 @@ class Aserver:
 
     def _play_callback(self, in_data, frame_count, time_info, flag):
         """callback function, called from pastream thread when data needed."""
-        # TODO input handling
-        #in_samples = np.frombuffer(in_data, dtype=self.backend.dtype)
-        #in_samples = in_samples.reshape(-1, self.channels)
-        #self.input_history.insert(in_samples)
+        self._input_history.append(in_data)
 
         tnow = self.block_time
         self.block_time += self.block_duration
@@ -402,12 +400,43 @@ class Aserver:
             del self.srv_outs[i]
 
         # data maintenance for scope, ScopeWidget and other services
-        self.output_history.insert(data)
+        self._output_history.append(data)
 
         if self.scope and self.scope.running:
             self.scope.set_data(data)
 
         return self.backend.process_buffer(data * (self.backend.range * self.gain))
+    
+    def get_output_history(self, num_samples: int = None):
+        """
+        Returns a copy of the num_samples output samples.
+        """
+        if not num_samples:
+            num_samples = self.history_size
+        num_blocks = int(np.ceil(num_samples/self.bs))
+
+        history_len = len(self._output_history)
+        result_blocks = list(itertools.islice(self._output_history, history_len - num_blocks, history_len))
+        result = np.concatenate(result_blocks, axis=0)
+        return result[-num_samples:]
+    
+    def get_input_history(self, num_samples: int = None):
+        """
+        Returns a copy of the num_samples input samples
+        """
+        # TODO: Not tested yet, as input does not work on my device
+        if not num_samples:
+            num_samples = self.history_size
+        num_blocks = int(np.ceil(num_samples/self.bs))
+        
+        history_len = len(self._input_history)
+        raw_chunks = list(itertools.islice(self._input_history, history_len - num_blocks, history_len))
+        merged_bytes = b''.join(raw_chunks)
+        return np.frombuffer(merged_bytes, dtype=self.backend.dtype)
+
+        #in_samples = np.frombuffer(in_data, dtype=self.backend.dtype)
+        #in_samples = in_samples.reshape(-1, self.channels)
+        #self.input_history.insert(in_samples)
 
     def stop(self):
         self._stop = True
