@@ -2633,3 +2633,178 @@ class MouseButton(SingleChannelGen):
 
     def __del__(self):
         self.listener_manager.stop_listener()
+
+
+@njit
+def amp_to_db_numba(amp: float):
+    return 20 * math.log10(abs(amp) + 1e-10) #1e-10 chosen arbitrarily to handle 0 inputs
+
+
+@njit
+def db_to_amp_numba(db: float):
+    return 10**(db / 20)
+
+
+@njit
+def simple_compressor_transfer_fn(input_db: float, threshold_db: float, ratio: float, knee: float):
+    """Simple compressor transfer function
+    
+    knee: 
+        Roughly the width of the curve in dB.
+        Precisely defined as target gain at threshold
+        = 0.5 * (1 - 1/ratio) * knee
+        = 0.5 * knee if ratio is inf:1 = inf
+
+    Example: Plotting the transfer function:
+        import matplotlib.pyplot as plt
+        x = np.linspace(-30, 0, 101)
+        plt.plot(x, simple_compressor_transfer_fn(x, threshold_db=-15, ratio=3, knee=2))
+
+    """
+    x = input_db - threshold_db
+    return 0.5 * ((1 + 1/ratio) * x - (1 - 1/ratio) * np.sqrt(x**2 + knee**2)) + threshold_db
+
+
+@njit
+def lag2_numba(target: float, state: float, rise_samples: float, fall_samples: float, target_epsilon: float = 0.001):
+    """Two-way lag that provides separat timing parameter if the value is rising and falling
+    """
+    if target > state:
+        if rise_samples == 0: return target
+        return state + (target-state) * (1-target_epsilon**(1/rise_samples))
+    else:
+        if fall_samples == 0: return target
+        return state + (target-state) * (1-target_epsilon**(1/fall_samples))
+
+
+@njit
+def simple_compressor_numba(input: np.ndarray,
+                     sidechain_input: np.ndarray,
+                     threshold_db: np.ndarray,
+                     ratio: np.ndarray,
+                     knee: np.ndarray,
+                     attack_samples: np.ndarray,
+                     release_samples: np.ndarray,
+                     gain_state_db: float,
+                     sample_count: int,
+                     transfer_fn = simple_compressor_transfer_fn
+):
+    output = np.empty_like(input)
+    for i in range(sample_count):
+        input_db = amp_to_db_numba(sidechain_input[i])
+        target_db = transfer_fn(input_db, threshold_db[i], ratio[i], knee[i])
+        gain_state_db = lag2_numba(target_db-input_db, gain_state_db, release_samples[i], attack_samples[i])        
+        output[i] = db_to_amp_numba(gain_state_db) * input[i]
+
+    return output, gain_state_db
+
+
+class SimpleCompressor(SingleChannelGen):
+    """
+    A simple Dynamic Range Compressor
+
+    Parameters
+    ----------
+    input : GenOrNum
+        The main input audio signal to be processed.
+
+    threshold_db : GenOrNum
+        The threshold level in decibels (dB). Signal amplitudes exceeding this 
+        level will trigger gain reduction.
+
+    ratio : GenOrNum
+        The compression ratio applied to the signal above the threshold. 
+        1.0 : No compression (1:1).
+        3 : Represents a 3:1 compression ratio.
+        np.inf : Represents infinite compression or hard limiting (∞:1).
+
+    knee : GenOrNum
+        The knee parameter of the transfer function. 
+        For the default transfer function:
+        0: Hard knee
+        Soft knee about the width of the curve in dB.
+        Precisely defined as target gain at threshold:
+            = 0.5 * (1 - 1/ratio) * knee
+            = 0.5 * knee if ratio is inf
+
+    attack_time : GenOrNum
+        Determines how quickly the compressor reduces gain.
+        Unit based on mode. 
+
+    release_time : GenOrNum
+        Determines how quickly the compressor releases gain.
+        Unit based on mode. 
+
+    makeup_db : GenOrNum
+        Static make-up gain to compensate for the overall volume reduction caused 
+        by the compressor.
+
+    sidechain_input : GenOrNum | None
+        An optional external control signal. If provided, the compressor calculates 
+        its gain reduction based on the amplitude of this sidechain signal rather 
+        than the main input. 
+        If None, the input is used.
+
+    transfer_fn : Callable
+        The custom function calculating the static gain reduction curve.
+        Defaults to `simple_compressor_transfer_fn`.
+        Must be a Numba JIT-compiled function with the exact signature:
+        fn(input_db: float, threshold_db: float, ratio: float, knee: float) -> float
+    """
+
+    def __init__(self,
+        input: GenOrNum,
+        threshold_db: GenOrNum = -10.,
+        ratio: GenOrNum = 3.,
+        knee: GenOrNum = 3.,
+        attack_time: GenOrNum = 0.010,
+        release_time: GenOrNum = 0.400,
+        makeup_db: GenOrNum = 0,
+        sidechain_input: GenOrNum | None = None,
+        mode: IndexMode | str = IndexMode.TIME,
+        transfer_fn = simple_compressor_transfer_fn,
+        *args, 
+        **kwargs
+    ) -> None:
+        super().__init__(*args, **kwargs)
+
+        self._add_node(input, "input", convert_num_to_arr=True)
+        self._add_node(threshold_db, "threshold_db", convert_num_to_arr=True)
+        self._add_node(ratio, "ratio", convert_num_to_arr=True)
+        self._add_node(knee, "knee", convert_num_to_arr=True)
+        self._add_node(attack_time, "attack_time", convert_num_to_arr=True)
+        self._add_node(release_time, "release_time", convert_num_to_arr=True)
+        self._add_node(makeup_db, "makeup_db", convert_num_to_arr=False)
+
+        self._has_sidechain_input = (sidechain_input != None)
+        if sidechain_input:
+            self._add_node(sidechain_input, "sidechain_input", convert_num_to_arr=True)
+        
+        self._time_factor = 1
+        match mode:
+            case IndexMode.TIME:
+                self._time_factor = self.sr
+            case IndexMode.INDEX:
+                pass
+            case _:
+                print("Warning: invalid index mode: using IndexMode.Index")
+        self.transfer_fn = transfer_fn
+
+    def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
+        gain_state_db = self.state.data.get("gain_state_db", 0)
+
+        output, gain_state_db = simple_compressor_numba(
+            input=self.nodes["input"],
+            sidechain_input=self.nodes["sidechain_input"] if self._has_sidechain_input else self.nodes["input"],
+            threshold_db=self.nodes["threshold_db"],
+            ratio=self.nodes["ratio"],
+            knee=self.nodes["knee"],
+            attack_samples=self.nodes["attack_time"] * self._time_factor,
+            release_samples=self.nodes["release_time"] * self._time_factor,
+            gain_state_db=gain_state_db,
+            sample_count=sample_count,
+            transfer_fn=self.transfer_fn,
+        )
+
+        self.state.data["gain_state_db"] = gain_state_db
+        return output * pam.db_to_amp(self.nodes["makeup_db"])
