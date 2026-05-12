@@ -1,6 +1,7 @@
 name: test-and-publish
 
-push:
+on:
+  push:
     # Avoid using all the resources/limits available by checking only
     # relevant branches and tags. Other branches can be checked via PRs.
     branches: [main]
@@ -66,14 +67,14 @@ jobs:
       - uses: astral-sh/setup-uv@v8.1.0
         with:
           python-version: ${{ matrix.python }}
-    - name: Install portaudio Ubuntu
-      if: matrix.platform == 'ubuntu-latest'
-      shell: bash -l {0}
-      run: sudo apt-get install portaudio19-dev
-    - name: Install portaudio MacOS
-      if: matrix.platform == 'macos-latest'
-      shell: bash -l {0}
-      run: brew install portaudio
+      - name: Install portaudio Ubuntu
+        if: matrix.platform == 'ubuntu-latest'
+        shell: bash -l {0}
+        run: sudo apt-get install portaudio19-dev
+      - name: Install portaudio MacOS
+        if: matrix.platform == 'macos-latest'
+        shell: bash -l {0}
+        run: brew install portaudio
       - name: Retrieve pre-built distribution files
         uses: actions/download-artifact@v4
         with: {name: python-distribution-files, path: dist/}
