@@ -1,26 +1,35 @@
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from pya.backend.base import BackendBase
-    from pya.backend.PyAudio import PyAudioBackend
     from pya.backend.Jupyter import JupyterBackend
+    from pya.backend.PyAudio import PyAudioBackend
+
+
+__all__ = [
+    "get_server_info",
+    "try_pyaudio_backend",
+    "try_jupyter_backend",
+    "determine_backend",
+]
 
 
 def get_server_info():
-    import re
     import json
-    import requests
+    import re
+
     import ipykernel
     import notebook.notebookapp
+    import requests
+
     kernel_id = re.search(
-        "kernel-(.*).json",
-        ipykernel.connect.get_connection_file()
+        "kernel-(.*).json", ipykernel.connect.get_connection_file()
     ).group(1)
     servers = notebook.notebookapp.list_running_servers()
     for s in servers:
         response = requests.get(
             requests.compat.urljoin(s["url"], "api/sessions"),
-            params={"token": s.get("token", "")}
+            params={"token": s.get("token", "")},
         )
         for n in json.loads(response.text):
             if n["kernel"]["id"] == kernel_id:
@@ -31,6 +40,7 @@ def get_server_info():
 def try_pyaudio_backend(**kwargs) -> Optional["PyAudioBackend"]:
     try:
         from pya.backend.PyAudio import PyAudioBackend
+
         return PyAudioBackend(**kwargs)
     except ImportError:
         return None
@@ -38,11 +48,18 @@ def try_pyaudio_backend(**kwargs) -> Optional["PyAudioBackend"]:
 
 def try_jupyter_backend(port, **kwargs) -> Optional["JupyterBackend"]:
     import os
+
     from pya.backend.Jupyter import JupyterBackend
+
     server_info = get_server_info()
-    if server_info is None or (server_info['hostname'] in ['localhost', '127.0.0.1'] and not force_webaudio):
+    if server_info is None or (
+        server_info["hostname"] in ["localhost", "127.0.0.1"]
+        # TODO commented out the `force_webaudio` condition below,
+        # because it was undefined
+        # `and not force_webaudio`
+    ):
         return None  # use default local backend
-    if os.environ.get('BINDER_SERVICE_HOST'):
+    if os.environ.get("BINDER_SERVICE_HOST"):
         return JupyterBackend(port=port, proxy_suffix=f"/proxy/{port}", **kwargs)
     else:
         return JupyterBackend(port=port, **kwargs)

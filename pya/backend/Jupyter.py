@@ -1,28 +1,35 @@
-from .base import BackendBase, StreamBase
-
 import asyncio
 import threading
-from functools import partial
-from IPython.display import Javascript, HTML, display
+
+from IPython.display import HTML, Javascript, display
+
+from pya.backend.base import BackendBase, StreamBase
 
 try:
     import websockets
 except ImportError:
     websockets = None
 
+__all__ = ["JupyterBackend", "JupyterStream"]
+
 
 class JupyterBackend(BackendBase):
-
-    dtype = 'float32'
+    dtype = "float32"
     range = 1
     bs = 4096  # streaming introduces lack which has to be covered by the buffer
 
     def __init__(self, port=8765, proxy_suffix=None):
         if not websockets:
-            raise Exception("JupyterBackend requires 'websockets' but it could not be imported. "
-                            "Did you miss installing optional 'remote' requirements?")
+            raise Exception(
+                "JupyterBackend requires 'websockets' but it could not be imported. "
+                "Did you miss installing optional 'remote' requirements?"
+            )
 
-        self.dummy_devices = [dict(maxInputChannels=0, maxOutputChannels=2, index=0, name="JupyterBackend")]
+        self.dummy_devices = [
+            dict(
+                maxInputChannels=0, maxOutputChannels=2, index=0, name="JupyterBackend"
+            )
+        ]
         self.port = port
         self.proxy_suffix = proxy_suffix
         if self.proxy_suffix is not None:
@@ -41,11 +48,20 @@ class JupyterBackend(BackendBase):
         return self.dummy_devices[0]
 
     def open(self, *args, channels, rate, stream_callback=None, **kwargs):
-        display(HTML("<div class=\"alert-info\">You are using the experimental Jupyter backend. "
-                     "Note that this backend is not feature complete and does not support recording so far. "
-                     "User experience may vary depending on the network latency.</div>"))
-        stream = JupyterStream(channels=channels, rate=rate, stream_callback=stream_callback, port=self.port,
-                               proxy_suffix=self.proxy_suffix)
+        display(
+            HTML(
+                '<div class="alert-info">You are using the experimental Jupyter backend. '  # noqa E501
+                "Note that this backend is not feature complete and does not support recording so far. "  # noqa E501
+                "User experience may vary depending on the network latency.</div>"
+            )
+        )
+        stream = JupyterStream(
+            channels=channels,
+            rate=rate,
+            stream_callback=stream_callback,
+            port=self.port,
+            proxy_suffix=self.proxy_suffix,
+        )
         stream.start_stream()
         return stream
 
@@ -57,7 +73,6 @@ class JupyterBackend(BackendBase):
 
 
 class JupyterStream(StreamBase):
-
     def __init__(self, channels, rate, stream_callback, port, proxy_suffix):
         self.rate = rate
         self.channels = channels
@@ -69,7 +84,7 @@ class JupyterStream(StreamBase):
             async for _ in websocket:
                 buffer = self.stream_callback(None, None, None, None)
                 # print(buffer)
-                await websocket.send(buffer.reshape(-1, 1, order='F').tobytes())
+                await websocket.send(buffer.reshape(-1, 1, order="F").tobytes())
 
         async def ws_runner():
             async with websockets.serve(bridge, "0.0.0.0", 8765):
@@ -85,9 +100,10 @@ class JupyterStream(StreamBase):
 
         self.loop = asyncio.new_event_loop()
         self.thread = threading.Thread(target=loop_thread, args=(self.loop,))
-        # self.thread.daemon = True  # allow program to shutdown even if the thread is alive
+        # allow program to shutdown even if the thread is alive
+        # self.thread.daemon = True
 
-        url_suffix = f':{port}' if proxy_suffix is None else proxy_suffix
+        url_suffix = f":{port}" if proxy_suffix is None else proxy_suffix
 
         self.client = Javascript(
             f"""
@@ -191,7 +207,8 @@ if (context.state == "suspended") {
 }
 
 console.log("PyaJSClient: Websocket client loaded.")
-            """)
+            """  # noqa E501
+        )
 
     @staticmethod
     def set_buffer_threshold(buffer_limit):

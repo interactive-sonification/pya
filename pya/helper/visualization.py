@@ -1,19 +1,35 @@
 from __future__ import absolute_import
-import matplotlib.pyplot as plt
+
 import math
-import numpy as np
+
 import matplotlib.gridspec as grd
+import matplotlib.pyplot as plt
+import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+__all__ = ["basicplot", "gridplot"]
 
-def basicplot(data: np.ndarray, ticks, channels, offset=0, scale=1,
-              cn=None, ax=None, typ='plot', cmap='inferno',
-              xlim=None, ylim=None, xlabel='', ylabel='',
-              show_bar=False,
-              **kwargs):
+
+def basicplot(
+    data: np.ndarray,
+    ticks,
+    channels,
+    offset=0,
+    scale=1,
+    cn=None,
+    ax=None,
+    typ="plot",
+    cmap="inferno",
+    xlim=None,
+    ylim=None,
+    xlabel="",
+    ylabel="",
+    show_bar=False,
+    **kwargs,
+):
     """Basic version of the plot for pya, this can be directly used
     by Asig. Aspec/Astft/Amfcc will have different extra setting
-    and type. 
+    and type.
 
     Parameters
     ----------
@@ -34,27 +50,32 @@ def basicplot(data: np.ndarray, ticks, channels, offset=0, scale=1,
         # offset is the spacing between channel,
         # scale is can shrink the signal just for visualization purpose.
         # Plot everything on top of each other.
-        if typ == 'plot':
+        if typ == "plot":
             p = ax.plot(ticks, data, **kwargs)
             # return p, ax
-        elif typ == 'spectrogram':
+        elif typ == "spectrogram":
             # ticks is (times, freqs)
-            p = ax.pcolormesh(ticks[0], ticks[1], data,
-                              cmap=plt.get_cmap(cmap), **kwargs)
-        elif typ == 'mfcc':
+            p = ax.pcolormesh(
+                ticks[0], ticks[1], data, cmap=plt.get_cmap(cmap), **kwargs
+            )
+        elif typ == "mfcc":
             p = ax.pcolormesh(data, cmap=plt.get_cmap(cmap), **kwargs)
     else:
-        if typ == 'plot': 
+        if typ == "plot":
             for idx, val in enumerate(data.T):
                 p = ax.plot(ticks, idx * offset + val * scale, **kwargs)
                 ax.set_xlabel(xlabel)
                 if cn:
                     ax.text(0, (idx + 0.1) * offset, cn[idx])
-        elif typ == 'spectrogram':
+        elif typ == "spectrogram":
             for idx in range(data.shape[1]):
-                p = ax.pcolormesh(ticks[0], idx * offset + scale * ticks[1], 
-                                  data[:, idx, :], cmap=plt.get_cmap(cmap),
-                                  **kwargs)
+                p = ax.pcolormesh(
+                    ticks[0],
+                    idx * offset + scale * ticks[1],
+                    data[:, idx, :],
+                    cmap=plt.get_cmap(cmap),
+                    **kwargs,
+                )
                 if cn:
                     ax.text(0, (idx + 0.1) * offset, cn[idx])
             ax.set_yticklabels([])
@@ -66,7 +87,7 @@ def basicplot(data: np.ndarray, ticks, channels, offset=0, scale=1,
     # Colorbar
     if show_bar:
         divider = make_axes_locatable(ax)
-        cax = divider.append_axes('right', size="2%", pad=0.03)
+        cax = divider.append_axes("right", size="2%", pad=0.03)
         _ = plt.colorbar(p, cax=cax)  # Add
     return p, ax
 
@@ -83,7 +104,7 @@ def gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None):
     # plot all 4 different pya objects in 1 column,
     amfcc and astft use pcolormesh so colorbar will
     # be displayed as well
-    gridplot([asig, amfcc, aspec, astft], colwrap=2, 
+    gridplot([asig, amfcc, aspec, astft], colwrap=2,
               cbar_ratio=0.08, figsize=[10, 10]);
 
     Parameters
@@ -105,7 +126,8 @@ def gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None):
     fig : plt.figure()
         The plt.figure() object
     """
-    from .. import Asig, Amfcc, Astft, Aspec
+    from .. import Amfcc, Asig, Aspec, Astft
+
     nplots = len(pya_objects)
 
     if colwrap > nplots:
@@ -125,8 +147,7 @@ def gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None):
         wratio.append(odd_weight) if i % 2 else wratio.append(even_weight)
 
     fig = plt.figure(figsize=figsize, constrained_layout=True)
-    grid = grd.GridSpec(nrow, ncol,
-                        figure=fig, width_ratios=wratio, wspace=0.01)
+    grid = grd.GridSpec(nrow, ncol, figure=fig, width_ratios=wratio, wspace=0.01)
 
     total_idx = ncol * nrow
     for i in range(total_idx):
@@ -135,9 +156,13 @@ def gridplot(pya_objects, colwrap=1, cbar_ratio=0.04, figsize=None):
             if idx < nplots:
                 ax = plt.subplot(grid[i])
                 # Title is object type + label
-                title = pya_objects[idx].__repr__().split('(')[0] + ': ' + pya_objects[idx].label
+                title = (
+                    pya_objects[idx].__repr__().split("(")[0]
+                    + ": "
+                    + pya_objects[idx].label
+                )
                 # Truncate if str too long
-                title = (title[:30] + "..." if len(title) > 30 else title)
+                title = title[:30] + "..." if len(title) > 30 else title
                 ax.set_title(title)
                 if isinstance(pya_objects[idx], Asig):
                     pya_objects[idx].plot(ax=ax)

@@ -1,9 +1,10 @@
 from unittest import TestCase
-from pya import *
+
+from pya.helper.visualization import gridplot
+from pya.ugen import Ugen
 
 
 class TestVisualization(TestCase):
-
     def setUp(self):
         self.asig = Ugen().sine()
         self.aspec = self.asig.to_spec()
@@ -21,21 +22,21 @@ class TestVisualization(TestCase):
         self.asig.plot(xlim=(0, 100), ylim=(0, 100))
 
     def test_asig_fn_db(self):
-        self.asig.plot(fn='db')
+        self.asig.plot(fn="db")
 
     def test_asig_fn_nocallable(self):
         with self.assertRaises(AttributeError):
-            self.asig.plot(fn='something')
+            self.asig.plot(fn="something")
 
     def test_asig_multichannels(self):
-        sig2d = Ugen().sine(channels=4, cn=['a', 'b', 'c', 'd']) 
+        sig2d = Ugen().sine(channels=4, cn=["a", "b", "c", "d"])
         sig2d.plot()
 
     def test_aspec_plot(self):
         self.aspec.plot()
 
     def tesst_aspec_plot_lim(self):
-        self.aspect.plot(xlim=(0, 1.), ylim=(0, 100))
+        self.aspect.plot(xlim=(0, 1.0), ylim=(0, 100))
 
     def test_gridplot(self):
         _ = gridplot(self.alst)

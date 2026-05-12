@@ -1,19 +1,39 @@
 """
-Audio codec module supporting high-quality audio file reading with consistent float32 output.
-Supports WAV, AIFF, FLAC (via SoundFile) and MP3 (via FFmpeg) while maintaining maximum precision.
+Audio codec module supporting high-quality audio file reading
+with consistent float32 output.
+Supports WAV, AIFF, FLAC (via SoundFile) and MP3 (via FFmpeg)
+while maintaining maximum precision.
 """
 
-import sys
-import subprocess
-import re
-import time
 import os
-import threading
-from warnings import warn
 import queue
+import re
+import subprocess
+import sys
+import threading
+import time
 
-import soundfile as sf
 import numpy as np
+import soundfile as sf
+
+__all__ = [
+    "DecodeError",
+    "NoFileError",
+    "NoBackendError",
+    "UnsupportedError",
+    "BitWidthError",
+    "FFmpegError",
+    "FFmpegNotInstalledError",
+    "FFmpegReadTimeoutError",
+    "CommunicationError",
+    "BaseAudioFile",
+    "SoundFileAudioFile",
+    "QueueReaderThread",
+    "popen_multiple",
+    "ffmpeg_available",
+    "FFmpegAudioFile",
+    "audio_read",
+]
 
 COMMANDS = ("ffmpeg", "avconv")
 
@@ -296,7 +316,7 @@ class FFmpegAudioFile(BaseAudioFile):
 
     @property
     def raw_str_info(self) -> str:
-        """Example info: 'duration: 00:00:00.81, start: 0.025057, bitrate: 84 kb/sstream #0:0: audio: mp3 (mp3float), 44100 hz, mono, fltp, 82 kb/s'"""
+        """Example info: 'duration: 00:00:00.81, start: 0.025057, bitrate: 84 kb/sstream #0:0: audio: mp3 (mp3float), 44100 hz, mono, fltp, 82 kb/s'"""  # noqa: E501
         return self._raw_str_info
 
     def _get_info(self):
@@ -329,7 +349,7 @@ class FFmpegAudioFile(BaseAudioFile):
         """Given relevant data from the ffmpeg output, set audio
         parameter fields on this object.
         Example: 'duration: 00:00:00.81, start: 0.025057, bitrate: 84 kb/sstream #0:0: audio: mp3 (mp3float), 44100 hz, mono, fltp, 82 kb/s'
-        """
+        """  # noqa: E501
         # Sample rate.
         match = re.search(r"(\d+) hz", str_info)
         if match:
@@ -356,7 +376,12 @@ class FFmpegAudioFile(BaseAudioFile):
         match = re.search(r"duration: (\d+):(\d+):(\d+).(\d)", str_info)
         if match:
             durparts = list(map(int, match.groups()))
-            self._duration = (durparts[0] * 60 * 60 + durparts[1] * 60 + durparts[2] + float(durparts[3]) / 10)
+            self._duration = (
+                durparts[0] * 60 * 60
+                + durparts[1] * 60
+                + durparts[2]
+                + float(durparts[3]) / 10
+            )
         else:
             self._duration = 0
 

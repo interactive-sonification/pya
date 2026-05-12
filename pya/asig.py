@@ -1,28 +1,25 @@
-from itertools import compress
-import numbers
 import logging
-from typing import Iterable
-from typing import Optional
-from typing import Union
+import numbers
+from itertools import compress
+from typing import Iterable, Optional, Union
 from warnings import warn
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import scipy.interpolate
 import scipy.signal
+from pyamapping import amp_to_db, db_to_amp, linlin
 from scipy.io import wavfile
 
-from pyamapping import amp_to_db, db_to_amp, linlin
-from .helper import spectrum, audio_from_file, padding
-from .helper import basicplot
-
+from .helper import audio_from_file, basicplot, padding, spectrum
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
 
 class Asig:
-    """Audio signal class.
+    """
+    Audio signal class.
     Asig enables manipulation of audio signals in the style of numpy and more.
     Asig offer functions for plotting (via matplotlib) and playing audio
     (using the pya.Aserver class)
@@ -54,20 +51,29 @@ class Asig:
         the .bound, .extend and .overwrite properties.
     """
 
-    def __init__(self, sig: Union[str, int, float, np.ndarray], sr: int = 44100,
-                 label: str = "", channels: int = 1, cn: Optional[list] = None):
-        """__init__ method
+    def __init__(
+        self,
+        sig: Union[str, int, float, np.ndarray],
+        sr: int = 44100,
+        label: str = "",
+        channels: int = 1,
+        cn: Optional[list] = None,
+    ):
+        """
+        Constructor method
 
         Parameters
         ----------
             sig: numpy.array or int or float or str
-                This is a multiple type argument, which all results in Asig.sig being a numpy.array to
+                This is a multiple type argument,
+                which all results in Asig.sig being a numpy.array to
                 represent the audio signal.
 
                 numpy.array for audio signal,
 
                 str for filepath. Currently support two types of audio loader:
-                1) Standard library for .wav, .aiff, and 2) ffmpeg for other such as .mp3.
+                1) Standard library for .wav, .aiff
+                2) ffmpeg for other such as .mp3.
 
                 int create x samples of silence,
 
@@ -104,8 +110,7 @@ class Asig:
             if channels == 1:
                 self.sig = np.zeros(int(sig * sr)).astype(self.dtype)
             else:
-                self.sig = np.zeros(
-                    (int(sig * sr), channels)).astype(self.dtype)
+                self.sig = np.zeros((int(sig * sr), channels)).astype(self.dtype)
         else:
             self.sig = np.array(sig).astype(self.dtype)
         self.cn = cn
@@ -140,12 +145,10 @@ class Asig:
                 if all(isinstance(x, str) for x in val):
                     self._cn = val
                 else:
-                    raise TypeError(
-                        "channel names cn need to be a list of string(s).")
+                    raise TypeError("channel names cn need to be a list of string(s).")
             else:
                 raise ValueError(
-                    "list size doesn't match channel numbers {}".format(
-                        self.channels)
+                    "list size doesn't match channel numbers {}".format(self.channels)
                 )
 
     @property
@@ -163,7 +166,8 @@ class Asig:
         return self.samples / self.sr
 
     def save_wavfile(self, fname: str = "asig.wav", dtype: str = "float32"):
-        """Save signal as .wav file, return self.
+        """
+        Save signal as .wav file, return self.
 
         Parameters
         ----------
@@ -193,7 +197,8 @@ class Asig:
                 raise TypeError("column names need to be a list of strings")
 
     def __getitem__(self, index):
-        """ Accessing array elements through slicing.
+        """
+        Accessing array elements through slicing.
             * int, get signal row asig[4];
             * slice, range and step slicing asig[4:40:2]
                 # from 4 to 40 every 2 samples;
@@ -260,8 +265,7 @@ class Asig:
                     stop = None
             ridx = slice(start, stop, 1)
             sr = self.sr
-            _LOGGER.debug("Time slicing, start: %s, stop: %s",
-                          str(start), str(stop))
+            _LOGGER.debug("Time slicing, start: %s, stop: %s", str(start), str(stop))
         else:  # Dont think there is a usecase.
             ridx = rindex
             sr = self.sr
@@ -273,8 +277,7 @@ class Asig:
                 cidx = [self.col_name.get(s) for s in cindex]
                 if cidx is None:
                     _LOGGER.error("Input column names does not exist")
-                cn_new = [self.cn[i]
-                          for i in cidx] if self.cn is not None else None
+                cn_new = [self.cn[i] for i in cidx] if self.cn is not None else None
             elif isinstance(cindex[0], bool):
                 cidx = cindex
                 cn_new = list(compress(self.cn, cindex))
@@ -282,8 +285,7 @@ class Asig:
                 try:
                     cidx = list(cindex)
                     cn_new = (
-                        [self.cn[i]
-                            for i in cindex] if self.cn is not None else None
+                        [self.cn[i] for i in cindex] if self.cn is not None else None
                     )
                 except (TypeError, ValueError):
                     cidx = slice(0, 0, 0)
@@ -314,8 +316,7 @@ class Asig:
         if sig.ndim == 2 and sig.shape[1] == 1:
             # Hot fix this to be consistent with bool slciing
             if not isinstance(cindex[0], bool):
-                _LOGGER.debug(
-                    "ndim is 2 and channel num is 1, performa np.squeeze")
+                _LOGGER.debug("ndim is 2 and channel num is 1, performa np.squeeze")
                 sig = np.squeeze(sig)
         if isinstance(sig, numbers.Number):
             _LOGGER.debug("signal is scalar, convert to array")
@@ -327,8 +328,10 @@ class Asig:
 
     @property
     def x(self):
-        """Extend mode: this mode allows destination
-        sig size in assignment to be extended through setitem"""
+        """
+        Extend mode: this mode allows destination
+        sig size in assignment to be extended through setitem
+        """
         # Set setitem mode to extend
         self.mix_mode = "extend"
         return self
@@ -337,8 +340,10 @@ class Asig:
 
     @property
     def b(self):
-        """Bound mode: this mode allows to truncate a source signal
-        in assignment to a limited destination in setitem."""
+        """
+        Bound mode: this mode allows to truncate a source signal
+        in assignment to a limited destination in setitem.
+        """
         # Set setitem mode to bound
         self.mix_mode = "bound"
         return self
@@ -347,15 +352,18 @@ class Asig:
 
     @property
     def o(self):
-        """Overwrite mode: this mode cuts and replaces target
-        selection by source signal on assignment via setitem"""
+        """
+        Overwrite mode: this mode cuts and replaces target
+        selection by source signal on assignment via setitem
+        """
         self.mix_mode = "overwrite"
         return self
 
     overwrite = o
 
     def __setitem__(self, index, value):
-        """setitem: asig[index] = value. This allows all the methods from getitem:
+        """
+        setitem: asig[index] = value. This allows all the methods from getitem:
             * numpy style slicing
             * string/string_list for subsetting based on channel name
             * time slicing (unit seconds) via dict.
@@ -496,24 +504,18 @@ class Asig:
             dn = dshape[0]  # ToDo: howto get that faster from ridx alone?
             sn = src.shape[0]
             if sn > dn:
-                self.sig[final_index] = src[:dn] if len(
-                    dshape) == 1 else src[:dn, :]
+                self.sig[final_index] = src[:dn] if len(dshape) == 1 else src[:dn, :]
             else:
-                self.sig[final_index][:sn] = src if len(
-                    dshape) == 1 else src[:, :]
+                self.sig[final_index][:sn] = src if len(dshape) == 1 else src[:, :]
 
         elif mode == "extend":
             _LOGGER.debug("setitem extend mode")
             if isinstance(ridx, list):
-                _LOGGER.error(
-                    "Extend mode not available for row index list"
-                )
+                _LOGGER.error("Extend mode not available for row index list")
                 return self
             if isinstance(ridx, slice):
                 if ridx.step not in [1, None]:
-                    raise AttributeError(
-                        "Extend mode only available for step-1 slices"
-                    )
+                    raise AttributeError("Extend mode only available for step-1 slices")
                 if ridx.stop is not None and ridx.stop < self.samples:
                     raise AttributeError(
                         "The current slice does not stop at the end of array."
@@ -523,8 +525,7 @@ class Asig:
             dn = dshape[0]
             sn = src.shape[0]
             if sn <= dn:  # same as bound, since src fits in
-                self.sig[final_index][:sn] = np.broadcast_to(
-                    src, (sn,) + dshape[1:])
+                self.sig[final_index][:sn] = np.broadcast_to(src, (sn,) + dshape[1:])
             elif sn > dn:
                 self.sig[final_index] = src[:dn]
                 # now extend by nn = sn-dn additional rows
@@ -542,8 +543,7 @@ class Asig:
                     nn = ridx.start + sn
                     self.sig = np.r_[
                         self.sig,
-                        np.zeros(
-                            (nn - self.sig.shape[0],) + self.sig.shape[1:]),
+                        np.zeros((nn - self.sig.shape[0],) + self.sig.shape[1:]),
                     ].astype(self.dtype)
                     if self.sig.ndim == 1:
                         self.sig[-sn:] = src
@@ -581,8 +581,9 @@ class Asig:
             self.sig = sig  # Update self.sig
         return self
 
-    def resample(self, target_sr: int = 44100, rate: float = 1., kind: str = "linear"):
-        """Resample signal based on interpolation, can process multichannel signals.
+    def resample(self, target_sr: int = 44100, rate: float = 1.0, kind: str = "linear"):
+        """
+        Resample signal based on interpolation, can process multichannel signals.
 
         Parameters
         ----------
@@ -599,8 +600,11 @@ class Asig:
             Asig with resampled signal.
         """
         times = np.arange(self.samples) / self.sr
-        tsel = (np.arange(np.floor(self.samples / self.sr *
-                                   target_sr / rate)) * rate / target_sr)
+        tsel = (
+            np.arange(np.floor(self.samples / self.sr * target_sr / rate))
+            * rate
+            / target_sr
+        )
         if self.channels == 1:
             interp_fn = scipy.interpolate.interp1d(
                 times,
@@ -611,12 +615,12 @@ class Asig:
                 fill_value=self.sig[-1],
             )
             return Asig(
-                interp_fn(tsel), target_sr,
-                label=self.label + "_resampled", cn=self.cn
+                interp_fn(tsel), target_sr, label=self.label + "_resampled", cn=self.cn
             )
         else:
             new_sig = np.ndarray(
-                shape=(int(self.samples / self.sr * target_sr / rate), self.channels))
+                shape=(int(self.samples / self.sr * target_sr / rate), self.channels)
+            )
             for i in range(self.channels):
                 interp_fn = scipy.interpolate.interp1d(
                     times,
@@ -629,8 +633,9 @@ class Asig:
                 new_sig[:, i] = interp_fn(tsel)
             return Asig(new_sig, target_sr, label=self.label + "_resampled", cn=self.cn)
 
-    def play(self, rate: float = 1., server=None, onset=0, channel=0, block=False):
-        """Play Asig audio via Aserver, using Aserver.default (if existing)
+    def play(self, rate: float = 1.0, server=None, onset=0, channel=0, block=False):
+        """
+        Play Asig audio via Aserver, using Aserver.default (if existing)
         kwargs are propagated to Aserver:play(onset=0, out=0)
 
         Parameters
@@ -639,7 +644,8 @@ class Asig:
             Playback rate (Default value = 1)
         **kwargs : str
             'server' : Aserver
-                Set which server to play. e.g. s = Aserver(); s.boot(); asig.play(server=s)
+                Set which server to play.
+                e.g. s = Aserver(); s.boot(); asig.play(server=s)
 
         Returns
         -------
@@ -647,6 +653,7 @@ class Asig:
             return self
         """
         import pya.aserver
+
         if server is None:
             server = pya.aserver.Aserver.default
         if rate == 1 and self.sr == server.sr:
@@ -657,10 +664,15 @@ class Asig:
         return self
 
     def shift_channel(self, shift: int = 0):
-        """Shift signal to other channels. This is particular useful for assigning a mono signal to a specific channel.
-            * shift = 0: does nothing as the same signal is being routed to the same position
-            * shift > 0: shift channels of self.sig 'right', i.e. from [0,..channels-1] to channels [shift,shift+1,...]
-            * shift < 0: shift channels of self.sig 'left', i.e. the first shift channels will be discarded.
+        """
+        Shift signal to other channels.
+        This is particular useful for assigning a mono signal to a specific channel.
+            * shift = 0: does nothing as the same signal
+                is being routed to the same position
+            * shift > 0: shift channels of self.sig 'right',
+                i.e. from [0,..channels-1] to channels [shift,shift+1,...]
+            * shift < 0: shift channels of self.sig 'left',
+                i.e. the first shift channels will be discarded.
 
         Parameters
         ----------
@@ -682,7 +694,7 @@ class Asig:
         if self.channels == 1:
             new_sig[:, shift] = self.sig
         elif shift > 0:
-            new_sig[:, shift: (shift + self.channels)] = self.sig
+            new_sig[:, shift : (shift + self.channels)] = self.sig
         elif shift < 0:
             new_sig[:] = self.sig[:, -shift:]
         if self.cn is None:
@@ -699,7 +711,8 @@ class Asig:
         return Asig(new_sig, self.sr, label=self.label + "_routed", cn=new_cn)
 
     def mono(self, blend: Optional[list] = None):
-        """Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)
+        """
+        Mix channels to mono signal. Perform sig = np.sum(self.sig_copy * blend, axis=1)
 
         Parameters
         ----------
@@ -722,26 +735,37 @@ class Asig:
             raise AttributeError("len(blend) != self.channels")
         else:
             sig = np.sum(self.sig * blend, axis=1)
-            col_names = [
-                self.cn[np.argmax(blend)]] if self.cn is not None else None
+            col_names = [self.cn[np.argmax(blend)]] if self.cn is not None else None
             return Asig(sig, self.sr, label=self.label + "_blended", cn=col_names)
 
     def stereo(self, blend: Optional[list] = None):
-        """Blend all channels of the signal to stereo. Applicable for any single-/ or multi-channel Asig.
+        """
+        Blend all channels of the signal to stereo.
+        Applicable for any single-/ or multi-channel Asig.
 
         Parameters
         ----------
         blend : list or None
-            Usage: For mono, blend=(g1, g2), the  channel will be broadcated to left, right with g1, g2 gains.
+            Usage: For mono, blend=(g1, g2),
+            the  channel will be broadcated to left, right with g1, g2 gains.
+
             For stereo signal, blend=(g1, g2), each channel is gain adjusted by g1, g2.
-            For multichannel: blend = [[list of gains for left channel], [list of gains for right channel]]
-            Default value = None, resulting in equal distribution to left and right channel
+
+            For multichannel:
+            blend = [
+                [list of gains for left channel],
+                [list of gains for right channel]
+            ]
+
+            Default value = None,
+            resulting in equal distribution to left and right channel
 
         Example
         -------
         asig[:,['c1','c2','c3']].stereo[[1, 0.707, 0], [0, 0.707, 1]]
             mixes channel 'c1' to left, 'c2' to center and 'c3' to right channel
-            of a new stereo asig. Note that for equal loudness left**2+right**2=1 should be used
+            of a new stereo asig.
+            Note that for equal loudness left**2+right**2=1 should be used
 
         Returns
         -------
@@ -766,9 +790,10 @@ class Asig:
                 left_sig = np.sum(self.sig * left, axis=1)
                 right_sig = np.sum(self.sig * right, axis=1)
             else:
-                msg = """For signal channels > 2, argument blend should be a tuple of two lists,
-                        each list contains the gain for each channel to be mixed.
-                        """
+                msg = """
+                For signal channels > 2, argument blend should be a tuple of two lists,
+                each list contains the gain for each channel to be mixed.
+                """
                 raise AttributeError(msg)
 
         sig = np.stack((left_sig, right_sig), axis=1)
@@ -785,7 +810,8 @@ class Asig:
 
         Example
         -------
-        {(0, 1): 0.2, (5, 0): 0.4}: rewire channel 0 to 1 with gain 0.2, and 5 to 1 with gain 2
+        {(0, 1): 0.2, (5, 0): 0.4}:
+        rewire channel 0 to 1 with gain 0.2, and 5 to 1 with gain 2
         leaving other channels unmodified
 
         Returns
@@ -808,7 +834,8 @@ class Asig:
         Panning is based on constant power panning, see pan below
         Behavior depends on nr of channels self.channels
         * multi-channel signals (self.channels>2) are cut back to stereo and treated as
-        * stereo signals (self.channels==2) are channelwise attenuated using cos(angle), sin(angle)
+        * stereo signals (self.channels==2)
+            are channelwise attenuated using cos(angle), sin(angle)
         * mono signals (self.channels==1) result in stereo output asigs.
 
         Parameters
@@ -865,7 +892,7 @@ class Asig:
         sig = self.sig - np.mean(self.sig, 0)
         return Asig(sig, sr=self.sr, label=self.label + "_DCfree", cn=self.cn)
 
-    def norm(self, norm: float = 1., in_db: bool = False, dcflag: bool = False):
+    def norm(self, norm: float = 1.0, in_db: bool = False, dcflag: bool = False):
         # ToDO add channel_wise argument . default True, currently it is the false.
         """Normalize signal
 
@@ -894,8 +921,11 @@ class Asig:
         return Asig(sig, self.sr, label=self.label + "_normalised", cn=self.cn)
 
     def gain(self, amp: Optional[float] = None, db: Optional[numbers.Number] = None):
-        """Apply gain in amplitude or dB, only use one or the other arguments. Argument can be either a scalar
-        or a list (to apply individual gain to each channel). The method returns a new asig with gain applied.
+        """
+        Apply gain in amplitude or dB, only use one or the other arguments.
+        Argument can be either a scalar or a list
+        (to apply individual gain to each channel).
+        The method returns a new asig with gain applied.
 
         Parameters
         ----------
@@ -964,7 +994,7 @@ class Asig:
             if fn == "db":
 
                 def fn(x):
-                    return np.sign(x) * amp_to_db((abs(x) * 2 ** 16 + 1))
+                    return np.sign(x) * amp_to_db((abs(x) * 2**16 + 1))
 
             elif not callable(fn):
                 msg = "Asig.plot: fn is neither keyword nor function"
@@ -1002,7 +1032,10 @@ class Asig:
         return np.linspace(0, (self.samples - 1) / self.sr, self.samples)
 
     def __eq__(self, other):
-        """Check if two asig objects have the same signal. But does not care about sr and others"""
+        """
+        Check if two asig objects have the same signal.
+        But does not care about sr and others
+        """
         sig_eq = np.array_equal(self.sig, other.sig)
         sr_eq = self.sr == other.sr
         return sig_eq and sr_eq
@@ -1019,10 +1052,14 @@ class Asig:
         )
 
     def __mul__(self, other):
-        """Magic method for multiplying. You can either multiply a scalar or an Asig object. If muliplying an Asig,
-            you don't always need to have same size arrays as audio signals may different in length. If mix_mode
-            is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
-            bigger array is."""
+        """
+        Magic method for multiplying.
+        You can either multiply a scalar or an Asig object.
+        If muliplying an Asig, you don't always need to have same size arrays
+        as audio signals may different in length. If mix_mode is set to 'bound' the size
+        is fixed to respect self. If not, the result will respect to whichever the
+        bigger array is.
+        """
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
         if isinstance(othersig, numbers.Number):
@@ -1060,13 +1097,16 @@ class Asig:
         )
 
     def __truediv__(self, other):
-        """Magic method for division. You can either divide a scalar or an Asig object.
+        """
+        Magic method for division. You can either divide a scalar or an Asig object.
         Use division with caution, audio signal is common to reach 0 or near,
         avoid zero division or extremely large result.
 
-        If dividing an Asig, you don't always need to have same size arrays as audio signals
-        may different in length. If mix_mode is set to 'bound' the size is fixed to respect self.
-        If not, the result will respect to whichever the bigger array is."""
+        If dividing an Asig, you don't always need to have same size arrays
+        as audio signals may different in length. If mix_mode is set to 'bound' the size
+        is fixed to respect self.  If not, the result will respect to whichever
+        the bigger array is.
+        """
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
         if isinstance(othersig, numbers.Number):
@@ -1106,10 +1146,13 @@ class Asig:
         )
 
     def __add__(self, other):
-        """Magic method for adding. You can either add a scalar or an Asig object. If adding an Asig,
-        you don't always need to have same size arrays as audio signals may different in length. If mix_mode
-        is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
-        bigger array is."""
+        """
+        Magic method for adding. You can either add a scalar or an Asig object.
+        If adding an Asig, you don't always need to have same size arrays
+        as audio signals may different in length. If mix_mode is set to 'bound' the size
+        is fixed to respect self. If not, the result will respect to whichever the
+        bigger array is.
+        """
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
         if isinstance(othersig, numbers.Number):  # When other is just a scalar
@@ -1146,10 +1189,13 @@ class Asig:
         return Asig(other + self.sig, self.sr, label=self.label + "_added", cn=self.cn)
 
     def __sub__(self, other):
-        """Magic method for subtraction. You can either minus a scalar or an Asig object. If subtracting an Asig,
-        you don't always need to have same size arrays as audio signals may different in length. If mix_mode
-        is set to 'bound' the size is fixed to respect self. If not, the result will respect to whichever the
-        bigger array is."""
+        """
+        Magic method for subtraction. You can either minus a scalar or an Asig object.
+        If subtracting an Asig, you don't always need to have same size arrays
+        as audio signals may different in length. If mix_mode is set to 'bound' the size
+        is fixed to respect self. If not, the result will respect to whichever the
+        bigger array is.
+        """
         selfsig = self.sig
         othersig = other.sig if isinstance(other, Asig) else other
         if isinstance(othersig, numbers.Number):  # When other is just a scalar
@@ -1200,7 +1246,9 @@ class Asig:
         sil_min_dur: float = 0.1,
         sil_pad: list = [0.001, 0.1],
     ):
-        """Locate meaningful 'events' in the signal and create event list. Onset detection.
+        """
+        Locate meaningful 'events' in the signal and create event list.
+        Onset detection.
 
         Parameters
         ----------
@@ -1214,13 +1262,15 @@ class Asig:
             minimum duration to be counted as silent (Default value = 0.1)
         sil_pad : list
             this allows you to add a small duration before and after the actual
-            found event locations to the event ranges. If it is a list, you can set the padding (Default value = [0.001)
+            found event locations to the event ranges.
+            If it is a list, you can set the padding (Default value = [0.001)
         0.1] :
 
         Returns
         -------
         _ : Asig
-            This method returns self. But the list of events can be accessed through self._['events']
+            This method returns self. But the list of events
+            can be accessed through self._['events']
         """
         if self.channels > 1:
             msg = """warning: works only with single channel.
@@ -1240,7 +1290,7 @@ class Asig:
             sil_pad_samples = (int(sil_pad * self.sr),) * 2
         event_list = []
         for i in range(0, self.samples, step_samples):
-            rms = self[i: i + step_samples].rms()
+            rms = self[i : i + step_samples].rms()
             if sil_flag:
                 if rms > sil_thr_amp:  # event found
                     sil_flag = False
@@ -1256,9 +1306,14 @@ class Asig:
                 if sil_count > sil_min_steps:  # event ended
                     # The below line is new.
                     if event_end - event_begin >= evt_min_steps:
-                        event_list.append([event_begin - sil_pad_samples[0],
-                                           event_end - step_samples * sil_min_steps + sil_pad_samples[1], ]
-                                          )
+                        event_list.append(
+                            [
+                                event_begin - sil_pad_samples[0],
+                                event_end
+                                - step_samples * sil_min_steps
+                                + sil_pad_samples[1],
+                            ]
+                        )
                         sil_flag = True
         self._["events"] = np.array(event_list)
         return self
@@ -1302,8 +1357,7 @@ class Asig:
                 plt.axvline(x=event[0])
                 plt.axvline(x=event[1], color="r")
         except KeyError:
-            raise ValueError(
-                "No events found, use find_events() before plotting.")
+            raise ValueError("No events found, use find_events() before plotting.")
 
     def fade_in(self, dur: float = 0.1, curve: float = 1):
         """Fade in the signal at the beginning
@@ -1324,7 +1378,8 @@ class Asig:
         if nsamp > self.samples:
             nsamp = self.samples
             warn("warning: Asig too short for fade_in - adapting fade_in time")
-        # TODO simplify this if we decide to make mono signal with dimension 1 instead of None.
+        # TODO simplify this if we decide to make mono signal
+        # with dimension 1 instead of None.
         if self.channels == 1:
             ramp = np.linspace(0, 1, nsamp, dtype="float32") ** curve
             return Asig(
@@ -1335,8 +1390,7 @@ class Asig:
             )
         else:
             ramp = np.meshgrid(
-                np.linspace(0, 1, nsamp, dtype="float32"), np.zeros(
-                    self.channels)
+                np.linspace(0, 1, nsamp, dtype="float32"), np.zeros(self.channels)
             )[0].T
             return Asig(
                 np.vstack((self.sig[:nsamp] * ramp, self.sig[nsamp:])),
@@ -1364,7 +1418,8 @@ class Asig:
         if nsamp > self.samples:
             nsamp = self.samples
             warn("Asig too short for fade_out - adapting fade_out time")
-        # TODO simplify this if we decide to make mono signal with dimension 1 instead of None.
+        # TODO simplify this if we decide to make mono signal
+        # with dimension 1 instead of None.
         if self.channels == 1:
             ramp = np.linspace(1, 0, nsamp, dtype="float32") ** curve
             return Asig(
@@ -1375,8 +1430,7 @@ class Asig:
             )
         else:
             ramp = np.meshgrid(
-                np.linspace(1, 0, nsamp, dtype="float32"), np.zeros(
-                    self.channels)
+                np.linspace(1, 0, nsamp, dtype="float32"), np.zeros(self.channels)
             )[0].T
             return Asig(
                 np.vstack((self.sig[:-nsamp], self.sig[-nsamp:] * ramp)),
@@ -1404,28 +1458,33 @@ class Asig:
         btype : str
             Filter type (Default value = 'bandpass')
         ftype : str
-            Tthe type of IIR filter. e.g. 'butter', 'cheby1', 'cheby2', 'elip', 'bessel' (Default value = 'butter')
+            Tthe type of IIR filter. e.g. 'butter', 'cheby1', 'cheby2', 'elip', 'bessel'
+            (Default value = 'butter')
         order : int
             Filter order (Default value = 4)
         filter : str
-            The scipy.signal method to call when applying the filter coeffs to the signal.
+            The scipy.signal method to call
+            when applying the filter coeffs to the signal.
             by default it is set to scipy.signal.lfilter (one-dimensional).
         rp : float
-            For Chebyshev and elliptic filters, provides the maximum ripple in the passband. (dB) (Default value = None)
+            For Chebyshev and elliptic filters,
+            provides the maximum ripple in the passband. (dB) (Default value = None)
         rs : float
-            For Chebyshev and elliptic filters, provides the minimum attenuation in the stop band. (dB) (Default value = None)
+            For Chebyshev and elliptic filters,
+            provides the minimum attenuation in the stop band. (dB)
+            (Default value = None)
 
         Returns
         -------
         _ : Asig
-            new Asig with the filter applied. also you can access b, a coefficients by doing self._['b']
+            new Asig with the filter applied.
+            also you can access b, a coefficients by doing self._['b']
             and self._['a']
 
         """
         # TODO scipy.signal.__getattribute__ error
         Wn = np.array(cutoff_freqs) * 2 / self.sr
-        b, a = scipy.signal.iirfilter(
-            order, Wn, rp=rp, rs=rs, btype=btype, ftype=ftype)
+        b, a = scipy.signal.iirfilter(order, Wn, rp=rp, rs=rs, btype=btype, ftype=ftype)
         y = scipy.signal.__getattribute__(filter)(b, a, self.sig, axis=0)
         aout = Asig(y, self.sr, label=self.label + "_iir")
         aout._["b"] = b
@@ -1434,7 +1493,9 @@ class Asig:
         return aout
 
     def plot_freqz(self, worN, **kwargs):
-        """Plot the frequency response of a digital filter. Perform scipy.signal.freqz then plot the response.
+        """
+        Plot the frequency response of a digital filter.
+        Perform scipy.signal.freqz then plot the response.
 
         TODO
         Parameters
@@ -1475,7 +1536,7 @@ class Asig:
         nsteps = len(amps)
         duration = self.samples / self.sr
         if nsteps == self.samples:
-            sig_new = self.sig * amps ** curve
+            sig_new = self.sig * amps**curve
         else:
             if not ts:
                 given_ts = np.linspace(0, duration, nsteps)
@@ -1498,13 +1559,22 @@ class Asig:
                     raise AttributeError("Asig.envelope error: ts not sorted")
                 given_ts = ts
             if nsteps != self.samples:
-                interp_fn = scipy.interpolate.interp1d(
-                    given_ts, amps, kind=kind)
-                sig_new = (self.sig * interp_fn(np.linspace(0, duration, self.samples)) ** curve)
+                interp_fn = scipy.interpolate.interp1d(given_ts, amps, kind=kind)
+                sig_new = (
+                    self.sig
+                    * interp_fn(np.linspace(0, duration, self.samples)) ** curve
+                )
         return Asig(sig_new, self.sr, label=self.label + "_enveloped", cn=self.cn)
 
-    def adsr(self, att: float = 0, dec: float = 0.1, sus: float = 0.7, rel: float = 0.1,
-             curve: int = 1, kind: str = "linear"):
+    def adsr(
+        self,
+        att: float = 0,
+        dec: float = 0.1,
+        sus: float = 0.7,
+        rel: float = 0.1,
+        curve: int = 1,
+        kind: str = "linear",
+    ):
         """Create and applied a ADSR evelope to signal.
 
         Parameters
@@ -1542,7 +1612,8 @@ class Asig:
         Parameters
         ----------
         win : str
-            Type of window check scipy.signal.get_window for avaiable types. (Default value = 'triang')
+            Type of window check scipy.signal.get_window for avaiable types.
+            (Default value = 'triang')
         **kwargs :
             keyword arguments for scipy.signal.get_window()
 
@@ -1558,12 +1629,15 @@ class Asig:
         if isinstance(winstr, tuple):
             winstr = win[0]
         if self.channels == 1:
-            return Asig(self.sig * scipy.signal.get_window(win, self.samples, **kwargs),
-                        self.sr, label=self.label + "_" + winstr, cn=self.cn)
+            return Asig(
+                self.sig * scipy.signal.get_window(win, self.samples, **kwargs),
+                self.sr,
+                label=self.label + "_" + winstr,
+                cn=self.cn,
+            )
         else:
             for i in range(self.channels):
-                self.sig[:,
-                         i] *= scipy.signal.get_window(win, self.samples, **kwargs)
+                self.sig[:, i] *= scipy.signal.get_window(win, self.samples, **kwargs)
             return Asig(self.sig, self.sr, label=self.label + "_" + winstr, cn=self.cn)
 
     def window_op(self, nperseg=64, stride=32, win=None, fn="rms", pad="mirror"):
@@ -1680,12 +1754,17 @@ class Asig:
     def to_spec(self):
         """Return Aspec object which is the rfft of the signal."""
         import pya.aspec
+
         return pya.aspec.Aspec(self)
 
     def to_stft(self, **kwargs):
-        """Return Astft object which is the stft of the signal. Keyword arguments are the arguments for
-        scipy.signal.stft(). """
+        """
+        Return Astft object which is the stft of the signal.
+        Keyword arguments are the arguments for
+        scipy.signal.stft().
+        """
         import pya.astft
+
         return pya.astft.Astft(self, **kwargs)
 
     def to_mfcc(
@@ -1700,8 +1779,9 @@ class Asig:
         preemph=0.95,
         append_energy=True,
     ):
-        """Return Amfcc object. """
+        """Return Amfcc object."""
         import pya.amfcc
+
         return pya.amfcc.Amfcc(
             self,
             label=self.label,
@@ -1717,7 +1797,13 @@ class Asig:
             cn=self.cn,
         )
 
-    def plot_spectrum(self, offset: float = 0, scale: float = 1.0, xlim: Optional[Iterable] = None, **kwargs):
+    def plot_spectrum(
+        self,
+        offset: float = 0,
+        scale: float = 1.0,
+        xlim: Optional[Iterable] = None,
+        **kwargs,
+    ):
         """Plot spectrum of the signal
 
         Parameters
@@ -1783,10 +1869,11 @@ class Asig:
         return self
 
     def spectrogram(self, *argv, **kvarg):
-        """Perform sicpy.signal.spectrogram and returns: frequencies, array of times, spectrogram
         """
-        freqs, times, Sxx = scipy.signal.spectrogram(
-            self.sig, self.sr, *argv, **kvarg)
+        Perform sicpy.signal.spectrogram and returns:
+        frequencies, array of times, spectrogram
+        """
+        freqs, times, Sxx = scipy.signal.spectrogram(self.sig, self.sr, *argv, **kvarg)
         return freqs, times, Sxx
 
     def get_size(self):
@@ -1794,7 +1881,9 @@ class Asig:
         return self.sig.shape, self.sig.shape[0] / self.sr
 
     def append(self, asig, amp=1):
-        """Apppend an asig with another. Conditions: the appended asig should have the same channels. If
+        """
+        Apppend an asig with another. Conditions: the appended asig
+        should have the same channels. If
         appended asig has a different sampling rate, resample it to match the orginal.
 
         Parameters
@@ -1856,7 +1945,8 @@ class Asig:
                 raise AttributeError("Argument asig has different channels.!")
             if sr != self.sr:
                 raise AttributeError(
-                    "Dangerous operation, samping rate (sr) not matched. Use resample() first."
+                    "Dangerous operation, samping rate (sr) not matched. "
+                    "Use resample() first."
                 )
         else:
             n = np.shape(sig)[0]
@@ -1883,7 +1973,9 @@ class Asig:
             cn=None,
         )
 
-    def pad(self, width: int = 0, tail: bool = True, constant_values: Union[int, float] = 0):
+    def pad(
+        self, width: int = 0, tail: bool = True, constant_values: Union[int, float] = 0
+    ):
         """Pads the signal
 
         Parameters
@@ -1923,22 +2015,29 @@ class Asig:
             mode : str {'full', 'valid', 'same'}
                 A string indicating the size of the output:
                 full
-                    The output is the full discrete linear convolution of the inputs. (Default)
+                    The output is the full discrete linear convolution of the inputs.
+                    (Default)
                 valid
-                    The output consists only of those elements that do not rely on the zero-padding.
-                    self.sr or ins must be at least as large as the other in every dimension.
+                    The output consists only of those elements
+                    that do not rely on the zero-padding.
+                    self.sr or ins must be at least as large
+                    as the other in every dimension.
                 same
-                    The output is the same size as self.sr, centered with respect to the full output.
+                    The output is the same size as self.sr,
+                    centered with respect to the full output.
             method : str {'auto', 'direct', 'fft'}
                 A string indicating which method to use to calculate the convolution
                 direct
                     Compute directly from sums, the definition of convolution
                 fft (default)
-                    The Fourier Transform is used to perform the convolution by calling fftconvolve
+                    The Fourier Transform is used to perform the convolution
+                    by calling fftconvolve
                 auto
-                    Automatically chooses direct or Fourier method based on an estimate of which is faster.
+                    Automatically chooses direct or Fourier method
+                    based on an estimate of which is faster.
             norm : str
-                If "amp" (default value), the result signal will have the same peak as the original signal.
+                If "amp" (default value), the result signal
+                will have the same peak as the original signal.
                 Otherwise, no normalization is applied.
 
         Returns
@@ -1948,8 +2047,7 @@ class Asig:
         """
         if isinstance(sig, Asig):
             if sig.sr != self.sr:
-                _LOGGER.warning(
-                    "sampling rate not matched, perform resampling...")
+                _LOGGER.warning("sampling rate not matched, perform resampling...")
                 sig = sig.resample(target_sr=self.sr)
             sig_array = sig.sig
             sig_size = sig.samples
@@ -1959,34 +2057,33 @@ class Asig:
             sig_size = len(sig)
             sig_channels = 1 if sig_array.ndim == 1 else sig_array.shape[1]
         else:
-            raise TypeError(
-                "Illegal type. ir must be an Asig object or an array.")
+            raise TypeError("Illegal type. ir must be an Asig object or an array.")
         # Compare size of A B, and pad zeros if needed.
         if self.samples > sig_size:
             # pad ir
             sig_array = padding(sig_array, width=self.samples - sig_size)
         else:
+            # TODO somehow, this code is not doing anything?
             # pad source
-            asig = padding(self.sig, width=sig_size - self.samples)
+            _ = padding(self.sig, width=sig_size - self.samples)
 
         # Now perform convolution
         if self.channels == 1:
             # If sig is a mono signal:
             result = np.array(
-                scipy.signal.convolve(
-                    self.sig, sig_array, mode=mode, method=method)
+                scipy.signal.convolve(self.sig, sig_array, mode=mode, method=method)
             )
         else:
             if sig_channels > 1 and self.channels != sig_channels:
                 raise ValueError(
-                    "input signal needs to have the same amount of channels as self.sig."
+                    "input signal needs to have the same "
+                    "amount of channels as self.sig."
                 )
             # Perform conv on each channel.
             for i in range(self.channels):
                 a = self.sig[:, i]
                 b = sig_array if sig_channels == 1 else sig_array[:, i]
-                r_1ch = np.array(scipy.signal.convolve(
-                    a, b, mode=mode, method=method))
+                r_1ch = np.array(scipy.signal.convolve(a, b, mode=mode, method=method))
                 if i == 0:
                     result = np.zeros((len(r_1ch), self.channels))
                 result[:, i] = r_1ch
@@ -2014,4 +2111,6 @@ class Asig:
         """
         vecfn = np.vectorize(fn)
         sig_out = vecfn(self.sig)
-        return Asig(sig_out, sr=self.sr, label=self.label, channels=self.channels, cn=self.cn)
+        return Asig(
+            sig_out, sr=self.sr, label=self.label, channels=self.channels, cn=self.cn
+        )

@@ -1,34 +1,45 @@
 from unittest import TestCase
-from pya import Asig, Ugen
-from pya.helper import spectrum, padding, next_pow2, is_pow2
-from pya.helper import signal_to_frame, magspec, powspec
 
 import numpy as np
 
+from pya import Asig, Ugen
+from pya.helper import (
+    is_pow2,
+    magspec,
+    next_pow2,
+    padding,
+    powspec,
+    signal_to_frame,
+    spectrum,
+)
+
 
 class TestHelpers(TestCase):
-    """Test helper functions
-    """
+    """Test helper functions"""
 
     def setUp(self):
         self.sig = np.sin(2 * np.pi * 100 * np.linspace(0, 1, 44100))
         self.asine = Asig(self.sig, sr=44100, label="test_sine")
-        self.asineWithName = Asig(self.sig, sr=44100,
-                                  label="test_sine", cn=['sine'])
+        self.asineWithName = Asig(self.sig, sr=44100, label="test_sine", cn=["sine"])
         self.sig2ch = np.repeat(self.sig, 2).reshape((44100, 2))
-        self.astereo = Asig(self.sig2ch, sr=44100, label="sterep",
-                            cn=['l', 'r'])
+        self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=["l", "r"])
         self.sig16ch = np.repeat(self.sig, 16).reshape((44100, 16))
-        self.asine16ch = Asig(self.sig16ch, sr=44100,
-                              label="test_sine_16ch")
+        self.asine16ch = Asig(self.sig16ch, sr=44100, label="test_sine_16ch")
 
     def tearDown(self):
         pass
 
     def test_spectrum(self):
         # Not tested expected outcome yet.
-        frq, Y = spectrum(self.asine.sig, self.asine.samples, self.asine.channels, self.asine.sr)
-        frqs, Ys = spectrum(self.astereo.sig, self.astereo.samples, self.astereo.channels, self.astereo.sr)
+        frq, Y = spectrum(
+            self.asine.sig, self.asine.samples, self.asine.channels, self.asine.sr
+        )
+        frqs, Ys = spectrum(
+            self.astereo.sig,
+            self.astereo.samples,
+            self.astereo.channels,
+            self.astereo.sr,
+        )
 
     def test_padding(self):
         """Pad silence to signal. Support 1-3D tensors."""
@@ -40,32 +51,61 @@ class TestHelpers(TestCase):
 
         tensor2 = np.ones((3, 3))
         padded = padding(tensor2, 2, tail=True)
-        self.assertTrue(np.array_equal(padded, np.array([[1., 1., 1.], [1., 1., 1.], [1., 1., 1.],
-                                                         [0., 0., 0.], [0., 0., 0.]])))
+        self.assertTrue(
+            np.array_equal(
+                padded,
+                np.array(
+                    [
+                        [1.0, 1.0, 1.0],
+                        [1.0, 1.0, 1.0],
+                        [1.0, 1.0, 1.0],
+                        [0.0, 0.0, 0.0],
+                        [0.0, 0.0, 0.0],
+                    ]
+                ),
+            )
+        )
         padded = padding(tensor2, 2, tail=False, constant_values=5)
-        self.assertTrue(np.array_equal(padded, np.array([[5., 5., 5.], [5., 5., 5.],
-                                                         [1., 1., 1.], [1., 1., 1.], [1., 1., 1.]])))
+        self.assertTrue(
+            np.array_equal(
+                padded,
+                np.array(
+                    [
+                        [5.0, 5.0, 5.0],
+                        [5.0, 5.0, 5.0],
+                        [1.0, 1.0, 1.0],
+                        [1.0, 1.0, 1.0],
+                        [1.0, 1.0, 1.0],
+                    ]
+                ),
+            )
+        )
 
         tensor3 = np.ones((2, 2, 2))
         padded = padding(tensor3, 2)
-        self.assertTrue(np.array_equal(padded, np.array([[[1., 1.],
-                                                          [1., 1.],
-                                                          [0., 0.],
-                                                          [0., 0.]],
-                                                        [[1., 1.],
-                                                         [1., 1.],
-                                                         [0., 0.],
-                                                         [0., 0.]]])))
+        self.assertTrue(
+            np.array_equal(
+                padded,
+                np.array(
+                    [
+                        [[1.0, 1.0], [1.0, 1.0], [0.0, 0.0], [0.0, 0.0]],
+                        [[1.0, 1.0], [1.0, 1.0], [0.0, 0.0], [0.0, 0.0]],
+                    ]
+                ),
+            )
+        )
         padded = padding(tensor3, 2, tail=False)
-        self.assertTrue(np.array_equal(padded, np.array([[[0., 0.],
-                                                          [0., 0.],
-                                                          [1., 1.],
-                                                          [1., 1.]
-                                                          ],
-                                                        [[0., 0.],
-                                                         [0., 0.],
-                                                         [1., 1.],
-                                                         [1., 1.]]])))
+        self.assertTrue(
+            np.array_equal(
+                padded,
+                np.array(
+                    [
+                        [[0.0, 0.0], [0.0, 0.0], [1.0, 1.0], [1.0, 1.0]],
+                        [[0.0, 0.0], [0.0, 0.0], [1.0, 1.0], [1.0, 1.0]],
+                    ]
+                ),
+            )
+        )
 
     def test_next_pow2(self):
         next = next_pow2(255)
@@ -101,7 +141,7 @@ class TestHelpers(TestCase):
         frames = signal_to_frame(sq.sig, 400, 400)
         mag = magspec(frames, 512)
         self.assertEqual(mag.shape, (20, 257))
-        self.assertTrue((mag >= 0.).all())  # All elements should be non-negative
+        self.assertTrue((mag >= 0.0).all())  # All elements should be non-negative
         ps = powspec(frames, 512)
         self.assertEqual(ps.shape, (20, 257))
-        self.assertTrue((ps >= 0.).all())  # All elements should be non-negative
+        self.assertTrue((ps >= 0.0).all())  # All elements should be non-negative

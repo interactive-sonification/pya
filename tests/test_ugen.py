@@ -1,6 +1,8 @@
 from unittest import TestCase
-from pya import *
+
 import numpy as np
+
+from pya.ugen import Ugen
 
 
 class TestUgen(TestCase):
@@ -50,7 +52,7 @@ class TestUgen(TestCase):
         white = Ugen().noise(
             type="white", amp=0.2, dur=1.0, sr=1000, cn=["white"], label="white_noise"
         )
-        pink = Ugen().noise(type="pink")
+        _ = Ugen().noise(type="pink")
         self.assertEqual(white.sr, 1000)
         self.assertEqual(white.cn, ["white"])
         self.assertEqual(white.label, "white_noise")
@@ -60,4 +62,4 @@ class TestUgen(TestCase):
     def test_dur_n_rows_exception(self):
         # An exception should be raised if both dur and n_rows are define.
         with self.assertRaises(AttributeError):
-            asig = Ugen().sine(dur=1.0, n_rows=400)
+            _ = Ugen().sine(dur=1.0, n_rows=400)

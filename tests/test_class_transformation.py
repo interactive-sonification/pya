@@ -1,10 +1,10 @@
-# Test change between asig, astft and aspec. 
-from pya import Asig, Aspec, Astft, Ugen
+# Test change between asig, astft and aspec.
 from unittest import TestCase
+
+from pya import Asig, Aspec, Astft, Ugen
 
 
 class TestClassTransform(TestCase):
-
     def setUp(self):
         pass
 
@@ -12,7 +12,7 @@ class TestClassTransform(TestCase):
         pass
 
     def test_asig_aspec(self):
-        # Create a signale with 3 sine waves and gaps inbetween, 
+        # Create a signale with 3 sine waves and gaps inbetween,
         # So that it will finds 3 events
         a = Ugen().sine()
         a_spec = a.to_spec()

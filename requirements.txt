@@ -1,4 +1,0 @@
-pyamapping
-scipy>=1.7.3
-matplotlib>=3.5.3
-soundfile>=0.13.0

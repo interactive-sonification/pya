@@ -1,12 +1,13 @@
 [![PyPI](https://img.shields.io/pypi/v/pya.svg)](https://pypi.org/project/pya)
-[![License](https://img.shields.io/github/license/interactive-sonification/pya.svg)](LICENSE)
+[![License](https://img.shields.io/github/license/interactive-sonification/pya.svg)](../LICENSE)
 
 # pya
 
-|Branch|`master`|`develop`|
+<!-- - [ ] add CI/CD build status badges back in
+- [ ] add test coverage badge -->
+
+|Branch|`main`|`develop`|
 |------:|--------:|---------:|
-|[CI-Linux/MacOS](https://github.com/interactive-sonification/pya/actions/workflows/pya-ci.yaml) | [![Build Status Master](https://github.com/interactive-sonification/pya/actions/workflows/pya-ci.yaml/badge.svg?branch=master)](https://github.com/interactive-sonification/pya/actions/workflows/pya-ci.yaml?query=branch%3Amaster) | [![Build Status Develop](https://github.com/interactive-sonification/pya/actions/workflows/pya-ci.yaml/badge.svg?branch=develop)](https://github.com/interactive-sonification/pya/actions/workflows/pya-ci.yaml?query=branch%3Adevelop) |
-|[CI-Windows](https://ci.appveyor.com/project/aleneum/pya-b7gkx/)| ![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/master?svg=true) | ![Build status AppVeyor](https://ci.appveyor.com/api/projects/status/vn61qeri0uyxeedv/branch/develop?svg=true) | 
 |Changes|[![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.5.0/master.svg)](https://github.com/interactive-sonification/pya/compare/v0.5.0...master) | [![GitHub commits](https://img.shields.io/github/commits-since/interactive-sonification/pya/v0.5.0/develop.svg)](https://github.com/interactive-sonification/pya/compare/v0.5.0...develop) |
 |Binder|[![Master Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/interactive-sonification/pya/master?filepath=examples%2Fpya-examples.ipynb) | [![Develop Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/interactive-sonification/pya/develop?filepath=examples%2Fpya-examples.ipynb) |
 
@@ -40,9 +41,14 @@ At this time pya is more suitable for offline rendering than realtime.
 
 ## Authors and Contributors
 
-* [Thomas](https://github.com/thomas-hermann) (author, maintainer)
-* [Jiajun](https://github.com/wiccy46) (co-author, maintainer)
-* [Alexander](https://github.com/aleneum) (maintainer)
+* [Thomas Hermann](https://github.com/thomas-hermann) (author, maintainer)
+* [Jiajun Yang](https://github.com/wiccy46) (co-author, maintainer)
+* [Alexander Neumann](https://github.com/aleneum) (maintainer)
+<!-- TODO add github for Luka and Jannis -->
+* [Luka Born]() (Contributor)
+* [Jannis Müller]() (Contributor)
+* [Fabian Hommel]() (Maintainer)
+
 * Contributors will be acknowledged here, contributions are welcome.
 
 ## Installation

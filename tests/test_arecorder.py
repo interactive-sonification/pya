@@ -1,52 +1,56 @@
 # Test arecorder class.
-import time
-from pya import Arecorder, Aserver, find_device
+import importlib.util
 from unittest import TestCase, mock
-import pytest
+
 import numpy as np
+import pytest
 
-try:
-    import pyaudio
-    has_pyaudio = True
-except ImportError:
-    has_pyaudio = False
+from pya import Arecorder
+
+has_pyaudio = importlib.util.find_spec("pyaudio") is not None
 
 
-FAKE_INPUT = {'index': 0,
-              'structVersion': 2,
-              'name': 'Mock Input',
-              'hostApi': 0,
-              'maxInputChannels': 1,
-              'maxOutputChannels': 0,
-              'defaultLowInputLatency': 0.04852607709750567,
-              'defaultLowOutputLatency': 0.01,
-              'defaultHighInputLatency': 0.05868480725623583,
-              'defaultHighOutputLatency': 0.1,
-              'defaultSampleRate': 44100.0}
+FAKE_INPUT = {
+    "index": 0,
+    "structVersion": 2,
+    "name": "Mock Input",
+    "hostApi": 0,
+    "maxInputChannels": 1,
+    "maxOutputChannels": 0,
+    "defaultLowInputLatency": 0.04852607709750567,
+    "defaultLowOutputLatency": 0.01,
+    "defaultHighInputLatency": 0.05868480725623583,
+    "defaultHighOutputLatency": 0.1,
+    "defaultSampleRate": 44100.0,
+}
 
-FAKE_OUTPUT = {'index': 1,
-               'structVersion': 2,
-               'name': 'Mock Output',
-               'hostApi': 0,
-               'maxInputChannels': 2,
-               'maxOutputChannels': 0,
-               'defaultLowInputLatency': 0.01,
-               'defaultLowOutputLatency': 0.02,
-               'defaultHighInputLatency': 0.03,
-               'defaultHighOutputLatency': 0.04,
-               'defaultSampleRate': 44100.0}
+FAKE_OUTPUT = {
+    "index": 1,
+    "structVersion": 2,
+    "name": "Mock Output",
+    "hostApi": 0,
+    "maxInputChannels": 2,
+    "maxOutputChannels": 0,
+    "defaultLowInputLatency": 0.01,
+    "defaultLowOutputLatency": 0.02,
+    "defaultHighInputLatency": 0.03,
+    "defaultHighOutputLatency": 0.04,
+    "defaultSampleRate": 44100.0,
+}
 
-FAKE_AUDIO_INTERFACE = {'index': 2,
-                        'structVersion': 2,
-                        'name': 'Mock Audio Interface',
-                        'hostApi': 0,
-                        'maxInputChannels': 14,
-                        'maxOutputChannels': 14,
-                        'defaultLowInputLatency': 0.01,
-                        'defaultLowOutputLatency': 0.02,
-                        'defaultHighInputLatency': 0.03,
-                        'defaultHighOutputLatency': 0.04,
-                        'defaultSampleRate': 48000.0}
+FAKE_AUDIO_INTERFACE = {
+    "index": 2,
+    "structVersion": 2,
+    "name": "Mock Audio Interface",
+    "hostApi": 0,
+    "maxInputChannels": 14,
+    "maxOutputChannels": 14,
+    "defaultLowInputLatency": 0.01,
+    "defaultLowOutputLatency": 0.02,
+    "defaultHighInputLatency": 0.03,
+    "defaultHighOutputLatency": 0.04,
+    "defaultSampleRate": 48000.0,
+}
 
 
 class MockRecorder(mock.MagicMock):
@@ -74,14 +78,17 @@ class MockRecorder(mock.MagicMock):
 
 class MockBackend:
     """Mock audio backend for testing"""
+
     def __init__(self, **kwargs):
-        self.dummy_devices = [{
-            'index': 0,
-            'maxInputChannels': 2,
-            'maxOutputChannels': 2,
-            'defaultSampleRate': 44100
-        }]
-        self.dtype = 'float32'
+        self.dummy_devices = [
+            {
+                "index": 0,
+                "maxInputChannels": 2,
+                "maxOutputChannels": 2,
+                "defaultSampleRate": 44100,
+            }
+        ]
+        self.dtype = "float32"
         self.range = 1.0
         self.bs = 256
 
@@ -106,6 +113,7 @@ class MockBackend:
 
 class MockStream:
     """Mock audio stream for testing"""
+
     def __init__(self):
         self._active = True
 
@@ -148,15 +156,14 @@ class TestArecorder(TestArecorderBase):
 
 
 class TestMockArecorder(TestCase):
-
     @pytest.mark.skipif(not has_pyaudio, reason="requires pyaudio to be installed")
     def test_mock_arecorder(self):
         mock_recorder = MockRecorder()
-        with mock.patch('pyaudio.PyAudio', return_value=mock_recorder):
+        with mock.patch("pyaudio.PyAudio", return_value=mock_recorder):
             ar = Arecorder()
             self.assertEqual(
-                "Mock Input",
-                ar.backend.get_default_input_device_info()['name'])
+                "Mock Input", ar.backend.get_default_input_device_info()["name"]
+            )
             ar.boot()
             self.assertTrue(mock_recorder.open.called)
             ar.record()
@@ -168,6 +175,6 @@ class TestMockArecorder(TestCase):
             # ar.stop()  # Dont know how to mock the stop.
             # TODO How to mock a result.
 
-        # Mock multiple input devices. 
+        # Mock multiple input devices.
         ar.set_device(2, reboot=True)  # Set to multiple device
         self.assertEqual(ar.max_in_chn, 14)

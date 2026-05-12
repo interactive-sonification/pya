@@ -1,0 +1,37 @@
+exclude: '^docs/conf.py|^uv\.lock$'
+
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+  - id: check-added-large-files
+    exclude: uv.lock
+  - id: check-ast
+  - id: check-json
+  - id: check-merge-conflict
+  - id: check-xml
+  - id: check-yaml
+  - id: end-of-file-fixer
+    exclude: "uv.lock"
+  - id: mixed-line-ending
+    exclude: "uv.lock"
+    args: ['--fix=auto']  # replace 'auto' with 'lf' to enforce Linux/Mac line endings or 'crlf' for Windows
+
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.9.0  # check latest
+  hooks:
+    - id: ruff          # replaces isort + flake8
+      args: [--fix]     # auto-fix where possible
+    - id: ruff-format   # replaces black
+
+- repo: https://github.com/kynan/nbstripout
+  rev: 0.8.1
+  hooks:
+    - id: nbstripout
+      args: [--extra-keys=metadata.kernelspec metadata.language_info]
+
+
+- repo: https://github.com/astral-sh/uv-pre-commit
+  rev: 0.6.0  # check latest
+  hooks:
+    - id: uv-lock  # updates uv.lock when pyproject.toml changes

@@ -1,8 +1,7 @@
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 
 
 class BackendBase(ABC):
-
     @abstractmethod
     def get_device_count(self):
         raise NotImplementedError
@@ -33,7 +32,6 @@ class BackendBase(ABC):
 
 
 class StreamBase(ABC):
-
     @abstractmethod
     def is_active(self):
         raise NotImplementedError
