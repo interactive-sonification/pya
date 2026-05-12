@@ -52,11 +52,10 @@ jobs:
     strategy:
       matrix:
         python:
-        - "3.10"  
-        - "3.11"  # oldest Python supported by PSF
-        - "3.12"  # oldest Python supported by PSF
-        - "3.13"  # oldest Python supported by PSF
-        - "3.14"  # newest Python that is stable
+        - "3.11"  
+        - "3.12"  
+        - "3.13"  
+        - "3.14"  
         platform:
         - ubuntu-latest
         - macos-latest
