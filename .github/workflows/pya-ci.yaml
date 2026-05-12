@@ -1,51 +1,126 @@
-name: Pya
+name: test-and-publish
 
-on:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-    branches:
-      - master
-      - develop
+push:
+    # Avoid using all the resources/limits available by checking only
+    # relevant branches and tags. Other branches can be checked via PRs.
+    branches: [main]
+    tags: ['v[0-9]*', '[0-9]+.[0-9]+*']  # Match tags that resemble a version
+  pull_request:  # Run in every PR
+  workflow_dispatch:  # Allow manually triggering the workflow
+  schedule:
+    # Run roughly every 15 days at 00:00 UTC
+    # (useful to check if updates on dependencies break the package)
+    - cron: '0 0 1,16 * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: >-
+    ${{ github.workflow }}-${{ github.ref_type }}-
+    ${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
 
 jobs:
-  unit-test:
-    runs-on: ${{ matrix.os  }}
-    timeout-minutes: 120
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      wheel-distribution: ${{ steps.wheel-distribution.outputs.path }}
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}  # deep clone for hatch-scm
+      - uses: astral-sh/setup-uv@v8.1.0
+      - name: Run static analysis and format checkers
+        run: uv run pre-commit run --all-files --show-diff-on-failure
+      - name: Build package distribution files
+        run: uv run tox -e clean,build
+      - name: Record the path of wheel distribution
+        id: wheel-distribution
+        run: echo "path=$(ls dist/*.whl)" >> $GITHUB_OUTPUT
+      - name: Store the distribution files for use in other stages
+        # `tests` and `publish` will use the same pre-built distributions,
+        # so we make sure to release the exact same package that was tested
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-distribution-files
+          path: dist/
+          retention-days: 1
+
+  test:
+    needs: prepare
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python:
+        - "3.10"  
+        - "3.11"  # oldest Python supported by PSF
+        - "3.12"  # oldest Python supported by PSF
+        - "3.13"  # oldest Python supported by PSF
+        - "3.14"  # newest Python that is stable
+        platform:
+        - ubuntu-latest
+        - macos-latest
+        - windows-latest
+    runs-on: ${{ matrix.platform }}
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v8.1.0
+        with:
+          python-version: ${{ matrix.python }}
     - name: Install portaudio Ubuntu
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.platform == 'ubuntu-latest'
       shell: bash -l {0}
       run: sudo apt-get install portaudio19-dev
     - name: Install portaudio MacOS
-      if: matrix.os == 'macos-latest'
+      if: matrix.platform == 'macos-latest'
       shell: bash -l {0}
       run: brew install portaudio
-    - uses: conda-incubator/setup-miniconda@v2
-      with:
-        miniconda-version: "latest"
-        activate-environment: test-env
-        environment-file: ci/test-environment.yml
-        python-version: ${{ matrix.python-version }}
-        auto-activate-base: false
-    - name: Set up depen
-      shell: bash -l {0}
-      run: |
-        conda init bash
-        conda config --add channels defaults
-        conda activate test-env
-        conda install ffmpeg coverage python-coveralls --file=requirements_remote.txt --file=requirements_test.txt
-        # pyaudio is not yet available on conda
-        pip install -r requirements.txt
-    - name: Run tests
-      shell: bash -l {0}
-      run: |
-        conda activate test-env
-        pytest --cov pya/
+      - name: Retrieve pre-built distribution files
+        uses: actions/download-artifact@v4
+        with: {name: python-distribution-files, path: dist/}
+      - name: Run tests
+        run: >-
+          uv run tox --installpkg '${{ needs.prepare.outputs.wheel-distribution }}'
+          -- -rFEx --durations 10 --color yes  # pytest args
+      - name: Upload partial coverage report
+        uses: coverallsapp/github-action@master
+        with:
+          path-to-lcov: coverage.lcov
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: ${{ matrix.platform }} - py${{ matrix.python }}
+          parallel: true
+
+  finalize:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finalize coverage report
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+      - name: debug
+        run: echo "ref=${{ github.ref }} event=${{ github.event_name }}"
+    
+  
+
+  publish:
+    needs: finalize
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && contains(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v8.1.0
+      - name: Retrieve pre-built distribution files
+        uses: actions/download-artifact@v4
+        with: {name: python-distribution-files, path: dist/}
+      - name: Publish Package
+        env:
+          # TODO: Set your PYPI_TOKEN as a secret using GitHub UI
+          # - https://pypi.org/help/#apitoken
+          # - https://docs.github.com/en/actions/security-guides/encrypted-secrets
+          UV_PUBLISH_URL: https://upload.pypi.org/legacy/
+          UV_PUBLISH_USERNAME: __token__
+          UV_PUBLISH_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: uv run tox -e publish
