@@ -5,10 +5,10 @@ import time
 from typing import Optional, Union
 
 import numpy as np
-from . import Asig
-from . import Aserver
 from pyamapping import db_to_amp
 
+from pya.aserver import Aserver
+from pya.asig import Asig
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -35,16 +35,26 @@ class Arecorder(Aserver):
     ...     ar.stop()
     """
 
-    def __init__(self, sr: int = 44100, bs: int = 256, device: Optional[int] = None,
-                 channels: Optional[int] = None, backend=None, **kwargs):
-        super().__init__(sr=sr, bs=bs, device=device, 
-                         backend=backend, **kwargs)
+    def __init__(
+        self,
+        sr: int = 44100,
+        bs: int = 256,
+        device: Optional[int] = None,
+        channels: Optional[int] = None,
+        backend=None,
+        **kwargs,
+    ):
+        super().__init__(sr=sr, bs=bs, device=device, backend=backend, **kwargs)
         self.record_buffer = []
         self.recordings = []  # store recorded Asigs, time stamp in label
         self._recording = False
         self._record_all = True
         self.tracks = slice(None)
-        self._device = self.backend.get_default_input_device_info()['index'] if device is None else device
+        self._device = (
+            self.backend.get_default_input_device_info()["index"]
+            if device is None
+            else device
+        )
         self._channels = channels or self.max_in_chn
         self.gains = np.ones(self._channels)
 
@@ -61,7 +71,9 @@ class Arecorder(Aserver):
             raise ValueError(f"AServer: channels {val} > max {self.max_in_chn}")
         self._channels = val
 
-    def set_tracks(self, tracks: Union[list, np.ndarray], gains: Union[list, np.ndarray]):
+    def set_tracks(
+        self, tracks: Union[list, np.ndarray], gains: Union[list, np.ndarray]
+    ):
         """Define the number of track to be recorded and their gains.
 
         parameters
@@ -94,20 +106,28 @@ class Arecorder(Aserver):
         # self.block_cnt = 0
         self.record_buffer = []
         self._recording = False
-        self.stream = self.backend.open(rate=self.sr, channels=self.channels, frames_per_buffer=self.bs,
-                                        input_device_index=self.device, output_flag=False,
-                                        input_flag=True, stream_callback=self._recorder_callback)
+        self.stream = self.backend.open(
+            rate=self.sr,
+            channels=self.channels,
+            frames_per_buffer=self.bs,
+            input_device_index=self.device,
+            output_flag=False,
+            input_flag=True,
+            stream_callback=self._recorder_callback,
+        )
         _LOGGER.info("Server Booted")
         return self
 
     def _recorder_callback(self, in_data, frame_count, time_info, flag):
-        """Callback function during streaming. """
+        """Callback function during streaming."""
         # self.block_cnt += 1
         if self._recording:
             sigar = np.frombuffer(in_data, dtype=self.backend.dtype)
             # (chunk length, chns)
             data_float = np.reshape(sigar, (len(sigar) // self.channels, self.channels))
-            data_float = data_float[:, self.tracks] * self.gains  # apply channel selection and gains.
+            data_float = (
+                data_float[:, self.tracks] * self.gains
+            )  # apply channel selection and gains.
             # if not self._record_all
             self.record_buffer.append(data_float)
             # E = 10 * np.log10(np.mean(data_float ** 2)) # energy in dB
@@ -137,6 +157,6 @@ class Arecorder(Aserver):
         if self.stream:
             state = self.stream.is_active()
         msg = f"""Arecorder: sr: {self.sr}, blocksize: {self.bs}, Stream Active: {state}
-           Input: {self.device_dict['name']}, Index: {self.device_dict['index']}
+           Input: {self.device_dict["name"]}, Index: {self.device_dict["index"]}
            """
         return msg

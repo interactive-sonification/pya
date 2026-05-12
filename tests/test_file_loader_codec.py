@@ -1,11 +1,13 @@
-from unittest import TestCase
 import os
+from unittest import TestCase
+
 import numpy as np
+
 from pya.helper.codec import (
-    audio_read,
-    SoundFileAudioFile,
     FFmpegAudioFile,
+    SoundFileAudioFile,
     UnsupportedError,
+    audio_read,
 )
 
 
@@ -96,7 +98,7 @@ class TestCodec(TestCase):
     # TODO: Add a flac file for testing
     # def test_high_resolution(self):
     #     """Test handling of high resolution audio (24-bit, high sample rate)"""
-    #     with audio_read(self.test_files['flac']) as audio:  # Assuming 24-bit/96kHz FLAC
+    #     with audio_read(self.test_files['flac']) as audio:# Assuming 24-bit/96kHz FLAC
     #         data = next(audio.read_data())
     #         self.assertTrue(np.max(np.abs(data)) <= 1.0)  # Check normalization
     #         self.assertEqual(np.float32, data.dtype)

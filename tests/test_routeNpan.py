@@ -1,7 +1,10 @@
-from unittest import TestCase
 import warnings
+from unittest import TestCase
+
 import numpy as np
-from pya import *
+
+from pya.asig import Asig
+
 # import logging
 # logging.basicConfig(level=logging.DEBUG)
 
@@ -12,9 +15,9 @@ class TestRoutePan(TestCase):
     def setUp(self):
         self.sig = np.sin(2 * np.pi * 100 * np.linspace(0, 1, 44100))
         self.asine = Asig(self.sig, sr=44100, label="test_sine")
-        self.asineWithName = Asig(self.sig, sr=44100, label="test_sine", cn=['sine'])
+        self.asineWithName = Asig(self.sig, sr=44100, label="test_sine", cn=["sine"])
         self.sig2ch = np.repeat(self.sig, 2).reshape((44100, 2))
-        self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=['l', 'r'])
+        self.astereo = Asig(self.sig2ch, sr=44100, label="sterep", cn=["l", "r"])
         self.sig16ch = np.repeat(self.sig, 16).reshape((44100, 16))
         self.asine16ch = Asig(self.sig16ch, sr=44100, label="test_sine_16ch")
 
@@ -51,8 +54,7 @@ class TestRoutePan(TestCase):
 
     def test_rewire(self):
         # Rewire channels, e.g. move 0 to 1 with a gain of 0.5"""
-        result = self.astereo.rewire({(0, 1): 0.5,
-                                      (1, 0): 0.5})
+        result = self.astereo.rewire({(0, 1): 0.5, (1, 0): 0.5})
         temp = self.astereo.sig
         expect = temp.copy()
         expect[:, 0] = temp[:, 1] * 0.5
@@ -60,14 +62,14 @@ class TestRoutePan(TestCase):
         self.assertTrue(np.allclose(expect[1000:10010, 1], result.sig[1000:10010, 1]))
 
     def test_pan2(self):
-        pan2 = self.astereo.pan2(-1.)
+        pan2 = self.astereo.pan2(-1.0)
         self.assertAlmostEqual(0, pan2.sig[:, 1].sum())
-        pan2 = self.astereo.pan2(1.)
+        pan2 = self.astereo.pan2(1.0)
         self.assertAlmostEqual(0, pan2.sig[:, 0].sum())
 
         pan2 = self.asine.pan2(-0.5)
         self.assertEqual(pan2.channels, 2)
         with self.assertRaises(TypeError):
-            self.astereo.pan2([2., 4.])
+            self.astereo.pan2([2.0, 4.0])
         with self.assertRaises(ValueError):
-            self.astereo.pan2(3.)
+            self.astereo.pan2(3.0)

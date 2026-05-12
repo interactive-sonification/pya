@@ -1,14 +1,16 @@
-from .aserver import Aserver
-from .asig import Asig
-from .astft import Astft
-from .aspec import Aspec
-from .amfcc import Amfcc
-from .arecorder import Arecorder
-from .ugen import Ugen
-from .version import __version__
-from .helper import *
+from pya.amfcc import Amfcc
+from pya.arecorder import Arecorder
+from pya.aserver import Aserver
+from pya.asig import Asig
+from pya.aspec import Aspec
+from pya.astft import Astft
+
 # from .helper.visualization import basicplots
-from .backend import *
+from pya.backend import *  # noqa: F403
+from pya.helper import *  # noqa: F403
+from pya.ugen import Ugen
+
+__all__ = ["Ugen", "Asig", "Aspec", "Astft", "Arecorder", "Amfcc"]
 
 
 def startup(**kwargs):

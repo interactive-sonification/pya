@@ -1,16 +1,19 @@
-from unittest import TestCase
-from pya import *
-import numpy as np
 import time
+from unittest import TestCase
+
+import numpy as np
+
+from pya.aserver import Aserver
+from pya.asig import Asig
+from pya.backend.Dummy import DummyBackend
 
 
 class TestAserver(TestCase):
-
     def setUp(self) -> None:
         self.backend = DummyBackend()
         self.sig = np.sin(2 * np.pi * 440 * np.linspace(0, 1, 44100))
         self.asine = Asig(self.sig, sr=44100, label="test_sine")
-        self.max_channels = self.backend.dummy_devices[0]['maxOutputChannels']
+        self.max_channels = self.backend.dummy_devices[0]["maxOutputChannels"]
 
     def test_default_server(self):
         Aserver.startup_default_server(backend=self.backend, bs=512, channels=4)
@@ -38,7 +41,10 @@ class TestAserver(TestCase):
             self.assertFalse(s.is_active)
 
     def test_invalid_channels(self):
-        """Raise an exception if booting with channels greater than max channels of the device. Dummy has 10"""
+        """
+        Raise an exception if booting with channels greater than max channels of the
+        device. Dummy has 10
+        """
         ch = 100
         s = Aserver(device=0, channels=ch, backend=self.backend)
         with self.assertRaises(OSError):
@@ -114,9 +120,10 @@ class TestAserver(TestCase):
 
     def test_incompatible_backend(self):
         s = Aserver(backend=self.backend)
-        sig = np.sin(2 * np.pi * 440 * np.linspace(0, 1, 44100) * np.iinfo(np.int16).max).astype(np.int16)
+        sig = np.sin(
+            2 * np.pi * 440 * np.linspace(0, 1, 44100) * np.iinfo(np.int16).max
+        ).astype(np.int16)
         asine = Asig(sig, sr=44100)
         s.boot()
         asine.play(server=s)
         s.quit()
-

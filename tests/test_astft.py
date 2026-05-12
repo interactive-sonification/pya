@@ -1,6 +1,8 @@
 from unittest import TestCase, mock
-from pya import Ugen, Astft
+
 import numpy as np
+
+from pya import Astft, Ugen
 
 
 class MockPlot(mock.MagicMock):
@@ -8,10 +10,9 @@ class MockPlot(mock.MagicMock):
 
 
 class TestAstft(TestCase):
-
     def setUp(self):
         self.asig = Ugen().sine()
-        self.asig2 = Ugen().sine(channels=2, cn=['a', 'b'])
+        self.asig2 = Ugen().sine(channels=2, cn=["a", "b"])
         self.asig_no_name = Ugen().sine(channels=3)
 
     def tearDown(self):
@@ -22,15 +23,15 @@ class TestAstft(TestCase):
         self.assertEqual(astft.sr, 44100)
         astft = self.asig.to_stft(sr=2000)
         self.assertEqual(astft.sr, 2000)
-        signal = self.asig2.sig
+        _ = self.asig2.sig
 
     def test_wrong_input_type(self):
         with self.assertRaises(TypeError):
-            asig = Astft(x=3, sr=500)
+            _ = Astft(x=3, sr=500)
 
     def test_multichannel_asig(self):
-        # Test conversion of a multi channel asig's astft. 
-        asine = Ugen().sawtooth(channels=3, cn=['a', 'b', 'c'])
+        # Test conversion of a multi channel asig's astft.
+        asine = Ugen().sawtooth(channels=3, cn=["a", "b", "c"])
         astft = asine.to_stft()
         self.assertEqual(astft.channels, 3)
         self.assertEqual(len(astft.cn), 3)
@@ -46,7 +47,7 @@ class TestAstft(TestCase):
         noise = np.random.normal(scale=np.sqrt(noise_power), size=time.shape)
         noise *= np.exp(-time / 5)
         x = carrier + noise
-        astft = Astft(x, sr, label="test")
+        _ = Astft(x, sr, label="test")
 
     def test_plot(self):
         self.asig.to_stft().plot()

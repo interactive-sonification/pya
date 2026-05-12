@@ -1,4 +1,3 @@
-from .helper.backend import determine_backend
 import copy
 import logging
 import time
@@ -7,13 +6,15 @@ from warnings import warn
 
 import numpy as np
 
+from .helper.backend import determine_backend
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
 
 
 class Aserver:
-    """Pya audio server
+    """
+    Pya audio server
     Based on pyaudio, works as a FIFO style audio stream pipeline,
     allowing Asig.play() to send audio segement into the stream.
 
@@ -27,7 +28,8 @@ class Aserver:
     >>> asine = Ugen().sine()
     >>> asine.play(server=ser)
     Asig('sine'): 1 x 44100 @ 44100Hz = 1.000s cn=['0']
-    >>> ser.quit()  # Important to call quit() to close the stream when you are done. Or use context manager.
+    >>> ser.quit()  # Important to call quit() to close the stream when you are done.
+    Or use context manager.
     """
 
     default = None  # that's the default Aserver if Asigs play via it
@@ -52,9 +54,15 @@ class Aserver:
         else:
             warn("Aserver:shutdown_default_server: no default_server to shutdown")
 
-    def __init__(self, sr: int = 44100, bs: Optional[int] = None,
-                 device: Optional[int] = None, channels: Optional[int] = None,
-                 backend=None, **kwargs):
+    def __init__(
+        self,
+        sr: int = 44100,
+        bs: Optional[int] = None,
+        device: Optional[int] = None,
+        channels: Optional[int] = None,
+        backend=None,
+        **kwargs,
+    ):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
 
@@ -65,7 +73,7 @@ class Aserver:
         bs : int
             Override block size or buffer size set by chosen backend
         device : int
-            The device index based on pya.device_info(), default is None which will set 
+            The device index based on pya.device_info(), default is None which will set
             the default device from PyAudio
         channels : int
             number of channel, default is the max output channels of the device
@@ -85,12 +93,16 @@ class Aserver:
         self.input_devices = []
         self.output_devices = []
         for i in range(self.backend.get_device_count()):
-            if int(self.backend.get_device_info_by_index(i)['maxInputChannels']) > 0:
+            if int(self.backend.get_device_info_by_index(i)["maxInputChannels"]) > 0:
                 self.input_devices.append(self.backend.get_device_info_by_index(i))
-            if int(self.backend.get_device_info_by_index(i)['maxOutputChannels']) > 0:
+            if int(self.backend.get_device_info_by_index(i)["maxOutputChannels"]) > 0:
                 self.output_devices.append(self.backend.get_device_info_by_index(i))
 
-        self._device = self.backend.get_default_output_device_info()['index'] if device is None else device
+        self._device = (
+            self.backend.get_default_output_device_info()["index"]
+            if device is None
+            else device
+        )
         self._channels = channels or self.max_out_chn
 
         self.gain = 1.0
@@ -125,11 +137,11 @@ class Aserver:
 
     @property
     def max_out_chn(self) -> int:
-        return int(self.device_dict['maxOutputChannels'])
+        return int(self.device_dict["maxOutputChannels"])
 
     @property
     def max_in_chn(self) -> int:
-        return int(self.device_dict['maxInputChannels'])
+        return int(self.device_dict["maxInputChannels"])
 
     @property
     def is_active(self) -> bool:
@@ -141,30 +153,47 @@ class Aserver:
 
     @device.setter
     def device(self, val):
-        self._device = val if val is not None else self.backend.get_default_output_device_info()['index']
+        self._device = (
+            val
+            if val is not None
+            else self.backend.get_default_output_device_info()["index"]
+        )
         if self.max_out_chn < self.channels:
-            warn(f"Aserver: warning: {self.channels}>{self.max_out_chn} channels requested - truncated.")
+            warn(
+                f"Aserver: warning: {self.channels}>{self.max_out_chn} channels requested - truncated."  # noqa E501
+            )
             self.channels = self.max_out_chn
 
     def __repr__(self):
         msg = f"""AServer: sr: {self.sr}, blocksize: {self.bs},
-         Stream Active: {self.is_active}, Device: {self.device_dict['name']}, Index: {self.device_dict['index']}"""
+         Stream Active: {self.is_active}, Device: {self.device_dict["name"]}, 
+         Index: {self.device_dict["index"]}
+        """
         return msg
 
     def get_devices(self, verbose: bool = False):
         """Return (and optionally print) available input and output device"""
         if verbose:
             print("Input Devices: ")
-            [print(f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}")
-             for i in self.input_devices]
+            [
+                print(
+                    f"Index: {i['index']}, Name: {i['name']},  Channels: {i['maxInputChannels']}"  # noqa E501
+                )
+                for i in self.input_devices
+            ]
             print("Output Devices: ")
-            [print(f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}")
-             for i in self.output_devices]
+            [
+                print(
+                    f"Index: {i['index']}, Name: {i['name']}, Channels: {i['maxOutputChannels']}"  # noqa E501
+                )
+                for i in self.output_devices
+            ]
         return self.input_devices, self.output_devices
 
     def set_device(self, idx: int, reboot: bool = True):
-        """Set audio device, an alternative way is to direct set the device property, i.e. Aserver.device = 1, 
-        but that will not reboot the server.
+        """
+        Set audio device, an alternative way is to direct set the device property,
+        i.e. Aserver.device = 1, but that will not reboot the server.
 
         Parameters
         ----------
@@ -192,11 +221,15 @@ class Aserver:
         self.boot_time = time.time()
         self.block_time = self.boot_time
         self.block_cnt = 0
-        self.stream = self.backend.open(channels=self.channels, rate=self.sr,
-                                        input_flag=False, output_flag=True,
-                                        frames_per_buffer=self.bs,
-                                        output_device_index=self.device,
-                                        stream_callback=self._play_callback)
+        self.stream = self.backend.open(
+            channels=self.channels,
+            rate=self.sr,
+            input_flag=False,
+            output_flag=True,
+            frames_per_buffer=self.bs,
+            output_device_index=self.device,
+            stream_callback=self._play_callback,
+        )
         self._is_active = self.stream.is_active()
         _LOGGER.info("Server Booted")
         return self
@@ -242,7 +275,9 @@ class Aserver:
                 asig = copy.copy(asig)
             asig.sig = asig.sig.astype(self.backend.dtype)
         # copy only relevant channels...
-        nchn = min(asig.channels, self.channels - out)  # max number of copyable channels
+        nchn = min(
+            asig.channels, self.channels - out
+        )  # max number of copyable channels
         # in: [:nchn] out: [out:out+nchn]
         if id(asig) == sigid:
             asig = copy.copy(asig)
@@ -254,7 +289,7 @@ class Aserver:
         self.srv_asigs.insert(idx, asig)
         self.srv_curpos.insert(idx, 0)
         self.srv_outs.insert(idx, out)
-        if 'block' in kwargs and kwargs['block']:
+        if "block" in kwargs and kwargs["block"]:
             if onset > 0:  # here really omset and not rt_onset!
                 _LOGGER.warning("blocking inactive with play(onset>0)")
             else:
@@ -294,11 +329,11 @@ class Aserver:
                 io0 = int((t - tnow) * self.sr)
             else:
                 io0 = 0
-            tmpsig = a.sig[c:c + self.bs - io0]
+            tmpsig = a.sig[c : c + self.bs - io0]
             n, nch = tmpsig.shape
             out = self.srv_outs[i]
             # .reshape(n, nch) not needed as moved to play
-            data[io0:io0 + n, out:out + nch] += tmpsig
+            data[io0 : io0 + n, out : out + nch] += tmpsig
             self.srv_curpos[i] += n
             if self.srv_curpos[i] >= a.samples:
                 dellist.append(i)  # store for deletion
@@ -324,9 +359,9 @@ class Aserver:
 
     def __del__(self):
         """Backup cleanup, only if context manager wasn't used"""
-        if hasattr(self, 'stream') and self.stream is not None:
+        if hasattr(self, "stream") and self.stream is not None:
             try:
                 self.quit()
                 self.backend.terminate()
-            except:
+            except Exception:
                 pass  # Ignore cleanup errors during shutdown

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0 
+* changed project management and build system to use `uv`. Most of the configuration is now gathered in the `pyproject.toml`.
+* added pre-commit hooks
+
+
 ## 0.5.2 (Nov 2023)
 * #82, `pyaudio` is now optional: If you plan to use `PyAudioBackend`, install `pya` with `pip install pya[pyaudio]`.
 * Fix audio device bug
@@ -86,4 +91,3 @@
 ## 0.2 (August 2019)
 
 * First official PyPI release
-

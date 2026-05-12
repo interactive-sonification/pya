@@ -1,12 +1,12 @@
 import logging
-from typing import Union, Optional
+from typing import Optional, Union
 
 import numpy as np
 import scipy.interpolate
 
 import pya.asig
-from .helper import basicplot
 
+from .helper import basicplot
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -14,8 +14,14 @@ _LOGGER.addHandler(logging.NullHandler())
 
 class Aspec:
     """Audio spectrum class using rfft"""
-    def __init__(self, x: Union[pya.asig.Asig, np.ndarray], sr: int = 44100,
-                 label: Optional[str] = None, cn: Optional[list] = None):
+
+    def __init__(
+        self,
+        x: Union[pya.asig.Asig, np.ndarray],
+        sr: int = 44100,
+        label: Optional[str] = None,
+        cn: Optional[list] = None,
+    ):
         """__init__() method
         Parameters
         ----------
@@ -36,7 +42,8 @@ class Aspec:
             self.channels = x.channels
             self.cn = cn or x.cn
         elif isinstance(x, np.ndarray):
-            # TODO. This is in the assumption x is spec. which is wrong. We define x to be the audio signals instead.
+            # TODO. This is in the assumption x is spec. which is wrong.
+            # We define x to be the audio signals instead.
             self.rfftspec = np.array(x)
             self.sr = sr
             self.samples = (len(x) - 1) * 2
@@ -57,10 +64,14 @@ class Aspec:
 
     def to_sig(self):
         """Convert Aspec into Asig"""
-        return pya.asig.Asig(np.fft.irfft(self.rfftspec),
-                             sr=self.sr, label=self.label + '_2sig', cn=self.cn)
+        return pya.asig.Asig(
+            np.fft.irfft(self.rfftspec),
+            sr=self.sr,
+            label=self.label + "_2sig",
+            cn=self.cn,
+        )
 
-    def weight(self, weights: list, freqs=None, curve=1, kind='linear'):
+    def weight(self, weights: list, freqs=None, curve=1, kind="linear"):
         """TODO
 
         Parameters
@@ -96,18 +107,16 @@ class Aspec:
                 weights = np.insert(np.array(weights), -1, weights[-1])
             given_freqs = freqs
         if nfreqs != self.nr_freqs:
-            interp_fn = scipy.interpolate.interp1d(given_freqs,
-                                                   weights, kind=kind)
+            interp_fn = scipy.interpolate.interp1d(given_freqs, weights, kind=kind)
             # ToDo: curve segmentwise!!!
             rfft_new = self.rfftspec * interp_fn(self.freqs) ** curve
         else:
-            rfft_new = self.rfftspec * weights ** curve
-        return Aspec(rfft_new, self.sr,
-                     label=self.label + "_weighted", cn=self.cn)
+            rfft_new = self.rfftspec * weights**curve
+        return Aspec(rfft_new, self.sr, label=self.label + "_weighted", cn=self.cn)
 
-    def plot(self, fn=np.abs, ax=None,
-             offset=0, scale=1,
-             xlim=None, ylim=None, **kwargs):
+    def plot(
+        self, fn=np.abs, ax=None, offset=0, scale=1, xlim=None, ylim=None, **kwargs
+    ):
         """Plot spectrum
 
         Parameters
@@ -132,14 +141,24 @@ class Aspec:
         _ : Asig
             self
         """
-        _, ax = basicplot(fn(self.rfftspec), self.freqs, channels=self.channels,
-                          cn=self.cn, offset=offset, scale=scale,
-                          ax=ax, typ='plot',
-                          xlabel='freq (Hz)', ylabel=f'{fn.__name__}(freq)',
-                          xlim=xlim, ylim=ylim, **kwargs)
+        _, ax = basicplot(
+            fn(self.rfftspec),
+            self.freqs,
+            channels=self.channels,
+            cn=self.cn,
+            offset=offset,
+            scale=scale,
+            ax=ax,
+            typ="plot",
+            xlabel="freq (Hz)",
+            ylabel=f"{fn.__name__}(freq)",
+            xlim=xlim,
+            ylim=ylim,
+            **kwargs,
+        )
         return self
 
     def __repr__(self):
         return "Aspec('{}'): {} x {} @ {} Hz = {:.3f} s".format(
-            self.label, self.channels, self.samples,
-            self.sr, self.samples / self.sr)
+            self.label, self.channels, self.samples, self.sr, self.samples / self.sr
+        )

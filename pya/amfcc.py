@@ -2,22 +2,28 @@ from typing import Optional, Union
 from warnings import warn
 
 import numpy as np
-from pyamapping import mel_to_hz, hz_to_mel
-from scipy.signal import get_window
+from pyamapping import hz_to_mel, mel_to_hz
 from scipy.fftpack import dct
+from scipy.signal import get_window
 
-from .helper import next_pow2, signal_to_frame, round_half_up, magspec
-from .helper import is_pow2
-from .helper import basicplot
 import pya.asig
-import logging
+
+from .helper import (
+    basicplot,
+    is_pow2,
+    magspec,
+    next_pow2,
+    round_half_up,
+    signal_to_frame,
+)
 
 # _LOGGER = logging.getLogger(__name__)
 # _LOGGER.addHandler(logging.NullHandler())
 
 
 class Amfcc:
-    """Mel filtered Fourier spectrum (MFCC) class,
+    """
+    Mel filtered Fourier spectrum (MFCC) class,
     this class is inspired by jameslyons/python_speech_features,
     https://github.com/jameslyons/python_speech_features
     Steps of mfcc:
@@ -68,12 +74,22 @@ class Amfcc:
         An array of the MFCC coeffcient, size: nframes x ncep
     """
 
-    def __init__(self, x: Union[pya.Asig, np.ndarray], sr: Optional[int] = None,
-                 label: str = '', n_per_frame: Optional[int] = None,
-                 hopsize: Optional[int] = None, nfft: Optional[int] = None,
-                 window: str = 'hann', nfilters: int = 26,
-                 ncep: int = 13, ceplifter: int = 22, preemph: float = 0.95,
-                 append_energy: bool = True, cn: Optional[list] = None):
+    def __init__(
+        self,
+        x: Union[pya.asig.Asig, np.ndarray],
+        sr: Optional[int] = None,
+        label: str = "",
+        n_per_frame: Optional[int] = None,
+        hopsize: Optional[int] = None,
+        nfft: Optional[int] = None,
+        window: str = "hann",
+        nfilters: int = 26,
+        ncep: int = 13,
+        ceplifter: int = 22,
+        preemph: float = 0.95,
+        append_energy: bool = True,
+        cn: Optional[list] = None,
+    ):
         """Initialize Amfcc object
 
         Parameters
@@ -119,7 +135,7 @@ class Amfcc:
         if isinstance(x, pya.asig.Asig):
             self.sr = x.sr
             self.x = x.sig
-            self.label = ''.join([x.label, "_mfccs"])
+            self.label = "".join([x.label, "_mfccs"])
             self.duration = x.get_duration()
             self.channels = x.channels
             self.cn = x.cn
@@ -129,8 +145,7 @@ class Amfcc:
             if sr:
                 self.sr = sr
             else:
-                msg = "If x is an array," \
-                    " sra(sampling rate) needs to be defined."
+                msg = "If x is an array, sra(sampling rate) needs to be defined."
                 raise AttributeError(msg)
             self.duration = np.shape(x)[0] / self.sr
             self.label = label
@@ -162,9 +177,9 @@ class Amfcc:
 
         # Framing signal.
         pre_emp_sig = self.preemphasis(self.x, coeff=preemph)
-        self.frames = signal_to_frame(pre_emp_sig,
-                                      self.n_per_frame, self.hopsize,
-                                      self.window)
+        self.frames = signal_to_frame(
+            pre_emp_sig, self.n_per_frame, self.hopsize, self.window
+        )
 
         # Computer power spectrum
         # Magnitude of spectrum, rfft then np.abs()
@@ -174,25 +189,23 @@ class Amfcc:
         # Total energy of each frame based on the power spectrum
         self.frame_energy = np.sum(pspec, 1)
         # Replace 0 with the smallest float positive number
-        self.frame_energy = np.where(self.frame_energy == 0,
-                                     np.finfo(float).eps,
-                                     self.frame_energy)
+        self.frame_energy = np.where(
+            self.frame_energy == 0, np.finfo(float).eps, self.frame_energy
+        )
 
         # Prepare Mel filter
         # Use the default filter banks.
-        self.filter_banks = Amfcc.mel_filterbanks(self.sr,
-                                                  nfilters=self.nfilters,
-                                                  nfft=self.nfft)
+        self.filter_banks = Amfcc.mel_filterbanks(
+            self.sr, nfilters=self.nfilters, nfft=self.nfft
+        )
 
         # filter bank energies are the features.
         self.cepstra = np.dot(pspec, self.filter_banks.T)
-        self.cepstra = np.where(self.cepstra == 0,
-                                np.finfo(float).eps, self.cepstra)
+        self.cepstra = np.where(self.cepstra == 0, np.finfo(float).eps, self.cepstra)
         self.cepstra = np.log(self.cepstra)
 
         # Discrete cosine transform
-        self.cepstra = dct(self.cepstra, type=2,
-                           axis=1, norm='ortho')[:, :self.ncep]
+        self.cepstra = dct(self.cepstra, type=2, axis=1, norm="ortho")[:, : self.ncep]
 
         self.cepstra = Amfcc.lifter(self.cepstra, self.ceplifter)
 
@@ -239,8 +252,13 @@ class Amfcc:
         return np.append(x[0], x[1:] - coeff * x[:-1])
 
     @staticmethod
-    def mel_filterbanks(sr: int, nfilters: int = 26, nfft: int = 512,
-                        lowfreq: float = 0, highfreq: Optional[float] = None):
+    def mel_filterbanks(
+        sr: int,
+        nfilters: int = 26,
+        nfft: int = 512,
+        lowfreq: float = 0,
+        highfreq: Optional[float] = None,
+    ):
         """Compute a Mel-filterbank. The filters are stored in the rows,
         the columns correspond to fft bins. The filters are returned as
         an array of size nfilt * (nfft/2 + 1)
@@ -316,15 +334,24 @@ class Amfcc:
         if L > 0:
             nframes, ncoeff = np.shape(cepstra)
             n = np.arange(ncoeff)
-            lift = 1 + (L / 2.) * np.sin(np.pi * n / L)
+            lift = 1 + (L / 2.0) * np.sin(np.pi * n / L)
             return lift * cepstra
         else:
             # values of L <= 0, do nothing
             return cepstra
 
-    def plot(self, show_bar: bool = True, offset: int = 0, scale: float = 1.,
-             xlim: Optional[float] = None, ylim: Optional[float] = None,
-             x_as_time: bool = True, nxlabel: int = 8, ax=None, **kwargs):
+    def plot(
+        self,
+        show_bar: bool = True,
+        offset: int = 0,
+        scale: float = 1.0,
+        xlim: Optional[float] = None,
+        ylim: Optional[float] = None,
+        x_as_time: bool = True,
+        nxlabel: int = 8,
+        ax=None,
+        **kwargs,
+    ):
         """Plot Amfcc.features via matshow, x is frames/time, y is the MFCCs
 
         Parameters
@@ -332,7 +359,8 @@ class Amfcc:
         show_bar : bool, optional
             Default is True, show colorbar.
         offset: int
-            It is the spacing between channel, without setting it every channel will be overlayed onto each other.
+            It is the spacing between channel,
+            without setting it every channel will be overlayed onto each other.
         scale: float
             Visual scaling for improve visibility
         xlim: float, optional
@@ -343,21 +371,32 @@ class Amfcc:
             The amountt of labels on the x axis. Default is 8 .
         """
         if self.channels > 1:
-            warn("Multichannel mfcc is not yet implemented. Please use "
-                 "mono signal for now, no plot is made")
+            warn(
+                "Multichannel mfcc is not yet implemented. Please use "
+                "mono signal for now, no plot is made"
+            )
             return self
-        im, ax = basicplot(self.cepstra.T, None,
-                           channels=self.channels,
-                           cn=self.cn, offset=offset, scale=scale,
-                           ax=ax, typ='mfcc', show_bar=show_bar,
-                           xlabel='time', xlim=xlim, ylim=ylim, **kwargs)
+        im, ax = basicplot(
+            self.cepstra.T,
+            None,
+            channels=self.channels,
+            cn=self.cn,
+            offset=offset,
+            scale=scale,
+            ax=ax,
+            typ="mfcc",
+            show_bar=show_bar,
+            xlabel="time",
+            xlim=xlim,
+            ylim=ylim,
+            **kwargs,
+        )
         self.im = im
         xticks = np.linspace(0, self.nframes, nxlabel, dtype=int)
         ax.set_xticks(xticks)
         # ax.set_("MFCC Coefficient")
         if x_as_time:
-            xlabels = np.round(np.linspace(0, self.duration, nxlabel),
-                               decimals=2)
+            xlabels = np.round(np.linspace(0, self.duration, nxlabel), decimals=2)
             # Replace x ticks with timestamps
             ax.set_xticklabels(xlabels)
             ax.xaxis.tick_bottom()
