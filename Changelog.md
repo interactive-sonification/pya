@@ -2,7 +2,9 @@
 
 ## 0.6.0 
 * changed project management and build system to use `uv`. Most of the configuration is now gathered in the `pyproject.toml`.
-* added pre-commit hooks
+* added pre-commit hooks and executed a lot of internal "form" refactoring to modern ruff standards (imports, documentation)
+* updated the github CI/CD pipelines to execute matrix testing for Ubuntu, MacOS and Windows
+
 
 
 ## 0.5.2 (Nov 2023)
