@@ -1,0 +1,91 @@
+[project]
+name = "pya"
+version = "0.5.2"
+description = 'Python audio coding classes - for dsp, sound synthesis and and sonification'
+authors = [
+    { name = "Thomas Hermann", email = "thermann@techfak.uni-bielefeld.de"},
+    { name = "Jiajun Yang", email = ""},
+    { name = "Alexander Neumann ...", email = ""},
+
+    { name = "Dennis Reinsch", email = "dreinsch@techfak.uni-bielefeld.de"},
+    { name = "Jannis Müller", email = ""},
+]
+maintainers = [
+    {name = "Fabian Hommel", email = "fhommel@techfak.uni-bielefeld.de"}
+]
+readme = "README.md"
+keywords=["sonification", "sound synthesis"]
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Sound/Audio :: Analysis",
+    "Topic :: Multimedia :: Sound/Audio :: Sound Synthesis"
+]
+dependencies = [
+    "pyamapping",
+    "scipy>=1.7.3",
+    "matplotlib>=3.5.3",
+    "soundfile>=0.13.0"
+]
+
+[project.urls]
+github = "https://github.com/interactive-sonification/pya"
+
+
+
+[project.optional-dependencies]
+example-notebooks = ["notebook"]
+pyaudio = [ "pyaudio>=0.2.12" ]
+remote = [ "notebook", "websocket", "ipywidgets" ]
+
+[tool.uv]
+dev-dependencies = [
+    "tox", 
+    "pytest", 
+    "pytest-cov", 
+    "pre-commit", 
+    "sphinx==7.2.6",
+    "sphinx-rtd-theme==2.0.0",
+    "myst-parser",
+    "pydocstyle",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["pya"]
+
+[tool.ruff]
+line-length = 88
+exclude = ["examples/", "dev/"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "T10"]  # E/F = flake8, I = isort
+ignore = ["E702"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pya"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.pytest.ini_options]
+addopts = "--cov=pya --cov-report=lcov --cov-report=term-missing"
+testpaths = ["tests"]  
+
+[tool.coverage.run]
+source = ["pya"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+]
