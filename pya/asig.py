@@ -172,14 +172,17 @@ class Asig:
         dtype : str
             datatype (Default value = 'float32')
         """
-        if dtype == "int16":
-            data = (self.sig * 32767).astype("int16")
-        elif dtype == "int32":
-            data = (self.sig * 2147483647).astype("int32")
-        elif dtype == "uint8":
-            data = (self.sig * 127 + 128).astype("uint8")
-        elif dtype == "float32":
-            data = self.sig.astype("float32")
+        match dtype:
+            case "int16":
+                data = (self.sig * 32767).astype("int16")
+            case "int32":
+                data = (self.sig * 2147483647).astype("int32")
+            case "uint8":
+                data = (self.sig * 127 + 128).astype("uint8")
+            case "float32":
+                data = self.sig.astype("float32")
+            case _:
+                raise NotImplementedError(f"Saving a wavfile with dtype not implemented")
         wavfile.write(fname, self.sr, data)
         return self
 
