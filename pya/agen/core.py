@@ -22,10 +22,12 @@ if TYPE_CHECKING:
     import graphviz
     from pya.agen.types import GenOrNum
 
-
 class AGenState:
     def __init__(self) -> None:
         self.__samples: np.ndarray = np.empty(0)
+        self.__idx: int = 0
+        self.__idx_sample: int = 0  # The 'real' sample idx that corresponds to the current cursor position
+        self.__max_size: int = 20 * config.AUDIO_RATE  # TODO: make this adjustable
         self.__length: int = 0
         self.__finished: bool = False
 
@@ -43,30 +45,54 @@ class AGenState:
     @property
     def length(self) -> int:
         """The current length of the cache."""
-        return self.__length
+        return self.__idx_sample
 
     def add_to_cache(self, samples: np.ndarray) -> None:
-        new_len = self.__length + samples.shape[0]
+        sample_count: int = samples.shape[0]
+        new_len = self.__length + sample_count
         if new_len > self.__samples.shape[0]:
-            if new_len > self.__samples.shape[0] * 2:
-                self.__samples = np.resize(self.__samples, new_len)
+            self.__samples = np.resize(self.__samples, min(max(new_len, self.__samples.shape[0]), self.__max_size))
+        if new_len > self.__max_size:
+            if sample_count > self.__max_size:
+                raise ValueError(f"Cache is too small to store samples. Cache size: {self.__max_size}, sample count: {sample_count}")
+            remaining = self.__max_size - self.__idx
+            if sample_count > remaining:
+                print(self.__idx, self.__max_size, remaining, samples.shape[0], self.__samples.shape)
+                self.__samples[self.__idx:] = samples[:remaining]
+                self.__samples[:sample_count - remaining] = samples[remaining:]
             else:
-                self.__samples = np.concatenate(
-                    [
-                        self.__samples,
-                        np.empty_like(self.__samples),
-                    ],
-                    axis=0,
-                )
-        self.__samples[self.__length : new_len] = samples
-        self.__length = new_len
+                self.__samples[self.__idx:self.__idx + sample_count] = samples
+        else:
+            self.__samples[self.__length : new_len] = samples
+        self.__length = min(new_len, self.__max_size)
+        self.__idx = (self.__idx + sample_count) % self.__max_size
+        self.__idx_sample += sample_count
 
     def get_from_cache(self, sample_count: int, start: int) -> np.ndarray:
-        if start + sample_count > self.__length and not self.__finished:
+        if start + sample_count > self.__idx_sample and not self.__finished:
             raise ValueError("Requested samples are not in cache")
-        view = self.__samples[
-            min(start, self.__length) : min(start + sample_count, self.__length)
-        ]
+
+        start = min(start, self.__idx_sample)
+        end = min(start + sample_count, self.__idx_sample)
+        if self.__idx_sample == self.__length:
+            view = self.__samples[start : end]
+        else:
+            # Use ring buffer logic
+            rb_start = max(self.__idx_sample - self.__max_size, 0)
+            if start < rb_start:
+                raise ValueError("Samples are not in the cache anymore")
+            start_idx = (self.__idx - (self.__idx_sample - start)) % self.__max_size
+            end_idx = (start_idx + sample_count) % self.__max_size
+            if end_idx < start_idx:
+                # We wrap from end to start, so we need to make a copy
+                view = np.concatenate([
+                    self.__samples[start_idx:],
+                    self.__samples[:end_idx - self.__max_size]
+                ])
+            else:
+                # Otherwise, we can just use a view
+                view = self.__samples[start_idx : end_idx]
+
         view.flags.writeable = False
         return view
 
