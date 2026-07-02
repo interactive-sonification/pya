@@ -22,12 +22,30 @@ if TYPE_CHECKING:
     import graphviz
     from pya.agen.types import GenOrNum
 
+@dataclass(frozen=True)
+class CacheFlags:
+    prealloc_memory: bool = False
+    """Whether the whole capacity of the cache should be directly allocated or the cache should grow incrementally.
+    Enabling this could reduce the amount of dynamic memory allocations in the generate() method.
+    """
+    max_seconds: float | None = None
+    """Maximum cache size in seconds."""
+    max_samples: int | None = None
+    """Maximum cache size in samples."""
+
 class AGenState:
-    def __init__(self) -> None:
-        self.__samples: np.ndarray = np.empty(0)
+    def __init__(self, flags: CacheFlags, sr: int) -> None:
         self.__idx: int = 0
         self.__idx_sample: int = 0  # The 'real' sample idx that corresponds to the current cursor position
-        self.__max_size: int = 20 * config.AUDIO_RATE  # TODO: make this adjustable
+
+        if flags.max_seconds is not None:
+            self.__max_size = int(flags.max_seconds * sr)
+        elif flags.max_samples is not None:
+            self.__max_size = flags.max_samples
+        else:
+            self.__max_size: int = 20 * sr
+
+        self.__samples: np.ndarray = np.empty(self.__max_size if flags.prealloc_memory else 0)
         self.__length: int = 0
         self.__finished: bool = False
 
@@ -164,11 +182,12 @@ class AGen(ABC):
         sr: int | None = 44100,
         done: DoneAction | str = DoneAction.STOP,
         downsample_children: bool = False,
+        cache_flags: CacheFlags = CacheFlags(),
     ) -> None:
         self.nodes: dict[str, float | int | np.ndarray] = {}
         self._node_items: dict[str, AGen.Node] = {}
 
-        self.cache: dict[int, np.ndarray] = {}
+        self.cache_flags = cache_flags
 
         self.__adaptive_sr = sr is None
 
@@ -589,7 +608,7 @@ class AGen(ABC):
                 "has at least one node that is a generator (and not a number)"
             )
         if self.states is None:
-            self.states = [AGenState() for _ in range(self.channels)]
+            self.states = [AGenState(self.cache_flags, self.sr) for _ in range(self.channels)]
             self.start_index = 0
         state = self.states[channel]
         # TODO: These are too many indentations. Refactor this.
