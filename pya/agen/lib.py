@@ -501,15 +501,151 @@ class PlayAsig(AGen):
         )
 
 
-class IndexMode(str, Enum):
-    INDEX = "index"
-    """samples, no matter what the sampling rate."""
-    RAD = "rad"
-    """index interval [0, 2 pi["""
-    ONE = "one"
-    """index interval in [0,1["""
-    TIME = "time"
-    """index interval in seconds using Asig sr"""
+class TimeUnit(str, Enum):
+    """
+    Represents time or phase units and provides
+    conversion routines between them.
+    """
+    SAMPLES = "samples"
+    """Time in samples. Default unit for conversions.""" # TODO in given sample rate
+    
+    SECONDS = "seconds"
+    """Time in seconds. Requires a sample rate to convert to SAMPLES"""
+    
+    NORMALIZED = "normalized"
+    """Normalized position as a fraction in [0, 1] relative to a reference length."""
+    
+    RADIANS = "radians"
+    """Phase in radians in [0, 2pi], where 2pi corresponds to the full reference length."""
+
+    @classmethod
+    def as_samples(
+        cls, 
+        value: GenOrNum | np.ndarray, 
+        from_unit: str | TimeUnit,
+        sr: float | None = None, 
+        reference_samples: int | float | None = None
+    ) -> float | np.ndarray:
+        """
+        Converts a value from the current unit into SAMPLES.
+        
+        Parameters
+        ----------
+        value
+            The time or phase value to convert.
+        sr
+            The sample rate in Hz. Default is 44100.0.
+        reference_samples
+            The reference length defined in SAMPLES.
+            
+        Returns
+        -------
+        float | np.ndarray
+            The converted value in samples.
+        """
+        match from_unit:
+            case TimeUnit.SAMPLES:
+                return value
+            
+            case TimeUnit.SECONDS:
+                return value * sr
+            
+            case TimeUnit.NORMALIZED:
+                if reference_samples is None:
+                    raise ValueError(f"Missing 'reference_samples'. Perhaps you used '{from_unit.name}' in a context where there is no reference.")
+                return value * reference_samples
+            
+            case TimeUnit.RADIANS:
+                if reference_samples is None:
+                    raise ValueError(f"Missing 'reference_samples'. Perhaps you used '{from_unit.name}' in a context where there is no reference.")
+                return (value / (2 * np.pi)) * reference_samples
+            
+            case _:
+                raise NotImplementedError(f"Conversion to samples not implemented for '{from_unit.name}'")
+
+    @classmethod
+    def as_unit(
+        cls, 
+        samples: int | float | np.ndarray, 
+        to_unit: str | TimeUnit,
+        sr: float, 
+        reference_samples: int | float | None = None
+    ) -> float | np.ndarray:
+        """
+        Converts a value in SAMPLES into the current unit.
+
+        Parameters
+        ----------
+        samples
+            The number of samples to convert.
+        to_unit
+            The target
+        sr
+            The sample rate in Hz.
+        reference_samples
+            The reference length defined in SAMPLES.
+            
+        Returns
+        -------
+        float | np.ndarray
+            The converted value in the current unit.
+        """
+        match to_unit:
+            case TimeUnit.SAMPLES:
+                return samples
+            
+            case TimeUnit.SECONDS:
+                return samples / sr
+            
+            case TimeUnit.NORMALIZED:
+                if reference_samples is None:
+                    raise ValueError(f"Missing 'reference_samples'. Perhaps you used '{to_unit.name}' in a context where there is no reference.")
+                return samples / reference_samples
+            
+            case TimeUnit.RADIANS:
+                if reference_samples is None:
+                    raise ValueError(f"Missing 'reference_samples'. Perhaps you used '{to_unit.name}' in a context where there is no reference.")
+                return (samples / reference_samples) * 2 * np.pi
+            
+            case _:
+                raise NotImplementedError(f"Conversion from samples not implemented for '{to_unit.name}'")
+
+
+    @classmethod
+    def convert(
+        cls, 
+        value: int | float | np.ndarray, 
+        from_unit: TimeUnit, 
+        to_unit: TimeUnit, 
+        sr: float, 
+        reference_samples: int | float | None = None
+    ) -> float | np.ndarray:
+        """
+        Classmethod to convert values from one unit to another.
+
+        Parameters
+        ----------
+        value
+            The value to convert.
+        from_unit
+            The current unit of the value.
+        target_unit
+            The unit to convert to.
+        sr
+            The sample rate in Hz
+        reference_samples
+            The reference length defined in SAMPLES.
+            
+        Returns
+        -------
+        float | np.ndarray
+            The converted value in the target unit.
+        """
+        if from_unit == to_unit:
+            return value
+
+        samples = TimeUnit.as_samples(value, from_unit, sr, reference_samples)
+        return TimeUnit.as_unit(samples, to_unit, sr, reference_samples)
 
 
 class LoopAsig(AGen):
@@ -537,9 +673,8 @@ class LoopAsig(AGen):
         sample frame to wrap to on a loop condition (i.e. first sample of loop)
     end_loop
         sample frame to end loop (i.e. last sample included)
-    mode: IndexMode | str (Default: IndexMode.INDEX)
-        either "index" for raw index, "rad" for (0..2pi), "one" for (0..1) range,
-        or "time" for time [s].
+    time_unit: 
+        The time unit to index the asig in start_pos, start_loop and end_loop
     loop: bool
         whether the Asig should be looped.
     """
@@ -552,9 +687,8 @@ class LoopAsig(AGen):
         start_pos: GenOrNum = 0,
         start_loop: GenOrNum = 0,
         end_loop: GenOrNum = 1,
-        mode: str | IndexMode = IndexMode.INDEX, 
+        time_unit: str | TimeUnit = TimeUnit.NORMALIZED, 
         loop: bool = False,
-        *args,
         sr: int | None = None,
         **kwargs,
     ):
@@ -575,7 +709,7 @@ class LoopAsig(AGen):
         )
         self.loop = loop
         self._asig = asig
-        self.mode = mode
+        self.time_unit = time_unit
         self.loop_flag = True
 
 
@@ -589,22 +723,9 @@ class LoopAsig(AGen):
         gate = self.nodes['gate']
         rate = self.nodes['rate']
 
-        factor = 1 # scale for start_pos, start_loop, end_loop
-        match self.mode:
-            case IndexMode.RAD:
-                factor = self._asig.samples / (2 * np.pi)
-            case IndexMode.ONE: 
-                factor = self._asig.samples
-            case IndexMode.TIME:
-                factor = self._asig.sr
-            case IndexMode.INDEX:
-                pass
-            case _:
-                print("Warning: unknown index mode: using IndexMode.Index")
-
-        start_pos = np.floor(self.nodes['start_pos'] * factor)
-        start_loop = np.floor(self.nodes['start_loop'] * factor)
-        end_loop = np.floor(self.nodes['end_loop'] * factor)
+        start_pos = np.floor(TimeUnit.as_samples(self.nodes['start_pos'], self.time_unit, self.sr, self._asig.samples))
+        start_loop = np.floor(TimeUnit.as_samples(self.nodes['start_loop'], self.time_unit, self.sr, self._asig.samples))
+        end_loop = np.floor(TimeUnit.as_samples(self.nodes['end_loop'], self.time_unit, self.sr, self._asig.samples))
 
         t_current = self.state.data.get("current_t", start_pos)
 
@@ -684,8 +805,9 @@ class LoopAsig(AGen):
         )
 
 
+# JM: Proposing to rename to ReadAsig, to match with PlayAsig & LoopAsig
 class AsigRead(AGen):
-    """Generator for reading Asig objects (as Buffer).
+    """Generator for reading Asig objects with linear interpolation (as Buffer).
     (equivalent to BufRd in SuperCollider 3)
 
     Parameters
@@ -695,9 +817,8 @@ class AsigRead(AGen):
         which are then used argument for Asig()
     phase: GenOrNum
         The phase at which to the Asig should be read. Interpretation according to mode.
-    mode: IndexMode | str
-        either "index" for raw index, "rad" (0..2pi), or "one" (0..1) range,
-        or "time" for time [s].
+    time_unit:
+        Unit for the phase to index the Asig
     loop: bool
         Whether the Asig should be looped.
     """
@@ -706,9 +827,8 @@ class AsigRead(AGen):
         self,
         asig: Asig | np.ndarray | str,
         phase: GenOrNum = 0,
-        mode: str | IndexMode = IndexMode.INDEX, 
+        time_unit: str | TimeUnit = TimeUnit.SAMPLES, 
         loop: bool = False,
-        *args,
         sr: int | None = None,
         **kwargs,
     ):
@@ -726,21 +846,11 @@ class AsigRead(AGen):
         )
         self.loop = loop
         self._asig = asig
-        self.mode = mode
+        self.time_unit = time_unit
         self._add_node(phase, "phase", convert_num_to_arr=True)
 
     def _generate_new(self, sample_count, start, channel):
-        t = self.nodes["phase"]
-        
-        match self.mode:
-            case IndexMode.RAD:
-                t = t * self._asig.samples / (2 * np.pi)
-            case IndexMode.ONE: 
-                t = t * self._asig.samples
-            case IndexMode.TIME:
-                t = t * self._asig.sr
-            case IndexMode.INDEX:
-                pass
+        t = TimeUnit.as_samples(self.nodes["phase"], self.time_unit, self.sr, self._asig.samples)
 
         if not self.loop:
             t = t[np.ceil(t) <= self._asig.sig.shape[0]]
@@ -915,134 +1025,126 @@ class XLine(SingleChannelGen):
         )
 
 
+@njit
+def lincurve_norm_numba(x: float, y1: float, y2: float, curve: float):
+    """Numba implementation for lincurve for single, normalized inputs"""
+    if abs(curve) < 0.001:
+        z = x * (y2 - y1) + y1
+    else:
+        z = y1 + (y2 - y1) / (1.0 - np.exp(curve)) * (
+            1 - np.exp((curve * x))
+        )
+    return z
+
+@njit
+def adsr_numba(attack_samples: np.ndarray,
+               decay_samples: np.ndarray,
+               sustain_gain: np.ndarray,
+               release_samples: np.ndarray,
+               gate: np.ndarray,
+               curve: np.ndarray,
+               velocity_sensitive: bool,
+               stage: float,
+               last_value: float,
+               stage_start_value: float, 
+               sample_count: int):
+    
+    output = np.empty(sample_count)
+
+    for i in range(sample_count):
+        if gate[i] > 0:
+            if stage >= 3: # If currently decaying
+                stage_start_value = last_value
+                stage = 0
+
+            if int(stage) == 0: # attack
+                if attack_samples[i] <= 1: stage = 1
+                else: stage += 1. / attack_samples[i]
+                value = lincurve_norm_numba(stage, stage_start_value, 1, curve[i])
+            elif int(stage) == 1: # decay
+                if decay_samples[i] <= 1: stage = 2
+                else: stage += 1. / decay_samples[i]
+                value = lincurve_norm_numba(stage-1, 1, sustain_gain[i], curve[i])
+            elif int(stage) == 2: # sustain
+                stage = 2
+                value = sustain_gain[i]
+                
+            if velocity_sensitive:
+                value *= gate[i]
+        else: 
+            if stage == 0: # idle
+                output[i] = 0
+                continue
+
+            # release
+            if stage < 3: 
+                stage_start_value = last_value
+                stage = 3
+            if release_samples[i] <= 1: stage = 4
+            else: stage += 1 / release_samples[i]
+
+            if stage >= 4: # reset
+                value = 0
+                stage = 0
+                stage_start_value = 0
+                # TODO: Done action
+            else:
+                value = lincurve_norm_numba(stage-3, stage_start_value, 0, curve[i])
+
+        last_value = value
+        output[i] = value
+    return output, stage, last_value, stage_start_value
+
+
 class ADSR(SingleChannelGen):
-    """Generator for ADSR envelopes.
-
-    Parameters
-    ----------
-    attack
-        The attack time in seconds.
-    decay
-        The decay time in seconds.
-    sustain
-        The sustain time in seconds.
-    release
-        The release time in seconds.
-    level
-        The sustain level.
     """
-
-    def __init__(
-        self,
-        attack: float,
-        decay: float,
-        sustain: float,
-        release: float,
-        level: float = 0.5,
-        *args,
-        **kwargs,
-    ) -> None:
-        self.attack = attack
-        self.decay = decay
-        self.sustain = sustain
-        self.release = release
-        self.level = level
+    A typical ADSR
+    """
+    def __init__(self,
+                 attack_time: GenOrNum = 0.01,
+                 decay_time: GenOrNum = 0.3,
+                 sustain_gain: GenOrNum = 0.5,
+                 release_time: GenOrNum = 1.0,
+                 gate: GenOrNum = 1.0,
+                 curve: GenOrNum = -4.0,
+                 velocity_sensitive: bool = False,
+                 time_unit: TimeUnit = TimeUnit.SECONDS,
+                 *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def get_nodes(self) -> dict[str, GenOrNum]:
-        return {
-            "attack": self.attack,
-            "decay": self.decay,
-            "sustain": self.sustain,
-            "release": self.release,
-            "level": self.level,
-        }
+        self._add_node(attack_time, "attack_time", convert_num_to_arr=True)
+        self._add_node(decay_time, "decay_time", convert_num_to_arr=True)
+        self._add_node(sustain_gain, "sustain_gain", convert_num_to_arr=True)
+        self._add_node(release_time, "release_time", convert_num_to_arr=True)
+        self._add_node(gate, "gate", convert_num_to_arr=True)
+        self._add_node(curve, "curve", convert_num_to_arr=True)
+        self.velocity_sensitive = velocity_sensitive
+        self.time_unit = time_unit
 
-    def _generate_single(self, sample_count: int, start: int) -> np.ndarray:
-        # TODO: This is unnecessarily complicated.
+    def _generate_single(self, sample_count, start):
+        stage = self.state.data.get("stage", 0)
+        last_value = self.state.data.get("last_value", 0)
+        stage_start_value = self.state.data.get("stage_start_value", 0)
 
-        start_time = start / self.sr
-        end_time = (start + sample_count) / self.sr
-
-        attack_samples = int(self.attack * self.sr)
-        decay_samples = int(self.decay * self.sr)
-        sustain_samples = int(self.sustain * self.sr)
-        release_samples = int(self.release * self.sr)
-
-        attack_end_sample = min(max(attack_samples - start, 0), sample_count)
-
-        attack_slope = 1 / self.attack
-        attack = np.linspace(
-            start=attack_slope * start_time,
-            stop=min(1, end_time * attack_slope),
-            num=attack_end_sample,
+        output, stage, last_value, stage_start_value = adsr_numba(
+            attack_samples=TimeUnit.as_samples(self.nodes["attack_time"], self.time_unit, self.sr),
+            decay_samples=TimeUnit.as_samples(self.nodes["decay_time"], self.time_unit, self.sr),
+            sustain_gain=self.nodes["sustain_gain"],
+            release_samples=TimeUnit.as_samples(self.nodes["release_time"], self.time_unit, self.sr),
+            gate=self.nodes["gate"],
+            curve=self.nodes["curve"],
+            velocity_sensitive=self.velocity_sensitive,
+            stage=stage,
+            last_value=last_value,
+            stage_start_value=stage_start_value,
+            sample_count=sample_count
         )
 
-        decay_slope = (self.level - 1) / self.decay
-        decay_end_sample = min(
-            max(attack_samples - start + decay_samples, 0), sample_count
-        )
+        self.state.data["stage"] = stage
+        self.state.data["last_value"] = last_value
+        self.state.data["stage_start_value"] = stage_start_value
 
-        decay = np.linspace(
-            start=min(1, 1 + decay_slope * (start - attack_samples) / self.sr),
-            stop=max(
-                self.level,
-                1
-                + decay_slope
-                * ((decay_end_sample - (attack_samples - start)) / self.sr),
-            ),
-            num=decay_end_sample - attack_end_sample,
-        )
-
-        sustain_end_sample = min(
-            max(attack_samples - start + decay_samples + sustain_samples, 0),
-            sample_count,
-        )
-        sustain = np.full(
-            shape=sustain_end_sample - decay_end_sample, fill_value=self.level
-        )
-
-        release_slope = -self.level / self.release
-        release_end_sample = min(
-            max(
-                attack_samples
-                - start
-                + decay_samples
-                + sustain_samples
-                + release_samples,
-                0,
-            ),
-            sample_count,
-        )
-        release = np.linspace(
-            start=min(
-                self.level,
-                self.level
-                + release_slope
-                * (start - attack_samples - decay_samples - sustain_samples)
-                / self.sr,
-            ),
-            stop=max(
-                0,
-                self.level
-                + release_slope
-                * (
-                    release_end_sample
-                    - (attack_samples + decay_samples + sustain_samples - start)
-                )
-                / self.sr,
-            ),
-            num=release_end_sample - sustain_end_sample,
-        )
-
-        return np.concatenate(
-            [
-                attack,
-                decay,
-                sustain,
-                release,
-            ]
-        )
+        return output
 
 
 class Release(SingleChannelGen):
@@ -1557,16 +1659,6 @@ class PanAz(AGen):
         return x * np.sin(np.pi * np.clip(chanpos, 0, 1))
 
 
-class TimeMode(str, Enum):
-    """Enum representing time units."""
-
-    SAMPLES = "samples"
-    """Time in samples."""
-
-    SECONDS = "seconds"
-    """Time in seconds."""
-
-
 class SeqAGen(AGen):
     """Sequence of generators.
 
@@ -1574,21 +1666,17 @@ class SeqAGen(AGen):
     ----------
     gens
         A list containing tuples with the onset time and AGen.
-    time_mode
-        The unit of the onset times. Either "seconds" or "samples".
+    time_unit
+        The unit of the onset times.
     """
 
     def __init__(
         self,
         gens: Sequence[tuple[float, GenOrNum]],
-        time_mode: TimeMode = TimeMode.SECONDS,
+        time_unit: TimeUnit = TimeUnit.SECONDS,
         *args,
         **kwargs,
     ):
-        if time_mode not in [a.value for a in TimeMode]:
-            raise ValueError(
-                f"Invalid time_mode: {time_mode}. Must be one of: {', '.join(TimeMode)}."
-            )
         gen_values = [gen for _, gen in gens]
         super().__init__(
             *args,
@@ -1597,7 +1685,7 @@ class SeqAGen(AGen):
             **kwargs,
         )
         self.gens = sorted(gens, key=lambda x: x[0])
-        self.time_mode = time_mode
+        self.time_unit = time_unit
 
     def create_graph(self, additional_attr=[]):
         if len(self.gens) > 5 and config.PLOT_SEQUENCE_AS_GRAPH_WARNING:
@@ -1621,8 +1709,7 @@ class SeqAGen(AGen):
 
         ax = plt.gca() or ax
         onsets = np.array([onset for onset, _ in self.gens], dtype=float)
-        if self.time_mode == TimeMode.SAMPLES:
-            onsets /= self.sr
+        onsets = TimeUnit.convert(onsets, from_unit="samples", to_unit="seconds", sr=self.sr)
         ax.vlines(onsets, 0, 0.5 * ((np.arange(len(self.gens)) % 2 == 0) * 2 - 1))
         ax.axvline(0, c="gray", lw=0.5)
         ax.axhline(0, c="black")
@@ -1646,9 +1733,7 @@ class SeqAGen(AGen):
         max_len = 0
         for onset, gen in self.gens:
             onset = max(onset, 0)
-            onset_sample = (
-                int(onset * self.sr) if self.time_mode == TimeMode.SECONDS else onset
-            )
+            onset_sample = TimeUnit.as_samples(onset, self.time_unit, self.sr)
             if onset_sample >= start + sample_count:
                 return result
             new_samples: np.ndarray = self._get_samples(
@@ -2325,25 +2410,25 @@ class Comb(SingleChannelGen):
 
     Parameters
     ----------
-    input : GenOrNum
+    input
         The input source
 
-    delay_time : GenOrNum
+    delay_time
         The delay time. Unit based on mode
         Constraint: 1 <= delay_time <= max_delay_time
 
-    decay_time : GenOrNum
+    decay_time
         Time for the echoes to decay by 60 decibels. Unit based on mode. 
         Positive: Standard decay
         Negative: Inverts the feedback phase, only emphasizing odd harmonics an octave lower
         np.inf:   Infinite decay
         -np.inf:  Infinite decay emphasizing odd harmonics an octave lower
 
-    max_delay_time : int | float
+    max_delay_time
         Maximum delay time expected, used to allocate the ring buffer. 
         Unit based on mode.
 
-    delay_fn : str | Callable[[float, np.ndarray, int], float] | None
+    delay_fn
         Interpolation method for fractional (non integer) delay times.
         None, "none", "n", delay_n_numba:
             No interpolation. Delay is rounded down. 
@@ -2364,9 +2449,8 @@ class Comb(SingleChannelGen):
             fn(input: float, delay_samples: float, buffer: np.ndarray, head: int, state: np.ndarray) -> tuple[np.ndarray, int, np.ndarray]
             Recommended to use decorator @njit(delay_fn_spec)
 
-    mode: IndexMode | str (Default: IndexMode.INDEX)
+    time_unit
         Unit of time used for delay and decay parameters.
-        Either "index" for raw index or "time" for time [s].
     """
 
     def __init__(self, 
@@ -2375,7 +2459,7 @@ class Comb(SingleChannelGen):
                  decay_time: GenOrNum = 0.2,
                  max_delay_time: int | float = 2.0,
                  delay_fn: str | delay_fn_type | None = "cubic",
-                 mode: IndexMode = IndexMode.TIME,
+                 time_unit: TimeUnit = TimeUnit.SECONDS,
                  *args,
                  **kwargs,
     ) -> None:
@@ -2385,16 +2469,10 @@ class Comb(SingleChannelGen):
         self._add_node(delay_time, "delay_time", convert_num_to_arr=True)
         self._add_node(decay_time, "decay_time")
 
-        self._time_factor = 1
-        match mode:
-            case IndexMode.TIME:
-                self._time_factor = self.sr
-            case IndexMode.INDEX:
-                pass
-            case _:
-                print("Warning: invalid index mode: using IndexMode.Index")
+        self.time_unit = time_unit
 
-        self._buffer = np.zeros(np.ceil(max_delay_time * self._time_factor).astype(int) + 3) # added samples for interpolation algorithms
+        buffer_size = np.ceil(TimeUnit.as_samples(max_delay_time, time_unit, sr=self.sr)).astype(int) + 3 # added samples for interpolation algorithms
+        self._buffer = np.zeros(buffer_size) 
 
         if callable(delay_fn):
             self._delay_fn = delay_fn 
@@ -2419,7 +2497,7 @@ class Comb(SingleChannelGen):
 
     def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
         input = self.nodes["input"]
-        delay_samples = self._time_factor * self.nodes["delay_time"]
+        delay_samples = TimeUnit.as_samples(self.nodes["delay_time"], self.time_unit, self.sr)
         head = self.state.data.get("head", 0)
         delay_state = self.state.data.get("delay_state", np.empty(0))
         previous = self.state.data.get("previous", 0)
@@ -2667,7 +2745,7 @@ def simple_compressor_transfer_fn(input_db: float, threshold_db: float, ratio: f
 
 @njit
 def lag2_numba(target: float, state: float, rise_samples: float, fall_samples: float, target_epsilon: float = 0.001):
-    """Two-way lag that provides separat timing parameter if the value is rising and falling
+    """Two-way lag that provides separate timing parameter if the value is rising and falling
     """
     if target > state:
         if rise_samples == 0: return target
@@ -2678,7 +2756,7 @@ def lag2_numba(target: float, state: float, rise_samples: float, fall_samples: f
 
 
 @njit
-def simple_compressor_numba(input: np.ndarray,
+def compressor_numba(input: np.ndarray,
                      sidechain_input: np.ndarray,
                      threshold_db: np.ndarray,
                      ratio: np.ndarray,
@@ -2699,26 +2777,26 @@ def simple_compressor_numba(input: np.ndarray,
     return output, gain_state_db
 
 
-class SimpleCompressor(SingleChannelGen):
+class Compressor(SingleChannelGen):
     """
     A simple Dynamic Range Compressor
 
     Parameters
     ----------
-    input : GenOrNum
+    input
         The main input audio signal to be processed.
 
-    threshold_db : GenOrNum
+    threshold_db
         The threshold level in decibels (dB). Signal amplitudes exceeding this 
         level will trigger gain reduction.
 
-    ratio : GenOrNum
+    ratio
         The compression ratio applied to the signal above the threshold. 
         1.0 : No compression (1:1).
         3 : Represents a 3:1 compression ratio.
         np.inf : Represents infinite compression or hard limiting (∞:1).
 
-    knee : GenOrNum
+    knee
         The knee parameter of the transfer function. 
         For the default transfer function:
         0: Hard knee
@@ -2727,25 +2805,28 @@ class SimpleCompressor(SingleChannelGen):
             = 0.5 * (1 - 1/ratio) * knee
             = 0.5 * knee if ratio is inf
 
-    attack_time : GenOrNum
+    attack_time
         Determines how quickly the compressor reduces gain.
         Unit based on mode. 
 
-    release_time : GenOrNum
+    release_time
         Determines how quickly the compressor releases gain.
         Unit based on mode. 
 
-    makeup_db : GenOrNum
+    makeup_db
         Static make-up gain to compensate for the overall volume reduction caused 
         by the compressor.
 
-    sidechain_input : GenOrNum | None
+    sidechain_input
         An optional external control signal. If provided, the compressor calculates 
         its gain reduction based on the amplitude of this sidechain signal rather 
         than the main input. 
         If None, the input is used.
 
-    transfer_fn : Callable
+    time_unit
+        Unit of time of the attack_time and release_time parameters
+
+    transfer_fn
         The custom function calculating the static gain reduction curve.
         Defaults to `simple_compressor_transfer_fn`.
         Must be a Numba JIT-compiled function with the exact signature:
@@ -2761,7 +2842,7 @@ class SimpleCompressor(SingleChannelGen):
         release_time: GenOrNum = 0.400,
         makeup_db: GenOrNum = 0,
         sidechain_input: GenOrNum | None = None,
-        mode: IndexMode | str = IndexMode.TIME,
+        time_unit: TimeUnit | str = TimeUnit.SECONDS,
         transfer_fn = simple_compressor_transfer_fn,
         *args, 
         **kwargs
@@ -2780,31 +2861,57 @@ class SimpleCompressor(SingleChannelGen):
         if sidechain_input:
             self._add_node(sidechain_input, "sidechain_input", convert_num_to_arr=True)
         
-        self._time_factor = 1
-        match mode:
-            case IndexMode.TIME:
-                self._time_factor = self.sr
-            case IndexMode.INDEX:
-                pass
-            case _:
-                print("Warning: invalid index mode: using IndexMode.Index")
+        self.time_unit = time_unit
         self.transfer_fn = transfer_fn
 
     def _generate_single(self, sample_count: int, start: int = 0) -> np.ndarray:
+        from pyamapping import db_to_amp
         gain_state_db = self.state.data.get("gain_state_db", 0)
 
-        output, gain_state_db = simple_compressor_numba(
+        output, gain_state_db = compressor_numba(
             input=self.nodes["input"],
             sidechain_input=self.nodes["sidechain_input"] if self._has_sidechain_input else self.nodes["input"],
             threshold_db=self.nodes["threshold_db"],
             ratio=self.nodes["ratio"],
             knee=self.nodes["knee"],
-            attack_samples=self.nodes["attack_time"] * self._time_factor,
-            release_samples=self.nodes["release_time"] * self._time_factor,
+            attack_samples=TimeUnit.as_samples(self.nodes["attack_time"], self.time_unit, self.sr),
+            release_samples=TimeUnit.as_samples(self.nodes["release_time"], self.time_unit, self.sr),
             gain_state_db=gain_state_db,
             sample_count=sample_count,
             transfer_fn=self.transfer_fn,
         )
 
         self.state.data["gain_state_db"] = gain_state_db
-        return output * pam.db_to_amp(self.nodes["makeup_db"])
+        return output * db_to_amp(self.nodes["makeup_db"])
+    
+
+def Limiter(
+        input: GenOrNum,
+        threshold_db: GenOrNum = 0.,
+        knee: GenOrNum = 0.,
+        release_time: GenOrNum = 0.400,
+        sidechain_input: GenOrNum | None = None,
+        time_unit: TimeUnit | str = TimeUnit.SECONDS,
+        transfer_fn = simple_compressor_transfer_fn,
+        *args, 
+        **kwargs
+):
+    """
+    A convenience wrapper function to supply a 
+    Limiter based on the Compressor
+    See documentation of Compressor
+    """
+    return Compressor(
+        input=input,
+        threshold_db=threshold_db,
+        ratio=np.inf,
+        knee=knee,
+        attack_time=0,
+        release_time=release_time,
+        makeup_db=0,
+        sidechain_input=sidechain_input,
+        time_unit=time_unit,
+        transfer_fn=transfer_fn,
+        args=args,
+        kwargs=kwargs
+    )
