@@ -58,7 +58,7 @@ class Aserver:
 
     def __init__(self, sr: int = 44100, bs: Optional[int] = None,
                  device: Optional[int] = None, channels: Optional[int] = None, 
-                 history_size: Optional[int] = 2**14,
+                 history_size: Optional[int] = 2**16,
                  backend=None, **kwargs):
         """Aserver manages an pyaudio stream, using its aserver callback
         to feed dispatched signals to output at the right time.
@@ -115,8 +115,8 @@ class Aserver:
         self._is_active = False
 
         self.history_size = history_size
-        self._output_history = deque(maxlen=int(np.ceil(history_size/bs)))
-        self._input_history = deque(maxlen=int(np.ceil(history_size/bs)))
+        self._output_history = deque(maxlen=int(np.ceil(history_size/self.bs)))
+        self._input_history = deque(maxlen=int(np.ceil(history_size/self.bs)))
 
         # TH: added for scope test
         self.scope = None 
@@ -345,12 +345,14 @@ class Aserver:
             self.block_time = time.time()
         # to shortcut computing
         if not self.srv_asigs or self.srv_onsets[0] > tnow:
+            self._output_history.append(self.empty_buffer)
             return self.backend.process_buffer(self.empty_buffer)
         elif self._stop:
             self.srv_asigs.clear()
             self.srv_onsets.clear()
             self.srv_curpos.clear()
             self.srv_outs.clear()
+            self._output_history.append(self.empty_buffer)
             return self.backend.process_buffer(self.empty_buffer)
         data = np.zeros((self.bs, self.channels), dtype=self.backend.dtype)
         # iterate through all registered asigs, adding samples to play
@@ -407,18 +409,21 @@ class Aserver:
 
         return self.backend.process_buffer(data * (self.backend.range * self.gain))
     
-    def get_output_history(self, num_samples: int = None):
+    def get_output_history(self, num_samples: int = None, channel: Optional[int] = None):
         """
-        Returns a copy of the num_samples output samples.
+        Returns a copy of the latest num_samples output samples, fewer if the history is shorter.
+        If channel is given, only that channel is returned as 1D array.
         """
         if not num_samples:
             num_samples = self.history_size
         num_blocks = int(np.ceil(num_samples/self.bs))
 
-        history_len = len(self._output_history)
-        result_blocks = list(itertools.islice(self._output_history, history_len - num_blocks, history_len))
-        result = np.concatenate(result_blocks, axis=0)
-        return result[-num_samples:]
+        blocks = list(itertools.islice(reversed(self._output_history), num_blocks))[::-1]
+        if channel is not None:
+            blocks = [block[:, channel] for block in blocks]
+        if not blocks:
+            return np.zeros((0,) if channel is not None else (0, self.channels), dtype=self.backend.dtype)
+        return np.concatenate(blocks)[-num_samples:]
     
     def get_input_history(self, num_samples: int = None):
         """
