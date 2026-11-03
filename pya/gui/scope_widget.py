@@ -68,6 +68,21 @@ def _inside_offscreen_run(y, low, high):
     return hidden
 
 
+def _parabolic_peak(spec, idx):
+    """Returns (fractional bin, amplitude) of the vertex of the parabola through the log amplitudes
+    of bin idx and its neighbours, or the bin itself if it is no local maximum. Fitting the log
+    amplitudes is much more accurate than the linear ones, since the main lobe of a windowed
+    spectrum is nearly a parabola in dB."""
+    if not 0 < idx < len(spec) - 1 or spec[idx] < max(spec[idx - 1], spec[idx + 1]):
+        return float(idx), spec[idx]
+    left, center, right = np.log(spec[idx - 1:idx + 2])
+    curvature = left - 2 * center + right
+    if curvature >= 0:
+        return float(idx), spec[idx]
+    offset = 0.5 * (left - right) / curvature
+    return idx + offset, np.exp(center - 0.25 * (left - right) * offset)
+
+
 def _minmax_envelope(x, y, columns, half_width, half_columns):
     """Returns the polygon around the minimum and maximum of y within each of at most `columns`
     buckets, widened by half_width vertically and half_columns buckets horizontally like a stroke,
@@ -150,6 +165,7 @@ class ScopeWidget:
 
         self.spec_hovered = False
         self.spec_selected_idx = None
+        self.spec_selected_peak = None
         self.mouse_ax_pos = np.zeros(2)
         self.mouse_freq = 0.0
         self._selection_dirty = False
@@ -555,7 +571,12 @@ class ScopeWidget:
     def _draw_spectrum(self):
         self._set_line_data(self.line2Dspec, *self._decimated_spectrum(self.last_spec))
         if self.spec_hovered:
-            self._set_line_data(self.line2Dhold, *self._decimated_spectrum(self._hold_spec))
+            freqs, values = self._decimated_spectrum(self._hold_spec)
+            if self.spec_selected_peak is not None:
+                freq, mag = self.spec_selected_peak
+                position = np.searchsorted(freqs, freq)
+                freqs, values = np.insert(freqs, position, freq), np.insert(values, position, mag)
+            self._set_line_data(self.line2Dhold, freqs, values)
 
     def _update_hold(self, spec):
         if np.any(spec > self._hold_spec):
@@ -572,7 +593,9 @@ class ScopeWidget:
             self._peaks_idx = find_peaks(np.log(self._hold_spec), prominence=self.spec_peak_prominence)[0]
 
         idx = self.spec_selected_idx = self._selected_bin()
-        freq, mag = self.spec_freqs[idx], self._hold_spec[idx]
+        fractional_bin, mag = _parabolic_peak(self._hold_spec, idx)
+        freq = fractional_bin * self.sr / self._window_size
+        self.spec_selected_peak = freq, mag
         self.line2Dspec_p.set_data([freq], [mag])
         self.line2Dspec_p.set_visible(True)
         freq_text = _with_unit(freq, "Hz", ".1f" if freq < 100 else ".0f")
@@ -663,6 +686,7 @@ class ScopeWidget:
         if event.inaxes is self.axspec:
             self.spec_hovered = False
             self.spec_selected_idx = None
+            self.spec_selected_peak = None
             for artist in (self.line2Dhold, self.line2Dspec_p, self.peak_label):
                 artist.set_visible(False)
             self._dirty = True
@@ -675,7 +699,7 @@ class ScopeWidget:
 
     def _on_mouse_click(self, event):
         if event.inaxes is self.axspec and event.button == 1 and self.spec_selected_idx is not None:
-            (SinOsc(self.spec_freqs[self.spec_selected_idx]) * Line(0.1, 0, 0.2)).dup(2).play()
+            (SinOsc(self.spec_selected_peak[0]) * Line(0.1, 0, 0.2)).dup(2).play()
 
     def _on_key(self, event):
         """matplotlib's own key handler is connected first and already toggled the scale for the
