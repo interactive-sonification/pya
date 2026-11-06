@@ -2902,16 +2902,16 @@ def Limiter(
     See documentation of Compressor
     """
     return Compressor(
-        input=input,
-        threshold_db=threshold_db,
-        ratio=np.inf,
-        knee=knee,
-        attack_time=0,
-        release_time=release_time,
-        makeup_db=0,
-        sidechain_input=sidechain_input,
-        time_unit=time_unit,
-        transfer_fn=transfer_fn,
-        args=args,
-        kwargs=kwargs
+        input,
+        threshold_db,
+        np.inf,  # ratio
+        knee,
+        0,  # attack_time
+        release_time,
+        0,  # makeup_db
+        sidechain_input,
+        time_unit,
+        transfer_fn,
+        *args,
+        **kwargs
     )
